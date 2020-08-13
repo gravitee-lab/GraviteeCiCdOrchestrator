@@ -52,7 +52,7 @@ class ErrorReporter {
   report(err: Error) {
     // could use apiKey here to send error somewhere
     console.error(err.message);
-    console.error(err.stack);
+    /// console.error(err.stack);
   }
 }
 
