@@ -1,0 +1,42 @@
+{
+  "name": "GraviteeReleaseOrchestrator",
+  "version": "0.0.1",
+  "description": "The Gravitee Release Orchestrator steers Circle CI operations to process a fully automated Release of Gravitee APIM. The Gravitee Devops Team AT github.com/gravitee-lab",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'no tests yet'",
+    "dev": "npm run build && ./node_modules/ts-node/dist/bin.js ./src/index.ts",
+    "start": "node ./dist/index.js",
+    "doc": "./node_modules/typedoc/bin/typedoc --out docs/src/ ./src ",
+    "compile": "tsc --outDir dist/ ./**/*.ts",
+    "build": "npm run compile && npm run test && npm run doc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gravitee-lab/GraviteeReleaseOrchestrator.git"
+  },
+  "keywords": [
+    "Devops",
+    "Circle CI",
+    "pipeline",
+    "distributed",
+    "automation",
+    "multi-repo",
+    "Gravitee APIM"
+  ],
+  "author": "The Gravitee Devops Team <jean-baptiste.lasselle@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/README.md",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "typedoc": "^0.18.0"
+  }
+}
