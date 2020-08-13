@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ReleaseManifestFilter | GraviteeReleaseOrchestrator</title>
+	<title>CircleCiOrchestrator | GraviteeReleaseOrchestrator</title>
 	<meta name="description" content="Documentation for GraviteeReleaseOrchestrator">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_modules_json_releasemanifestfilter_.html">&quot;modules/json/ReleaseManifestFilter&quot;</a>
+					<a href="../modules/_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/CircleCiOrchestrator&quot;</a>
 				</li>
 				<li>
-					<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html">ReleaseManifestFilter</a>
+					<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html">CircleCiOrchestrator</a>
 				</li>
 			</ul>
-			<h1>Class ReleaseManifestFilter</h1>
+			<h1>Class CircleCiOrchestrator</h1>
 		</div>
 	</div>
 </header>
@@ -72,7 +72,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>1./ extracts the scale : the <code>buildDependencies</code> element alone, as [scale.json]</p>
+						<p>Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.</p>
 					</div>
 				</div>
 			</section>
@@ -80,7 +80,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ReleaseManifestFilter</span>
+						<span class="target">CircleCiOrchestrator</span>
 					</li>
 				</ul>
 			</section>
@@ -91,21 +91,21 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_branch" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>branch</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_version" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>version</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#execution_plan" class="tsd-kind-icon">execution_<wbr>plan</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#retries" class="tsd-kind-icon">retries</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#parse" class="tsd-kind-icon">parse</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#validatejson" class="tsd-kind-icon">validateJSon</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#giveup" class="tsd-kind-icon">giveup</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#start" class="tsd-kind-icon">start</a></li>
 							</ul>
 						</section>
 					</div>
@@ -117,38 +117,38 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Release<wbr>Manifest<wbr>Filter<span class="tsd-signature-symbol">(</span>release_version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, release_branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html" class="tsd-signature-type">ReleaseManifestFilter</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Circle<wbr>CiOrchestrator<span class="tsd-signature-symbol">(</span>execution_plan<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span>, retries<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html" class="tsd-signature-type">CircleCiOrchestrator</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/372b1c3/src/modules/json/ReleaseManifestFilter.ts#L15">modules/json/ReleaseManifestFilter.ts:15</a></li>
+									<li>Defined in modules/circleci/CircleCiOrchestrator.ts:11</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>release_version: <span class="tsd-signature-type">string</span></h5>
+									<h5>execution_plan: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
-									<h5>release_branch: <span class="tsd-signature-type">string</span></h5>
+									<h5>retries: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html" class="tsd-signature-type">ReleaseManifestFilter</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html" class="tsd-signature-type">CircleCiOrchestrator</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="gravitee_release_branch" class="tsd-anchor"></a>
-					<h3>gravitee_<wbr>release_<wbr>branch</h3>
-					<div class="tsd-signature tsd-kind-icon">gravitee_<wbr>release_<wbr>branch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="execution_plan" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> execution_<wbr>plan</h3>
+					<div class="tsd-signature tsd-kind-icon">execution_<wbr>plan<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/372b1c3/src/modules/json/ReleaseManifestFilter.ts#L14">modules/json/ReleaseManifestFilter.ts:14</a></li>
+							<li>Defined in modules/circleci/CircleCiOrchestrator.ts:10</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,13 +157,13 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="gravitee_release_version" class="tsd-anchor"></a>
-					<h3>gravitee_<wbr>release_<wbr>version</h3>
-					<div class="tsd-signature tsd-kind-icon">gravitee_<wbr>release_<wbr>version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="retries" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> retries</h3>
+					<div class="tsd-signature tsd-kind-icon">retries<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/372b1c3/src/modules/json/ReleaseManifestFilter.ts#L15">modules/json/ReleaseManifestFilter.ts:15</a></li>
+							<li>Defined in modules/circleci/CircleCiOrchestrator.ts:11</li>
 						</ul>
 					</aside>
 				</section>
@@ -171,43 +171,38 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="parse" class="tsd-anchor"></a>
-					<h3>parse</h3>
+					<a name="giveup" class="tsd-anchor"></a>
+					<h3>giveup</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">parse<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">giveup<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/372b1c3/src/modules/json/ReleaseManifestFilter.ts#L23">modules/json/ReleaseManifestFilter.ts:23</a></li>
+									<li>Defined in modules/circleci/CircleCiOrchestrator.ts:29</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="start" class="tsd-anchor"></a>
+					<h3>start</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in modules/circleci/CircleCiOrchestrator.ts:20</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>returning an A 2-dimensional array</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="validatejson" class="tsd-anchor"></a>
-					<h3>validateJSon</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">validateJSon<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/372b1c3/src/modules/json/ReleaseManifestFilter.ts#L33">modules/json/ReleaseManifestFilter.ts:33</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>just checks if the file exists</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -228,10 +223,10 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/_lib_errors_.html">&quot;lib/errors&quot;</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/<wbr>Circle<wbr>CiOrchestrator&quot;</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/_modules_json_releasemanifestfilter_.html">&quot;modules/json/<wbr>Release<wbr>Manifest<wbr>Filter&quot;</a>
 					</li>
 				</ul>
@@ -241,33 +236,27 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html" class="tsd-kind-icon">Release<wbr>Manifest<wbr>Filter</a>
+						<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html" class="tsd-kind-icon">Circle<wbr>CiOrchestrator</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_branch" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>branch</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#execution_plan" class="tsd-kind-icon">execution_<wbr>plan</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_version" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>version</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#parse" class="tsd-kind-icon">parse</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#retries" class="tsd-kind-icon">retries</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#validatejson" class="tsd-kind-icon">validateJSon</a>
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#giveup" class="tsd-kind-icon">giveup</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#start" class="tsd-kind-icon">start</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-variable tsd-parent-kind-module">
-						<a href="../modules/_modules_json_releasemanifestfilter_.html#companyname" class="tsd-kind-icon">company<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module">
-						<a href="../modules/_modules_json_releasemanifestfilter_.html#manifestpath" class="tsd-kind-icon">manifest<wbr>Path</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
@@ -280,11 +269,13 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 			</ul>
 		</div>
 	</div>

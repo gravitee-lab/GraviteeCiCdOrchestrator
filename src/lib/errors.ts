@@ -47,11 +47,6 @@ class ErrorReporter {
       }
       this.retries_before_failure = retries_before_failure;
     }
-    console.info(`{[Config]} - PRODUCT is set to ${process.env.PRODUCT}`)
-    console.info(`{[Config]} - RETRIES_BEFORE_FAILURE is set to ${process.env.RETRIES_BEFORE_FAILURE}`)
-    console.info(`{[Config]} - SSH_RELEASE_GIT_REPO is set to ${process.env.SSH_RELEASE_GIT_REPO}`)
-    console.info(`{[Config]} - HTTP_RELEASE_GIT_REPO is set to ${process.env.HTTP_RELEASE_GIT_REPO}`)
-    console.info(`{[Config]} - RELEASE_BRANCHES is set to ${process.env.RELEASE_BRANCHES}`)
   }
 
   report(err: Error) {

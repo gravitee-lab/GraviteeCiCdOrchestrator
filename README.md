@@ -9,7 +9,7 @@ A custom component in Gravitee's CICD, that brings distributed builds in
 * run :
 
 ```bash
-npm run orchestra
+npm start
 ```
 
 * build _(compile, test, and generate source code docs)_ :
