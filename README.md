@@ -11,10 +11,17 @@ A custom component in Gravitee's CICD, that brings distributed builds in
 ```bash
 npm run orchestra
 ```
+
 * test :
 
 ```bash
 npm run test
+```
+
+* generate source code typedoc :
+
+```bash
+npm run doc
 ```
 
 
