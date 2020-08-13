@@ -1,0 +1,5 @@
+# node / typescript build cycle
+node_modules/
+dist/
+# folders structure i am not sure about yet
+tests-data/
