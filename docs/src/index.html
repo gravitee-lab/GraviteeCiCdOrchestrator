@@ -76,9 +76,21 @@
 				</ul>
 				<pre><code class="language-bash">npm run orchestra</code></pre>
 				<ul>
+					<li>build <em>(compile, test, and generate source code docs)</em> :</li>
+				</ul>
+				<pre><code class="language-bash">npm run build</code></pre>
+				<ul>
+					<li>compile source code with <code>tsc</code> :</li>
+				</ul>
+				<pre><code class="language-bash">npm run compile</code></pre>
+				<ul>
 					<li>test :</li>
 				</ul>
 				<pre><code class="language-bash">npm run <span class="hljs-built_in">test</span></code></pre>
+				<ul>
+					<li>generate source code <a href="https://github.com/TypeStrong/typedoc">typedoc</a> :</li>
+				</ul>
+				<pre><code class="language-bash">npm run doc</code></pre>
 				<a href="#iaac-cycle-git-flowed-default-config" id="iaac-cycle-git-flowed-default-config" style="color: inherit; text-decoration: none;">
 					<h1>IAAC cycle (git flowed, default config)</h1>
 				</a>
@@ -158,6 +170,7 @@ atom .</code></pre>
 <span class="hljs-built_in">export</span> NPM_STARTER_NAME=<span class="hljs-string">&quot;foo&quot;</span>
 
 sudo npm install -g npm
+sudo npm install -g typescript
 
 npm init --yes <span class="hljs-string">&quot;<span class="hljs-variable">${NPM_STARTER_NAME}</span>&quot;</span>
 
@@ -210,6 +223,9 @@ npm install typedoc --save-dev
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_lib_errors_.html">&quot;lib/errors&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_modules_json_releasemanifestfilter_.html">&quot;modules/json/<wbr>Release<wbr>Manifest<wbr>Filter&quot;</a>

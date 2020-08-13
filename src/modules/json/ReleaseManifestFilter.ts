@@ -1,4 +1,4 @@
-import fs from 'fs';
+import * as fs from 'fs';
 
 export let manifestPath : string = "./release.json";
 
@@ -28,24 +28,11 @@ export class ReleaseManifestFilter {
       return returnedArray
     }
     /**
-     * This method constructs a JSON Object, containing only the [buildDependencies]
-     * JSon element from the [release.json]
-     **/
-    resolveScale()  : any {
-      console.log ("Gravitee Release Version: [" + this.gravitee_release_version + "]" );
-      console.log ("Gravitee Release Message: [" + this.gravitee_release_message + "]" );
-      console.log("Parsing release.json not implemented yet");
-      let returnedArray : string [][] = {
-
-      };
-      return returnedArray
-    }
-    /**
      * just checks if the file exists
      **/
     validateJSon()  : void {
+      console.log ("Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("Gravitee Release Version: [" + this.gravitee_release_version + "]" );
-      console.log ("Gravitee Release Message: [" + this.gravitee_release_message + "]" );
       console.log("Parsing release.json not implemented yet");
     }
 }
