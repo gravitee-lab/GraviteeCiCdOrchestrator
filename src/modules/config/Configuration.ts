@@ -1,26 +1,29 @@
 import fs from 'fs';
 
-export let manifestPath : string = "./release.json";
-
+export interface OrchestratorConfig
+{
+    product: string;
+    execution: number;
+    settings: string[];
+}
 /**
  * 1./ extracts the scale : the `buildDependencies` element alone, as [scale.json]
- *
+ * 2./ ccc
  *
  **/
-export class ReleaseManifestFilter {
+export class Configuration {
     /**
-     * [gravitee_release_branch] must match one the of the existing branch on
+     * [config_file_path] The path to the configuration file, from
+     * the PWD of the process executing the [GraviteeReleaseOrchestrator]
      **/
-    gravitee_release_branch: string;
-    gravitee_release_version: string;
-    constructor(release_version: string, release_branch: string) {
-        this.gravitee_release_version = release_version;
-        this.gravitee_release_branch = release_branch;
+    config_file_path: string;
+    constructor() {
+        this.config_file_path = config_file_path;
     }
     /**
      * returning an A 2-dimensional array
      **/
-    parse()  : string [][] {
+    loadConfigFromFile()  : void {
       console.log ("Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("Gravitee Release Version: [" + this.gravitee_release_version + "]" );
       console.log("Parsing release.json not implemented yet");

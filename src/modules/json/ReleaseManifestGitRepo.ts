@@ -1,10 +1,8 @@
-import fs from 'fs';
-
-export let manifestPath : string = "./release.json";
+export let manifestRepoURI : string = "./release.json";
 
 /**
- * 1./ extracts the scale : the `buildDependencies` element alone, as [scale.json]
- *
+ * This module allows to check whch is the reference git repo where the release.json lives.
+ * This module will (in the future) load those infos from a configuration file, config.toml
  *
  **/
 export class ReleaseManifestFilter {
@@ -21,8 +19,8 @@ export class ReleaseManifestFilter {
      * returning an A 2-dimensional array
      **/
     parse()  : string [][] {
-      console.log ("Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("Gravitee Release Version: [" + this.gravitee_release_version + "]" );
+      console.log ("Gravitee Release Message: [" + this.gravitee_release_message + "]" );
       console.log("Parsing release.json not implemented yet");
       let returnedArray : string [][] = [[], [], []];
       return returnedArray

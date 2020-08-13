@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo 'no tests yet'",
     "orchestra": "./node_modules/ts-node/dist/bin.js ./src/index.ts",
-    "doc" : "./node_modules/typedoc/bin/typedoc --out docs/src/ ./src ",
-    "compile" : "tsc ./**/*.ts",
-    "build" : "npm run compile && npm run test && npm run doc",
+    "doc": "./node_modules/typedoc/bin/typedoc --out docs/src/ ./src ",
+    "compile": "tsc ./**/*.ts",
+    "build": "npm run compile && npm run test && npm run doc"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/README.md",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   },
