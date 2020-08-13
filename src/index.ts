@@ -17,7 +17,7 @@ console.info(`{[Config]} SSH_RELEASE_GIT_REPO is set to ${process.env.SSH_RELEAS
 console.info(`{[Config]} HTTP_RELEASE_GIT_REPO is set to ${process.env.HTTP_RELEASE_GIT_REPO}`)
 console.info(`{[Config]} RELEASE_BRANCHES is set to ${process.env.RELEASE_BRANCHES}`)
 
-/// errorReporter.report(new Error("example JBL"))
+errorReporter.report(new Error("{[Config]} - GraviteeReleaseOrchestrator Config. Error Manager"))
 
 let manifestParser = new ReleaseManifestFilter("45.21.78", "This will be an awesome release, won't it ? :) ")
 
