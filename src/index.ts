@@ -31,3 +31,4 @@ let selectedDependenciesExecutionPlan : string [][] = manifestParser.parse();
 
 /// then, using the execution plan, we are going to process parallel executions one after the other
 let orchestrator = new CircleCiOrchestrator(selectedDependenciesExecutionPlan, 5);
+orchestrator.start();

@@ -24,7 +24,7 @@ export class ReleaseManifestFilter {
       console.log ("Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("Gravitee Release Version: [" + this.gravitee_release_version + "]" );
       console.log("Parsing release.json not implemented yet");
-      let returnedArray : string [][] = [[], [], []];
+      let returnedArray : string [][] = [["graviteeio:whiskey", "graviteeio:in", "graviteeio:a", "graviteeio:jar"], ["graviteeio:Itook", "graviteeio:allof", "graviteeio:hismoney", "graviteeio:mushareem"], ["graviteeio:dabadoo", "graviteeio:dabada", "graviteeio:onefor", "graviteeio:mydaddyoh"]];
       return returnedArray
     }
     /**
