@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo 'no tests yet'",
     "orchestra": "./node_modules/ts-node/dist/bin.js ./src/index.ts",
-    "doc" : "./node_modules/typedoc/bin/typedoc --out docs/src/ ./src "
+    "doc" : "./node_modules/typedoc/bin/typedoc --out docs/src/ ./src ",
+    "compile" : "tsc ./**/*.ts",
+    "build" : "npm run compile && npm run test && npm run doc",
   },
   "repository": {
     "type": "git",

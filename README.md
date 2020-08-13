@@ -12,6 +12,18 @@ A custom component in Gravitee's CICD, that brings distributed builds in
 npm run orchestra
 ```
 
+* build _(compile, test, and generate source code docs)_ :
+
+```bash
+npm run build
+```
+
+* compile source code with `tsc` :
+
+```bash
+npm run compile
+```
+
 * test :
 
 ```bash
@@ -109,6 +121,7 @@ export NPM_PROJECT_HOMEPAGE=https://github.com/gravitee-lab/GraviteeReleaseOrche
 export NPM_STARTER_NAME="foo"
 
 sudo npm install -g npm
+sudo npm install -g typescript
 
 npm init --yes "${NPM_STARTER_NAME}"
 
