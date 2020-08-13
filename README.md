@@ -94,7 +94,7 @@ atom .
 export GIT_REPO_HTTPS_URI=https://github.com/gravitee-lab/GraviteeReleaseOrchestrator.git
 export NPM_PROJECT_ISSUES_HTTPS_URI=https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues
 
-export NPM_PROJECT_NAME="GraviteeReleaseXXXXOrchestrator"
+export NPM_PROJECT_NAME="GraviteeReleaseOrchestrator"
 export NPM_PROJECT_VERSION_ZERO="0.0.1"
 export NPM_PROJECT_DESC="The Gravitee Release Orchestrator steers Circle CI operations to process a fully automated Release of Gravitee APIM. The Gravitee Devops Team AT github.com/gravitee-lab"
 export NPM_PROJECT_HOMEPAGE=https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/README.md
@@ -140,7 +140,7 @@ EOF
 # Addin dev dependencies
 npm install --save typescript ts-node
 npm install --save-dev @types/node
-
+npm install typedoc --save-dev
 
 
 

@@ -7,6 +7,9 @@ export class ReleaseManifestFilter {
         this.gravitee_release_version = release_version;
         this.gravitee_release_message = release_message;
     }
+    /**
+     * returning an A 2-dimensional array
+     **/
     parse() {
       console.log ("Gravitee Release Version: [" + this.gravitee_release_version + "]" );
       console.log ("Gravitee Release Message: [" + this.gravitee_release_message + "]" );
