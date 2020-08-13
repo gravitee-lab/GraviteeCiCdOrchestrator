@@ -18,7 +18,7 @@ npm run orchestra
 npm run test
 ```
 
-* generate source code typedoc :
+* generate source code [typedoc](https://github.com/TypeStrong/typedoc) :
 
 ```bash
 npm run doc
