@@ -18,7 +18,11 @@ export class ReleaseManifestFilter {
     releaseManifest: any;
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
-        this.releaseManifest = {}; /// defaults to the empty JSON Object
+        let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
+        this.releaseManifest = JSON.parse(manifestAsString);
+        // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
+
+        //this.releaseManifest = {}; /// defaults to the empty JSON Object
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
     }
@@ -31,11 +35,17 @@ export class ReleaseManifestFilter {
     parse()  : string [][] {
 
       console.log("{[ReleaseManifestFilter]} - Parsing release.json located at [" + manifestPath + "]");
+      console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
-      let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
-      this.releaseManifest = JSON.parse(manifestAsString);
+      this.releaseManifest.components.forEach(component => {
 
-      console.log("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, " ")}` + "]");
+        if (JSON.stringify(component.version).includes('-SNAPSHOT')) {
+          console.info('');
+          console.info("[{CircleCiOrchestrator}] - processing filter selected component : ");
+          console.info(`${JSON.stringify(component, null, "  ")}`);
+          console.info('');
+        }
+      });
 
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Version: [" + this.gravitee_release_version + "]" );
