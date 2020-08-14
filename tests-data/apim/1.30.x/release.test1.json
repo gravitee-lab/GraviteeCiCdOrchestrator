@@ -11,7 +11,7 @@
         },
         {
             "name": "gravitee-definition",
-            "version": "1.20.3"
+            "version": "1.20.3-SNAPSHOT"
         },
         {
             "name": "gravitee-gateway",
@@ -27,7 +27,7 @@
         },
         {
             "name": "gravitee-management-webui",
-            "version": "1.30.19"
+            "version": "1.30.19-SNAPSHOT"
         },
         {
             "name": "gravitee-plugin",
@@ -55,11 +55,11 @@
         },
         {
             "name": "gravitee-policy-rest-to-soap",
-            "version": "1.6.0"
+            "version": "1.6.0-SNAPSHOT"
         },
         {
             "name": "gravitee-policy-transformqueryparams",
-            "version": "1.4.1"
+            "version": "1.4.1-SNAPSHOT"
         },
         {
             "name": "gravitee-policy-ipfiltering",
@@ -107,7 +107,7 @@
         },
         {
             "name": "gravitee-policy-request-validation",
-            "version": "1.7.3"
+            "version": "1.7.3-SNAPSHOT"
         },
         {
             "name": "gravitee-policy-resource-filtering",
@@ -131,7 +131,7 @@
         },
         {
             "name": "gravitee-policy-assign-content",
-            "version": "1.4.0"
+            "version": "1.4.0-SNAPSHOT"
         },
         {
             "name": "gravitee-policy-jws",

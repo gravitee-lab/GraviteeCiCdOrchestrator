@@ -22,12 +22,12 @@ class ErrorReporter {
 
   constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string) {
 
-    console.info("{[.DOTENV]} - validating [release_manifest_path] ")
+    console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
-      console.info("{[.DOTENV]} - validating [release_manifest_path] an error should be thrown")
+      console.debug("{[.DOTENV]} - validating [release_manifest_path] an error should be thrown")
       throw new Error("{[.DOTENV]} - [RELEASE_MANIFEST_PATH] is undefined, or an empty string, at least either of them is required. Value should be set to the local path of the [release.json] manifest file. Gravitee Release Orchestrator will parse this file to determine which " + `${this.product}` + " component to release.")
     } else {
-      console.info("{[.DOTENV]} - validating [release_manifest_path] NO error should be thrown")
+      console.debug("{[.DOTENV]} - validating [release_manifest_path] NO error should be thrown")
     }
     if ((ssh_release_git_repo === undefined || ssh_release_git_repo === "") && (http_release_git_repo === undefined || http_release_git_repo === "")) {
       throw new Error("{[.DOTENV]} - Both [HTTP_RELEASE_GIT_REPO] and [SSH_RELEASE_GIT_REPO] are undefined, or an empty string, but , at least one of them is required to be set to a non empty string. Value should respectively be set to the HTTP and SSH URI of the git repo versioning the [release.json] manifest file.")
