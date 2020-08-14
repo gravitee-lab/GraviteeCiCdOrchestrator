@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+/// import * as loadJsonFile from 'load-json-file';
 
 // export const manifestPath : string = "tests-data/apim/1.30.x/release.json";
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
@@ -14,16 +15,28 @@ export class ReleaseManifestFilter {
      **/
     gravitee_release_branch: string;
     gravitee_release_version: string;
+    releaseManifest: any;
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
+        this.releaseManifest = {}; /// defaults to the empty JSON Object
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
     }
+
     /**
      * returning an A 2-dimensional array
+     * npm install load-json-file
+     *
      **/
     parse()  : string [][] {
+
       console.log("{[ReleaseManifestFilter]} - Parsing release.json located at [" + manifestPath + "]");
+
+      let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
+      this.releaseManifest = JSON.parse(manifestAsString);
+
+      console.log("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, " ")}` + "]");
+
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Version: [" + this.gravitee_release_version + "]" );
       console.log("{[ReleaseManifestFilter]} - parse() method not fully implemented yet");
