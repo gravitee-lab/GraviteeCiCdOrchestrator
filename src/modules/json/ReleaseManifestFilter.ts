@@ -105,30 +105,6 @@ export class ReleaseManifestFilter {
       });
 
       console.log("{[ReleaseManifestFilter]} - buildExecutionPlan() method not fully implemented yet");
-      // returnedArray = [['graviteeio:rrr', "graviteeio:in", "graviteeio:a", "graviteeio:jar"], ["graviteeio:Itook", "graviteeio:allof", "graviteeio:hismoney", "graviteeio:mushareem"], ["graviteeio:dabadoo", "graviteeio:dabada", "graviteeio:onefor", "graviteeio:mydaddyoh"]];
-      let someExecutionPlan = [
-        [
-          { graviteeio :
-            { gituri : "ccc", version : ""}
-          },
-          { graviteeio :
-            { gituri : "ccc", version : ""}
-          },
-
-          { graviteeio :
-            { gituri : "ccc", version : ""}
-          }
-        ],
-        [
-          { graviteeio :
-            { gituri : "ccc", version : ""}
-          },
-          { graviteeio :
-            { gituri : "ccc", version : ""}
-          }
-        ]
-      ];
-
       return this.executionPlan
     }
 

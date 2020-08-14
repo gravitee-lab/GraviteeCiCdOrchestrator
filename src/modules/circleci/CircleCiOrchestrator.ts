@@ -19,9 +19,13 @@ export class CircleCiOrchestrator {
      **/
     start()  : void {
       console.info("[{CircleCiOrchestrator}] - started processing execution plan, and will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
-      this.execution_plan.forEach(parallelExecutions => {
+      this.execution_plan.forEach(parallelExecutionsSet => {
         console.info("[{CircleCiOrchestrator}] - processing parallel executions of the following [Circle CI] pipelines : ");
-        console.info(parallelExecutions);
+        if (parallelExecutionsSet === []) {
+          console.info("This Parallel Executions Set is empty");
+        } else {
+          console.info(parallelExecutionsSet);
+        }
       });
       console.log("[{CircleCiOrchestrator}] - Processing of the execution plan is not imlemented yet.");
 
