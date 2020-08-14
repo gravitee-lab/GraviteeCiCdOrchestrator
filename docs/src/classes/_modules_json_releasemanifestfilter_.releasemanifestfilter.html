@@ -72,8 +72,13 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>1./ extracts the scale : the <code>buildDependencies</code> element alone, as [scale.json]</p>
+						<p>Filters Gravitee components to release and builds an Execution Plan.</p>
 					</div>
+					<dl class="tsd-comment-tags">
+						<dt>comment</dt>
+						<dd><p>All methods are synchronous</p>
+						</dd>
+					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -126,7 +131,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L19">modules/json/ReleaseManifestFilter.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L18">modules/json/ReleaseManifestFilter.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -151,7 +156,7 @@
 					<div class="tsd-signature tsd-kind-icon">gravitee_<wbr>release_<wbr>branch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L16">modules/json/ReleaseManifestFilter.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L15">modules/json/ReleaseManifestFilter.ts:15</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -166,7 +171,7 @@
 					<div class="tsd-signature tsd-kind-icon">gravitee_<wbr>release_<wbr>version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L17">modules/json/ReleaseManifestFilter.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L16">modules/json/ReleaseManifestFilter.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -176,7 +181,7 @@
 					<div class="tsd-signature tsd-kind-icon">release<wbr>Manifest<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L18">modules/json/ReleaseManifestFilter.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L17">modules/json/ReleaseManifestFilter.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -186,7 +191,7 @@
 					<div class="tsd-signature tsd-kind-icon">selected<wbr>Components<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L19">modules/json/ReleaseManifestFilter.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L18">modules/json/ReleaseManifestFilter.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -203,16 +208,16 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L54">modules/json/ReleaseManifestFilter.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L53">modules/json/ReleaseManifestFilter.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>returning an A 2-dimensional array
-									Generates the Execution plan using [this.selectedComponents] with the components that should be included in the release</p>
+									<p>Generates the Execution plan using [this.selectedComponents] with the components that should be included in the release</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>A 2-dimensional JSon array, which is the execution plan, that will be executted by the {@see CircleCiOrchestrator}</p>
 						</li>
 					</ul>
 				</section>
@@ -226,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L33">modules/json/ReleaseManifestFilter.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L32">modules/json/ReleaseManifestFilter.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -249,7 +254,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/5517267/src/modules/json/ReleaseManifestFilter.ts#L97">modules/json/ReleaseManifestFilter.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L101">modules/json/ReleaseManifestFilter.ts:101</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

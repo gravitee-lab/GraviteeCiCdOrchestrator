@@ -5,9 +5,8 @@ import * as fs from 'fs';
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
 
 /**
- * 1./ extracts the scale : the `buildDependencies` element alone, as [scale.json]
- *
- *
+ * Filters Gravitee components to release and builds an Execution Plan.
+ * @comment All methods are synchronous
  **/
 export class ReleaseManifestFilter {
     /**
@@ -47,16 +46,21 @@ export class ReleaseManifestFilter {
       console.debug("{[ReleaseManifestFilter]} - Selected components are [" + `${JSON.stringify(this.selectedComponents, null, "  ")}` + "]");
     }
     /**
-     * returning an A 2-dimensional array
      * Generates the Execution plan using [this.selectedComponents] with the components that should be included in the release
+     * @returns A 2-dimensional JSon array, which is the execution plan, that will be executted by the {@see CircleCiOrchestrator}
      *
      **/
     buildExecutionPlan()  : string [][] {
       let execPlan : any [][] = [[]];
-      this.filter();
+      this.filter(); /// populates the [this.selectedComponents] Class member
 
       this.selectedComponents.components.forEach(component => {
         execPlan[0].push(component);
+        /// .keys(obj).length
+        console.log ("{[ReleaseManifestFilter]} - The component : ");
+        console.log (`${JSON.stringify(component, null, "  ")}`);
+        console.log ("{[ReleaseManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.");
+
       });
 
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );

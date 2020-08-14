@@ -1,7 +1,7 @@
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
- *
+ * @comment All methods are asynchronous, RxJS or at least Promises, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class CircleCiOrchestrator {
     /**
