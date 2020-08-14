@@ -1,6 +1,5 @@
 import * as fs from 'fs';
-/// import * as loadJsonFile from 'load-json-file';
-
+import * as arrayUtils from 'util';
 // export const manifestPath : string = "tests-data/apim/1.30.x/release.json";
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
 
@@ -17,7 +16,7 @@ export class ReleaseManifestFilter {
     releaseManifest: any;
     selectedComponents : any;
     parallelizationConstraintsMatrix: any[][];
-
+    executionPlan : any [][];
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
         this.loadParallelizationContraints();
@@ -27,13 +26,49 @@ export class ReleaseManifestFilter {
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
         this.selectedComponents = { "components" : []};
+        this.initializeExecutionPlan();
+        /// throw new Error('DEBUG POINT to reove asap');
     }
+    /**
+     * initializes the execution plan, to :
+     * <ul>
+     * <li> an emply execution plan, </li>
+     * <li> which is an array of arrays, </li>
+     * <li> which is not an empty array, but an array of <pre>N</pre> empty arrays, where <pre>N</pre> is the length of {@see this.parallelizationConstraintsMatrix} </li>
+     * </ul>
+     **/
+    initializeExecutionPlan () : void {
+      this.executionPlan = [];
+      console.debug("{[ReleaseManifestFilter]} - Initializing Empty Execution Plan from Parallelization Constraints Matrix... ");
+      for (let i = 0; i < this.parallelizationConstraintsMatrix.length; i++) {
+        let newEntry = [ ];
+        /// let newEntry = [ 'ahbon' ];
 
+        console.debug('adding new entry in [this.executionPlan]')
+        this.executionPlan.push(newEntry);
+      }
+      console.debug("{[ReleaseManifestFilter]} - Initialized Empty Execution Plan with " + `${this.executionPlan.length}` + " empty arrays : ");
+      console.log('[');
+      this.executionPlan.forEach(executionSet => {
+        console.log('  [');
+        console.log('    ' + arrayUtils.inspect(`${executionSet}`, { maxArrayLength: null }));
+        console.log('  ],');
+      });
+      console.log(']');
+    }
     loadParallelizationContraints() : void {
       console.debug("{[ReleaseManifestFilter]} - Loading Parallelization Constraints Matrix from Release Manifest... ");
       this.parallelizationConstraintsMatrix = this.releaseManifest.buildDependencies
       console.debug("{[ReleaseManifestFilter]} - Loaded Parallelization Constraints Matrix from Release Manifest : ");
-      console.debug(`${this.parallelizationConstraintsMatrix}`);
+      // console.debug(`${this.parallelizationConstraintsMatrix}`);
+      console.log('[');
+
+      this.parallelizationConstraintsMatrix.forEach(executionSet => {
+        console.log('  [');
+        console.log('    ' + arrayUtils.inspect(`${executionSet}`, { maxArrayLength: null }));
+        console.log('  ],');
+      });
+      console.log(']');
     }
     /**
      * Filters the releaseManifest Release manifest file to
@@ -61,30 +96,17 @@ export class ReleaseManifestFilter {
      *
      **/
     buildExecutionPlan()  : string [][] {
-      let execPlan : any [][] = [[]];
+
       this.filter(); /// populates the [this.selectedComponents] Class member
 
       this.selectedComponents.components.forEach(component => {
         let parallelExecutionSetIndex = this.getParallelExecutionSetIndex(component);
-        if (parallelExecutionSetIndex < 0) {
-          let errMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component : ";
-          errMsg += `${JSON.stringify(component, null, "  ")}`;
-          errMsg += " ";
-          throw new Error(errMsg)
-        }
-        execPlan[0].push(component);
-        /// .keys(obj).length
-        console.log ("{[ReleaseManifestFilter]} - The component : ");
-        console.log (`${JSON.stringify(component, null, "  ")}`);
-        console.log ("{[ReleaseManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.");
-
+        this.executionPlan[parallelExecutionSetIndex].push(component);
       });
 
-      console.log ("{[ReleaseManifestFilter]} - Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
-      console.log ("{[ReleaseManifestFilter]} - Gravitee Release Version: [" + this.gravitee_release_version + "]" );
-      console.log("{[ReleaseManifestFilter]} - parse() method not fully implemented yet");
+      console.log("{[ReleaseManifestFilter]} - buildExecutionPlan() method not fully implemented yet");
       // returnedArray = [['graviteeio:rrr', "graviteeio:in", "graviteeio:a", "graviteeio:jar"], ["graviteeio:Itook", "graviteeio:allof", "graviteeio:hismoney", "graviteeio:mushareem"], ["graviteeio:dabadoo", "graviteeio:dabada", "graviteeio:onefor", "graviteeio:mydaddyoh"]];
-      execPlan = [
+      let someExecutionPlan = [
         [
           { graviteeio :
             { gituri : "ccc", version : ""}
@@ -107,20 +129,89 @@ export class ReleaseManifestFilter {
         ]
       ];
 
-      return execPlan
+      return this.executionPlan
     }
 
     /**
+     * This method lokks up the [this.parallelizationConstraintsMatrix] ("Parallelization Constraints Matrix") to determine what is the Parallelization Execution Set Index of {@argument component}
      *
      * @argument component must be a JSon Object, with only two properties : "name", and "version", just like in the [release.json]
      * @returns number a positive integer, between zero and length of the [this.parallelizationConstraint] array
      *
      **/
     getParallelExecutionSetIndex (component: any) : number {
+
+      /// First, let's check the provided argument actually is a component :
+      /// is a JSON Object with only two properties, 'name', and 'version', jsut like in the 'components' array in [release.json] Release manifest file.
+      /// .keys(obj).length
+      console.debug('');
+      console.debug('--- ');
+      console.debug('');
+      if (Object.keys(component).length != 2) {
+        let errMsg = "{[ReleaseManifestFilter]} - The component : ";
+        errMsg += `${JSON.stringify(component, null, "  ")}`;
+        errMsg += "{[ReleaseManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.";
+        errMsg += "{[ReleaseManifestFilter]} - whil components are exepected to have exactly 2 properties [JSon] properties.";
+        throw new Error(errMsg);
+      }
+      if (component.name === undefined || component.name === "") {
+        let errMsg = "{[ReleaseManifestFilter]} - The component : ";
+        errMsg += `${JSON.stringify(component, null, "  ")}`;
+        errMsg += "{[ReleaseManifestFilter]} - 'name' [JSon] property is undefined, while Gravitee [components] are exepected to";
+        errMsg += "{[ReleaseManifestFilter]} - have a 'name' [JSon] property that neither is undefined, nor an empty string.";
+        throw new Error(errMsg);
+      }
+      if (component.version === undefined || component.name === "") {
+        let errMsg = "{[ReleaseManifestFilter]} - The component : ";
+        errMsg += `${JSON.stringify(component, null, "  ")}`;
+        errMsg += "{[ReleaseManifestFilter]} - 'version' [JSon] property is undefined, while Gravitee [components] are exepected to";
+        errMsg += "{[ReleaseManifestFilter]} - have a 'version' [JSon] property that neither is undefined, nor an empty string.";
+        throw new Error(errMsg);
+      }
+
+      /// now we know we have available properties 'name' and 'version' into 'component'
       let parallelExecutionSetIndexToReturn = -1;
+      /// component.name
 
-      /// First, let's check the provided argument
+      /// double loop search into [Parallelization Constraints Matrix]
+      for (let i = 0; i < this.parallelizationConstraintsMatrix.length; i++) {
 
+        this.parallelizationConstraintsMatrix[i].forEach(componentName => {
+          if (component.name === componentName) {
+            console.debug("{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for " + `${componentName}` + " into Parallel Execution Set no. ["+ `${i}` + "] : ");
+            console.debug('');
+            console.debug(`${JSON.stringify(component, null, "  ")}`);
+            console.debug('');
+            console.debug('--- ');
+            console.debug('');
+            parallelExecutionSetIndexToReturn = i;
+            let foundMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [" + `${parallelExecutionSetIndexToReturn}` + "] for the following component : \n";
+            foundMsg += `${JSON.stringify(component, null, "  ")}`;
+            foundMsg += " ";
+            console.info(foundMsg);
+          }
+        });
+      }
+
+      /// Index must not be out of bounds of the [parallelizationConstraintsMatrix]
+      /// Index must not be negative
+      if (parallelExecutionSetIndexToReturn < 0) {
+        let errMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component : ";
+        errMsg += `${JSON.stringify(component, null, "  ")}`;
+        errMsg += " ";
+        throw new Error(errMsg)
+      }
+      /// Index must not be strictly less than the [this.parallelizationConstraintsMatrix] array length
+      if (parallelExecutionSetIndexToReturn > this.parallelizationConstraintsMatrix.length - 1) {
+
+        let errMsg = "{[ReleaseManifestFilter]} - [Parallel Execution Set Index] out of bounds Exception"
+        errMsg += "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator determined the Parallel Execution Set Index of the following component : ";
+        errMsg += `${JSON.stringify(component, null, "  ")}`;
+        errMsg += " is [" + `${parallelExecutionSetIndexToReturn}` + "] ";
+        errMsg += " while the [Parallelization Constraints Matrix] defines the highest index to  [" + `${this.parallelizationConstraintsMatrix.length - 1}` + "] ";
+
+        throw new Error(errMsg)
+      }
       return parallelExecutionSetIndexToReturn;
     }
     /**
