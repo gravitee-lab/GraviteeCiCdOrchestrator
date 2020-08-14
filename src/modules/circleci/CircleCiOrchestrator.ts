@@ -27,10 +27,10 @@ export class CircleCiOrchestrator {
           console.info(parallelExecutionsSet);
         }
       });
-      console.log("[{CircleCiOrchestrator}] - Processing of the execution plan is not imlemented yet.");
+      console.log("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
 
     }
     giveup()  : void {
-      console.log("[{CircleCiOrchestrator}] - giveup() method is not imlemented yet.");
+      console.log("[{CircleCiOrchestrator}] - giveup() method is not implemented yet.");
     }
 }
