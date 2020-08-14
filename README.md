@@ -163,7 +163,7 @@ console.log('hey there!')
 EOF
 
 
-# Addin dev dependencies
+# Addin dev and runtime dependencies
 npm install --save typescript ts-node
 npm install --save-dev @types/node
 npm install typedoc --save-dev
