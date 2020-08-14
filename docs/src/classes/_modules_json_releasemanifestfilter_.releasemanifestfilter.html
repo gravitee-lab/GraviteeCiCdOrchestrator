@@ -104,6 +104,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_branch" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>branch</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_version" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>version</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#parallelizationconstraintsmatrix" class="tsd-kind-icon">parallelization<wbr>Constraints<wbr>Matrix</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#releasemanifest" class="tsd-kind-icon">release<wbr>Manifest</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#selectedcomponents" class="tsd-kind-icon">selected<wbr>Components</a></li>
 							</ul>
@@ -113,6 +114,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#buildexecutionplan" class="tsd-kind-icon">build<wbr>Execution<wbr>Plan</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#filter" class="tsd-kind-icon">filter</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#getparallelexecutionsetindex" class="tsd-kind-icon">get<wbr>Parallel<wbr>Execution<wbr>Set<wbr>Index</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#loadparallelizationcontraints" class="tsd-kind-icon">load<wbr>Parallelization<wbr>Contraints</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#validatejson" class="tsd-kind-icon">validateJSon</a></li>
 							</ul>
 						</section>
@@ -131,7 +134,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L18">modules/json/ReleaseManifestFilter.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L19">modules/json/ReleaseManifestFilter.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -156,7 +159,7 @@
 					<div class="tsd-signature tsd-kind-icon">gravitee_<wbr>release_<wbr>branch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L15">modules/json/ReleaseManifestFilter.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L15">modules/json/ReleaseManifestFilter.ts:15</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -171,7 +174,17 @@
 					<div class="tsd-signature tsd-kind-icon">gravitee_<wbr>release_<wbr>version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L16">modules/json/ReleaseManifestFilter.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L16">modules/json/ReleaseManifestFilter.ts:16</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="parallelizationconstraintsmatrix" class="tsd-anchor"></a>
+					<h3>parallelization<wbr>Constraints<wbr>Matrix</h3>
+					<div class="tsd-signature tsd-kind-icon">parallelization<wbr>Constraints<wbr>Matrix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L19">modules/json/ReleaseManifestFilter.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -181,7 +194,7 @@
 					<div class="tsd-signature tsd-kind-icon">release<wbr>Manifest<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L17">modules/json/ReleaseManifestFilter.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L17">modules/json/ReleaseManifestFilter.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +204,7 @@
 					<div class="tsd-signature tsd-kind-icon">selected<wbr>Components<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L18">modules/json/ReleaseManifestFilter.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L18">modules/json/ReleaseManifestFilter.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -208,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L53">modules/json/ReleaseManifestFilter.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L63">modules/json/ReleaseManifestFilter.ts:63</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -231,7 +244,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L32">modules/json/ReleaseManifestFilter.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L42">modules/json/ReleaseManifestFilter.ts:42</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -240,6 +253,54 @@
 									Populate [this.selectedComponents] with the components that should be included in the release</p>
 								</div>
 							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getparallelexecutionsetindex" class="tsd-anchor"></a>
+					<h3>get<wbr>Parallel<wbr>Execution<wbr>Set<wbr>Index</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Parallel<wbr>Execution<wbr>Set<wbr>Index<span class="tsd-signature-symbol">(</span>component<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L119">modules/json/ReleaseManifestFilter.ts:119</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>argument</dt>
+									<dd><p>component must be a JSon Object, with only two properties : &quot;name&quot;, and &quot;version&quot;, just like in the [release.json]</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>component: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>number a positive integer, between zero and length of the [this.parallelizationConstraint] array</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="loadparallelizationcontraints" class="tsd-anchor"></a>
+					<h3>load<wbr>Parallelization<wbr>Contraints</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Parallelization<wbr>Contraints<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L32">modules/json/ReleaseManifestFilter.ts:32</a></li>
+								</ul>
+							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -254,7 +315,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/0a55cd2/src/modules/json/ReleaseManifestFilter.ts#L101">modules/json/ReleaseManifestFilter.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6b63e9c/src/modules/json/ReleaseManifestFilter.ts#L132">modules/json/ReleaseManifestFilter.ts:132</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -307,6 +368,9 @@
 								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#gravitee_release_version" class="tsd-kind-icon">gravitee_<wbr>release_<wbr>version</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#parallelizationconstraintsmatrix" class="tsd-kind-icon">parallelization<wbr>Constraints<wbr>Matrix</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#releasemanifest" class="tsd-kind-icon">release<wbr>Manifest</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -317,6 +381,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#filter" class="tsd-kind-icon">filter</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#getparallelexecutionsetindex" class="tsd-kind-icon">get<wbr>Parallel<wbr>Execution<wbr>Set<wbr>Index</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#loadparallelizationcontraints" class="tsd-kind-icon">load<wbr>Parallelization<wbr>Contraints</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_json_releasemanifestfilter_.releasemanifestfilter.html#validatejson" class="tsd-kind-icon">validateJSon</a>

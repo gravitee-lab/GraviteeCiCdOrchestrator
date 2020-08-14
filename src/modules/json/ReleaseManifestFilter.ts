@@ -16,14 +16,24 @@ export class ReleaseManifestFilter {
     gravitee_release_version: string;
     releaseManifest: any;
     selectedComponents : any;
+    parallelizationConstraintsMatrix: any[][];
+
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
+        this.loadParallelizationContraints();
         // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
         //this.releaseManifest = {}; /// defaults to the empty JSON Object
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
         this.selectedComponents = { "components" : []};
+    }
+
+    loadParallelizationContraints() : void {
+      console.debug("{[ReleaseManifestFilter]} - Loading Parallelization Constraints Matrix from Release Manifest... ");
+      this.parallelizationConstraintsMatrix = this.releaseManifest.buildDependencies
+      console.debug("{[ReleaseManifestFilter]} - Loaded Parallelization Constraints Matrix from Release Manifest : ");
+      console.debug(`${this.parallelizationConstraintsMatrix}`);
     }
     /**
      * Filters the releaseManifest Release manifest file to
@@ -55,6 +65,13 @@ export class ReleaseManifestFilter {
       this.filter(); /// populates the [this.selectedComponents] Class member
 
       this.selectedComponents.components.forEach(component => {
+        let parallelExecutionSetIndex = this.getParallelExecutionSetIndex(component);
+        if (parallelExecutionSetIndex < 0) {
+          let errMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component : ";
+          errMsg += `${JSON.stringify(component, null, "  ")}`;
+          errMsg += " ";
+          throw new Error(errMsg)
+        }
         execPlan[0].push(component);
         /// .keys(obj).length
         console.log ("{[ReleaseManifestFilter]} - The component : ");
@@ -91,6 +108,20 @@ export class ReleaseManifestFilter {
       ];
 
       return execPlan
+    }
+
+    /**
+     *
+     * @argument component must be a JSon Object, with only two properties : "name", and "version", just like in the [release.json]
+     * @returns number a positive integer, between zero and length of the [this.parallelizationConstraint] array
+     *
+     **/
+    getParallelExecutionSetIndex (component: any) : number {
+      let parallelExecutionSetIndexToReturn = -1;
+
+      /// First, let's check the provided argument
+
+      return parallelExecutionSetIndexToReturn;
     }
     /**
      * Checks :
