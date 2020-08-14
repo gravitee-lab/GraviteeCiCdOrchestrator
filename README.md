@@ -1,6 +1,12 @@
-# GraviteeReleaseOrchestrator
+# The Gravitee Release Orchestrator
 
-A custom component in Gravitee's CICD, that brings distributed builds in
+
+A custom component in `Gravitee`'s CICD, that brings distributed builds in :
+
+* will parse release.json to determine which `Gravitee APIM` dependencies have to be released,
+* will then request Circle CI REST API to trigger , for each selected `Gravitee APIM` dependency, the Pipeline defined in the `.circleci/config.yml` of each of those dependencies, to actually distribute the build (and scale it out)
+* will trigger the Circle CI Pipelines respecting the paralellization constriants defined by the  `buildDependencies` property in the `release.json`, to maximize scale out.
+* confer to  the specs specified in `CICD_APIM_TheGroovyGraviteeReleaseProcess.png` (team privately shared document)
 
 
 # Buld, test n run
@@ -42,7 +48,7 @@ npm run doc
 *  Init of the git flow in repo :
 
 ```bash
-export WORK_HOME='~/gravitee-orchestra'
+export WORK_HOME="${HOME}/gravitee-orchestra"
 
 git clone git@github.com:gravitee-lab/GraviteeReleaseOrchestrator.git ${WORK_HOME}
 
@@ -65,7 +71,7 @@ atom .
 * Resume work on 'feature/basic_source_code', from an empty directory :
 
 ```bash
-export WORK_HOME='~/gravitee-orchestra'
+export WORK_HOME="${HOME}/gravitee-orchestra"
 export FEATURE_ALIAS='basic_source_code'
 
 git clone git@github.com:gravitee-lab/GraviteeReleaseOrchestrator.git ${WORK_HOME}
@@ -74,7 +80,7 @@ cd ${WORK_HOME}
 
 git flow init --defaults && git push -u origin --all
 
-git checkout "feature/${DESIRED_VERSION}"
+git checkout "feature/${FEATURE_ALIAS}"
 
 # git flow feature start ${FEATURE_ALIAS} && git push -u origin --all
 
@@ -89,10 +95,10 @@ atom .
 * Resume work on `feature/basic_source_code`, from an already setup directory :
 
 ```bash
-export WORK_HOME='~/gravitee-orchestra'
+export WORK_HOME="${HOME}/gravitee-orchestra"
 export FEATURE_ALIAS='basic_source_code'
 
-git clone git@github.com:gravitee-lab/GraviteeReleaseOrchestrator.git ${WORK_HOME}
+# git clone git@github.com:gravitee-lab/GraviteeReleaseOrchestrator.git ${WORK_HOME}
 
 cd ${WORK_HOME}
 
