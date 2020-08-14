@@ -38,8 +38,8 @@ export class ReleaseManifestFilter {
       console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
       this.releaseManifest.components.forEach(component => {
-
-        if (JSON.stringify(component.version).includes('-SNAPSHOT')) {
+        
+        if (component.version.includes('-SNAPSHOT')) {
           console.info('');
           console.info("[{CircleCiOrchestrator}] - processing filter selected component : ");
           console.info(`${JSON.stringify(component, null, "  ")}`);
