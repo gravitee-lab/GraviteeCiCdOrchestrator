@@ -28,9 +28,9 @@ errorReporter.report(new Error("{[Config]} - GraviteeReleaseOrchestrator Config.
 
 let manifestParser = new ReleaseManifestFilter("45.21.78", "This will be an awesome release, won't it ? :) ")
 
-/// First, parsing the release.json, and returning an A 2-dimensional array
-let selectedDependenciesExecutionPlan : string [][] = manifestParser.parse();
+/// First, parsing the release.json, and returning a 2-dimensional array : the execution Plan
+let executionPlan : string [][] = manifestParser.buildExecutionPlan();
 
 /// then, using the execution plan, we are going to process parallel executions one after the other
-let orchestrator = new CircleCiOrchestrator(selectedDependenciesExecutionPlan, 5);
+let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
 orchestrator.start();
