@@ -15,6 +15,7 @@ export class ReleaseManifestFilter {
     gravitee_release_branch: string;
     gravitee_release_version: string;
     constructor(release_version: string, release_branch: string) {
+        this.validateJSon();
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
     }
@@ -22,7 +23,6 @@ export class ReleaseManifestFilter {
      * returning an A 2-dimensional array
      **/
     parse()  : string [][] {
-      this.validateJSon();
       console.log("{[ReleaseManifestFilter]} - Parsing release.json located at [" + manifestPath + "]");
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Version: [" + this.gravitee_release_version + "]" );
