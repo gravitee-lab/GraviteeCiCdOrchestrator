@@ -16,6 +16,7 @@ export class ReleaseManifestFilter {
     gravitee_release_branch: string;
     gravitee_release_version: string;
     releaseManifest: any;
+    selectedComponents : any;
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
         let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
@@ -25,6 +26,7 @@ export class ReleaseManifestFilter {
         //this.releaseManifest = {}; /// defaults to the empty JSON Object
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
+        this.selectedComponents = { "components" : []};
     }
 
     /**
@@ -33,24 +35,28 @@ export class ReleaseManifestFilter {
      *
      **/
     parse()  : string [][] {
+      let returnedArray : string [][] = [[]];
 
       console.log("{[ReleaseManifestFilter]} - Parsing release.json located at [" + manifestPath + "]");
       console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
       this.releaseManifest.components.forEach(component => {
-        
+
         if (component.version.includes('-SNAPSHOT')) {
           console.info('');
-          console.info("[{CircleCiOrchestrator}] - processing filter selected component : ");
-          console.info(`${JSON.stringify(component, null, "  ")}`);
+          /// console.debug("[{CircleCiOrchestrator}] - processing filter selected component : ");
+          /// console.debug(`${JSON.stringify(component, null, "  ")}`);
+          //selectedComponents.push(component);
+          this.selectedComponents.components.push(component);
           console.info('');
         }
       });
+      console.debug("{[ReleaseManifestFilter]} - Selected components are [" + `${JSON.stringify(this.selectedComponents, null, "  ")}` + "]");
 
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Branch: [" + this.gravitee_release_branch + "]" );
       console.log ("{[ReleaseManifestFilter]} - Gravitee Release Version: [" + this.gravitee_release_version + "]" );
       console.log("{[ReleaseManifestFilter]} - parse() method not fully implemented yet");
-      let returnedArray : string [][] = [["graviteeio:whiskey", "graviteeio:in", "graviteeio:a", "graviteeio:jar"], ["graviteeio:Itook", "graviteeio:allof", "graviteeio:hismoney", "graviteeio:mushareem"], ["graviteeio:dabadoo", "graviteeio:dabada", "graviteeio:onefor", "graviteeio:mydaddyoh"]];
+      returnedArray = [["graviteeio:whiskey", "graviteeio:in", "graviteeio:a", "graviteeio:jar"], ["graviteeio:Itook", "graviteeio:allof", "graviteeio:hismoney", "graviteeio:mushareem"], ["graviteeio:dabadoo", "graviteeio:dabada", "graviteeio:onefor", "graviteeio:mydaddyoh"]];
       return returnedArray
     }
     /**
