@@ -42,9 +42,6 @@ export class ReleaseManifestFilter {
       console.debug("{[ReleaseManifestFilter]} - Initializing Empty Execution Plan from Parallelization Constraints Matrix... ");
       for (let i = 0; i < this.parallelizationConstraintsMatrix.length; i++) {
         let newEntry = [ ];
-        /// let newEntry = [ 'ahbon' ];
-
-        console.debug('adding new entry in [this.executionPlan]')
         this.executionPlan.push(newEntry);
       }
       console.debug("{[ReleaseManifestFilter]} - Initialized Empty Execution Plan with " + `${this.executionPlan.length}` + " empty arrays : ");
