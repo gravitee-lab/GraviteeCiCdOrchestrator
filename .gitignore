@@ -2,4 +2,4 @@
 node_modules/
 dist/
 # folders structure i am not sure about yet
-tests-data/
+# tests-data/apim/1.30.x/release.json
