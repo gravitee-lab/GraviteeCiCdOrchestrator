@@ -38,7 +38,16 @@ export class CircleCiOrchestrator {
           console.info(parallelExecutionsSet);
           this.processExecutionSet(parallelExecutionsSet); /// must be synchronous
         }
+
       });
+      /// A test : just one pipeline build trigger on a test repo
+      let pipelineParameters = { parameters: {}};
+      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild("Jean-Baptiste-Lasselle", 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
+          next: data => console.log( ' JBL - JBL - JBL - JBL -**** RESULTAT PIPELINE[data] => ', data ),
+          complete: data => {
+            console.log( '[triggering Circle CI Build completed! :)] Circle CI JSON Response is  => ', data )
+          }
+      } );
       console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
     }
 
@@ -51,12 +60,7 @@ export class CircleCiOrchestrator {
           } );
 
       });
-      /// Just a test 
-      let pipelineParameters = { parameters: {}};
-      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild("Jean-Baptiste-Lasselle", 'gravitee-lab', "testrepo1", 'npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
-          next: data => console.log( '[data] => ', data ),
-          complete: data => console.log( '[triggering Circle CI Build completed! :)]' )
-        } );
+
 
     }
     giveup()  : void {
@@ -158,17 +162,50 @@ export class CircleCIClient {
               "Content-Type": "application/json"
             }
           };
-
+// curl -X POST
           let jsonPayload: any = pipelineParameters;
           jsonPayload.branch = `${branch}`;
 
+          console.info("curl -X POST -d " + `${JSON.stringify(jsonPayload)}` + " -H 'Content-Type: application/json'" + " -H 'Accept: application/json'" + " -H 'Circle-Token: " + `${this.secrets.circleci.auth.token}` + "' https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline");
+
           /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
-          axios.post( "https://circleci.com/api/v2/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, config )
+          axios.post( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, config )
           .then( ( response ) => {
               observer.next( response.data );
               observer.complete();
           } )
           .catch( ( error ) => {
+              console.log("Circle CI HTTP Error JSON Response is : ");
+              /// console.log(JSON.stringify(error.response));
+              console.log(error.response);
+              observer.error( error );
+          } );
+      } );
+
+      return observableRequest;
+    }
+    getLatestGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
+      let observableRequest = Observable.create( ( observer ) => {
+          let config = {
+            headers: {
+              "Circle-Token": this.secrets.circleci.auth.token,
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            }
+          };
+
+          console.info("curl -X POST -d -H 'Content-Type: application/json'" + " -H 'Accept: application/json'" + " -H 'Circle-Token: " + `${this.secrets.circleci.auth.token}` + "' https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline");
+
+          /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
+          axios.get( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", config )
+          .then( ( response ) => {
+              observer.next( response.data );
+              observer.complete();
+          } )
+          .catch( ( error ) => {
+              console.log("Circle CI HTTP Error JSON Response is : ");
+              /// console.log(JSON.stringify(error.response));
+              console.log(error.response);
               observer.error( error );
           } );
       } );
