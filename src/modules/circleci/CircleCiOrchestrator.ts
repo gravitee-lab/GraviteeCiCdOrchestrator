@@ -23,7 +23,16 @@ export class CircleCiOrchestrator {
      *       "pipeline": {
      *         "execution_index": "14",
      *         "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
-     *         "created_at": "2020-08-16T21:33:43.830Z"
+     *         "created_at": "2020-08-16T21:33:43.830Z",
+     *         "exec_state": "2020-08-16T21:33:43.830Z",
+     *       }
+     *     },
+     *     {
+     *       "pipeline": {
+     *         "execution_index": "14",
+     *         "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
+     *         "created_at": "2020-08-16T21:33:43.830Z",
+     *         "exec_state": "2020-08-16T21:33:43.830Z",
      *       }
      *     }
      *   ]
@@ -31,7 +40,40 @@ export class CircleCiOrchestrator {
      *
      * </pre>
      * -----
+     *  Note how to retrieve "everything about a pipeline", from its <strong>Circle CI</strong> Pipeline ID :
+     * -----
+     * <pre>
+     * ~/gravitee-orchestra$ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 6622dda825a8305bd927e6f77b71b4ad2df87e2f' https://circleci.com/api/v2/pipeline/f71bb92d-534f-485d-9dae-af32df1b340d | jq
+     * % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+     *                                  Dload  Upload   Total   Spent    Left  Speed
+     * 100   663  100   663    0     0   1735      0 --:--:-- --:--:-- --:--:--  1731
+     * {
+     *   "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
+     *   "errors": [],
+     *   "project_slug": "gh/gravitee-lab/testrepo1",
+     *   "updated_at": "2020-08-16T21:33:43.830Z",
+     *   "number": 14,
+     *   "state": "created",
+     *   "created_at": "2020-08-16T21:33:43.830Z",
+     *   "trigger": {
+     *     "received_at": "2020-08-16T21:33:43.799Z",
+     *     "type": "api",
+     *     "actor": {
+     *       "login": "Jean-Baptiste-Lasselle",
+     *       "avatar_url": "https://avatars2.githubusercontent.com/u/35227860?v=4"
+     *     }
+     *   },
+     *   "vcs": {
+     *     "origin_repository_url": "https://github.com/gravitee-lab/testrepo1",
+     *     "target_repository_url": "https://github.com/gravitee-lab/testrepo1",
+     *     "revision": "b9940405385ab81ad7bb44880ed71f0c23e55c17",
+     *     "provider_name": "GitHub",
+     *     "branch": "dependabot/npm_and_yarn/handlebars-4.5.3"
+     *   }
+     * }
      *
+     * </pre>
+     * -----
      **/
     private progressMatrix: any[];
 
@@ -76,14 +118,6 @@ export class CircleCiOrchestrator {
         }
 
       });
-      /// A test : just one pipeline build trigger on a test repo
-      let pipelineParameters = { parameters: {}};
-      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
-          next: this.handleCircleCIData.bind(this),
-          complete: data => {
-            console.log( '[triggering Circle CI Build completed! :)]')
-          }
-      } );
 
     }
 
@@ -134,7 +168,15 @@ export class CircleCiOrchestrator {
           } );
 
       });
-
+      /// A simle test to run once for every parallelExecutionSet
+      /// A test : just one pipeline build trigger on a test repo
+      let pipelineParameters = { parameters: {}};
+      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
+          next: this.handleCircleCIData.bind(this),
+          complete: data => {
+            console.log( '[triggering Circle CI Build completed! :)]')
+          }
+      });
 
     }
     giveup()  : void {

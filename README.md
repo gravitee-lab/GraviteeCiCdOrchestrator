@@ -23,7 +23,7 @@ The **Gravitee Release Orchestrator**  will load those secrets from a local json
 
 You can set the `SECRETS_FILE_PATH``env. variable n the `.env` file, to set the secret file path to another location.
 
-The **Gravitee Release Orchestrator**  secrets file, must have the following structure (soon, a JSon Schema)
+The **Gravitee Release Orchestrator**  secrets file, must have the following structure (soon, a JSon Schema) :
 
 ```JSon
 {
@@ -37,7 +37,8 @@ The **Gravitee Release Orchestrator**  secrets file, must have the following str
 ```
 
 
-* run :
+* create the `.secrests.json` file, add your Gravitee Bot's username and token,
+* set the confguration values in the `.env`, and run :
 
 ```bash
 npm start

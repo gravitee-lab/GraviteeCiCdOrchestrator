@@ -22,7 +22,9 @@ class ErrorReporter {
   private secrets_file_path: string
   /// for example '360s' for 360 seconds before stopping  fething the Circle CI API
   private pipelines_timeout: string;
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, pipelines_timeout: string) {
+  /// The Gihub.com Organization whre all the git repos live.
+  private gh_org: string;
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, pipelines_timeout: string, gh_org: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -70,6 +72,12 @@ class ErrorReporter {
     } else {
       this.pipelines_timeout = pipelines_timeout;
     }
+    if (gh_org === undefined || gh_org === "") {
+      console.warn("{[.DOTENV]} - [GH_ORG] is undefined, defaulting value to 'graviteeio-lab'")
+      this.gh_org = 'graviteeio-lab';
+    } else {
+      this.gh_org = gh_org;
+    }
   }
 
   report(err: Error) {
@@ -79,4 +87,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.PIPELINES_TIMEOUT);
+export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.PIPELINES_TIMEOUT, process.env.GH_ORG);
