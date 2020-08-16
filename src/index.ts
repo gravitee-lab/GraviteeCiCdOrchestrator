@@ -8,20 +8,20 @@ import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator"
 console.log('')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('I am the Gravitee Release Orchestrator !')
-console.log('hey there!')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
-/// DOTENV Checking configuration
-console.info(`{[Config]} RELEASE_MANIFEST_PATH is set to ${process.env.RELEASE_MANIFEST_PATH}`)
-console.info(`{[Config]} PRODUCT is set to ${process.env.PRODUCT}`)
-console.info(`{[Config]} RETRIES_BEFORE_FAILURE is set to ${process.env.RETRIES_BEFORE_FAILURE}`)
-console.info(`{[Config]} SSH_RELEASE_GIT_REPO is set to ${process.env.SSH_RELEASE_GIT_REPO}`)
-console.info(`{[Config]} HTTP_RELEASE_GIT_REPO is set to ${process.env.HTTP_RELEASE_GIT_REPO}`)
-console.info(`{[Config]} RELEASE_BRANCHES is set to ${process.env.RELEASE_BRANCHES}`)
+/// DOTENV Checking .DOTENVuration
+console.info(`{[.DOTENV]} RELEASE_MANIFEST_PATH is set to ${process.env.RELEASE_MANIFEST_PATH}`)
+console.info(`{[.DOTENV]} PRODUCT is set to ${process.env.PRODUCT}`)
+console.info(`{[.DOTENV]} RETRIES_BEFORE_FAILURE is set to ${process.env.RETRIES_BEFORE_FAILURE}`)
+console.info(`{[.DOTENV]} SSH_RELEASE_GIT_REPO is set to ${process.env.SSH_RELEASE_GIT_REPO}`)
+console.info(`{[.DOTENV]} HTTP_RELEASE_GIT_REPO is set to ${process.env.HTTP_RELEASE_GIT_REPO}`)
+console.info(`{[.DOTENV]} RELEASE_BRANCHES is set to ${process.env.RELEASE_BRANCHES}`)
+console.info(`{[.DOTENV]} SECRETS_FILE_PATH is set to ${process.env.SECRETS_FILE_PATH}`)
 console.log('');
 
-errorReporter.report(new Error("{[Config]} - GraviteeReleaseOrchestrator Config. Error Manager"))
+errorReporter.report(new Error("{[.DOTENV]} - GraviteeReleaseOrchestrator .DOTENV. Error Manager"))
 
 
 /// Processing now

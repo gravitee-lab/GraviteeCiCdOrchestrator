@@ -74,9 +74,28 @@
 					<li>will trigger the Circle CI Pipelines respecting the paralellization constriants defined by the  <code>buildDependencies</code> property in the <code>release.json</code>, to maximize scale out.</li>
 					<li>confer to  the specs specified in <code>CICD_APIM_TheGroovyGraviteeReleaseProcess.png</code> (team privately shared document)</li>
 				</ul>
+				<p>The <strong>Gravitee Release Orchestrator</strong> makes use of the following technologies :</p>
+				<ul>
+					<li><code>typescript</code></li>
+					<li><a href="https://github.com/motdotla/dotenv"><code>.DOTENV</code></a>, to manage its confguration file <code>.env</code>, as a twelve factor app.</li>
+					<li>The <a href="https://www.npmjs.com/package/circleci#startbuild">Circle CI client</a>, to hit Circle CI REST API, trigger builds, and inspect them.</li>
+					<li><code>typedoc</code></li>
+				</ul>
 				<a href="#buld-test-n-run" id="buld-test-n-run" style="color: inherit; text-decoration: none;">
 					<h1>Buld, test n run</h1>
 				</a>
+				<p>The <strong>Gravitee Release Orchestrator</strong> makes use of secrets : the Circle CI <code>username</code> and <code>token</code>.</p>
+				<p>The <strong>Gravitee Release Orchestrator</strong>  will load those secrets from a local json file, which path is <code>.secrets.json</code>.</p>
+				<p>You can set the <code>SECRETS_FILE_PATH``env. variable n the </code>.env` file, to set the secret file path to another location.</p>
+				<p>The <strong>Gravitee Release Orchestrator</strong>  secrets file, must have the following structure (soon, a JSon Schema)</p>
+				<pre><code class="language-JSon">{
+  <span class="hljs-attr">&quot;circleci&quot;</span>: {
+    <span class="hljs-attr">&quot;auth&quot;</span>: {
+      <span class="hljs-attr">&quot;username&quot;</span>: <span class="hljs-string">&quot;Jean-Baptiste-Lasselle&quot;</span>, <span class="hljs-comment">/// should be a bot</span>
+      <span class="hljs-attr">&quot;token&quot;</span>: <span class="hljs-string">&quot;KZSOx/FPEKFFAKEFAKEPQLvKQQCdsD5-dsTRQSDLKQqsd&quot;</span>
+    }
+  }
+}</code></pre>
 				<ul>
 					<li>run :</li>
 				</ul>
@@ -216,6 +235,12 @@ EOF
 npm install --save typescript ts-node
 npm install --save-dev @types/node
 npm install typedoc --save-dev
+<span class="hljs-comment"># circleci has no @types/circleci types definition, so</span>
+<span class="hljs-comment"># will use an HTTP Client package instead</span>
+<span class="hljs-comment"># npm install circleci --save</span>
+npm install rxjs rxjs-compat --save
+npm install axios @types/axios --save
+
 
 
 </code></pre>

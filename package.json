@@ -1,6 +1,6 @@
 {
   "name": "GraviteeReleaseOrchestrator",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The Gravitee Release Orchestrator steers Circle CI operations to process a fully automated Release of Gravitee APIM. The Gravitee Devops Team AT github.com/gravitee-lab",
   "main": "index.js",
   "scripts": {
@@ -31,13 +31,16 @@
   },
   "homepage": "https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/README.md",
   "dependencies": {
-    "circleci": "^0.3.3",
     "dotenv": "^8.2.0",
+    "rxjs": "^6.6.2",
+    "rxjs-compat": "^6.6.2",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.7"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/node": "^14.0.27",
+    "axios": "^0.19.2",
     "typedoc": "^0.18.0"
   }
 }

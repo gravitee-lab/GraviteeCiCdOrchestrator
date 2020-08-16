@@ -8,8 +8,33 @@ A custom component in `Gravitee`'s CICD, that brings distributed builds in :
 * will trigger the Circle CI Pipelines respecting the paralellization constriants defined by the  `buildDependencies` property in the `release.json`, to maximize scale out.
 * confer to  the specs specified in `CICD_APIM_TheGroovyGraviteeReleaseProcess.png` (team privately shared document)
 
+The **Gravitee Release Orchestrator** makes use of the following technologies :
+* `typescript`
+* [`.DOTENV`](https://github.com/motdotla/dotenv), to manage its confguration file `.env`, as a twelve factor app.
+* The [Circle CI client](https://www.npmjs.com/package/circleci#startbuild), to hit Circle CI REST API, trigger builds, and inspect them.
+* `typedoc`
+
 
 # Buld, test n run
+
+The **Gravitee Release Orchestrator** makes use of secrets : the Circle CI `username` and `token`.
+
+The **Gravitee Release Orchestrator**  will load those secrets from a local json file, which path is `.secrets.json`.
+
+You can set the `SECRETS_FILE_PATH``env. variable n the `.env` file, to set the secret file path to another location.
+
+The **Gravitee Release Orchestrator**  secrets file, must have the following structure (soon, a JSon Schema)
+
+```JSon
+{
+  "circleci": {
+    "auth": {
+      "username": "Jean-Baptiste-Lasselle", /// should be a bot
+      "token": "KZSOx/FPEKFFAKEFAKEPQLvKQQCdsD5-dsTRQSDLKQqsd"
+    }
+  }
+}
+```
 
 
 * run :
@@ -167,6 +192,12 @@ EOF
 npm install --save typescript ts-node
 npm install --save-dev @types/node
 npm install typedoc --save-dev
+# circleci has no @types/circleci types definition, so
+# will use an HTTP Client package instead
+# npm install circleci --save
+npm install rxjs rxjs-compat --save
+npm install axios @types/axios --save
+
 
 
 

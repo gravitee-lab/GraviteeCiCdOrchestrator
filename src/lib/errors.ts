@@ -19,8 +19,8 @@ class ErrorReporter {
   private ssh_release_git_repo: string
   private http_release_git_repo: string
   private release_branches: string
-
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string) {
+  private secrets_file_path: string
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -41,6 +41,12 @@ class ErrorReporter {
     this.http_release_git_repo = http_release_git_repo;
     this.release_branches = release_branches;
 
+    if (product === undefined || product === "") {
+      console.warn("{[.DOTENV]} - [SECRETS_FILE_PATH] is undefined, defaulting value to './.secrets.json'")
+      this.secrets_file_path = './.secrets.json';
+    } else {
+      this.secrets_file_path = secrets_file_path;
+    }
     if (product === undefined || product === "") {
       console.warn("{[.DOTENV]} - [HTTP_RELEASE_GIT_REPO] is undefined, defaulting value to 'Gravitee APIM'")
       this.product = "Gravitee APIM";
@@ -65,4 +71,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES);
+export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH);
