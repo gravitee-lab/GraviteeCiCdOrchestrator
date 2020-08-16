@@ -13,6 +13,26 @@ export class CircleCiOrchestrator {
      * [gravitee_release_branch] must match one the of the existing branch on
      **/
     private execution_plan: string [][];
+    /**
+     *
+     * -----
+     * <pre>
+     * {
+     *   "progressMatrix": [
+     *     {
+     *       "pipeline": {
+     *         "execution_index": "14",
+     *         "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
+     *         "created_at": "2020-08-16T21:33:43.830Z"
+     *       }
+     *     }
+     *   ]
+     * }
+     *
+     * </pre>
+     * -----
+     *
+     **/
     private progressMatrix: any[];
 
     private retries: number;
