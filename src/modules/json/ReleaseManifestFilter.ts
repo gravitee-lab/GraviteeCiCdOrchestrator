@@ -100,8 +100,6 @@ export class ReleaseManifestFilter {
         let parallelExecutionSetIndex = this.getParallelExecutionSetIndex(component);
         this.executionPlan[parallelExecutionSetIndex].push(component);
       });
-
-      console.log("{[ReleaseManifestFilter]} - buildExecutionPlan() method not fully implemented yet");
       return this.executionPlan
     }
 
