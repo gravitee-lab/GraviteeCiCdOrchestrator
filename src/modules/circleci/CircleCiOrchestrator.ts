@@ -13,18 +13,34 @@ export class CircleCiOrchestrator {
      * [gravitee_release_branch] must match one the of the existing branch on
      **/
     private execution_plan: string [][];
+    private progressMatrix: any[];
+
     private retries: number;
 
     private circleci_client: CircleCIClient;
+    private secrets: any;
 
     constructor(execution_plan: string [][], retries: number) {
         this.execution_plan = execution_plan;
         this.retries = retries;
-        this.circleci_client = new CircleCIClient();
+        this.loadCircleCISecrets();
+        this.circleci_client = new CircleCIClient(this.secrets);
+        this.progressMatrix = [];
 
     }
 
+    loadCircleCISecrets () : void {
+      /// first load the secretfile
 
+      let secretFileAsString: string = fs.readFileSync(process.env.SECRETS_FILE_PATH,'utf8');
+      this.secrets = JSON.parse(secretFileAsString);
+      console.debug('');
+      console.debug("[{CircleCiOrchestrator}] - secrets file content :");
+      console.debug('');
+      console.debug(this.secrets)
+      console.debug('');
+
+    }
     /**
      * returning an A 2-dimensional array
      **/
@@ -42,15 +58,53 @@ export class CircleCiOrchestrator {
       });
       /// A test : just one pipeline build trigger on a test repo
       let pipelineParameters = { parameters: {}};
-      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild("Jean-Baptiste-Lasselle", 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
-          next: data => console.log( ' JBL - JBL - JBL - JBL -**** RESULTAT PIPELINE[data] => ', data ),
+      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
+          next: this.handleCircleCIData.bind(this),
           complete: data => {
-            console.log( '[triggering Circle CI Build completed! :)] Circle CI JSON Response is  => ', data )
+            console.log( '[triggering Circle CI Build completed! :)]')
           }
       } );
-      console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
+
     }
 
+    /**
+     * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
+     * Every time this method is invoked, it adds an entry  in the {@see this.progressMatrix}, from the <pre>data</pre> returned by the <strong>Circle CI</strong> API call
+     * then, the {@see this.progressMatrix}
+     *
+     *
+     * @argument data A JSOn Object returned by the Circle CI API as Response of a Pipeline trigger
+     * -----
+     * <pre>
+     * {
+     *
+     *    "number": "17",
+     *    "id": "c08fe570-a3ea-4232-9ed8-432ed65921a1",
+     *    "state": "pending",
+     *    "created_at": "2020-08-16T18:18:01.891Z"
+     *
+     *  }
+     * </pre>
+     * -----
+     *
+     *
+     **/
+    handleCircleCIData (data: any) : void {
+      console.info( '[{CircleCiOrchestrator}] - [handleCircleCIData] Processing Circle CI API Response [data] => ', data )
+      let entry: any = {};
+      entry.pipeline = {
+        execution_index: `${data.number}`,
+        id : `${data.id}`,
+        created_at: `${data.created_at}`,
+        exec_state: `${data.state}`
+      }
+      this.progressMatrix.push(entry);
+      console.info('')
+      console.info( '[{CircleCiOrchestrator}] - [handleCircleCIData] [this.progressMatrix] is now :  ');
+      console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
+      console.info('')
+      console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
+    }
     processExecutionSet (parallelExecutionsSet: string[]) : void {
 
       parallelExecutionsSet.forEach((dependency, index) => {
@@ -75,22 +129,11 @@ export class CircleCiOrchestrator {
  * Circle CI API v2 based
  **/
 export class CircleCIClient {
-  private secrets: any;
-  constructor() {
-    this.loadCircleCISecrets();
-  }
-  loadCircleCISecrets () : void {
-    /// first load the secretfile
 
-    let secretFileAsString: string = fs.readFileSync(process.env.SECRETS_FILE_PATH,'utf8');
-    this.secrets = JSON.parse(secretFileAsString);
-    console.debug('');
-    console.debug("[{CircleCiOrchestrator}] - secrets file content :");
-    console.debug('');
-    console.debug(this.secrets)
-    console.debug('');
-
+  constructor(private secrets: any) {
+    this.secrets = secrets;
   }
+
 
     /**
      * Triggers a Circle CI Pipeline, for a repo on Github
