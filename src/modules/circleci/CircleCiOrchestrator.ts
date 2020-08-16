@@ -22,12 +22,15 @@ export class CircleCiOrchestrator {
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
         if (parallelExecutionsSet.length == 0) {
-          console.info("[{CircleCiOrchestrator}] - Skipped : This Parallel Executions Set no. ["+`${index}`+"] is empty");
+          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${index}`+"] because it is empty");
         } else {
           console.info(parallelExecutionsSet);
+          processExecutionSet(parallelExecutionsSet); /// must be synchronous
         }
       });
-      console.log("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
+      console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
+    }
+    processExecutionSet (parallelExecutionsSet: string[]) : void {
 
     }
     giveup()  : void {
