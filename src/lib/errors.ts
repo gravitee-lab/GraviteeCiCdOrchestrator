@@ -20,7 +20,9 @@ class ErrorReporter {
   private http_release_git_repo: string
   private release_branches: string
   private secrets_file_path: string
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string) {
+  /// for example '360s' for 360 seconds before stopping  fething the Circle CI API
+  private pipelines_timeout: string;
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, pipelines_timeout: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -61,6 +63,12 @@ class ErrorReporter {
         throw new Error("{[.DOTENV]} - [RETRY_BEFORE_FAILURE] is defined, but is not a Number. Example value : '7'");
       }
       this.retries_before_failure = retries_before_failure;
+    }
+    if (pipelines_timeout === undefined) {
+      console.warn("{[.DOTENV]} - [PIPELINES_TIMEOUT] is undefined, defaulting value to '360s'")
+      this.pipelines_timeout = "360s";
+    } else {
+      this.pipelines_timeout = pipelines_timeout;
     }
   }
 
