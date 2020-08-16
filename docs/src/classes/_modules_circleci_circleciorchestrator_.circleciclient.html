@@ -72,7 +72,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Mimics the official CircleCI cLient, only much simpler, and with [RxJS]</p>
+						<p>Mimics the official Circle CI cLient, only much simpler, and with [RxJS]
+						Circle CI API v2 based</p>
 					</div>
 				</div>
 			</section>
@@ -104,7 +105,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#loadcirclecisecrets" class="tsd-kind-icon">load<wbr>CircleCISecrets</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#triggerbuild" class="tsd-kind-icon">trigger<wbr>Build</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#triggerghbuild" class="tsd-kind-icon">trigger<wbr>GhBuild</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#whoami" class="tsd-kind-icon">whoami</a></li>
 							</ul>
 						</section>
@@ -123,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/e5fae65/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_circleciorchestrator_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></h4>
@@ -139,7 +140,7 @@
 					<div class="tsd-signature tsd-kind-icon">secrets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/e5fae65/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,7 +157,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/e5fae65/src/modules/circleci/CircleCiOrchestrator.ts#L71">modules/circleci/CircleCiOrchestrator.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L71">modules/circleci/CircleCiOrchestrator.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -164,28 +165,31 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="triggerbuild" class="tsd-anchor"></a>
-					<h3>trigger<wbr>Build</h3>
+					<a name="triggerghbuild" class="tsd-anchor"></a>
+					<h3>trigger<wbr>GhBuild</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">trigger<wbr>Build<span class="tsd-signature-symbol">(</span>username<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">trigger<wbr>GhBuild<span class="tsd-signature-symbol">(</span>username<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, org_name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, repo_name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/e5fae65/src/modules/circleci/CircleCiOrchestrator.ts#L91">modules/circleci/CircleCiOrchestrator.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L95">modules/circleci/CircleCiOrchestrator.ts:95</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Triggers a Circle CI Pipeline</p>
+									<p>Triggers a Circle CI Pipeline, for a repo on Github</p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>argument</dt>
 									<dd><p>username {@type string} the Circle CI username , eg &quot;jpstevens&quot;,</p>
 									</dd>
 									<dt>argument</dt>
-									<dd><p>project {@type string} the Circle CI project name, matching the github repo name, e.g.&quot;circleci&quot;,</p>
+									<dd><p>org_name  {@type string} the github organization name if the git repo in on github.com</p>
+									</dd>
+									<dt>argument</dt>
+									<dd><p>repo_name {@type string} the Circle CI project name, matching the github repo name, e.g.&quot;circleci&quot;,</p>
 									</dd>
 									<dt>argument</dt>
 									<dd><p>branch {@type string} the git branch &quot;master&quot; on which to trigger the pipeline</p>
@@ -198,13 +202,17 @@
 									<h5>username: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>project: <span class="tsd-signature-type">string</span></h5>
+									<h5>org_name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>repo_name: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
 									<h5>branch: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<p>any But it actually is an Observable Stream of the HTTP response you can subscribe to.</p>
 						</li>
 					</ul>
 				</section>
@@ -218,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/e5fae65/src/modules/circleci/CircleCiOrchestrator.ts#L104">modules/circleci/CircleCiOrchestrator.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L122">modules/circleci/CircleCiOrchestrator.ts:122</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -264,7 +272,7 @@
 								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#loadcirclecisecrets" class="tsd-kind-icon">load<wbr>CircleCISecrets</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#triggerbuild" class="tsd-kind-icon">trigger<wbr>Build</a>
+								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#triggerghbuild" class="tsd-kind-icon">trigger<wbr>GhBuild</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#whoami" class="tsd-kind-icon">whoami</a>
