@@ -25,13 +25,13 @@ export class CircleCiOrchestrator {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${index}`+"] because it is empty");
         } else {
           console.info(parallelExecutionsSet);
-          processExecutionSet(parallelExecutionsSet); /// must be synchronous
+          this.processExecutionSet(parallelExecutionsSet); /// must be synchronous
         }
       });
       console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
     }
     processExecutionSet (parallelExecutionsSet: string[]) : void {
-
+      ///
     }
     giveup()  : void {
       console.log("[{CircleCiOrchestrator}] - giveup() method is not implemented yet.");
