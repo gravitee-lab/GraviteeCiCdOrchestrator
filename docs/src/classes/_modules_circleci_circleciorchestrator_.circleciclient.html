@@ -124,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c6b24b6/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_circleciorchestrator_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></h4>
@@ -140,7 +140,7 @@
 					<div class="tsd-signature tsd-kind-icon">secrets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c6b24b6/src/modules/circleci/CircleCiOrchestrator.ts#L67">modules/circleci/CircleCiOrchestrator.ts:67</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -157,7 +157,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L71">modules/circleci/CircleCiOrchestrator.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c6b24b6/src/modules/circleci/CircleCiOrchestrator.ts#L71">modules/circleci/CircleCiOrchestrator.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -168,19 +168,36 @@
 					<a name="triggerghbuild" class="tsd-anchor"></a>
 					<h3>trigger<wbr>GhBuild</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">trigger<wbr>GhBuild<span class="tsd-signature-symbol">(</span>username<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, org_name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, repo_name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">trigger<wbr>GhBuild<span class="tsd-signature-symbol">(</span>username<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, org_name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, repo_name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, pipelineParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L95">modules/circleci/CircleCiOrchestrator.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c6b24b6/src/modules/circleci/CircleCiOrchestrator.ts#L166">modules/circleci/CircleCiOrchestrator.ts:166</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Triggers a Circle CI Pipeline, for a repo on Github</p>
 								</div>
+								<hr>
+								<pre>
+     version: 2.1
+     jobs:
+       build:
+         docker:
+           - image: "circleci/node:<< pipeline.parameters.image-tag >>"
+         environment:
+           IMAGETAG: "<< pipeline.parameters.image-tag >>"
+         steps:
+           - run: echo "Image tag used was ${IMAGETAG}"
+     parameters:
+       image-tag:
+         default: latest
+         type: string
+</pre>
+								<hr>
 								<dl class="tsd-comment-tags">
 									<dt>argument</dt>
 									<dd><p>username {@type string} the Circle CI username , eg &quot;jpstevens&quot;,</p>
@@ -193,6 +210,55 @@
 									</dd>
 									<dt>argument</dt>
 									<dd><p>branch {@type string} the git branch &quot;master&quot; on which to trigger the pipeline</p>
+									</dd>
+									<dt>argument</dt>
+									<dd><p>pipelineParameters {@type any} the Circle CI pipeline parameters. For Example, a  :</p>
+										<hr>
+										<pre>
+     version: 2.1
+     jobs:
+       build:
+         docker:
+           - image: "circleci/node:<< pipeline.parameters.image-tag >>"
+         environment:
+           IMAGETAG: "<< pipeline.parameters.image-tag >>"
+           GRAVITEEIO_VERSION: "<< pipeline.parameters.graviteeio-version >>"
+           GRAVITEEIO_VERSION_MINOR: "<< pipeline.parameters.graviteeio-version-minor >>"
+           GRAVITEEIO_VERSION_MAJOR: "<< pipeline.parameters.graviteeio-version-major >>"
+         steps:
+           - run: echo "Docker Image tag used was ${IMAGETAG}"
+           - run: echo "GRAVITEEIO_VERSION used was ${GRAVITEEIO_VERSION}"
+           - run: echo "GRAVITEEIO_VERSION_MINOR used was ${GRAVITEEIO_VERSION_MINOR}"
+           - run: echo "GRAVITEEIO_VERSION_MAJOR used was ${GRAVITEEIO_VERSION_MAJOR}"
+     parameters:
+       image-tag:
+         default: latest
+         type: string
+       graviteeio-version:
+         default: 3.1.0
+         type: string
+       graviteeio-version-minor:
+         default: 3.1
+         type: string
+       graviteeio-version-major:
+         default: 3
+         type: string
+
+</pre>
+										<hr>
+										<p> then <pre>pipelineParameters</pre> coudl for example be :</p>
+										<hr>
+										<pre>
+{
+   "parameters": {
+     "image-tag": "3.1.14-full",
+     "graviteeio-version": "3.1.14",
+     "graviteeio-version-minor": "3.1",
+     "graviteeio-version-major": "3"
+   }
+ }
+</pre>
+										<hr>
 									</dd>
 								</dl>
 							</div>
@@ -210,6 +276,9 @@
 								<li>
 									<h5>branch: <span class="tsd-signature-type">string</span></h5>
 								</li>
+								<li>
+									<h5>pipelineParameters: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 							<p>any But it actually is an Observable Stream of the HTTP response you can subscribe to.</p>
@@ -226,7 +295,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/13901b8/src/modules/circleci/CircleCiOrchestrator.ts#L122">modules/circleci/CircleCiOrchestrator.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c6b24b6/src/modules/circleci/CircleCiOrchestrator.ts#L192">modules/circleci/CircleCiOrchestrator.ts:192</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>

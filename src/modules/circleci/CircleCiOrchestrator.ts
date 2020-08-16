@@ -45,12 +45,19 @@ export class CircleCiOrchestrator {
     processExecutionSet (parallelExecutionsSet: string[]) : void {
 
       parallelExecutionsSet.forEach((dependency, index) => {
-        /// let observableRequest = this.circleci_client.whoami();
-        let subscription = this.circleci_client.whoami().subscribe( {
+        let whoamiSubscription = this.circleci_client.whoami().subscribe( {
             next: data => console.log( '[data] => ', data ),
             complete: data => console.log( '[complete]' )
-        } );
+          } );
+
       });
+      /// Just a test 
+      let pipelineParameters = { parameters: {}};
+      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild("Jean-Baptiste-Lasselle", 'gravitee-lab', "testrepo1", 'npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
+          next: data => console.log( '[data] => ', data ),
+          complete: data => console.log( '[triggering Circle CI Build completed! :)]' )
+        } );
+
     }
     giveup()  : void {
       console.log("[{CircleCiOrchestrator}] - giveup() method is not implemented yet.");
@@ -84,27 +91,7 @@ export class CircleCIClient {
     /**
      * Triggers a Circle CI Pipeline, for a repo on Github
      *
-     * -----
-     * <pre>
-     *      version: 2.1
-     *      jobs:
-     *        build:
-     *          docker:
-     *            - image: "circleci/node:<< pipeline.parameters.image-tag >>"
-     *          environment:
-     *            IMAGETAG: "<< pipeline.parameters.image-tag >>"
-     *          steps:
-     *            - run: echo "Image tag used was ${IMAGETAG}"
-     *      parameters:
-     *        image-tag:
-     *          default: latest
-     *          type: string
-     * </pre>
-     * -----
-     *
-     *
-     *
-     * @argument username {@type string} the Circle CI username , eg "jpstevens",
+     * @argument username {@type string} the Circle CI username. matches your Github username, because you authenticated using Github, to register to Circle Ci . eg "jpstevens",
      * @argument org_name  {@type string} the github organization name if the git repo in on github.com
      * @argument repo_name {@type string} the Circle CI project name, matching the github repo name, e.g."circleci",
      * @argument branch {@type string} the git branch "master" on which to trigger the pipeline
@@ -144,8 +131,7 @@ export class CircleCIClient {
      * </pre>
      * -----
      *
-     *  then <pre>pipelineParameters</pre> coudl for example be :
-     *
+     *  then <pre>pipelineParameters</pre> should be (except the values) :
      *
      * -----
      * <pre>
@@ -163,7 +149,7 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
-    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: string): any {
+    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
             headers: {
@@ -173,11 +159,11 @@ export class CircleCIClient {
             }
           };
 
-          let jsonPayloadExample = {
-            'branch': `${branch}`
-          };
+          let jsonPayload: any = pipelineParameters;
+          jsonPayload.branch = `${branch}`;
+
           /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
-          axios.post( "https://circleci.com/api/v2/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayloadExample, config )
+          axios.post( "https://circleci.com/api/v2/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, config )
           .then( ( response ) => {
               observer.next( response.data );
               observer.complete();
