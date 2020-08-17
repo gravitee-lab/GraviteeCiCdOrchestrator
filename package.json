@@ -31,6 +31,8 @@
   },
   "homepage": "https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/README.md",
   "dependencies": {
+    "@types/cli-progress": "^3.8.0",
+    "cli-progress": "^3.8.2",
     "dotenv": "^8.2.0",
     "rxjs": "^6.6.2",
     "rxjs-compat": "^6.6.2",

@@ -14,7 +14,7 @@ The **Gravitee Release Orchestrator** makes use of the following technologies :
 * The [Circle CI client](https://www.npmjs.com/package/circleci#startbuild), to hit Circle CI REST API, trigger builds, and inspect them.
 * `typedoc`
 * `RxJS` to process asynchronous Circle CI API calls
-
+* [CLI Progess](https://www.npmjs.com/package/cli-progress#multi-bar-mode), to display a "multi progess bar", in the std output, and inform of execution progress for each dependency in a parallel execution set.
 
 # Buld, test n run
 
@@ -199,7 +199,7 @@ npm install typedoc --save-dev
 # npm install circleci --save
 npm install rxjs rxjs-compat --save
 npm install axios @types/axios --save
-
+npm install cli-progress @types/cli-progress --save
 
 
 
