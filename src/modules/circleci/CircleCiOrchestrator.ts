@@ -189,9 +189,19 @@ export class CircleCiOrchestrator {
 
       });
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
-        console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
+        console.info("[{CircleCiOrchestrator}] - Monitoring Parallel Execution Set no. ["+`${index}`+"]  : ");
+
         if (parallelExecutionsSet.length == 0) {
           console.info("[{CircleCiOrchestrator}] - Skipped Monitoring Parallel Executions Set no. ["+`${index}`+"] because it is empty");
+          console.info("");
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+          console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'parallel_executions_set_is' below : ");
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+          console.info(" ---");
+          console.info(JSON.stringify({ parallel_executions_set_is: parallelExecutionsSet}, null, " "));
+          console.info(" ---");
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+          console.info("");
         } else {
 
           this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);

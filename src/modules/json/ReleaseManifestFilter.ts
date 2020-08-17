@@ -154,13 +154,13 @@ export class ReleaseManifestFilter {
         this.executionPlan[parallelExecutionSetIndex].push(component);
       });
       console.info("");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " "));
       console.info(" ---");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       return this.executionPlan
     }
