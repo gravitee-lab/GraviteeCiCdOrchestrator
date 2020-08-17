@@ -13,14 +13,61 @@ import * as cliProgress from 'cli-progress';
  **/
 export class CircleCiOrchestrator {
     /**
-     *
-     * ---
-     *
+    * <p>
+    * The Execution plan listing all the components that should be included in the release :
+    * <p>
+    * <ul>
+    * <li>The 2-dim. Array has the exact same structure as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git)</li>
+    * <li>The 2-dim. Array has the exact same entries than the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only  structure as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only all dependencies that do not require processing release, were removed as Array entries.</li>
+    * <li>The 2-dim. Array has the exact same length as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only some entries are empty arrays (not undefined, but of length zero)</li>
+    * <ul>
+     * -----
      * Example Execution Plan :
      * -----
      * <pre>
-     *
+     *      [
+     *          [
+     *              "gravitee-common"
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *              "gravitee-repository-test"
+     *          ],
+     *          [
+     *              "gravitee-reporter-api",
+     *              "gravitee-notifier-email"
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *              "gravitee-resource-oauth2-provider-api"
+     *          ],
+     *          [
+     *              "gravitee-resource-cache"
+     *          ],
+     *          [
+     *              "gravitee-policy-apikey",
+     *              "gravitee-policy-ratelimit",
+     *              "gravitee-policy-dynamic-routing",
+     *              "gravitee-fetcher-bitbucket",
+     *              "gravitee-fetcher-github"
+     *          ],
+     *          [
+     *              "gravitee-management-rest-api",
+     *              "gravitee-management-webui"
+     *          ]
+     *      ]
      * </pre>
+     *
+     *
+     * See also {@see ReleaseManifestFilter#buildExecutionPlan() }
      *
      **/
     private execution_plan: string [][];
@@ -168,11 +215,10 @@ export class CircleCiOrchestrator {
     processExecutionSet (parallelExecutionsSet: string[]) : void {
 
       parallelExecutionsSet.forEach((dependency, index) => {
-        let whoamiSubscription = this.circleci_client.whoami().subscribe( {
+        let whoamiSubscription = this.circleci_client.whoami().subscribe({
             next: data => console.log( '[data] => ', data ),
             complete: data => console.log( '[complete]' )
-          } );
-
+          });
       });
       /// pipeline execution parameters, same as Jenkins build parameters
       let pipelineParameters = { parameters: {}};

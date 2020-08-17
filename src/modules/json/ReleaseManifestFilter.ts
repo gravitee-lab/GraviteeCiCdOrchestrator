@@ -97,7 +97,50 @@ export class ReleaseManifestFilter {
      * <li>The 2-dim. Array has the exact same length as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only some entries are empty arrays (not undefined, but of length zero)</li>
      * <ul>
      *
-     * Example Execution plan : 
+     * Example Execution Plan :
+     * -----
+     * <pre>
+     *      [
+     *          [
+     *              "gravitee-common"
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *              "gravitee-repository-test"
+     *          ],
+     *          [
+     *              "gravitee-reporter-api",
+     *              "gravitee-notifier-email"
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *          ],
+     *          [
+     *              "gravitee-resource-oauth2-provider-api"
+     *          ],
+     *          [
+     *              "gravitee-resource-cache"
+     *          ],
+     *          [
+     *              "gravitee-policy-apikey",
+     *              "gravitee-policy-ratelimit",
+     *              "gravitee-policy-dynamic-routing",
+     *              "gravitee-fetcher-bitbucket",
+     *              "gravitee-fetcher-github"
+     *          ],
+     *          [
+     *              "gravitee-management-rest-api",
+     *              "gravitee-management-webui"
+     *          ]
+     *      ]
+     * </pre>
+     *
      *
      * @returns A 2-dimensional JSon array, which is the execution plan, that will be executed by the {@see CircleCiOrchestrator}
      *

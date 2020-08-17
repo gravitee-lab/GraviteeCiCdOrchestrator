@@ -136,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L84">modules/circleci/CircleCiOrchestrator.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L131">modules/circleci/CircleCiOrchestrator.ts:131</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -161,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">circleci_<wbr>client<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_circleciorchestrator_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L83">modules/circleci/CircleCiOrchestrator.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L130">modules/circleci/CircleCiOrchestrator.ts:130</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -171,19 +171,65 @@
 					<div class="tsd-signature tsd-kind-icon">execution_<wbr>plan<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L26">modules/circleci/CircleCiOrchestrator.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L73">modules/circleci/CircleCiOrchestrator.ts:73</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<hr>
-						</div>
-						<a href="#example-execution-plan-" id="example-execution-plan-" style="color: inherit; text-decoration: none;">
-							<h2>Example Execution Plan :</h2>
-						</a>
-						<pre>
-
+							<p>
+								The Execution plan listing all the components that should be included in the release :
+								<p>
+									<ul>
+										<li>The 2-dim. Array has the exact same structure as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git)</li>
+										<li>The 2-dim. Array has the exact same entries than the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only  structure as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only all dependencies that do not require processing release, were removed as Array entries.</li>
+										<li>The 2-dim. Array has the exact same length as the 'buildDependencies' JSON property in the release.json (from https://github.com/gravitee-io/release.git), only some entries are empty arrays (not undefined, but of length zero)</li>
+										<ul>
+											-----
+											Example Execution Plan :
+											-----
+											<pre>
+     [
+         [
+             "gravitee-common"
+         ],
+         [
+         ],
+         [
+             "gravitee-repository-test"
+         ],
+         [
+             "gravitee-reporter-api",
+             "gravitee-notifier-email"
+         ],
+         [
+         ],
+         [
+         ],
+         [
+         ],
+         [
+         ],
+         [
+             "gravitee-resource-oauth2-provider-api"
+         ],
+         [
+             "gravitee-resource-cache"
+         ],
+         [
+             "gravitee-policy-apikey",
+             "gravitee-policy-ratelimit",
+             "gravitee-policy-dynamic-routing",
+             "gravitee-fetcher-bitbucket",
+             "gravitee-fetcher-github"
+         ],
+         [
+             "gravitee-management-rest-api",
+             "gravitee-management-webui"
+         ]
+     ]
 </pre>
+						</div>
+						<p>See also {@see ReleaseManifestFilter#buildExecutionPlan() }</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
@@ -192,7 +238,7 @@
 					<div class="tsd-signature tsd-kind-icon">progress<wbr>Matrix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L79">modules/circleci/CircleCiOrchestrator.ts:79</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L126">modules/circleci/CircleCiOrchestrator.ts:126</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -255,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">retries<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L81">modules/circleci/CircleCiOrchestrator.ts:81</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L128">modules/circleci/CircleCiOrchestrator.ts:128</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -265,7 +311,7 @@
 					<div class="tsd-signature tsd-kind-icon">secrets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L84">modules/circleci/CircleCiOrchestrator.ts:84</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L131">modules/circleci/CircleCiOrchestrator.ts:131</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -282,7 +328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L187">modules/circleci/CircleCiOrchestrator.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L233">modules/circleci/CircleCiOrchestrator.ts:233</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -299,7 +345,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L165">modules/circleci/CircleCiOrchestrator.ts:165</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L212">modules/circleci/CircleCiOrchestrator.ts:212</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -322,7 +368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L147">modules/circleci/CircleCiOrchestrator.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L194">modules/circleci/CircleCiOrchestrator.ts:194</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -371,7 +417,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L95">modules/circleci/CircleCiOrchestrator.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L142">modules/circleci/CircleCiOrchestrator.ts:142</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -388,7 +434,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L168">modules/circleci/CircleCiOrchestrator.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L215">modules/circleci/CircleCiOrchestrator.ts:215</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -411,7 +457,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L110">modules/circleci/CircleCiOrchestrator.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/09efee2/src/modules/circleci/CircleCiOrchestrator.ts#L157">modules/circleci/CircleCiOrchestrator.ts:157</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
