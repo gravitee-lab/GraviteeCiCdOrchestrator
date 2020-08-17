@@ -7,11 +7,21 @@ import * as cliProgress from 'cli-progress';
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
+ * [gravitee_release_branch] must match one of the existing branch on https://github.com/gravtiee-io/release.git, see [.DOTNEV] [RELEASE_BRANCHES] env. var.
+ *
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class CircleCiOrchestrator {
     /**
-     * [gravitee_release_branch] must match one the of the existing branch on
+     *
+     * ---
+     *
+     * Example Execution Plan :
+     * -----
+     * <pre>
+     *
+     * </pre>
+     *
      **/
     private execution_plan: string [][];
     /**
@@ -134,8 +144,8 @@ export class CircleCiOrchestrator {
      *
      *
      **/
-    handleCircleCIData (data: any) : void {
-      console.info( '[{CircleCiOrchestrator}] - [handleCircleCIData] Processing Circle CI API Response [data] => ', data )
+    handleTriggerPipelineCircleCIResponseData (data: any) : void {
+      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', data )
       let entry: any = {};
       entry.pipeline = {
         execution_index: `${data.number}`,
@@ -143,12 +153,17 @@ export class CircleCiOrchestrator {
         created_at: `${data.created_at}`,
         exec_state: `${data.state}`
       }
+
       this.progressMatrix.push(entry);
+
       console.info('')
-      console.info( '[{CircleCiOrchestrator}] - [handleCircleCIData] [this.progressMatrix] is now :  ');
+      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
       console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
       console.info('')
       console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
+    }
+    handleGetPipelineGhRepoCircleCIResponseData (data: any) : void {
+      /// TODO ?
     }
     processExecutionSet (parallelExecutionsSet: string[]) : void {
 
@@ -159,11 +174,10 @@ export class CircleCiOrchestrator {
           } );
 
       });
-      /// A simle test to run once for every parallelExecutionSet
-      /// A test : just one pipeline build trigger on a test repo
+      /// pipeline execution parameters, same as Jenkins build parameters
       let pipelineParameters = { parameters: {}};
       let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
-          next: this.handleCircleCIData.bind(this),
+          next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
           complete: data => {
             console.log( '[triggering Circle CI Build completed! :)]')
           }
@@ -277,36 +291,36 @@ export class CircleCIClient {
               observer.error( error );
           } );
       } );
-
       return observableRequest;
     }
-    getLatestGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
+    getLatestGhBuilds(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
+      throw new Error("Not impemented yet");
+      /// return observableRequest;
+    }
+    /**
+     * Retrieves the Github Repo URI from the PipelineID
+     **/
+    getPipelineGhRepo(circleCiPipelineID: string): any {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
             headers: {
               "Circle-Token": this.secrets.circleci.auth.token,
-              "Accept": "application/json",
-              "Content-Type": "application/json"
+              "Accept": "application/json"
             }
           };
-
-          console.info("curl -X POST -d -H 'Content-Type: application/json'" + " -H 'Accept: application/json'" + " -H 'Circle-Token: " + `${this.secrets.circleci.auth.token}` + "' https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline");
-
-          /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
-          axios.get( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", config )
+          axios.get( 'https://circleci.com/api/v2/pipeline/' + `${circleCiPipelineID}`, config )
           .then( ( response ) => {
               observer.next( response.data );
               observer.complete();
           } )
           .catch( ( error ) => {
-              console.log("Circle CI HTTP Error JSON Response is : ");
-              /// console.log(JSON.stringify(error.response));
-              console.log(error.response);
               observer.error( error );
           } );
       } );
 
       return observableRequest;
+      // throw new Error("Not impemented yet");
+      /// return observableRequest;
     }
     /**
      * Hits the Circle CI API and return an {@see ObservableStream<any>} emitting the Circle CI JSON answer for the https://circleci.com/api/v2/me Endpoint
@@ -385,72 +399,40 @@ export class ParallelExectionSetProgressBar {
 
   private multibar: cliProgress.MultiBar;
   /**
-   * Example Progress Matrix :
+   * Example Parallel Execution Set (very simple, 1-dim. string[] Array, see {@see CircleCiOrchestrator#execution_plan} ) :
    * -----
    * <pre>
-   *      {
-   *        "progressMatrix": [
-   *          {
-   *            "pipeline": {
-   *              "execution_index": "15",
-   *              "id": "71938e5a-536f-482f-8bef-edae81801fb9",
-   *              "created_at": "2020-08-16T22:34:58.224Z",
-   *              "exec_state": "pending"
-   *            }
-   *          },
-   *          {
-   *            "pipeline": {
-   *              "execution_index": "16",
-   *              "id": "952de923-293b-4829-add4-056c4f95940a",
-   *              "created_at": "2020-08-16T22:34:58.273Z",
-   *              "exec_state": "pending"
-   *            }
-   *          },
-   *          {
-   *            "pipeline": {
-   *              "execution_index": "17",
-   *              "id": "c3ea1b05-1273-42ce-a04f-7e9fa8aa4d93",
-   *              "created_at": "2020-08-16T22:34:58.282Z",
-   *              "exec_state": "pending"
-   *            }
-   *          },
-   *          {
-   *            "pipeline": {
-   *              "execution_index": "18",
-   *              "id": "a42e7542-fded-4163-9e0a-a5839370ede6",
-   *              "created_at": "2020-08-16T22:34:58.302Z",
-   *              "exec_state": "pending"
-   *            }
-   *          },
-   *          {
-   *            "pipeline": {
-   *              "execution_index": "19",
-   *              "id": "46b17f2b-3b3f-4c9f-a6b3-5e608c113bab",
-   *              "created_at": "2020-08-16T22:34:58.305Z",
-   *              "exec_state": "pending"
-   *            }
-   *          }
-   *        ]
-   *      }
+   *
+   *    [
+   *        "gravitee-policy-apikey",
+   *        "gravitee-policy-ratelimit",
+   *        "gravitee-policy-request-content-limit",
+   *        "gravitee-policy-dynamic-routing",
+   *        "gravitee-policy-jwt",
+   *        "gravitee-policy-callout-http",
+   *        "gravitee-fetcher-github"
+   *    ]
    *
    * </pre>
    *
    **/
-  private progressMatrix: any[];
+  private parallelExecutionsSet: string[] /// or progressMatrix ? that is the question. I think I'll instantiate a new ParallelExectionSetProgressBar() instance for every non-empty (array of lentgh zero) entry in the progressMatrix
 
-  constructor(progressMatrix: any[]) {
+  constructor(parallelExecutionsSet: string[]) {
     this.init();
-    if (progressMatrix === undefined) {
-      throw new Error("[{ParallelExectionSetProgressBar}] - progressMatrix is empty or undefined, so can't work on any status to report.")
+    this.parallelExecutionsSet = parallelExecutionsSet;
+    if (parallelExecutionsSet === undefined) {
+      throw new Error("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is undefined, so can't work on any status to report.")
     }
-    if (progressMatrix.length == 0) {
-      console.warn("[{ParallelExectionSetProgressBar}] - progressMatrix is empty, so can't work on any status to report.")
+    if (parallelExecutionsSet.length == 0) {
+      console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.")
     }
-    this.progressMatrix = progressMatrix;
+
   }
 
   /**
-   * Initializes the {@see cliProgress.MultiBar} https://www.npmjs.com/package/cli-progress component, from the {@see this.progressMatrix}
+   * Initializes the {@see cliProgress.MultiBar} https://www.npmjs.com/package/cli-progress component, from
+   * the {@see this.progressMatrix}
    **/
   init (): void {
     ///
@@ -460,7 +442,24 @@ export class ParallelExectionSetProgressBar {
         hideCursor: true
     }, cliProgress.Presets.shades_grey);
 
+    this.parallelExecutionsSet.forEach((componentName, index) => {
+      // add bars
+      let singleBar = this.multibar.create(100, 0);
 
+      // control bars
+      singleBar.increment();
+      singleBar.update(20, {filename: "helloworld.txt"});
+
+      // stop all bars
+
+    });
+
+  }
+  /**
+  * Releases TTY to let the stdout proceed
+   **/
+  stop() {
+    this.multibar.stop();
   }
 
 }

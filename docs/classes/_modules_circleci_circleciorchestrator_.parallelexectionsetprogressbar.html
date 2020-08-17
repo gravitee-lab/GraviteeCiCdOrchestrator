@@ -140,13 +140,14 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#multibar" class="tsd-kind-icon">multibar</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#parallelexecutionsset" class="tsd-kind-icon">parallel<wbr>Executions<wbr>Set</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#init" class="tsd-kind-icon">init</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#stop" class="tsd-kind-icon">stop</a></li>
 							</ul>
 						</section>
 					</div>
@@ -158,19 +159,19 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Parallel<wbr>Exection<wbr>Set<wbr>Progress<wbr>Bar<span class="tsd-signature-symbol">(</span>progressMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Parallel<wbr>Exection<wbr>Set<wbr>Progress<wbr>Bar<span class="tsd-signature-symbol">(</span>parallelExecutionsSet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/987f96f/src/modules/circleci/CircleCiOrchestrator.ts#L439">modules/circleci/CircleCiOrchestrator.ts:439</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L419">modules/circleci/CircleCiOrchestrator.ts:419</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>progressMatrix: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>parallelExecutionsSet: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></h4>
@@ -186,71 +187,36 @@
 					<div class="tsd-signature tsd-kind-icon">multibar<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MultiBar</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/987f96f/src/modules/circleci/CircleCiOrchestrator.ts#L386">modules/circleci/CircleCiOrchestrator.ts:386</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L400">modules/circleci/CircleCiOrchestrator.ts:400</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="progressmatrix" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> progress<wbr>Matrix</h3>
-					<div class="tsd-signature tsd-kind-icon">progress<wbr>Matrix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="parallelexecutionsset" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> parallel<wbr>Executions<wbr>Set</h3>
+					<div class="tsd-signature tsd-kind-icon">parallel<wbr>Executions<wbr>Set<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/987f96f/src/modules/circleci/CircleCiOrchestrator.ts#L439">modules/circleci/CircleCiOrchestrator.ts:439</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L419">modules/circleci/CircleCiOrchestrator.ts:419</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<a href="#example-progress-matrix-" id="example-progress-matrix-" style="color: inherit; text-decoration: none;">
-								<h2>Example Progress Matrix :</h2>
+							<a href="#example-parallel-execution-set-very-simple-1-dim-string-array-see-see-circleciorchestratorexecution_plan--" id="example-parallel-execution-set-very-simple-1-dim-string-array-see-see-circleciorchestratorexecution_plan--" style="color: inherit; text-decoration: none;">
+								<h2>Example Parallel Execution Set (very simple, 1-dim. string[] Array, see {@see CircleCiOrchestrator#execution_plan} ) :</h2>
 							</a>
 							<pre>
-     {
-       "progressMatrix": [
-         {
-           "pipeline": {
-             "execution_index": "15",
-             "id": "71938e5a-536f-482f-8bef-edae81801fb9",
-             "created_at": "2020-08-16T22:34:58.224Z",
-             "exec_state": "pending"
-           }
-         },
-         {
-           "pipeline": {
-             "execution_index": "16",
-             "id": "952de923-293b-4829-add4-056c4f95940a",
-             "created_at": "2020-08-16T22:34:58.273Z",
-             "exec_state": "pending"
-           }
-         },
-         {
-           "pipeline": {
-             "execution_index": "17",
-             "id": "c3ea1b05-1273-42ce-a04f-7e9fa8aa4d93",
-             "created_at": "2020-08-16T22:34:58.282Z",
-             "exec_state": "pending"
-           }
-         },
-         {
-           "pipeline": {
-             "execution_index": "18",
-             "id": "a42e7542-fded-4163-9e0a-a5839370ede6",
-             "created_at": "2020-08-16T22:34:58.302Z",
-             "exec_state": "pending"
-           }
-         },
-         {
-           "pipeline": {
-             "execution_index": "19",
-             "id": "46b17f2b-3b3f-4c9f-a6b3-5e608c113bab",
-             "created_at": "2020-08-16T22:34:58.305Z",
-             "exec_state": "pending"
-           }
-         }
-       ]
-     }
                 </div>
-                <p></pre></p>
+                <p>   [
+       &quot;gravitee-policy-apikey&quot;,
+       &quot;gravitee-policy-ratelimit&quot;,
+       &quot;gravitee-policy-request-content-limit&quot;,
+       &quot;gravitee-policy-dynamic-routing&quot;,
+       &quot;gravitee-policy-jwt&quot;,
+       &quot;gravitee-policy-callout-http&quot;,
+       &quot;gravitee-fetcher-github&quot;
+   ]</p>
+<p></pre></p>
 						</div>
 				</section>
 			</section>
@@ -266,12 +232,35 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/987f96f/src/modules/circleci/CircleCiOrchestrator.ts#L455">modules/circleci/CircleCiOrchestrator.ts:455</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L437">modules/circleci/CircleCiOrchestrator.ts:437</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Initializes the {@see cliProgress.MultiBar} <a href="https://www.npmjs.com/package/cli-progress">https://www.npmjs.com/package/cli-progress</a> component, from the {@see this.progressMatrix}</p>
+									<p>Initializes the {@see cliProgress.MultiBar} <a href="https://www.npmjs.com/package/cli-progress">https://www.npmjs.com/package/cli-progress</a> component, from
+									the {@see this.progressMatrix}</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="stop" class="tsd-anchor"></a>
+					<h3>stop</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">stop<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/b246166/src/modules/circleci/CircleCiOrchestrator.ts#L461">modules/circleci/CircleCiOrchestrator.ts:461</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Releases TTY to let the stdout proceed</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -323,10 +312,13 @@
 								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#multibar" class="tsd-kind-icon">multibar</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
+								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#parallelexecutionsset" class="tsd-kind-icon">parallel<wbr>Executions<wbr>Set</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#init" class="tsd-kind-icon">init</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#stop" class="tsd-kind-icon">stop</a>
 							</li>
 						</ul>
 					</li>
