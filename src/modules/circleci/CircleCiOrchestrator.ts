@@ -437,7 +437,8 @@ export class ParallelExectionSetProgressBar {
    *
    **/
   private progressMatrix: any[];
-  constructor(progressMatrix: any[]){
+
+  constructor(progressMatrix: any[]) {
     this.init();
     if (progressMatrix === undefined) {
       throw new Error("[{ParallelExectionSetProgressBar}] - progressMatrix is empty or undefined, so can't work on any status to report.")
@@ -447,6 +448,10 @@ export class ParallelExectionSetProgressBar {
     }
     this.progressMatrix = progressMatrix;
   }
+
+  /**
+   * Initializes the {@see cliProgress.MultiBar} https://www.npmjs.com/package/cli-progress component, from the {@see this.progressMatrix}
+   **/
   init (): void {
     ///
     // create new MultiBar container
