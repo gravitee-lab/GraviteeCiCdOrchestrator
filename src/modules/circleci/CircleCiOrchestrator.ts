@@ -125,11 +125,16 @@ export class CircleCiOrchestrator {
      *
      **/
     private progressMatrix: any[];
-
     private retries: number;
-
     private circleci_client: CircleCIClient;
     private secrets: any;
+
+    /**
+     *
+     * This property is set to a new Instance of {@see ParallelExectionSetProgressBar} every time a new Parallel Executions Set is processed, using {@see CircleCiOrchestrator#processExecutionSet()}
+     *
+     **/
+    private progressBar: ParallelExectionSetProgressBar;
 
     constructor(execution_plan: string [][], retries: number) {
         this.execution_plan = execution_plan;
@@ -137,7 +142,7 @@ export class CircleCiOrchestrator {
         this.loadCircleCISecrets();
         this.circleci_client = new CircleCIClient(this.secrets);
         this.progressMatrix = [];
-
+        this.progressBar = null; // has to be null, will be ins
     }
 
     loadCircleCISecrets () : void {
@@ -159,6 +164,8 @@ export class CircleCiOrchestrator {
       console.info("[{CircleCiOrchestrator}] - started processing execution plan, and will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
+        this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
+
         if (parallelExecutionsSet.length == 0) {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${index}`+"] because it is empty");
         } else {
@@ -167,7 +174,7 @@ export class CircleCiOrchestrator {
         }
 
       });
-
+      this.progressBar.stop();
     }
 
     /**
