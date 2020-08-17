@@ -15,66 +15,56 @@ export class CircleCiOrchestrator {
      **/
     private execution_plan: string [][];
     /**
-     *
+     * Example Progress Matrix :
      * -----
      * <pre>
-     * {
-     *   "progressMatrix": [
-     *     {
-     *       "pipeline": {
-     *         "execution_index": "14",
-     *         "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
-     *         "created_at": "2020-08-16T21:33:43.830Z",
-     *         "exec_state": "2020-08-16T21:33:43.830Z",
-     *       }
-     *     },
-     *     {
-     *       "pipeline": {
-     *         "execution_index": "14",
-     *         "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
-     *         "created_at": "2020-08-16T21:33:43.830Z",
-     *         "exec_state": "2020-08-16T21:33:43.830Z",
-     *       }
-     *     }
-     *   ]
-     * }
+     *      {
+     *        "progressMatrix": [
+     *          {
+     *            "pipeline": {
+     *              "execution_index": "15",
+     *              "id": "71938e5a-536f-482f-8bef-edae81801fb9",
+     *              "created_at": "2020-08-16T22:34:58.224Z",
+     *              "exec_state": "pending"
+     *            }
+     *          },
+     *          {
+     *            "pipeline": {
+     *              "execution_index": "16",
+     *              "id": "952de923-293b-4829-add4-056c4f95940a",
+     *              "created_at": "2020-08-16T22:34:58.273Z",
+     *              "exec_state": "pending"
+     *            }
+     *          },
+     *          {
+     *            "pipeline": {
+     *              "execution_index": "17",
+     *              "id": "c3ea1b05-1273-42ce-a04f-7e9fa8aa4d93",
+     *              "created_at": "2020-08-16T22:34:58.282Z",
+     *              "exec_state": "pending"
+     *            }
+     *          },
+     *          {
+     *            "pipeline": {
+     *              "execution_index": "18",
+     *              "id": "a42e7542-fded-4163-9e0a-a5839370ede6",
+     *              "created_at": "2020-08-16T22:34:58.302Z",
+     *              "exec_state": "pending"
+     *            }
+     *          },
+     *          {
+     *            "pipeline": {
+     *              "execution_index": "19",
+     *              "id": "46b17f2b-3b3f-4c9f-a6b3-5e608c113bab",
+     *              "created_at": "2020-08-16T22:34:58.305Z",
+     *              "exec_state": "pending"
+     *            }
+     *          }
+     *        ]
+     *      }
      *
      * </pre>
-     * -----
-     *  Note how to retrieve "everything about a pipeline", from its <strong>Circle CI</strong> Pipeline ID :
-     * -----
-     * <pre>
-     * ~/gravitee-orchestra$ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 6622dda825a8305bd927e6f77b71b4ad2df87e2f' https://circleci.com/api/v2/pipeline/f71bb92d-534f-485d-9dae-af32df1b340d | jq
-     * % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-     *                                  Dload  Upload   Total   Spent    Left  Speed
-     * 100   663  100   663    0     0   1735      0 --:--:-- --:--:-- --:--:--  1731
-     * {
-     *   "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
-     *   "errors": [],
-     *   "project_slug": "gh/gravitee-lab/testrepo1",
-     *   "updated_at": "2020-08-16T21:33:43.830Z",
-     *   "number": 14,
-     *   "state": "created",
-     *   "created_at": "2020-08-16T21:33:43.830Z",
-     *   "trigger": {
-     *     "received_at": "2020-08-16T21:33:43.799Z",
-     *     "type": "api",
-     *     "actor": {
-     *       "login": "Jean-Baptiste-Lasselle",
-     *       "avatar_url": "https://avatars2.githubusercontent.com/u/35227860?v=4"
-     *     }
-     *   },
-     *   "vcs": {
-     *     "origin_repository_url": "https://github.com/gravitee-lab/testrepo1",
-     *     "target_repository_url": "https://github.com/gravitee-lab/testrepo1",
-     *     "revision": "b9940405385ab81ad7bb44880ed71f0c23e55c17",
-     *     "provider_name": "GitHub",
-     *     "branch": "dependabot/npm_and_yarn/handlebars-4.5.3"
-     *   }
-     * }
      *
-     * </pre>
-     * -----
      **/
     private progressMatrix: any[];
 
@@ -392,13 +382,80 @@ export class CircleCIClient {
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class ParallelExectionSetProgressBar {
-  /// ccc;
 
-  constructor(){
-
+  private multibar: cliProgress.MultiBar;
+  /**
+   * Example Progress Matrix :
+   * -----
+   * <pre>
+   *      {
+   *        "progressMatrix": [
+   *          {
+   *            "pipeline": {
+   *              "execution_index": "15",
+   *              "id": "71938e5a-536f-482f-8bef-edae81801fb9",
+   *              "created_at": "2020-08-16T22:34:58.224Z",
+   *              "exec_state": "pending"
+   *            }
+   *          },
+   *          {
+   *            "pipeline": {
+   *              "execution_index": "16",
+   *              "id": "952de923-293b-4829-add4-056c4f95940a",
+   *              "created_at": "2020-08-16T22:34:58.273Z",
+   *              "exec_state": "pending"
+   *            }
+   *          },
+   *          {
+   *            "pipeline": {
+   *              "execution_index": "17",
+   *              "id": "c3ea1b05-1273-42ce-a04f-7e9fa8aa4d93",
+   *              "created_at": "2020-08-16T22:34:58.282Z",
+   *              "exec_state": "pending"
+   *            }
+   *          },
+   *          {
+   *            "pipeline": {
+   *              "execution_index": "18",
+   *              "id": "a42e7542-fded-4163-9e0a-a5839370ede6",
+   *              "created_at": "2020-08-16T22:34:58.302Z",
+   *              "exec_state": "pending"
+   *            }
+   *          },
+   *          {
+   *            "pipeline": {
+   *              "execution_index": "19",
+   *              "id": "46b17f2b-3b3f-4c9f-a6b3-5e608c113bab",
+   *              "created_at": "2020-08-16T22:34:58.305Z",
+   *              "exec_state": "pending"
+   *            }
+   *          }
+   *        ]
+   *      }
+   *
+   * </pre>
+   *
+   **/
+  private progressMatrix: any[];
+  constructor(progressMatrix: any[]){
+    this.init();
+    if (progressMatrix === undefined) {
+      throw new Error("[{ParallelExectionSetProgressBar}] - progressMatrix is empty or undefined, so can't work on any status to report.")
+    }
+    if (progressMatrix.length == 0) {
+      console.warn("[{ParallelExectionSetProgressBar}] - progressMatrix is empty, so can't work on any status to report.")
+    }
+    this.progressMatrix = progressMatrix;
   }
   init (): void {
     ///
+    // create new MultiBar container
+    this.multibar = new cliProgress.MultiBar({
+        clearOnComplete: false,
+        hideCursor: true
+    }, cliProgress.Presets.shades_grey);
+
+
   }
 
 }
