@@ -9,7 +9,8 @@
     "start": "node ./dist/index.js",
     "doc": "./node_modules/typedoc/bin/typedoc --out docs/ ./src ",
     "compile": "tsc --outDir dist/ ./**/*.ts",
-    "build": "npm run compile && npm run test && npm run doc"
+    "build": "npm run compile && npm run test && npm run doc && npm run oci",
+    "oci": "docker version && docker ps -a && docker images"
   },
   "repository": {
     "type": "git",

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as cliProgress from 'cli-progress';
+import * as Collections from 'typescript-collections';
 
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
@@ -442,7 +443,7 @@ export class CircleCIClient {
  * @comment Zero Circle CI API calls here, this just a progress bar, and it does nothing, unless someone tells him to do something (change singleBar progress status, etc...). Also, the progress Bar does not rmember any state, it just allows update the progress State of one component see {@see ParallelExectionSetProgressBar#updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus)}
  **/
 export class ParallelExectionSetProgressBar {
-  private bars: Map<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
+  private bars: Collections.Dictionary<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
   private multibar: cliProgress.MultiBar;
   /**
    * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
@@ -467,7 +468,6 @@ export class ParallelExectionSetProgressBar {
   private parallelExecutionsSet: string[] /// or progressMatrix ? that is the question. I think I'll instantiate a new ParallelExectionSetProgressBar() instance for every non-empty (array of lentgh zero) entry in the progressMatrix
 
   constructor(parallelExecutionsSet: string[]) {
-    this.init();
     this.parallelExecutionsSet = parallelExecutionsSet;
     if (parallelExecutionsSet === undefined) {
       throw new Error("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is undefined, so can't work on any status to report.")
@@ -475,14 +475,15 @@ export class ParallelExectionSetProgressBar {
     if (parallelExecutionsSet.length == 0) {
       console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.")
     }
-
+    this.initMultiBar();
   }
 
   /**
-   * Initializes the {@see cliProgress.MultiBar} https://www.npmjs.com/package/cli-progress component, from
-   * the {@see this.progressMatrix}
+   * Initializes the {@see cliProgress.MultiBar} <strong>this.multibar</strong> and the {@see Collections.Dictionnary<string, cliProgress.SingleBar>}  <strong>this.bars</strong> https://www.npmjs.com/package/cli-progress component, from
+   * the {@see this.parallelExecutionsSet} Parallel Executions Set
    **/
-  init (): void {
+  initMultiBar (): void {
+    this.bars = new Collections.Dictionary<string, cliProgress.SingleBar>();
     ///
     // create new MultiBar container
     this.multibar = new cliProgress.MultiBar({
@@ -495,10 +496,11 @@ export class ParallelExectionSetProgressBar {
     this.parallelExecutionsSet.forEach((componentName, index) => {
       // add bars
       let singleBar = this.multibar.create(100, 0);
+      this.bars.setValue(componentName, singleBar);
 
       // control bars
       singleBar.increment();
-      singleBar.update(20, {filename: "helloworld.txt"});
+
 
       // stop all bars
 
@@ -506,7 +508,8 @@ export class ParallelExectionSetProgressBar {
 
   }
   updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus) {
-
+    let singleBar = this.bars.getValue(componentName);
+    singleBar.update(newStatus, {filename: `${componentName}`});
   }
 
   /**
@@ -549,15 +552,16 @@ export enum ParallelExectionSetProgressStatus {
    **/
   UNTRIGGERED = 25,
   /**
-   * Pipeline execution was triggered and is running
+   * Pipeline execution was triggered and is running.
    **/
   PENDING = 50,
   /**
-   * Pipeline  execution completed with <strong>erros</strong>
+   * <p>Pipeline  execution completed with <strong>erros</strong></p>
+   * <p>Because fifty-one is far from being one hundred percent, just like completing execution with errors is far from completing successfully (without errors)</p>
    **/
-  ERRORED = 100,
+  ERRORED = 51,
   /**
-   * Pipeline execution succcessfully completed, with no <strong>errors</strong>
+   * Pipeline execution succcessfully completed, with no <strong>errors</strong>.
    **/
   CREATED = 100
 }
