@@ -143,12 +143,13 @@ export class CircleCiOrchestrator {
     private progressBar: ParallelExectionSetProgressBar;
 
     constructor(execution_plan: string [][], retries: number) {
-        this.execution_plan = execution_plan;
-        this.retries = retries;
-        this.loadCircleCISecrets();
-        this.circleci_client = new CircleCIClient(this.secrets);
-        this.progressMatrix = [];
-        this.progressBar = null; // has to be null, will be ins
+      this.execution_plan = execution_plan;
+      this.retries = retries;
+      this.loadCircleCISecrets();
+      this.circleci_client = new CircleCIClient(this.secrets);
+      this.progressMatrix = [];
+      this.progressBar = null; // has to be null, will be set to a new instance of {@see ParallelExectionSetProgressBar} every time we process a new Parallel Execution Set
+      this.componentBeingProcessed = null;
     }
 
     loadCircleCISecrets () : void {
@@ -221,9 +222,7 @@ export class CircleCiOrchestrator {
       console.info('')
       console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
     }
-    handleGetPipelineGhRepoCircleCIResponseData (data: any) : void {
-      /// TODO ?
-    }
+
     processExecutionSet (parallelExecutionsSet: string[]) : void {
       this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
 
@@ -242,11 +241,17 @@ export class CircleCiOrchestrator {
         });
 
       });
-
-
       this.progressBar.stop();
     }
 
+    /**
+     * Monitors the progress of each pipeline execution in a Parallel Executions Set (an entry in the {@see CircleCiOrchestrator#execution_plan})
+     * @comment Synchronous
+     *
+     **/
+    monitorProgress (parallelExecutionsSet: string[]) : void {
+
+    }
     giveup()  : void {
       console.log("[{CircleCiOrchestrator}] - giveup() method is not implemented yet.");
     }

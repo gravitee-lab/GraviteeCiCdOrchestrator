@@ -153,6 +153,12 @@ export class ReleaseManifestFilter {
         let parallelExecutionSetIndex = this.getParallelExecutionSetIndex(component);
         this.executionPlan[parallelExecutionSetIndex].push(component);
       });
+      console.info("");
+      console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
+      console.info(" ---");
+      console.info(JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " "));
+      console.info(" ---");
+      console.info("");
       return this.executionPlan
     }
 
