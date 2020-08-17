@@ -182,6 +182,38 @@ export class CircleCiOrchestrator {
 
     }
 
+
+
+    processExecutionSet (parallelExecutionsSet: string[]) : void {
+      console.info("");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'built_execution_plan_is' below : ");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info(" ---");
+      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet}, null, " "));
+      console.info(" ---");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("");
+      this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
+
+      let whoamiSubscription = this.circleci_client.whoami().subscribe({
+        next: data => console.log( '[data] => ', data ),
+        complete: data => console.log( '[complete]' )
+      });
+      parallelExecutionsSet.forEach((componentName, index) => {
+        /// pipeline execution parameters, same as Jenkins build parameters
+        let pipelineParameters = { parameters: {}};
+        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
+            next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+            complete: data => {
+              console.log( '[triggering Circle CI Build completed! :)]')
+            }
+        });
+
+      });
+      this.monitorProgress(parallelExecutionsSet);
+      this.progressBar.stop();
+    }
     /**
      * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
      * Every time this method is invoked, it adds an entry  in the {@see this.progressMatrix}, from the <pre>data</pre> returned by the <strong>Circle CI</strong> API call
@@ -223,33 +255,36 @@ export class CircleCiOrchestrator {
       console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
     }
 
-    processExecutionSet (parallelExecutionsSet: string[]) : void {
-      this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
-
-      let whoamiSubscription = this.circleci_client.whoami().subscribe({
-        next: data => console.log( '[data] => ', data ),
-        complete: data => console.log( '[complete]' )
-      });
-      parallelExecutionsSet.forEach((componentName, index) => {
-        /// pipeline execution parameters, same as Jenkins build parameters
-        let pipelineParameters = { parameters: {}};
-        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
-            next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
-            complete: data => {
-              console.log( '[triggering Circle CI Build completed! :)]')
-            }
-        });
-
-      });
-      this.progressBar.stop();
-    }
-
     /**
      * Monitors the progress of each pipeline execution in a Parallel Executions Set (an entry in the {@see CircleCiOrchestrator#execution_plan})
      * @comment Synchronous
      *
      **/
     monitorProgress (parallelExecutionsSet: string[]) : void {
+      console.info("");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - Monitoring Parallel Executions Set : the set under monitoring is the value of the 'built_execution_plan_is' below : ");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info(" ---");
+      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet}, null, " "));
+      console.info(" ---");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("");
+      /// Ok, so now I will  need to poll all builds until TIMEOUT
+
+      this.progressMatrix.forEach((pipelineExecution, index) => {
+        // 1. I retrieve the pipeline info usign the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
+
+        let getPipelineInfoSubscription = this.circleci_client.getPipelineInfo(pipelineExecution.pipeline.id).subscribe({
+            next: this.handleGetPipelineInfoCircleCIResponseData.bind(this),
+            complete: data => {
+              console.log( '[triggering Circle CI Build completed! :)]')
+            }
+        });
+      })
+    }
+
+    handleGetPipelineInfoCircleCIResponseData (circleCiJsonResponse: any) {
 
     }
     giveup()  : void {
@@ -369,6 +404,28 @@ export class CircleCIClient {
      * Retrieves the Github Repo URI from the PipelineID
      **/
     getPipelineGhRepo(circleCiPipelineID: string): any {
+      let observableRequest = Observable.create( ( observer ) => {
+          let config = {
+            headers: {
+              "Circle-Token": this.secrets.circleci.auth.token,
+              "Accept": "application/json"
+            }
+          };
+          axios.get( 'https://circleci.com/api/v2/pipeline/' + `${circleCiPipelineID}`, config )
+          .then( ( response ) => {
+              observer.next( response.data );
+              observer.complete();
+          } )
+          .catch( ( error ) => {
+              observer.error( error );
+          } );
+      } );
+
+      return observableRequest;
+      // throw new Error("Not impemented yet");
+      /// return observableRequest;
+    }
+    getPipelineInfo(circleCiPipelineID: string): any {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
             headers: {
