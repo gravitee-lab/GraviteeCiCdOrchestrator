@@ -359,35 +359,35 @@ export class CircleCIClient {
  *
  * <ul>
  * <li>
- * <pre>pending</pre> (pipeline was triggered and pipeline execution is running)
+ * <pre>pending</pre> (pipeline was triggered and pipeline  execution is  <strong>running</strong>)
  * </li>
  * <li>
- * <pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+ * <pre>errored</pre> (pipeline execution  <strong>completed with errors</strong>)
  * </li>
  * <li>
- * <pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+ * <pre>created</pre> (pipeline execution  <strong>succcessfully completed</strong>, with no <strong>errors</strong> )
  * </li>
  * </ul>
  *
  * Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
- * So I added a fourth one, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
+ * So I added a fourth one, <strong>untriggered</strong> , in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
  *
  * <ul>
  * <li>
- * <pre>untriggered</pre> (pipeline execution was not triggered and is running)
+ * <pre>untriggered</pre> (pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the Circle CI API v2)
  * </li>
  * <li>
- * <pre>pending</pre> (pipeline execution was triggered and is running)
+ * <pre>pending</pre> (pipeline was triggered and pipeline  execution is  <strong>running</strong>)
  * </li>
  * <li>
- * <pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+ * <pre>errored</pre> (pipeline execution  <strong>completed with errors</strong>)
  * </li>
  * <li>
- * <pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+ * <pre>created</pre> (pipeline execution  <strong>succcessfully completed</strong>, with no <strong>errors</strong> )
  * </li>
  * </ul>
  *
- * Also see <pre>barGlue</pre>, to have custom text displayed with status'
+ * Also [see **barGlue** option](https://www.npmjs.com/package/cli-progress#options-1), to have custom text displayed with status'
  *
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
@@ -406,34 +406,43 @@ export class ParallelExectionSetProgressBar {
 /**
  *
  * The {@see ParallelExectionSetProgressStatus} enumerates all possible Execution Status' of a pipeline Execution
- *
+ * <p>
  * Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
- * So I added a fourth one, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
- *
+ * So I added a fourth one, <strong>untriggered</strong>, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
+ * </p>
  * <ul>
  * <li>
- * <pre>untriggered</pre> (pipeline execution was not triggered and is running)
+ * <pre>untriggered</pre> (pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the Circle CI API v2)
  * </li>
  * <li>
  * <pre>pending</pre> (pipeline execution was triggered and is running)
  * </li>
  * <li>
- * <pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+ * <pre>errored</pre> (pipeline execution completed with <strong>erros</strong>)
  * </li>
  * <li>
- * <pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+ * <pre>created</pre> (pipeline execution succcessfully completed, with no <strong>errors</strong>)
  * </li>
  * </ul>
- *
- * Also see <pre>barGlue</pre>, to have custom text displayed with status'
- *
  *
  * @comment see {@see ParallelExectionSetProgressBar}
  * @comment Note this might be truned into an internal type (like java inner classes/interfaces) for the {@see ParallelExectionSetProgressBar}
  **/
 export enum ParallelExectionSetProgressStatus {
-  UNTRIGGERED = 1,
+  /**
+   * Pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the <strong>Circle CI API v2</strong>
+   **/
+  UNTRIGGERED,
+  /**
+   * Pipeline execution was triggered and is running
+   **/
   PENDING,
+  /**
+   * Pipeline  execution completed with <strong>erros</strong>
+   **/
   ERRORED,
+  /**
+   * Pipeline execution succcessfully completed, with no <strong>errors</strong>
+   **/
   CREATED
 }

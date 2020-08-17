@@ -73,24 +73,25 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>The {@see ParallelExectionSetProgressStatus} enumerates all possible Execution Status&#39; of a pipeline Execution</p>
+						<p>
+							Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
+							So I added a fourth one, <strong>untriggered</strong>, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
+						</p>
+						<ul>
+							<li>
+								<pre>untriggered</pre> (pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the Circle CI API v2)
+							</li>
+							<li>
+								<pre>pending</pre> (pipeline execution was triggered and is running)
+							</li>
+							<li>
+								<pre>errored</pre> (pipeline execution completed with <strong>erros</strong>)
+							</li>
+							<li>
+								<pre>created</pre> (pipeline execution succcessfully completed, with no <strong>errors</strong>)
+							</li>
+						</ul>
 					</div>
-					<p>Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
-					So I added a fourth one, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :</p>
-					<ul>
-						<li>
-							<pre>untriggered</pre> (pipeline execution was not triggered and is running)
-						</li>
-						<li>
-							<pre>pending</pre> (pipeline execution was triggered and is running)
-						</li>
-						<li>
-							<pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
-						</li>
-						<li>
-							<pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
-						</li>
-					</ul>
-					<p>Also see <pre>barGlue</pre>, to have custom text displayed with status&#39;</p>
 					<dl class="tsd-comment-tags">
 						<dt>comment</dt>
 						<dd><p>see {@see ParallelExectionSetProgressBar}</p>
@@ -125,9 +126,14 @@
 					<div class="tsd-signature tsd-kind-icon">CREATED<span class="tsd-signature-symbol">:</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/bb54b52/src/modules/circleci/CircleCiOrchestrator.ts#L438">modules/circleci/CircleCiOrchestrator.ts:438</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/2c96341/src/modules/circleci/CircleCiOrchestrator.ts#L447">modules/circleci/CircleCiOrchestrator.ts:447</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Pipeline execution succcessfully completed, with no <strong>errors</strong></p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
 					<a name="errored" class="tsd-anchor"></a>
@@ -135,9 +141,14 @@
 					<div class="tsd-signature tsd-kind-icon">ERRORED<span class="tsd-signature-symbol">:</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/bb54b52/src/modules/circleci/CircleCiOrchestrator.ts#L437">modules/circleci/CircleCiOrchestrator.ts:437</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/2c96341/src/modules/circleci/CircleCiOrchestrator.ts#L443">modules/circleci/CircleCiOrchestrator.ts:443</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Pipeline  execution completed with <strong>erros</strong></p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
 					<a name="pending" class="tsd-anchor"></a>
@@ -145,19 +156,29 @@
 					<div class="tsd-signature tsd-kind-icon">PENDING<span class="tsd-signature-symbol">:</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/bb54b52/src/modules/circleci/CircleCiOrchestrator.ts#L436">modules/circleci/CircleCiOrchestrator.ts:436</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/2c96341/src/modules/circleci/CircleCiOrchestrator.ts#L439">modules/circleci/CircleCiOrchestrator.ts:439</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Pipeline execution was triggered and is running</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
 					<a name="untriggered" class="tsd-anchor"></a>
 					<h3>UNTRIGGERED</h3>
-					<div class="tsd-signature tsd-kind-icon">UNTRIGGERED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = 1</span></div>
+					<div class="tsd-signature tsd-kind-icon">UNTRIGGERED<span class="tsd-signature-symbol">:</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/bb54b52/src/modules/circleci/CircleCiOrchestrator.ts#L435">modules/circleci/CircleCiOrchestrator.ts:435</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/2c96341/src/modules/circleci/CircleCiOrchestrator.ts#L435">modules/circleci/CircleCiOrchestrator.ts:435</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the <strong>Circle CI API v2</strong></p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>

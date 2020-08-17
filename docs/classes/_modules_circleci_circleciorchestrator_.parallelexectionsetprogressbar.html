@@ -85,32 +85,32 @@
 					<p>Each Progress Bar, notifies the progress status of one Pipeline Execution. As of Circle CI API v2, there are 3 possible states for a pipeline execution :</p>
 					<ul>
 						<li>
-							<pre>pending</pre> (pipeline was triggered and pipeline execution is running)
+							<pre>pending</pre> (pipeline was triggered and pipeline  execution is  <strong>running</strong>)
 						</li>
 						<li>
-							<pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+							<pre>errored</pre> (pipeline execution  <strong>completed with errors</strong>)
 						</li>
 						<li>
-							<pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+							<pre>created</pre> (pipeline execution  <strong>succcessfully completed</strong>, with no <strong>errors</strong> )
 						</li>
 					</ul>
 					<p>Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
-					So I added a fourth one, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :</p>
+					So I added a fourth one, <strong>untriggered</strong> , in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :</p>
 					<ul>
 						<li>
-							<pre>untriggered</pre> (pipeline execution was not triggered and is running)
+							<pre>untriggered</pre> (pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the Circle CI API v2)
 						</li>
 						<li>
-							<pre>pending</pre> (pipeline execution was triggered and is running)
+							<pre>pending</pre> (pipeline was triggered and pipeline  execution is  <strong>running</strong>)
 						</li>
 						<li>
-							<pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+							<pre>errored</pre> (pipeline execution  <strong>completed with errors</strong>)
 						</li>
 						<li>
-							<pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+							<pre>created</pre> (pipeline execution  <strong>succcessfully completed</strong>, with no <strong>errors</strong> )
 						</li>
 					</ul>
-					<p>Also see <pre>barGlue</pre>, to have custom text displayed with status&#39;</p>
+					<p>Also <a href="https://www.npmjs.com/package/cli-progress#options-1">see <strong>barGlue</strong> option</a>, to have custom text displayed with status&#39;</p>
 					<dl class="tsd-comment-tags">
 						<dt>comment</dt>
 						<dd><p>All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9">https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9</a></p>
@@ -157,7 +157,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/bb54b52/src/modules/circleci/CircleCiOrchestrator.ts#L394">modules/circleci/CircleCiOrchestrator.ts:394</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/2c96341/src/modules/circleci/CircleCiOrchestrator.ts#L394">modules/circleci/CircleCiOrchestrator.ts:394</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></h4>
@@ -177,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/bb54b52/src/modules/circleci/CircleCiOrchestrator.ts#L400">modules/circleci/CircleCiOrchestrator.ts:400</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/2c96341/src/modules/circleci/CircleCiOrchestrator.ts#L400">modules/circleci/CircleCiOrchestrator.ts:400</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
