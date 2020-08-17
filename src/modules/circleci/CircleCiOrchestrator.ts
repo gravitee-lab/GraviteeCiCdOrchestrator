@@ -345,12 +345,45 @@ export class CircleCIClient {
 
 /**
  * {@see ParallelExectionSetProgressBar} :
+ *
  * <ul>
  * <li>
  * Displays a multi progress bar for a Parallel Execution Set
  * </li>
  * <li>
  * based on https://www.npmjs.com/package/cli-progress#multi-bar-mode
+ * </li>
+ * </ul>
+ *
+ * Each Progress Bar, notifies the progress status of one Pipeline Execution. As of Circle CI API v2, there are 3 possible states for a pipeline execution :
+ *
+ * <ul>
+ * <li>
+ * <pre>pending</pre> (pipeline was triggered and pipeline execution is running)
+ * </li>
+ * <li>
+ * <pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+ * </li>
+ * <li>
+ * <pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+ * </li>
+ * </ul>
+ *
+ * Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
+ * So I added a fourth one, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
+ *
+ * <ul>
+ * <li>
+ * <pre>untriggered</pre> (pipeline execution was not triggered and is running)
+ * </li>
+ * <li>
+ * <pre>pending</pre> (pipeline execution was triggered and is running)
+ * </li>
+ * <li>
+ * <pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+ * </li>
+ * <li>
+ * <pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
  * </li>
  * </ul>
  *
