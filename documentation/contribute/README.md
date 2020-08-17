@@ -1,6 +1,10 @@
 # Contribute guide
 
-
+* Use the git flow, with default configuration for all parameters.
+* Mention in every commit message the issue(s) this commit is about. E.g. use the `"feat(awesome_feature) : doing this, as of #456"` syntax, to mention issue number `456`.
+* Try and always reference just one issue, in a commit message (unless it is about a small side task, like documentation).
+* conventional commits
+* Below helper scripts to help you quickly set your dev(ops) IDE environment based on the git flow
 
 # IAAC cycle (git flowed, default config)
 
