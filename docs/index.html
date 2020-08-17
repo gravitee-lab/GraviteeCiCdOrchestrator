@@ -80,6 +80,8 @@
 					<li><a href="https://github.com/motdotla/dotenv"><code>.DOTENV</code></a>, to manage its confguration file <code>.env</code>, as a twelve factor app.</li>
 					<li>The <a href="https://www.npmjs.com/package/circleci#startbuild">Circle CI client</a>, to hit Circle CI REST API, trigger builds, and inspect them.</li>
 					<li><code>typedoc</code></li>
+					<li><code>RxJS</code> to process asynchronous Circle CI API calls</li>
+					<li><a href="https://www.npmjs.com/package/cli-progress#multi-bar-mode">CLI Progess</a>, to display a &quot;multi progess bar&quot;, in the std output, and inform of execution progress for each dependency in a parallel execution set.</li>
 				</ul>
 				<a href="#buld-test-n-run" id="buld-test-n-run" style="color: inherit; text-decoration: none;">
 					<h1>Buld, test n run</h1>
@@ -241,7 +243,7 @@ npm install typedoc --save-dev
 <span class="hljs-comment"># npm install circleci --save</span>
 npm install rxjs rxjs-compat --save
 npm install axios @types/axios --save
-
+npm install cli-progress @types/cli-progress --save
 
 
 </code></pre>

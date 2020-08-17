@@ -7,7 +7,7 @@
     "test": "echo 'no tests yet'",
     "dev": "npm run build && ./node_modules/ts-node/dist/bin.js ./src/index.ts",
     "start": "node ./dist/index.js",
-    "doc": "./node_modules/typedoc/bin/typedoc --out docs/src/ ./src ",
+    "doc": "./node_modules/typedoc/bin/typedoc --out docs/ ./src ",
     "compile": "tsc --outDir dist/ ./**/*.ts",
     "build": "npm run compile && npm run test && npm run doc"
   },

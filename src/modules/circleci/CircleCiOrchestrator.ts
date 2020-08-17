@@ -317,6 +317,9 @@ export class CircleCIClient {
 
       return observableRequest;
     }
+    /**
+     * Hits the Circle CI API and return an {@see ObservableStream<any>} emitting the Circle CI JSON answer for the https://circleci.com/api/v2/me Endpoint
+     **/
     whoami(): any {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
@@ -337,4 +340,14 @@ export class CircleCIClient {
 
       return observableRequest;
     }
+}
+
+/**
+ * Displays a multi progress bar for a Parallel Execution Set
+ * based on []
+ *
+ * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
+ **/
+export class ParallelExectionSetProgressBar {
+
 }
