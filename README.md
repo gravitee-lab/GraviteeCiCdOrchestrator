@@ -13,6 +13,7 @@ The **Gravitee Release Orchestrator** makes use of the following technologies :
 * [`.DOTENV`](https://github.com/motdotla/dotenv), to manage its confguration file `.env`, as a twelve factor app.
 * The [Circle CI client](https://www.npmjs.com/package/circleci#startbuild), to hit Circle CI REST API, trigger builds, and inspect them.
 * `typedoc`
+* `RxJS` to process asynchronous Circle CI API calls
 
 
 # Buld, test n run

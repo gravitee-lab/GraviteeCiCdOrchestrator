@@ -87,7 +87,7 @@
 				<p>The <strong>Gravitee Release Orchestrator</strong> makes use of secrets : the Circle CI <code>username</code> and <code>token</code>.</p>
 				<p>The <strong>Gravitee Release Orchestrator</strong>  will load those secrets from a local json file, which path is <code>.secrets.json</code>.</p>
 				<p>You can set the <code>SECRETS_FILE_PATH``env. variable n the </code>.env` file, to set the secret file path to another location.</p>
-				<p>The <strong>Gravitee Release Orchestrator</strong>  secrets file, must have the following structure (soon, a JSon Schema)</p>
+				<p>The <strong>Gravitee Release Orchestrator</strong>  secrets file, must have the following structure (soon, a JSon Schema) :</p>
 				<pre><code class="language-JSon">{
   <span class="hljs-attr">&quot;circleci&quot;</span>: {
     <span class="hljs-attr">&quot;auth&quot;</span>: {
@@ -97,7 +97,8 @@
   }
 }</code></pre>
 				<ul>
-					<li>run :</li>
+					<li>create the <code>.secrests.json</code> file, add your Gravitee Bot&#39;s username and token,</li>
+					<li>set the confguration values in the <code>.env</code>, and run :</li>
 				</ul>
 				<pre><code class="language-bash">npm start</code></pre>
 				<ul>
