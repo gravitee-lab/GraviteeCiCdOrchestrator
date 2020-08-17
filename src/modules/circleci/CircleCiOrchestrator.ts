@@ -397,5 +397,43 @@ export class ParallelExectionSetProgressBar {
   constructor(){
 
   }
+  init (): void {
+    ///
+  }
 
+}
+
+/**
+ *
+ * The {@see ParallelExectionSetProgressStatus} enumerates all possible Execution Status' of a pipeline Execution
+ *
+ * Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
+ * So I added a fourth one, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
+ *
+ * <ul>
+ * <li>
+ * <pre>untriggered</pre> (pipeline execution was not triggered and is running)
+ * </li>
+ * <li>
+ * <pre>pending</pre> (pipeline execution was triggered and is running)
+ * </li>
+ * <li>
+ * <pre>errored</pre> (pipeline execution completed witjh <pre>erros</pre>)
+ * </li>
+ * <li>
+ * <pre>created</pre> (pipeline execution succcessfully completed, with no <pre>erros</pre>)
+ * </li>
+ * </ul>
+ *
+ * Also see <pre>barGlue</pre>, to have custom text displayed with status'
+ *
+ *
+ * @comment see {@see ParallelExectionSetProgressBar}
+ * @comment Note this might be truned into an internal type (like java inner classes/interfaces) for the {@see ParallelExectionSetProgressBar}
+ **/
+export enum ParallelExectionSetProgressStatus {
+  UNTRIGGERED = 1,
+  PENDING,
+  ERRORED,
+  CREATED
 }
