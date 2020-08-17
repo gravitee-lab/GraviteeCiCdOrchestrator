@@ -14,6 +14,12 @@ import * as Collections from 'typescript-collections';
  **/
 export class CircleCiOrchestrator {
     /**
+     *
+     * Used to iterate over components, one after the other, while they are being processed according the {@see CircleCiOrchestrator#execution_plan}
+     *
+     **/
+    private componentBeingProcessed: string;
+    /**
     * <p>
     * The Execution plan listing all the components that should be included in the release :
     * <p>
@@ -164,8 +170,6 @@ export class CircleCiOrchestrator {
       console.info("[{CircleCiOrchestrator}] - started processing execution plan, and will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
-        this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
-
         if (parallelExecutionsSet.length == 0) {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${index}`+"] because it is empty");
         } else {
@@ -174,7 +178,7 @@ export class CircleCiOrchestrator {
         }
 
       });
-      this.progressBar.stop();
+
     }
 
     /**
@@ -199,14 +203,14 @@ export class CircleCiOrchestrator {
      *
      *
      **/
-    handleTriggerPipelineCircleCIResponseData (data: any) : void {
-      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', data )
+    handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any) : void {
+      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
       let entry: any = {};
       entry.pipeline = {
-        execution_index: `${data.number}`,
-        id : `${data.id}`,
-        created_at: `${data.created_at}`,
-        exec_state: `${data.state}`
+        execution_index: `${circleCiJsonResponse.number}`,
+        id : `${circleCiJsonResponse.id}`,
+        created_at: `${circleCiJsonResponse.created_at}`,
+        exec_state: `${circleCiJsonResponse.state}`
       }
 
       this.progressMatrix.push(entry);
@@ -221,23 +225,28 @@ export class CircleCiOrchestrator {
       /// TODO ?
     }
     processExecutionSet (parallelExecutionsSet: string[]) : void {
+      this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
 
-      parallelExecutionsSet.forEach((dependency, index) => {
-        let whoamiSubscription = this.circleci_client.whoami().subscribe({
-            next: data => console.log( '[data] => ', data ),
-            complete: data => console.log( '[complete]' )
-          });
+      let whoamiSubscription = this.circleci_client.whoami().subscribe({
+        next: data => console.log( '[data] => ', data ),
+        complete: data => console.log( '[complete]' )
       });
-      /// pipeline execution parameters, same as Jenkins build parameters
-      let pipelineParameters = { parameters: {}};
-      let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe( {
-          next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
-          complete: data => {
-            console.log( '[triggering Circle CI Build completed! :)]')
-          }
+      parallelExecutionsSet.forEach((componentName, index) => {
+        /// pipeline execution parameters, same as Jenkins build parameters
+        let pipelineParameters = { parameters: {}};
+        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
+            next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+            complete: data => {
+              console.log( '[triggering Circle CI Build completed! :)]')
+            }
+        });
+
       });
 
+
+      this.progressBar.stop();
     }
+
     giveup()  : void {
       console.log("[{CircleCiOrchestrator}] - giveup() method is not implemented yet.");
     }
