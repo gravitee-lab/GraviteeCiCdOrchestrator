@@ -169,6 +169,15 @@ export class CircleCiOrchestrator {
      **/
     start()  : void {
       console.info("[{CircleCiOrchestrator}] - started processing execution plan, and will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
+      console.info("");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info(" ---");
+      console.info(JSON.stringify({ built_execution_plan_is: this.execution_plan}, null, " "));
+      console.info(" ---");
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("");
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
         if (parallelExecutionsSet.length == 0) {
@@ -176,6 +185,18 @@ export class CircleCiOrchestrator {
         } else {
           console.info(parallelExecutionsSet);
           this.processExecutionSet(parallelExecutionsSet); /// must be synchronous
+        }
+
+      });
+      this.execution_plan.forEach((parallelExecutionsSet, index) => {
+        console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
+        if (parallelExecutionsSet.length == 0) {
+          console.info("[{CircleCiOrchestrator}] - Skipped Monitoring Parallel Executions Set no. ["+`${index}`+"] because it is empty");
+        } else {
+
+          this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
+          this.monitorProgress(parallelExecutionsSet);
+          this.progressBar.stop();
         }
 
       });
@@ -194,7 +215,7 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-      this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
+
 
       let whoamiSubscription = this.circleci_client.whoami().subscribe({
         next: data => console.log( '[data] => ', data ),
@@ -211,8 +232,7 @@ export class CircleCiOrchestrator {
         });
 
       });
-      this.monitorProgress(parallelExecutionsSet);
-      this.progressBar.stop();
+
     }
     /**
      * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
