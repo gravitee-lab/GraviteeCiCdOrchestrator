@@ -168,15 +168,15 @@ export class CircleCiOrchestrator {
      * returning an A 2-dimensional array
      **/
     start()  : void {
-      console.info("[{CircleCiOrchestrator}] - started processing execution plan, and will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
+      console.info("[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
       console.info("");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - Execution plan is the value of the 'built_execution_plan_is' below : ");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ built_execution_plan_is: this.execution_plan}, null, " "));
       console.info(" ---");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${index}`+"] will trigger the following [Circle CI] pipelines : ");
@@ -188,20 +188,17 @@ export class CircleCiOrchestrator {
         }
 
       });
+
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'built_execution_plan_is' below : ");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
-        console.info("[{CircleCiOrchestrator}] - Monitoring Parallel Execution Set no. ["+`${index}`+"]  : ");
+        console.info("[{CircleCiOrchestrator}] - MONITORING PARALLEL EXECUTION SET no. ["+`${index}`+"]  : ");
 
         if (parallelExecutionsSet.length == 0) {
           console.info("[{CircleCiOrchestrator}] - Skipped Monitoring Parallel Executions Set no. ["+`${index}`+"] because it is empty");
-          console.info("");
-          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-          console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'parallel_executions_set_is' below : ");
-          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-          console.info(" ---");
-          console.info(JSON.stringify({ parallel_executions_set_is: parallelExecutionsSet}, null, " "));
-          console.info(" ---");
-          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-          console.info("");
+
         } else {
 
           this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
@@ -217,13 +214,13 @@ export class CircleCiOrchestrator {
 
     processExecutionSet (parallelExecutionsSet: string[]) : void {
       console.info("");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'built_execution_plan_is' below : ");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet}, null, " "));
       console.info(" ---");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
 
 
@@ -282,7 +279,6 @@ export class CircleCiOrchestrator {
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
       console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
       console.info('')
-      console.warn("[{CircleCiOrchestrator}] - Processing of the execution plan is not implemented yet.");
     }
 
     /**
@@ -292,13 +288,13 @@ export class CircleCiOrchestrator {
      **/
     monitorProgress (parallelExecutionsSet: string[]) : void {
       console.info("");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - Monitoring Parallel Executions Set : the set under monitoring is the value of the 'built_execution_plan_is' below : ");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - MONITORING PARALLEL EXECUTIONS SET (the value of the 'parallel_executions_set_is' value below) : ");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
-      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet}, null, " "));
+      console.info(JSON.stringify({ parallel_executions_set_is: parallelExecutionsSet}, null, " "));
       console.info(" ---");
-      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       /// Ok, so now I will  need to poll all builds until TIMEOUT
 
