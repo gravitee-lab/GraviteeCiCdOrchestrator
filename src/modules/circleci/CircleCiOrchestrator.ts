@@ -445,6 +445,8 @@ export class ParallelExectionSetProgressBar {
 
   private multibar: cliProgress.MultiBar;
   /**
+   * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
+   * -----
    * Example Parallel Execution Set (very simple, 1-dim. string[] Array, see {@see CircleCiOrchestrator#execution_plan} ) :
    * -----
    * <pre>
