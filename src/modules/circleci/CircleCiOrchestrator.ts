@@ -647,9 +647,9 @@ export class ParallelExectionSetProgressBar {
     if (this.bars === undefined || this.bars.size() == 0) {
       throw new Error("[{ParallelExectionSetProgressBar}] - Starting Progress Bar failed because there are no Single Progress Bars in this Multi Progress Bar ")
     }
-    this.bars.forEach((componentName, bar) => {
+    this.bars.forEach((componentName, singleBar) => {
       // sets the single bar initial State
-      bar.start(ParallelExectionSetProgressBar.COMPLETED_SCALE, ParallelExectionSetProgressStatus.UNTRIGGERED);
+      singleBar.start(ParallelExectionSetProgressBar.COMPLETED_SCALE, ParallelExectionSetProgressStatus.UNTRIGGERED, {filename: `${componentName}`});
     })
   }
   /**
