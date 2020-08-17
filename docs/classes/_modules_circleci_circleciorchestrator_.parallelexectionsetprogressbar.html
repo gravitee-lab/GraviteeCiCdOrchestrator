@@ -140,6 +140,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#multibar" class="tsd-kind-icon">multibar</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -157,15 +158,21 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Parallel<wbr>Exection<wbr>Set<wbr>Progress<wbr>Bar<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Parallel<wbr>Exection<wbr>Set<wbr>Progress<wbr>Bar<span class="tsd-signature-symbol">(</span>progressMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L396">modules/circleci/CircleCiOrchestrator.ts:396</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L439">modules/circleci/CircleCiOrchestrator.ts:439</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>progressMatrix: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></h4>
 						</li>
 					</ul>
@@ -179,9 +186,72 @@
 					<div class="tsd-signature tsd-kind-icon">multibar<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MultiBar</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L396">modules/circleci/CircleCiOrchestrator.ts:396</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L386">modules/circleci/CircleCiOrchestrator.ts:386</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="progressmatrix" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> progress<wbr>Matrix</h3>
+					<div class="tsd-signature tsd-kind-icon">progress<wbr>Matrix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L439">modules/circleci/CircleCiOrchestrator.ts:439</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<a href="#example-progress-matrix-" id="example-progress-matrix-" style="color: inherit; text-decoration: none;">
+								<h2>Example Progress Matrix :</h2>
+							</a>
+							<pre>
+     {
+       "progressMatrix": [
+         {
+           "pipeline": {
+             "execution_index": "15",
+             "id": "71938e5a-536f-482f-8bef-edae81801fb9",
+             "created_at": "2020-08-16T22:34:58.224Z",
+             "exec_state": "pending"
+           }
+         },
+         {
+           "pipeline": {
+             "execution_index": "16",
+             "id": "952de923-293b-4829-add4-056c4f95940a",
+             "created_at": "2020-08-16T22:34:58.273Z",
+             "exec_state": "pending"
+           }
+         },
+         {
+           "pipeline": {
+             "execution_index": "17",
+             "id": "c3ea1b05-1273-42ce-a04f-7e9fa8aa4d93",
+             "created_at": "2020-08-16T22:34:58.282Z",
+             "exec_state": "pending"
+           }
+         },
+         {
+           "pipeline": {
+             "execution_index": "18",
+             "id": "a42e7542-fded-4163-9e0a-a5839370ede6",
+             "created_at": "2020-08-16T22:34:58.302Z",
+             "exec_state": "pending"
+           }
+         },
+         {
+           "pipeline": {
+             "execution_index": "19",
+             "id": "46b17f2b-3b3f-4c9f-a6b3-5e608c113bab",
+             "created_at": "2020-08-16T22:34:58.305Z",
+             "exec_state": "pending"
+           }
+         }
+       ]
+     }
+                </div>
+                <p></pre></p>
+						</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -196,7 +266,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L400">modules/circleci/CircleCiOrchestrator.ts:400</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/da5de66/src/modules/circleci/CircleCiOrchestrator.ts#L450">modules/circleci/CircleCiOrchestrator.ts:450</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -246,6 +316,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#multibar" class="tsd-kind-icon">multibar</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html#init" class="tsd-kind-icon">init</a>
