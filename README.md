@@ -76,4 +76,6 @@ npm run doc
 
 cf. [How to contribute guide](https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/tree/master/documentation/contribute)
 
-(feature branch) cf. [How to contribute guide](https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/tree/feature/specs_implementation/documentation/contribute)
+<!--
+     (feature branch) cf. [How to contribute guide](https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/tree/feature/specs_implementation/documentation/contribute)
+-->
