@@ -20,3 +20,6 @@ It's up to you and your team whether you want to use it. I guess there is no exp
 
 
 ## References
+
+* https://stackoverflow.com/questions/43083577/what-does-sign-at-the-end-of-function-name-indicate/43083604
+* https://medium.com/@benlesh/observables-and-finnish-notation-df8356ed1c9b
