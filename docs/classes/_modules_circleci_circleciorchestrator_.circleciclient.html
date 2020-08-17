@@ -106,6 +106,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#getlatestghbuilds" class="tsd-kind-icon">get<wbr>Latest<wbr>GhBuilds</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#getpipelineghrepo" class="tsd-kind-icon">get<wbr>Pipeline<wbr>GhRepo</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#getpipelineinfo" class="tsd-kind-icon">get<wbr>Pipeline<wbr>Info</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#triggerghbuild" class="tsd-kind-icon">trigger<wbr>GhBuild</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciclient.html#whoami" class="tsd-kind-icon">whoami</a></li>
 							</ul>
@@ -125,7 +126,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c735533/src/modules/circleci/CircleCiOrchestrator.ts#L266">modules/circleci/CircleCiOrchestrator.ts:266</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L319">modules/circleci/CircleCiOrchestrator.ts:319</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -147,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">secrets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c735533/src/modules/circleci/CircleCiOrchestrator.ts#L268">modules/circleci/CircleCiOrchestrator.ts:268</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L321">modules/circleci/CircleCiOrchestrator.ts:321</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,7 +165,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c735533/src/modules/circleci/CircleCiOrchestrator.ts#L364">modules/circleci/CircleCiOrchestrator.ts:364</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L417">modules/circleci/CircleCiOrchestrator.ts:417</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -199,13 +200,69 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c735533/src/modules/circleci/CircleCiOrchestrator.ts#L371">modules/circleci/CircleCiOrchestrator.ts:371</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L424">modules/circleci/CircleCiOrchestrator.ts:424</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Retrieves the Github Repo URI from the PipelineID</p>
 								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>circleCiPipelineID: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getpipelineinfo" class="tsd-anchor"></a>
+					<h3>get<wbr>Pipeline<wbr>Info</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Pipeline<wbr>Info<span class="tsd-signature-symbol">(</span>circleCiPipelineID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L480">modules/circleci/CircleCiOrchestrator.ts:480</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Retrieves the pipeline Execution Infos based on the Circle CI API v2 <strong>pipeline id<strong> (Which actually is a Pipeline Execution ID, not a Pipeline ID),  using the <pre>[GET /api/v2/pipeline/${circleci_pipeline_id}]</pre> Endpoint</p>
+								</div>
+								<hr>
+								<a href="#circle-ci-api-v2-json-response-will-be-of-the-form-" id="circle-ci-api-v2-json-response-will-be-of-the-form-" style="color: inherit; text-decoration: none;">
+									<h2><strong>Circle CI API v2<strong> JSON Response will be of the form :</h2>
+								</a>
+								<pre><code> {
+   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;f71bb92d-534f-485d-9dae-af32df1b340d&quot;</span>,
+   <span class="hljs-attr">&quot;errors&quot;</span>: [],
+   <span class="hljs-attr">&quot;project_slug&quot;</span>: <span class="hljs-string">&quot;gh/gravitee-lab/testrepo1&quot;</span>,
+   <span class="hljs-attr">&quot;updated_at&quot;</span>: <span class="hljs-string">&quot;2020-08-16T21:33:43.830Z&quot;</span>,
+   <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-number">14</span>,
+   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;created&quot;</span>,
+   <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;2020-08-16T21:33:43.830Z&quot;</span>,
+   <span class="hljs-attr">&quot;trigger&quot;</span>: {
+     <span class="hljs-attr">&quot;received_at&quot;</span>: <span class="hljs-string">&quot;2020-08-16T21:33:43.799Z&quot;</span>,
+     <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;api&quot;</span>,
+     <span class="hljs-attr">&quot;actor&quot;</span>: {
+       <span class="hljs-attr">&quot;login&quot;</span>: <span class="hljs-string">&quot;Jean-Baptiste-Lasselle&quot;</span>,
+       <span class="hljs-attr">&quot;avatar_url&quot;</span>: <span class="hljs-string">&quot;https://avatars2.githubusercontent.com/u/35227860?v=4&quot;</span>
+     }
+   },
+   <span class="hljs-attr">&quot;vcs&quot;</span>: {
+     <span class="hljs-attr">&quot;origin_repository_url&quot;</span>: <span class="hljs-string">&quot;https://github.com/gravitee-lab/testrepo1&quot;</span>,
+     <span class="hljs-attr">&quot;target_repository_url&quot;</span>: <span class="hljs-string">&quot;https://github.com/gravitee-lab/testrepo1&quot;</span>,
+     <span class="hljs-attr">&quot;revision&quot;</span>: <span class="hljs-string">&quot;b9940405385ab81ad7bb44880ed71f0c23e55c17&quot;</span>,
+     <span class="hljs-attr">&quot;provider_name&quot;</span>: <span class="hljs-string">&quot;GitHub&quot;</span>,
+     <span class="hljs-attr">&quot;branch&quot;</span>: <span class="hljs-string">&quot;dependabot/npm_and_yarn/handlebars-4.5.3&quot;</span>
+   }
+ }</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -227,7 +284,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c735533/src/modules/circleci/CircleCiOrchestrator.ts#L334">modules/circleci/CircleCiOrchestrator.ts:334</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L387">modules/circleci/CircleCiOrchestrator.ts:387</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -331,7 +388,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c735533/src/modules/circleci/CircleCiOrchestrator.ts#L396">modules/circleci/CircleCiOrchestrator.ts:396</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/ece0c60/src/modules/circleci/CircleCiOrchestrator.ts#L505">modules/circleci/CircleCiOrchestrator.ts:505</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -386,6 +443,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#getpipelineghrepo" class="tsd-kind-icon">get<wbr>Pipeline<wbr>GhRepo</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#getpipelineinfo" class="tsd-kind-icon">get<wbr>Pipeline<wbr>Info</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.circleciclient.html#triggerghbuild" class="tsd-kind-icon">trigger<wbr>GhBuild</a>

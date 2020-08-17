@@ -273,18 +273,36 @@ export class CircleCiOrchestrator {
       /// Ok, so now I will  need to poll all builds until TIMEOUT
 
       this.progressMatrix.forEach((pipelineExecution, index) => {
-        // 1. I retrieve the pipeline info usign the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
+        // 1./ I retrieve the pipeline info using the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
+
 
         let getPipelineInfoSubscription = this.circleci_client.getPipelineInfo(pipelineExecution.pipeline.id).subscribe({
             next: this.handleGetPipelineInfoCircleCIResponseData.bind(this),
             complete: data => {
-              console.log( '[triggering Circle CI Build completed! :)]')
+              console.log( '[retrieving Circle CI Pipeline Infos completed! :)]')
             }
         });
       })
     }
 
     handleGetPipelineInfoCircleCIResponseData (circleCiJsonResponse: any) {
+      // 2./ then I update this.progressMatrix and this.progressBar
+      circleCiJsonResponse.id
+      circleCiJsonResponse.state
+      let slugArray: string [] = circleCiJsonResponse.project_slug.split(" ", 3); /// So array indexes [0, 1, 2]
+
+      circleCiJsonResponse.vcs.origin_repository_url;
+      circleCiJsonResponse.vcs.target_repository_url;
+
+      if (circleCiJsonResponse.state === "pending") {
+        this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
+      } else if (circleCiJsonResponse.state === "errored") {
+        this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.ERRORED);
+      } else if (circleCiJsonResponse.state === "created") {
+        this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.CREATED);
+      } else {
+        throw new Error("[{CircleCiOrchestrator}] - [handleGetPipelineInfoCircleCIResponseData] Undefined Circle CI v2 Pipeline Status [" + `${circleCiJsonResponse.state}` + "]");
+      }
 
     }
     giveup()  : void {
@@ -425,6 +443,40 @@ export class CircleCIClient {
       // throw new Error("Not impemented yet");
       /// return observableRequest;
     }
+
+    /**
+     * Retrieves the pipeline Execution Infos based on the Circle CI API v2 <strong>pipeline id<strong> (Which actually is a Pipeline Execution ID, not a Pipeline ID),  using the <pre>[GET /api/v2/pipeline/${circleci_pipeline_id}]</pre> Endpoint
+     *
+     *
+     * ---
+     * <strong>Circle CI API v2<strong> JSON Response will be of the form :
+     * ---
+     *      {
+     *        "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
+     *        "errors": [],
+     *        "project_slug": "gh/gravitee-lab/testrepo1",
+     *        "updated_at": "2020-08-16T21:33:43.830Z",
+     *        "number": 14,
+     *        "state": "created",
+     *        "created_at": "2020-08-16T21:33:43.830Z",
+     *        "trigger": {
+     *          "received_at": "2020-08-16T21:33:43.799Z",
+     *          "type": "api",
+     *          "actor": {
+     *            "login": "Jean-Baptiste-Lasselle",
+     *            "avatar_url": "https://avatars2.githubusercontent.com/u/35227860?v=4"
+     *          }
+     *        },
+     *        "vcs": {
+     *          "origin_repository_url": "https://github.com/gravitee-lab/testrepo1",
+     *          "target_repository_url": "https://github.com/gravitee-lab/testrepo1",
+     *          "revision": "b9940405385ab81ad7bb44880ed71f0c23e55c17",
+     *          "provider_name": "GitHub",
+     *          "branch": "dependabot/npm_and_yarn/handlebars-4.5.3"
+     *        }
+     *      }
+     *
+     **/
     getPipelineInfo(circleCiPipelineID: string): any {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
@@ -521,6 +573,7 @@ export class CircleCIClient {
  * @comment Zero Circle CI API calls here, this just a progress bar, and it does nothing, unless someone tells him to do something (change singleBar progress status, etc...). Also, the progress Bar does not rmember any state, it just allows update the progress State of one component see {@see ParallelExectionSetProgressBar#updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus)}
  **/
 export class ParallelExectionSetProgressBar {
+  private static COMPLETED_SCALE: number = 100;
   private bars: Collections.Dictionary<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
   private multibar: cliProgress.MultiBar;
   /**
@@ -554,6 +607,7 @@ export class ParallelExectionSetProgressBar {
       console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.")
     }
     this.initMultiBar();
+    this.start();
   }
 
   /**
@@ -572,16 +626,9 @@ export class ParallelExectionSetProgressBar {
     }, cliProgress.Presets.shades_grey);
 
     this.parallelExecutionsSet.forEach((componentName, index) => {
-      // add bars
-      let singleBar = this.multibar.create(100, 0);
+      // add single bar
+      let singleBar = this.multibar.create(ParallelExectionSetProgressBar.COMPLETED_SCALE, 0);
       this.bars.setValue(componentName, singleBar);
-
-      // control bars
-      singleBar.increment();
-
-
-      // stop all bars
-
     });
 
   }
@@ -589,7 +636,22 @@ export class ParallelExectionSetProgressBar {
     let singleBar = this.bars.getValue(componentName);
     singleBar.update(newStatus, {filename: `${componentName}`});
   }
-
+  /**
+   * ---
+   * Starts all the single Bars initializing them to the initial state {@see ParallelExectionSetProgressStatus.UNTRIGGERED}
+   *
+   * @throws {@see Error} when bars Dictionary is undefinied or empty (there must be at least one single bar)
+   *
+   **/
+  private start() : void {
+    if (this.bars === undefined || this.bars.size() == 0) {
+      throw new Error("[{ParallelExectionSetProgressBar}] - Starting Progress Bar failed because there are no Single Progress Bars in this Multi Progress Bar ")
+    }
+    this.bars.forEach((componentName, bar) => {
+      // sets the single bar initial State
+      bar.start(ParallelExectionSetProgressBar.COMPLETED_SCALE, ParallelExectionSetProgressStatus.UNTRIGGERED);
+    })
+  }
   /**
   * Releases TTY to let the stdout proceed
    **/
