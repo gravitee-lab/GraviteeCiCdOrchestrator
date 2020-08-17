@@ -387,6 +387,8 @@ export class CircleCIClient {
  * </li>
  * </ul>
  *
+ * Also see <pre>barGlue</pre>, to have custom text displayed with status'
+ *
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class ParallelExectionSetProgressBar {
