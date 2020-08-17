@@ -2,6 +2,7 @@
 import { Observable } from 'rxjs';
 import axios from 'axios';
 import * as fs from 'fs';
+import * as cliProgress from 'cli-progress';
 
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
@@ -343,11 +344,23 @@ export class CircleCIClient {
 }
 
 /**
+ * {@see ParallelExectionSetProgressBar} :
+ * <ul>
+ * <li>
  * Displays a multi progress bar for a Parallel Execution Set
- * based on []
+ * </li>
+ * <li>
+ * based on https://www.npmjs.com/package/cli-progress#multi-bar-mode
+ * </li>
+ * </ul>
  *
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class ParallelExectionSetProgressBar {
+  /// ccc;
+
+  constructor(){
+
+  }
 
 }
