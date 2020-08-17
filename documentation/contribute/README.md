@@ -136,7 +136,7 @@ npm install typedoc --save-dev
 npm install rxjs rxjs-compat --save
 npm install axios @types/axios --save
 npm install cli-progress @types/cli-progress --save
-
+npm i typescript-collections --save
 
 
 ```

@@ -439,10 +439,10 @@ export class CircleCIClient {
  *
  * Also [see **barGlue** option](https://www.npmjs.com/package/cli-progress#options-1), to have custom text displayed with status'
  *
- * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
+ * @comment Zero Circle CI API calls here, this just a progress bar, and it does nothing, unless someone tells him to do something (change singleBar progress status, etc...). Also, the progress Bar does not rmember any state, it just allows update the progress State of one component see {@see ParallelExectionSetProgressBar#updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus)}
  **/
 export class ParallelExectionSetProgressBar {
-
+  private bars: Map<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
   private multibar: cliProgress.MultiBar;
   /**
    * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
@@ -487,7 +487,9 @@ export class ParallelExectionSetProgressBar {
     // create new MultiBar container
     this.multibar = new cliProgress.MultiBar({
         clearOnComplete: false,
-        hideCursor: true
+        hideCursor: true,
+        barCompleteChar: '\u2588',
+        barIncompleteChar: '\u2591'
     }, cliProgress.Presets.shades_grey);
 
     this.parallelExecutionsSet.forEach((componentName, index) => {
@@ -503,6 +505,10 @@ export class ParallelExectionSetProgressBar {
     });
 
   }
+  updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus) {
+
+  }
+
   /**
   * Releases TTY to let the stdout proceed
    **/
@@ -541,17 +547,17 @@ export enum ParallelExectionSetProgressStatus {
   /**
    * Pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the <strong>Circle CI API v2</strong>
    **/
-  UNTRIGGERED,
+  UNTRIGGERED = 25,
   /**
    * Pipeline execution was triggered and is running
    **/
-  PENDING,
+  PENDING = 50,
   /**
    * Pipeline  execution completed with <strong>erros</strong>
    **/
-  ERRORED,
+  ERRORED = 100,
   /**
    * Pipeline execution succcessfully completed, with no <strong>errors</strong>
    **/
-  CREATED
+  CREATED = 100
 }
