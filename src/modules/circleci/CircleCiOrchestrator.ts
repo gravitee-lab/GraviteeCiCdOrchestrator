@@ -169,13 +169,7 @@ export class CircleCiOrchestrator {
       this.progressBars = new Collections.Dictionary<number,ParallelExectionSetProgressBar>();
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. ["+`${index}`+"]  ");
-        if (parallelExecutionsSet.length == 0) {
-          console.info("[{CircleCiOrchestrator}] - no Progressbar initialized for Parallel Executions Set no. ["+`${index}`+"] because it is empty");
-        } else {
-          console.info(parallelExecutionsSet);
-          this.processExecutionSet(parallelExecutionsSet); /// must be synchronous
-        }
-
+        this.progressBars.setValue(index, new ParallelExectionSetProgressBar(parallelExecutionsSet));
       });
     }
 
@@ -688,7 +682,7 @@ export class ParallelExectionSetProgressBar {
    **/
   private start() : void {
     if (this.bars === undefined || this.bars === null) {
-      throw new Error("[{ParallelExectionSetProgressBar}] - Starting Progress Bar failed because there are no Single Progress Bars in this Multi Progress Bar ")
+      throw new Error("[{ParallelExectionSetProgressBar}] - Starting Progress Bar failed because [this.bars] is undefined or null, which is unexpected, and should never ever happen.");
     }
     if (this.parallelExecutionsSet.length == 0) {
       console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.");
