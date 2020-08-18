@@ -127,6 +127,7 @@ export class CircleCiOrchestrator {
      *
      **/
     private progressMatrix: any[];
+    private monitorReport: any[];
     private retries: number;
     private circleci_client: CircleCIClient;
     private secrets: any;
@@ -156,6 +157,7 @@ export class CircleCiOrchestrator {
       this.loadCircleCISecrets();
       this.circleci_client = new CircleCIClient(this.secrets);
       this.progressMatrix = [];
+      this.monitorReport = [];
       this.initProgressBars();
       this.github_org = process.env.GH_ORG;
     }
@@ -206,7 +208,7 @@ export class CircleCiOrchestrator {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${index}`+"] because it is empty");
         } else {
           console.info(parallelExecutionsSet);
-          this.processExecutionSet(parallelExecutionsSet); /// must be synchronous
+          this.processExecutionSet(parallelExecutionsSet); /// must be synchronous : send all CircleCI Pipeline triggers, and then start monitoring.
         }
 
       });
@@ -242,8 +244,9 @@ export class CircleCiOrchestrator {
         let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
             next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
             complete: data => {
-              console.log( '[triggering Circle CI Build completed! :)]')
-            }
+              console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
+            },
+            error: this.errorHandlerTriggerCCIPipeline.bind(this)
         });
 
       });
@@ -290,20 +293,34 @@ export class CircleCiOrchestrator {
     }
 
     /**
+     * RX JS err handler for triggering circle ci pipelines
+     **/
+    errorHandlerTriggerCCIPipeline (error: any) : void {
+      console.info( '[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
+      let entry: any = {};
+      entry.pipeline = {
+        execution_index: null,
+        id : null,
+        created_at: null,
+        exec_state: null,
+        error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
+      }
+
+      this.progressMatrix.push(entry);
+
+      console.info('')
+      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
+      console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
+      console.info('')
+    }
+
+    /**
      * Monitors the progress of each pipeline execution in a Parallel Executions Set (an entry in the {@see CircleCiOrchestrator#execution_plan})
      * @comment Synchronous
      *
      **/
-    monitorProgress (parallelExecutionsSet: string[]) : void {
-      console.info("");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - MONITORING PARALLEL EXECUTIONS SET (the value of the 'parallel_executions_set_is' value below) : ");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info(" ---");
-      console.info(JSON.stringify({ parallel_executions_set_is: parallelExecutionsSet}, null, " "));
-      console.info(" ---");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("");
+    monitorProgress (execution_plan: string[][]) : void {
+
       /// Ok, so now I will  need to poll all builds until TIMEOUT
 
       this.progressMatrix.forEach((pipelineExecution, index) => {
@@ -312,7 +329,8 @@ export class CircleCiOrchestrator {
             next: this.handleGetPipelineInfoCircleCIResponseData.bind(this),
             complete: data => {
               console.log( '[retrieving Circle CI Pipeline Infos completed! :)]')
-            }
+            },
+            error: this.errorHandlerGetCCIPipelineInfos.bind(this)
         });
       })
     }
@@ -322,6 +340,11 @@ export class CircleCiOrchestrator {
       circleCiJsonResponse.id
       circleCiJsonResponse.state
       let slugArray: string [] = circleCiJsonResponse.project_slug.split(" ", 3); /// So array indexes [0, 1, 2]
+      let git_repo_namme: string = `${slugArray[1]}`;
+      let git_repo_http_uri: string = "https://github.com/" + `${slugArray[1]}` + "/" + `${slugArray[1]}`;
+      let git_repo_ssh_uri: string = "git@github.com:" + `${slugArray[1]}` + "/" + `${slugArray[1]}`;
+
+      let executionPlan_ParallelExecSet_Index = "git@github.com:" + `${slugArray[1]}` + "/" + `${slugArray[1]}`;
 
       circleCiJsonResponse.vcs.origin_repository_url;
       circleCiJsonResponse.vcs.target_repository_url;
@@ -336,6 +359,23 @@ export class CircleCiOrchestrator {
         throw new Error("[{CircleCiOrchestrator}] - [handleGetPipelineInfoCircleCIResponseData] Undefined Circle CI v2 Pipeline Status [" + `${circleCiJsonResponse.state}` + "]");
       }
 
+    }
+    /**
+     * RX JS err handler for fetching circle ci pipelines infos
+     **/
+    errorHandlerGetCCIPipelineInfos (error: any) : void {
+      console.error( '[{CircleCiOrchestrator}] - Fetching Circle CI pipeline infos with  Circle CI API failed. ', error )
+      let reportEntry: any = {};
+      reportEntry.get_pipeline_infos = {
+        error : {message: "[{CircleCiOrchestrator}] - Fetching Circle CI pipeline infos with  Circle CI API failed. ", cause: error}
+      }
+
+      this.monitorReport.push(reportEntry);
+
+      console.info('')
+      console.info( '[{CircleCiOrchestrator}] - [errorHandlerGetCCIPipelineInfos] [this.monitorReport] is now :  ');
+      console.info(JSON.stringify({monitorReport: this.monitorReport}))
+      console.info('')
     }
     giveup()  : void {
       console.log("[{CircleCiOrchestrator}] - giveup() method is not implemented yet.");
