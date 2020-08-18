@@ -14,12 +14,7 @@ import * as Collections from 'typescript-collections';
  **/
 export class CircleCiOrchestrator {
     private github_org: string;
-    /**
-     *
-     * Used to iterate over components, one after the other, while they are being processed according the {@see CircleCiOrchestrator#execution_plan}
-     *
-     **/
-    private componentBeingProcessed: string;
+
     /**
     * <p>
     * The Execution plan listing all the components that should be included in the release :
@@ -162,7 +157,6 @@ export class CircleCiOrchestrator {
       this.circleci_client = new CircleCIClient(this.secrets);
       this.progressMatrix = [];
       this.initProgressBars();
-      this.componentBeingProcessed = null;
       this.github_org = process.env.GH_ORG;
     }
     /**
