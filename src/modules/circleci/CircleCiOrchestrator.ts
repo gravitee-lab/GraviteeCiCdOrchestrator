@@ -222,7 +222,7 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-      this.monitorProgress(this.execution_plan);
+      // this.monitorProgress(this.execution_plan);
     }
 
 
@@ -360,11 +360,11 @@ export class CircleCiOrchestrator {
       // retireving the progressBar to update for the component
 
       if (circleCiJsonResponse.state === "pending") {
-        this.progressBars..updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
+        // this.progressBars..updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
       } else if (circleCiJsonResponse.state === "errored") {
-        this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.ERRORED);
+        // this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.ERRORED);
       } else if (circleCiJsonResponse.state === "created") {
-        this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.CREATED);
+        // this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.CREATED);
       } else {
         throw new Error("[{CircleCiOrchestrator}] - [handleGetPipelineInfoCircleCIResponseData] Undefined Circle CI v2 Pipeline Status [" + `${circleCiJsonResponse.state}` + "]");
       }

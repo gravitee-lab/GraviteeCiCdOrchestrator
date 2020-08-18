@@ -104,9 +104,10 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#componentbeingprocessed" class="tsd-kind-icon">component<wbr>Being<wbr>Processed</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#execution_plan" class="tsd-kind-icon">execution_<wbr>plan</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#progressbar" class="tsd-kind-icon">progress<wbr>Bar</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#github_org" class="tsd-kind-icon">github_<wbr>org</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#monitorreport" class="tsd-kind-icon">monitor<wbr>Report</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#progressbars" class="tsd-kind-icon">progress<wbr>Bars</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#retries" class="tsd-kind-icon">retries</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#secrets" class="tsd-kind-icon">secrets</a></li>
@@ -115,9 +116,12 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#errorhandlergetccipipelineinfos" class="tsd-kind-icon">error<wbr>Handler<wbr>GetCCIPipeline<wbr>Infos</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#errorhandlertriggerccipipeline" class="tsd-kind-icon">error<wbr>Handler<wbr>TriggerCCIPipeline</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#giveup" class="tsd-kind-icon">giveup</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#handlegetpipelineinfocircleciresponsedata" class="tsd-kind-icon">handle<wbr>Get<wbr>Pipeline<wbr>Info<wbr>CircleCIResponse<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#handletriggerpipelinecircleciresponsedata" class="tsd-kind-icon">handle<wbr>Trigger<wbr>Pipeline<wbr>CircleCIResponse<wbr>Data</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#initprogressbars" class="tsd-kind-icon">init<wbr>Progress<wbr>Bars</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#loadcirclecisecrets" class="tsd-kind-icon">load<wbr>CircleCISecrets</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#monitorprogress" class="tsd-kind-icon">monitor<wbr>Progress</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#processexecutionset" class="tsd-kind-icon">process<wbr>Execution<wbr>Set</a></li>
@@ -139,7 +143,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L143">modules/circleci/CircleCiOrchestrator.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L152">modules/circleci/CircleCiOrchestrator.ts:152</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -164,24 +168,9 @@
 					<div class="tsd-signature tsd-kind-icon">circleci_<wbr>client<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_circleciorchestrator_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L135">modules/circleci/CircleCiOrchestrator.ts:135</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L132">modules/circleci/CircleCiOrchestrator.ts:132</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="componentbeingprocessed" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> component<wbr>Being<wbr>Processed</h3>
-					<div class="tsd-signature tsd-kind-icon">component<wbr>Being<wbr>Processed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L21">modules/circleci/CircleCiOrchestrator.ts:21</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Used to iterate over components, one after the other, while they are being processed according the {@see CircleCiOrchestrator#execution_plan}</p>
-						</div>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="execution_plan" class="tsd-anchor"></a>
@@ -189,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">execution_<wbr>plan<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L80">modules/circleci/CircleCiOrchestrator.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L76">modules/circleci/CircleCiOrchestrator.ts:76</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -251,18 +240,45 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="progressbar" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> progress<wbr>Bar</h3>
-					<div class="tsd-signature tsd-kind-icon">progress<wbr>Bar<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a></div>
+					<a name="github_org" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> github_<wbr>org</h3>
+					<div class="tsd-signature tsd-kind-icon">github_<wbr>org<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L143">modules/circleci/CircleCiOrchestrator.ts:143</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L16">modules/circleci/CircleCiOrchestrator.ts:16</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="monitorreport" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> monitor<wbr>Report</h3>
+					<div class="tsd-signature tsd-kind-icon">monitor<wbr>Report<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L130">modules/circleci/CircleCiOrchestrator.ts:130</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="progressbars" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> progress<wbr>Bars</h3>
+					<div class="tsd-signature tsd-kind-icon">progress<wbr>Bars<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Dictionary</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">, </span><a href="_modules_circleci_circleciorchestrator_.parallelexectionsetprogressbar.html" class="tsd-signature-type">ParallelExectionSetProgressBar</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L152">modules/circleci/CircleCiOrchestrator.ts:152</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>This property is set to a new Instance of {@see ParallelExectionSetProgressBar} every time a new Parallel Executions Set is processed, using {@see CircleCiOrchestrator#processExecutionSet()}</p>
+							<p>For each Parallel Execution Set of the {@see this.execution_plan}, an instance of {@see ParallelExectionSetProgressBar} is instantiated</p>
 						</div>
+						<p>So for every Parallel Executions Set that is processed, using {@see CircleCiOrchestrator#processExecutionSet()}, there will be a progress bar</p>
+						<p>Also above the progress bars, all pipeline HTTP links will be given.</p>
+						<p>One HTTP Link can be constructed, per githbu repo, if not found in REST API calls JSON responses :</p>
+						<p>=&gt; For a repo named  &quot;testrepo1&quot;, in the github org &quot;gravitee-lab&quot;, and a branch named &quot;dependabot/npm_and_yarn/handlebars-4.5.3&quot;, HTTP Link is :</p>
+						<p>==&gt; <a href="https://app.circleci.com/pipelines/github/gravitee-lab/testrepo1?branch=dependabot%2Fnpm_and_yarn%2Fhandlebars-4.5.3">https://app.circleci.com/pipelines/github/gravitee-lab/testrepo1?branch=dependabot%2Fnpm_and_yarn%2Fhandlebars-4.5.3</a></p>
+						<p>==&gt; Knowing that this link will display page of latest pipeline executions of the <a href="https://github.com/gravitee-lab/testrepo1.git">https://github.com/gravitee-lab/testrepo1.git</a> repo on the &quot;dependabot/npm_and_yarn/handlebars-4.5.3&quot; branch
+						Note : the key for each {@see ParallelExectionSetProgressBar} is the Parallel Execution Set itself : an array of string</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
@@ -271,7 +287,7 @@
 					<div class="tsd-signature tsd-kind-icon">progress<wbr>Matrix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L133">modules/circleci/CircleCiOrchestrator.ts:133</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L129">modules/circleci/CircleCiOrchestrator.ts:129</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -334,7 +350,7 @@
 					<div class="tsd-signature tsd-kind-icon">retries<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L134">modules/circleci/CircleCiOrchestrator.ts:134</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L131">modules/circleci/CircleCiOrchestrator.ts:131</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -344,13 +360,69 @@
 					<div class="tsd-signature tsd-kind-icon">secrets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L136">modules/circleci/CircleCiOrchestrator.ts:136</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L133">modules/circleci/CircleCiOrchestrator.ts:133</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="errorhandlergetccipipelineinfos" class="tsd-anchor"></a>
+					<h3>error<wbr>Handler<wbr>GetCCIPipeline<wbr>Infos</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">error<wbr>Handler<wbr>GetCCIPipeline<wbr>Infos<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L389">modules/circleci/CircleCiOrchestrator.ts:389</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>RX JS err handler for fetching circle ci pipelines infos</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>error: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="errorhandlertriggerccipipeline" class="tsd-anchor"></a>
+					<h3>error<wbr>Handler<wbr>TriggerCCIPipeline</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">error<wbr>Handler<wbr>TriggerCCIPipeline<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L298">modules/circleci/CircleCiOrchestrator.ts:298</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>RX JS err handler for triggering circle ci pipelines</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>error: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="giveup" class="tsd-anchor"></a>
 					<h3>giveup</h3>
@@ -361,7 +433,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L334">modules/circleci/CircleCiOrchestrator.ts:334</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L404">modules/circleci/CircleCiOrchestrator.ts:404</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -378,7 +450,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L314">modules/circleci/CircleCiOrchestrator.ts:314</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L341">modules/circleci/CircleCiOrchestrator.ts:341</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +473,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L266">modules/circleci/CircleCiOrchestrator.ts:266</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L277">modules/circleci/CircleCiOrchestrator.ts:277</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -441,6 +513,28 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="initprogressbars" class="tsd-anchor"></a>
+					<h3>init<wbr>Progress<wbr>Bars</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Progress<wbr>Bars<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L167">modules/circleci/CircleCiOrchestrator.ts:167</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>initializes a new progress bar for every Parallel Executions Set (every entry int this.execution_plan)</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="loadcirclecisecrets" class="tsd-anchor"></a>
 					<h3>load<wbr>CircleCISecrets</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -450,7 +544,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L155">modules/circleci/CircleCiOrchestrator.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L175">modules/circleci/CircleCiOrchestrator.ts:175</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -461,13 +555,13 @@
 					<a name="monitorprogress" class="tsd-anchor"></a>
 					<h3>monitor<wbr>Progress</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">monitor<wbr>Progress<span class="tsd-signature-symbol">(</span>parallelExecutionsSet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">monitor<wbr>Progress<span class="tsd-signature-symbol">(</span>execution_plan<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L289">modules/circleci/CircleCiOrchestrator.ts:289</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L322">modules/circleci/CircleCiOrchestrator.ts:322</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -483,7 +577,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>parallelExecutionsSet: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>execution_plan: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -500,7 +594,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L215">modules/circleci/CircleCiOrchestrator.ts:215</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L230">modules/circleci/CircleCiOrchestrator.ts:230</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -523,7 +617,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/74e4f02/src/modules/circleci/CircleCiOrchestrator.ts#L170">modules/circleci/CircleCiOrchestrator.ts:170</a></li>
+									<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/c16ad7b/src/modules/circleci/CircleCiOrchestrator.ts#L190">modules/circleci/CircleCiOrchestrator.ts:190</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -577,13 +671,16 @@
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#componentbeingprocessed" class="tsd-kind-icon">component<wbr>Being<wbr>Processed</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#execution_plan" class="tsd-kind-icon">execution_<wbr>plan</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#progressbar" class="tsd-kind-icon">progress<wbr>Bar</a>
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#github_org" class="tsd-kind-icon">github_<wbr>org</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#monitorreport" class="tsd-kind-icon">monitor<wbr>Report</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#progressbars" class="tsd-kind-icon">progress<wbr>Bars</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
@@ -595,6 +692,12 @@
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#secrets" class="tsd-kind-icon">secrets</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#errorhandlergetccipipelineinfos" class="tsd-kind-icon">error<wbr>Handler<wbr>GetCCIPipeline<wbr>Infos</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#errorhandlertriggerccipipeline" class="tsd-kind-icon">error<wbr>Handler<wbr>TriggerCCIPipeline</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#giveup" class="tsd-kind-icon">giveup</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -602,6 +705,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#handletriggerpipelinecircleciresponsedata" class="tsd-kind-icon">handle<wbr>Trigger<wbr>Pipeline<wbr>CircleCIResponse<wbr>Data</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#initprogressbars" class="tsd-kind-icon">init<wbr>Progress<wbr>Bars</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html#loadcirclecisecrets" class="tsd-kind-icon">load<wbr>CircleCISecrets</a>
