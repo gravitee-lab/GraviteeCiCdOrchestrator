@@ -13,6 +13,7 @@ import * as Collections from 'typescript-collections';
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class CircleCiOrchestrator {
+    private github_org: string;
     /**
      *
      * Used to iterate over components, one after the other, while they are being processed according the {@see CircleCiOrchestrator#execution_plan}
@@ -150,6 +151,7 @@ export class CircleCiOrchestrator {
       this.progressMatrix = [];
       this.progressBar = null; // has to be null, will be set to a new instance of {@see ParallelExectionSetProgressBar} every time we process a new Parallel Execution Set
       this.componentBeingProcessed = null;
+      this.github_org = process.env.GH_ORG;
     }
 
     loadCircleCISecrets () : void {
@@ -170,11 +172,15 @@ export class CircleCiOrchestrator {
     start()  : void {
       console.info("[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
       console.info("");
+      let whoamiSubscription = this.circleci_client.whoami().subscribe({
+        next: data => console.log( '[data] => ', data ),
+        complete: data => console.log( '[complete]' )
+      });
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - Execution plan is the value of the 'built_execution_plan_is' below : ");
+      console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
-      console.info(JSON.stringify({ built_execution_plan_is: this.execution_plan}, null, " "));
+      console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
@@ -190,23 +196,14 @@ export class CircleCiOrchestrator {
       });
 
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'built_execution_plan_is' below : ");
+      console.info("{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-
-      this.execution_plan.forEach((parallelExecutionsSet, index) => {
-        console.info("[{CircleCiOrchestrator}] - MONITORING PARALLEL EXECUTION SET no. ["+`${index}`+"]  : ");
-
-        if (parallelExecutionsSet.length == 0) {
-          console.info("[{CircleCiOrchestrator}] - Skipped Monitoring Parallel Executions Set no. ["+`${index}`+"] because it is empty");
-
-        } else {
-
-          this.progressBar = new ParallelExectionSetProgressBar(parallelExecutionsSet);
-          this.monitorProgress(parallelExecutionsSet);
-          this.progressBar.stop();
-        }
-
-      });
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info(" ---");
+      console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
+      console.info(" ---");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("");
 
     }
 
@@ -215,7 +212,7 @@ export class CircleCiOrchestrator {
     processExecutionSet (parallelExecutionsSet: string[]) : void {
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'built_execution_plan_is' below : ");
+      console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet}, null, " "));
@@ -224,14 +221,10 @@ export class CircleCiOrchestrator {
       console.info("");
 
 
-      let whoamiSubscription = this.circleci_client.whoami().subscribe({
-        next: data => console.log( '[data] => ', data ),
-        complete: data => console.log( '[complete]' )
-      });
       parallelExecutionsSet.forEach((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {}};
-        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, 'gravitee-lab', "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
+        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
             next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
             complete: data => {
               console.log( '[triggering Circle CI Build completed! :)]')
