@@ -212,7 +212,7 @@ export class CircleCiOrchestrator {
         }
 
       });
-      /// everything before this, should log only to debug level, or to file only, using winston 
+      /// everything before this, should log only to debug level, or to file only, using winston
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -323,6 +323,8 @@ export class CircleCiOrchestrator {
 
       /// Ok, so now I will  need to poll all builds until TIMEOUT
 
+
+      /// I poll a first time.
       this.progressMatrix.forEach((pipelineExecution, index) => {
         // 1./ I retrieve the pipeline info using the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
         let getPipelineInfoSubscription = this.circleci_client.getPipelineInfo(pipelineExecution.pipeline.id).subscribe({
@@ -332,6 +334,7 @@ export class CircleCiOrchestrator {
             },
             error: this.errorHandlerGetCCIPipelineInfos.bind(this)
         });
+
       })
     }
 
@@ -349,8 +352,13 @@ export class CircleCiOrchestrator {
       circleCiJsonResponse.vcs.origin_repository_url;
       circleCiJsonResponse.vcs.target_repository_url;
 
+      /// ++ Update Progress Matrix (In the Progress Matrix, when all entries have a 'state' JSon property with value 'created')
 
-      /// Now retireving the progressBar to update for the component
+
+      /// ++ Now Update Progress Bar
+
+      // retireving the progressBar to update for the component
+
       if (circleCiJsonResponse.state === "pending") {
         this.progressBars..updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
       } else if (circleCiJsonResponse.state === "errored") {
@@ -360,7 +368,20 @@ export class CircleCiOrchestrator {
       } else {
         throw new Error("[{CircleCiOrchestrator}] - [handleGetPipelineInfoCircleCIResponseData] Undefined Circle CI v2 Pipeline Status [" + `${circleCiJsonResponse.state}` + "]");
       }
+      /// ++ Update Monitor Report
+      let reportEntry: any = {};
+      reportEntry.monitor_event = {
+        action: 'fetch-CircleCI-API [GET /api/v2/pipeline/${circleci_pipeline_id}]',
+        circle_ci_response: circleCiJsonResponse,
+        error : {}
+      }
 
+      this.monitorReport.push(reportEntry);
+
+      console.info('')
+      console.info( '[{CircleCiOrchestrator}] - [errorHandlerGetCCIPipelineInfos] [this.monitorReport] is now :  ');
+      console.info(JSON.stringify({monitorReport: this.monitorReport}))
+      console.info('')
     }
     /**
      * RX JS err handler for fetching circle ci pipelines infos
@@ -368,7 +389,8 @@ export class CircleCiOrchestrator {
     errorHandlerGetCCIPipelineInfos (error: any) : void {
       console.error( '[{CircleCiOrchestrator}] - Fetching Circle CI pipeline infos with  Circle CI API failed. ', error )
       let reportEntry: any = {};
-      reportEntry.get_pipeline_infos = {
+      reportEntry.monitor_event = {
+        action: 'fetch-CircleCI-API [GET /api/v2/pipeline/${circleci_pipeline_id}]',
         error : {message: "[{CircleCiOrchestrator}] - Fetching Circle CI pipeline infos with  Circle CI API failed. ", cause: error}
       }
 
