@@ -165,6 +165,9 @@ export class CircleCiOrchestrator {
       this.componentBeingProcessed = null;
       this.github_org = process.env.GH_ORG;
     }
+    /**
+     * initializes a new progress bar for every Parallel Executions Set (every entry int this.execution_plan)
+     **/
     initProgressBars () : void {
       this.progressBars = new Collections.Dictionary<number,ParallelExectionSetProgressBar>();
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
@@ -308,11 +311,9 @@ export class CircleCiOrchestrator {
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       /// Ok, so now I will  need to poll all builds until TIMEOUT
-
+      
       this.progressMatrix.forEach((pipelineExecution, index) => {
         // 1./ I retrieve the pipeline info using the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
-
-
         let getPipelineInfoSubscription = this.circleci_client.getPipelineInfo(pipelineExecution.pipeline.id).subscribe({
             next: this.handleGetPipelineInfoCircleCIResponseData.bind(this),
             complete: data => {
@@ -332,7 +333,7 @@ export class CircleCiOrchestrator {
       circleCiJsonResponse.vcs.target_repository_url;
 
       if (circleCiJsonResponse.state === "pending") {
-        this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
+        this.progressBars..updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
       } else if (circleCiJsonResponse.state === "errored") {
         this.progressBar.updateStatus(slugArray[2], ParallelExectionSetProgressStatus.ERRORED);
       } else if (circleCiJsonResponse.state === "created") {
