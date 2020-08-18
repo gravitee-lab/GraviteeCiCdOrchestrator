@@ -138,10 +138,22 @@ export class CircleCiOrchestrator {
 
     /**
      *
-     * This property is set to a new Instance of {@see ParallelExectionSetProgressBar} every time a new Parallel Executions Set is processed, using {@see CircleCiOrchestrator#processExecutionSet()}
+     * For each Parallel Execution Set of the {@see this.execution_plan}, an instance of {@see ParallelExectionSetProgressBar} is instantiated
+     *
+     * So for every Parallel Executions Set that is processed, using {@see CircleCiOrchestrator#processExecutionSet()}, there will be a progress bar
+     *
+     * Also above the progress bars, all pipeline HTTP links will be given.
+     *
+     * One HTTP Link can be constructed, per githbu repo, if not found in REST API calls JSON responses :
+     *
+     * => For a repo named  "testrepo1", in the github org "gravitee-lab", and a branch named "dependabot/npm_and_yarn/handlebars-4.5.3", HTTP Link is :
+     *
+     * ==> https://app.circleci.com/pipelines/github/gravitee-lab/testrepo1?branch=dependabot%2Fnpm_and_yarn%2Fhandlebars-4.5.3
+     *
+     * ==> Knowing that this link will display page of latest pipeline executions of the https://github.com/gravitee-lab/testrepo1.git repo on the "dependabot/npm_and_yarn/handlebars-4.5.3" branch
      *
      **/
-    private progressBar: ParallelExectionSetProgressBar;
+    private progressBars: Collections.Dictionary<number,ParallelExectionSetProgressBar>;
 
     constructor(execution_plan: string [][], retries: number) {
       this.execution_plan = execution_plan;
@@ -149,9 +161,22 @@ export class CircleCiOrchestrator {
       this.loadCircleCISecrets();
       this.circleci_client = new CircleCIClient(this.secrets);
       this.progressMatrix = [];
-      this.progressBar = null; // has to be null, will be set to a new instance of {@see ParallelExectionSetProgressBar} every time we process a new Parallel Execution Set
+      this.initProgressBars();
       this.componentBeingProcessed = null;
       this.github_org = process.env.GH_ORG;
+    }
+    initProgressBars () : void {
+      this.progressBars = new Collections.Dictionary<number,ParallelExectionSetProgressBar>();
+      this.execution_plan.forEach((parallelExecutionsSet, index) => {
+        console.info("[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. ["+`${index}`+"]  ");
+        if (parallelExecutionsSet.length == 0) {
+          console.info("[{CircleCiOrchestrator}] - no Progressbar initialized for Parallel Executions Set no. ["+`${index}`+"] because it is empty");
+        } else {
+          console.info(parallelExecutionsSet);
+          this.processExecutionSet(parallelExecutionsSet); /// must be synchronous
+        }
+
+      });
     }
 
     loadCircleCISecrets () : void {
@@ -219,7 +244,6 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-
 
       parallelExecutionsSet.forEach((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
@@ -619,8 +643,8 @@ export class ParallelExectionSetProgressBar {
 
   constructor(parallelExecutionsSet: string[]) {
     this.parallelExecutionsSet = parallelExecutionsSet;
-    if (parallelExecutionsSet === undefined) {
-      throw new Error("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is undefined, so can't work on any status to report.")
+    if (parallelExecutionsSet === undefined || parallelExecutionsSet === null) {
+      throw new Error("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is null or undefined, so can't work on any status to report.")
     }
     if (parallelExecutionsSet.length == 0) {
       console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.")
@@ -663,13 +687,19 @@ export class ParallelExectionSetProgressBar {
    *
    **/
   private start() : void {
-    if (this.bars === undefined || this.bars.size() == 0) {
+    if (this.bars === undefined || this.bars === null) {
       throw new Error("[{ParallelExectionSetProgressBar}] - Starting Progress Bar failed because there are no Single Progress Bars in this Multi Progress Bar ")
     }
-    this.bars.forEach((componentName, singleBar) => {
-      // sets the single bar initial State
-      singleBar.start(ParallelExectionSetProgressBar.COMPLETED_SCALE, ParallelExectionSetProgressStatus.UNTRIGGERED, {filename: `${componentName}`});
-    })
+    if (this.parallelExecutionsSet.length == 0) {
+      console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.");
+      this.multibar.stop();
+      console.warn("[{ParallelExectionSetProgressBar}] - stopped Progress Bar.");
+    } else {
+      this.bars.forEach((componentName, singleBar) => {
+        // sets the single bar initial State
+        singleBar.start(ParallelExectionSetProgressBar.COMPLETED_SCALE, ParallelExectionSetProgressStatus.UNTRIGGERED, {filename: `${componentName}`});
+      });
+    }
   }
   /**
   * Releases TTY to let the stdout proceed
