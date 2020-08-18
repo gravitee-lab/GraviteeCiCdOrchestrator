@@ -212,7 +212,7 @@ export class CircleCiOrchestrator {
         }
 
       });
-
+      /// everything before this, should log only to debug level, or to file only, using winston 
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -222,7 +222,7 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-
+      this.monitorProgress(this.execution_plan);
     }
 
 
@@ -349,6 +349,8 @@ export class CircleCiOrchestrator {
       circleCiJsonResponse.vcs.origin_repository_url;
       circleCiJsonResponse.vcs.target_repository_url;
 
+
+      /// Now retireving the progressBar to update for the component
       if (circleCiJsonResponse.state === "pending") {
         this.progressBars..updateStatus(slugArray[2], ParallelExectionSetProgressStatus.PENDING);
       } else if (circleCiJsonResponse.state === "errored") {
