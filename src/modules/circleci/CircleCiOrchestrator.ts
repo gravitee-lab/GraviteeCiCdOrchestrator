@@ -151,9 +151,9 @@ export class CircleCiOrchestrator {
      * ==> https://app.circleci.com/pipelines/github/gravitee-lab/testrepo1?branch=dependabot%2Fnpm_and_yarn%2Fhandlebars-4.5.3
      *
      * ==> Knowing that this link will display page of latest pipeline executions of the https://github.com/gravitee-lab/testrepo1.git repo on the "dependabot/npm_and_yarn/handlebars-4.5.3" branch
-     *
+     * Note : the key for each {@see ParallelExectionSetProgressBar} is the Parallel Execution Set itself : an array of string
      **/
-    private progressBars: Collections.Dictionary<number,ParallelExectionSetProgressBar>;
+    private progressBars: Collections.Dictionary<string [],ParallelExectionSetProgressBar>;
 
     constructor(execution_plan: string [][], retries: number) {
       this.execution_plan = execution_plan;
@@ -169,10 +169,10 @@ export class CircleCiOrchestrator {
      * initializes a new progress bar for every Parallel Executions Set (every entry int this.execution_plan)
      **/
     initProgressBars () : void {
-      this.progressBars = new Collections.Dictionary<number,ParallelExectionSetProgressBar>();
+      this.progressBars = new Collections.Dictionary<string [],ParallelExectionSetProgressBar>();
       this.execution_plan.forEach((parallelExecutionsSet, index) => {
         console.info("[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. ["+`${index}`+"]  ");
-        this.progressBars.setValue(index, new ParallelExectionSetProgressBar(parallelExecutionsSet));
+        this.progressBars.setValue(parallelExecutionsSet, new ParallelExectionSetProgressBar(parallelExecutionsSet));
       });
     }
 
@@ -311,7 +311,7 @@ export class CircleCiOrchestrator {
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       /// Ok, so now I will  need to poll all builds until TIMEOUT
-      
+
       this.progressMatrix.forEach((pipelineExecution, index) => {
         // 1./ I retrieve the pipeline info using the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
         let getPipelineInfoSubscription = this.circleci_client.getPipelineInfo(pipelineExecution.pipeline.id).subscribe({
