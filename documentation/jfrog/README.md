@@ -100,9 +100,10 @@ git clone https://github.com/gravitee-io/gravitee-parent
 
 * Dans aucun composant `Java` Gravitee.io, on ne trouve de configuration de remote maven de type 'release' : unqiuement `snapshot` et `staging`
 * Examinons plus en détail les scripts `groovy` présents dans https://github.com/gravitee-io/jenkins-scripts.git :
-  * `src/main/groovy/releaseParent.groovy` : je pense effectue le release de https://github.com/gravitee-io/gravitee-parent
-  
-
+  * `src/main/groovy/release.groovy` : c'est le point d'entrée du "logiciel" `groovy` s'exécutant dans le pipeline https://ci.gravitee.io/view/Release/job/Release_Gravitee.io :
+    * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
+    * `src/main/groovy/releaseParent.groovy` : je pense effectue le release de https://github.com/gravitee-io/gravitee-parent
+    * `src/main/groovy/releasejson.groovy` : lorsque l'on a poussé un commit sur https://github.com/gravitee-io/release.git de `relaase.json`, le script créée le tag et pousse sur la "bonne branche" : à l'aide des paramètres du pipeline Jenkins (liste déroulante, no de version)
 
 
 
