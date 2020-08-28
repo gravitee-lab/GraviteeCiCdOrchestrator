@@ -6,3 +6,5 @@ dist/
 # Secrets as files
 .secret.circleci.json
 .secrets.json
+# privately versioned files
+documentation/global-process

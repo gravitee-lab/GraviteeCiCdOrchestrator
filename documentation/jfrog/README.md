@@ -32,14 +32,14 @@ git clone https://github.com/gravitee-io/gravitee-parent
 
 ```
 
+* set up de https://gravitee.jfrog.io comme maven repo distant pour un composant java `Gravitee` :
 
 # Comment sont résolus les maven repo distants
- 
-* set up de https://gravitee.jfrog.io comme maven repo distant pour un composant java `Gravitee` :
-  * https://github.com/gravitee-io/gravitee-parent contient un `pom.xml` _parent_ qui définit la configuration de 3 repo maven distants :
-    * 2 `snapshots` : https://oss.sonatype.org/content/repositories/snapshots et http://oss.sonatype.org/content/repositories/snapshots
-    * 1 `staging` : https://oss.sonatype.org/service/local/staging/deploy/maven2/
-    * Deux sections du `pom.xml` configurent ces 3 repos :
+
+* https://github.com/gravitee-io/gravitee-parent contient un `pom.xml` _parent_ qui définit la configuration de 3 repo maven distants :
+  * 2 `snapshots` : https://oss.sonatype.org/content/repositories/snapshots et http://oss.sonatype.org/content/repositories/snapshots
+  * 1 `staging` : https://oss.sonatype.org/service/local/staging/deploy/maven2/
+  * Deux sections du `pom.xml` configurent ces 3 repos :
 
 
 ```Xml
@@ -69,6 +69,29 @@ git clone https://github.com/gravitee-io/gravitee-parent
 </repositories>
 <!-- [...] -->
 ```
+* En plus de ces deux sections dans le `pom.xml` parent commun à tous les composants Java, certains ont dans leur propre `pom.xml`, une section de configuration de maven repo :
+
+```Xml
+<profiles>
+    <profile>
+        <id>allow-snapshots-for-swagger3</id>
+        <activation><activeByDefault>true</activeByDefault></activation>
+        <repositories>
+            <repository>
+                <id>snapshots-repo</id>
+                <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                <releases><enabled>false</enabled></releases>
+                <snapshots><enabled>true</enabled></snapshots>
+            </repository>
+        </repositories>
+    </profile>
+</profiles>
+```
+
+
+
+
+# ANNEXE : Doc de ref.
 
 `JFrog` Docs reference :
 
