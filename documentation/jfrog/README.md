@@ -107,7 +107,29 @@ git clone https://github.com/gravitee-io/gravitee-parent
     * `git rev-parse HEAD > GIT_COMMIT` : génération du GIT_COMMIT_ID (chercher le git comit id maven plugin s'il est utilisé)
     * `mvn -B -U clean install` puis `mvn enforcer:enforce` :  pour faire un dry run. le maven enforcer plugin est là pour une unique contrainte, présente dans le `pom.xml` de chaque composant java `Gravitee.io` : `No Snapshots Allowed!` (le pom parent commun à tous les composant ne comprend que le dépendance qu'est le maven enforcer plugin ). Les contraintes sont exeprimées par les tags `XML` utilisés comme `DSL`.
     * `mvn -B -U -P gravitee-release clean deploy` : lavoilà la release pour envoyer sur `nexus`
-    * `ccc`
+    * `git add --update`
+    * `git commit -m 'release(${c.version.releaseVersion()})`
+    * `git tag ${c.version.releaseVersion()}` : ok, APRES, avoir fait le `maven deploy`, est créée le tag de release : possibilité d'utiliser le git flow ici, sans pousser la branche `develop`.
+    * Create the maintenance branch if needed :
+
+```bash
+# si dry run :
+# create the maintenance branch named '${NEXT_BRANCH_NAME}'"
+git checkout -b "${NEXT_BRANCH_NAME}"
+mvn -B versions:set -DnewVersion="${NEXT_FIX_SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
+git add --update
+git commit -m 'chore(): Prepare next version'
+git checkout "${SCM_BRANCH}"
+# si ce n'est pas un dry run :
+# create the maintenance branch named "${NEXT_BRANCH_NAME}"
+git checkout -b ${c.version.getNextBranchName()}
+mvn -B versions:set -DnewVersion="${NEXT_FIX_SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
+git add --update
+git commit -m 'chore(): Prepare next version'
+git push --tags origin "${NEXT_BRANCH_NAME}" # seulement si ce n'est PAS un dry run
+git checkout "${SCM_BRANCH}"
+```
+
   * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
   * `src/main/groovy/releaseParent.groovy` : s'exécute avec le pipeline https://ci.gravitee.io/view/Release/job/Release%20Parent/ agissant sur https://github.com/gravitee-io/gravitee-parent
   * `src/main/groovy/releasejson.groovy` : lorsque l'on a poussé un commit sur https://github.com/gravitee-io/release.git de `relaase.json`, le script créée le tag et pousse sur la "bonne branche" : à l'aide des paramètres du pipeline Jenkins (liste déroulante, no de version)
