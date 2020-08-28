@@ -105,8 +105,8 @@ git clone https://github.com/gravitee-io/gravitee-parent
     * `mvn -B versions:set -DnewVersion=${c.version.releaseVersion()} -DgenerateBackupPoms=false` commentaire : `// set version`
     * `mvn -B -U versions:update-properties -Dincludes=io.gravitee.*:* -DallowMajorUpdates=false -DallowMinorUpdates=false -DallowIncrementalUpdates=true -DgenerateBackupPoms=false`,  commentaire : `// use release version of each -SNAPSHOT gravitee artifact`
     * `git rev-parse HEAD > GIT_COMMIT` : génération du GIT_COMMIT_ID (chercher le git comit id maven plugin s'il est utilisé)
-    * `mvn -B -U clean install` puis `mvn enforcer:enforce` :  pour faire un dry run
-    * `ccc`
+    * `mvn -B -U clean install` puis `mvn enforcer:enforce` :  pour faire un dry run. le maven enforcer plugin est là pour une unique contrainte, présente dans le `pom.xml` de chaque composant java `Gravitee.io` : `No Snapshots Allowed!` (le pom parent commun à tous les composant ne comprend que le dépendance qu'est le maven enforcer plugin ). Les contraintes sont exeprimées par les tags `XML` utilisés comme `DSL`.
+    * `mvn -B -U -P gravitee-release clean deploy` : lavoilà la release pour envoyer sur `nexus`
     * `ccc`
   * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
   * `src/main/groovy/releaseParent.groovy` : s'exécute avec le pipeline https://ci.gravitee.io/view/Release/job/Release%20Parent/ agissant sur https://github.com/gravitee-io/gravitee-parent
