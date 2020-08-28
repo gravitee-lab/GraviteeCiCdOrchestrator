@@ -88,7 +88,7 @@ git clone https://github.com/gravitee-io/gravitee-parent
 </profiles>
 ```
 
-* Chaque composant Java référence dans son propre `pom.xml` le https://github.com/gravitee-io/gravitee-parent comme _"`pom parent`"_ : 
+* Chaque composant Java référence dans son propre `pom.xml` le https://github.com/gravitee-io/gravitee-parent comme _"`pom parent`"_ :
 
 ```Xml
 <parent>
@@ -97,6 +97,13 @@ git clone https://github.com/gravitee-io/gravitee-parent
     <version>19</version>
 </parent>
 ```
+
+* Dans aucun composant `Java` Gravitee.io, on ne trouve de configuration de remote maven de type 'release' : unqiuement `snapshot` et `staging`
+* Examinons plus en détail les scripts `groovy` présents dans https://github.com/gravitee-io/jenkins-scripts.git :
+  * `src/main/groovy/releaseParent.groovy` : je pense effectue le release de https://github.com/gravitee-io/gravitee-parent
+  
+
+
 
 
 # ANNEXE : Doc de ref.
