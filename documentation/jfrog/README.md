@@ -88,7 +88,15 @@ git clone https://github.com/gravitee-io/gravitee-parent
 </profiles>
 ```
 
+* Chaque composant Java référence dans son propre `pom.xml` le https://github.com/gravitee-io/gravitee-parent comme _"`pom parent`"_ : 
 
+```Xml
+<parent>
+    <groupId>io.gravitee</groupId>
+    <artifactId>gravitee-parent</artifactId>
+    <version>19</version>
+</parent>
+```
 
 
 # ANNEXE : Doc de ref.
