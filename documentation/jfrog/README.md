@@ -150,14 +150,17 @@ git rev-parse HEAD > GIT_COMMIT
 # dans le 'pom.xml' de chaque composant java Gravitee.io : No Snapshots Allowed! (le pom parent commun à tous
 #  les composant ne comprend que le dépendance qu'est le maven enforcer plugin ).
 # Les contraintes sont exeprimées par les tags XML utilisés comme DSL.
-mvn -B -U clean install` puis `mvn enforcer:enforce`
-# la voilà la release pour envoyer sur `nexus`
+mvn -B -U clean install
+mvn enforcer:enforce
+# la voilà la release pour envoyer sur nexus
 mvn -B -U -P gravitee-release clean deploy
 # // commit, tag the release
-git add --update`
+git add --update
 git commit -m "release(${RELEASE_VERSION})"
-git tag ${c.version.releaseVersion()}` : ok, APRES, avoir fait le `maven deploy`, est créée le tag de release : possibilité d'utiliser le git flow ici, sans pousser la branche `develop`.
-
+# ok, APRES, avoir fait le maven deploy, est créée le
+# tag de release : possibilité d'utiliser le git flow ici, sans
+# pousser la branche develop.
+git tag "${RELEASE_VERSION}"
 # https://github.com/gravitee-io/jenkins-scripts/blob/master/src/main/groovy/releasemaven.groovys
 
 # ------------------------------------------------------------
