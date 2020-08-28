@@ -128,6 +128,8 @@ git add --update
 git commit -m 'chore(): Prepare next version'
 git push --tags origin "${NEXT_BRANCH_NAME}" # seulement si ce n'est PAS un dry run
 git checkout "${SCM_BRANCH}"
+# update next version
+mvn -B versions:set -DnewVersion="${NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH}" -DgenerateBackupPoms=false
 ```
 
   * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
