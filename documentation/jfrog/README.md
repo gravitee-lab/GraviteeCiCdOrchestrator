@@ -113,6 +113,11 @@ git clone https://github.com/gravitee-io/gravitee-parent
     *  :
 
 ```bash
+# ------------------------------------------------------------
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# {\/\/} # --->> REVERSE https://github.com/gravitee-io/jenkins-scripts/blob/3919a90fe32b04782e11d3695de1d3ed3c8da165/src/main/groovy/releasemaven.groovy#L10
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# ------------------------------------------------------------
 # --- general tools execution environment
 #
 # def mvnHome = tool 'MVN33'
@@ -166,7 +171,10 @@ git tag "${RELEASE_VERSION}"
 # ------------------------------------------------------------
 # ==>>> Create the maintenance branch if needed
 # ------------------------------------------------------------
-# Si dry run :
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# {\/\/} IF DRY RUN :
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# ------------------------------------------------------------
 # create the maintenance branch named '${NEXT_BRANCH_NAME}'"
 # ------------------------------------------------------------
 git checkout -b "${NEXT_BRANCH_NAME}"
@@ -174,13 +182,20 @@ mvn -B versions:set -DnewVersion="${NEXT_FIX_SNAPSHOT_VERSION}" -DgenerateBackup
 git add --update
 git commit -m 'chore(): Prepare next version'
 git checkout "${SCM_BRANCH}"
-# si ce n'est pas un dry run :
+# ------------------------------------------------------------
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# {\/\/} IF NOT DRY RUN :
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# ------------------------------------------------------------
 # create the maintenance branch named "${NEXT_BRANCH_NAME}"
 git checkout -b ${c.version.getNextBranchName()}
 mvn -B versions:set -DnewVersion="${NEXT_FIX_SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
 git add --update
 git commit -m 'chore(): Prepare next version'
 git push --tags origin "${NEXT_BRANCH_NAME}" # seulement si ce n'est PAS un dry run
+# {\/\/} # {\/\/} # {\/\/} # {\/\/}
+# ------------------------------------------------------------
+
 git checkout "${SCM_BRANCH}"
 # update next version
 mvn -B versions:set -DnewVersion="${NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH}" -DgenerateBackupPoms=false
