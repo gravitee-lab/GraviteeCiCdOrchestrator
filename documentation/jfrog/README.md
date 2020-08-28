@@ -113,6 +113,11 @@ git clone https://github.com/gravitee-io/gravitee-parent
     * Create the maintenance branch if needed :
 
 ```bash
+export SCM_BRANCH=<valeur passée en paramètre ${GRAVITEEIO_VERSION} du pipeline  https://ci.gravitee.io/view/Release/job/Release_Gravitee.io>
+export NEXT_BRANCH_NAME=<se déduit de ${SCM_BRANCH} ?>
+export NEXT_FIX_SNAPSHOT_VERSION=<se déduit de ${SCM_BRANCH} ?>
+export NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH=<se déduit de ${SCM_BRANCH} ?>
+
 # si dry run :
 # create the maintenance branch named '${NEXT_BRANCH_NAME}'"
 git checkout -b "${NEXT_BRANCH_NAME}"
