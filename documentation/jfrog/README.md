@@ -100,10 +100,94 @@ git clone https://github.com/gravitee-io/gravitee-parent
 
 * Dans aucun composant `Java` Gravitee.io, on ne trouve de configuration de remote maven de type 'release' : unqiuement `snapshot` et `staging`
 * Examinons plus en détail les scripts `groovy` présents dans https://github.com/gravitee-io/jenkins-scripts.git :
-  * `src/main/groovy/release.groovy` : c'est le point d'entrée du "logiciel" `groovy` s'exécutant dans le pipeline https://ci.gravitee.io/view/Release/job/Release_Gravitee.io :
-    * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
-    * `src/main/groovy/releaseParent.groovy` : je pense effectue le release de https://github.com/gravitee-io/gravitee-parent
-    * `src/main/groovy/releasejson.groovy` : lorsque l'on a poussé un commit sur https://github.com/gravitee-io/release.git de `relaase.json`, le script créée le tag et pousse sur la "bonne branche" : à l'aide des paramètres du pipeline Jenkins (liste déroulante, no de version)
+  * les 4 scripts suivants, sont indépendants : pour chaucjn d'entre eux, il n'utilise (`import`) aucun des deux.
+  * `src/main/groovy/release.groovy` : s'exécutant dans le pipeline https://ci.gravitee.io/view/Release/job/Release_Gravitee.io :
+  * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
+  * `src/main/groovy/releaseParent.groovy` : s'exécute avec le pipeline https://ci.gravitee.io/view/Release/job/Release%20Parent/ agissant sur https://github.com/gravitee-io/gravitee-parent
+  * `src/main/groovy/releasejson.groovy` : lorsque l'on a poussé un commit sur https://github.com/gravitee-io/release.git de `relaase.json`, le script créée le tag et pousse sur la "bonne branche" : à l'aide des paramètres du pipeline Jenkins (liste déroulante, no de version)
+
+* Un autre pipeline, https://ci.gravitee.io/view/Release/job/Release_Schema_Generator/configure , exécute le script groocvy suuivant (et cela ressemble fort à l'algoritme d'enchaînement des manven release de chaque repo `mvn install`)  :
+
+```Groovy
+def scmUrl = "git@github.com:gravitee-io/json-schema-generator-maven-plugin.git"
+def scmBranch = "master"
+dryRunAsBool = Boolean.valueOf(dryRun)
+
+if (dryRunAsBool) {
+    println("\n    ##################################" +
+            "\n    #                                #" +
+            "\n    #          DRY RUN MODE          #" +
+            "\n    #                                #" +
+            "\n    ##################################")
+}
+
+node() {
+    println("\n    scmUrl         = ${scmUrl}" +
+            "\n    scmBranch      = ${scmBranch}" +
+            "\n    releaseVersion = ${RELEASE_VERSION}" +
+            "\n    nextSnapshot   = ${NEXT_VERSION}")
+
+    sh 'rm -rf *'
+    sh 'rm -rf .git'
+
+    def mvnHome = tool 'MVN33'
+    def javaHome = tool 'JDK 8'
+    withEnv(["PATH+MAVEN=${mvnHome}/bin",
+            "M2_HOME=${mvnHome}",
+            "JAVA_HOME=${javaHome}"]) {
+
+        checkout([
+                $class                           : 'GitSCM',
+                branches                         : [[
+                                                            name: "${scmBranch}"
+                                                    ]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions                       : [[
+                                                            $class     : 'LocalBranch',
+                                                            localBranch: "${scmBranch}"
+                                                    ]],
+                submoduleCfg                     : [],
+                userRemoteConfigs                : [[
+                                                            credentialsId: 'ce78e461-eab0-44fb-bc8d-15b7159b483d',
+                                                            url          : "${scmUrl}"
+                                                    ]]
+        ])
+
+        // set version
+        sh "mvn -B versions:set -DnewVersion=${RELEASE_VERSION} -DgenerateBackupPoms=false"
+
+        // use release version of each -SNAPSHOT gravitee artifact
+        sh "mvn -B -U versions:update-properties -Dincludes=io.gravitee.*:* -DgenerateBackupPoms=false"
+
+        sh "cat pom.xml"
+
+        // deploy
+        if (dryRunAsBool) {
+            sh "mvn -B -U clean install"
+            sh "mvn enforcer:enforce"
+        } else {
+            sh "mvn -B -U -P gravitee-release clean deploy"
+        }
+
+        // commit, tag the release
+        sh "git add --update"
+        sh "git commit -m 'release(${RELEASE_VERSION})'"
+        sh "git tag ${RELEASE_VERSION}"
+
+        // update next version
+        sh "mvn -B versions:set -DnewVersion=${NEXT_VERSION} -DgenerateBackupPoms=false"
+
+        // commit, tag the snapshot
+        sh "git add --update"
+        sh "git commit -m 'chore(): Prepare next version'"
+
+        // push
+        if ( !dryRun ) {
+            sh "git push --tags origin ${scmBranch}"
+        }
+    }
+}
+```
 
 
 
