@@ -110,7 +110,7 @@ git clone https://github.com/gravitee-io/gravitee-parent
     * `git add --update`
     * `git commit -m 'release(${c.version.releaseVersion()})`
     * `git tag ${c.version.releaseVersion()}` : ok, APRES, avoir fait le `maven deploy`, est créée le tag de release : possibilité d'utiliser le git flow ici, sans pousser la branche `develop`.
-    * Create the maintenance branch if needed :
+    *  :
 
 ```bash
 export SCM_BRANCH=<valeur passée en paramètre ${GRAVITEEIO_VERSION} du pipeline  https://ci.gravitee.io/view/Release/job/Release_Gravitee.io>
@@ -118,8 +118,14 @@ export NEXT_BRANCH_NAME=<se déduit de ${SCM_BRANCH} ?>
 export NEXT_FIX_SNAPSHOT_VERSION=<se déduit de ${SCM_BRANCH} ?>
 export NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH=<se déduit de ${SCM_BRANCH} ?>
 
-# si dry run :
+# https://github.com/gravitee-io/jenkins-scripts/blob/master/src/main/groovy/releasemaven.groovys
+
+# ------------------------------------------------------------
+# ==>>> Create the maintenance branch if needed
+# ------------------------------------------------------------
+# Si dry run :
 # create the maintenance branch named '${NEXT_BRANCH_NAME}'"
+# ------------------------------------------------------------
 git checkout -b "${NEXT_BRANCH_NAME}"
 mvn -B versions:set -DnewVersion="${NEXT_FIX_SNAPSHOT_VERSION}" -DgenerateBackupPoms=false
 git add --update
