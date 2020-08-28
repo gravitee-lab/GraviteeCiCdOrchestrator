@@ -118,9 +118,8 @@ export NEXT_BRANCH_NAME=<se déduit de ${SCM_BRANCH} ?>
 export NEXT_FIX_SNAPSHOT_VERSION=<se déduit de ${SCM_BRANCH} ?>
 export NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH=<se déduit de ${SCM_BRANCH} ?>
 
-# // set version
-mvn -B versions:set -DnewVersion="${RELEASE_VERSION}" -DgenerateBackupPoms=false` commentaire :
-
+# commentaire : // set version
+mvn -B versions:set -DnewVersion="${RELEASE_VERSION}" -DgenerateBackupPoms=false
 # commentaire : // use release version of each -SNAPSHOT gravitee artifact
 mvn -B -U versions:update-properties -Dincludes=io.gravitee.*:* -DallowMajorUpdates=false -DallowMinorUpdates=false -DallowIncrementalUpdates=true -DgenerateBackupPoms=false
 
