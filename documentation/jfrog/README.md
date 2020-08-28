@@ -32,6 +32,9 @@ git clone https://github.com/gravitee-io/gravitee-parent
 
 ```
 
+
+# Comment sont résolus les maven repo distants
+ 
 * set up de https://gravitee.jfrog.io comme maven repo distant pour un composant java `Gravitee` :
   * https://github.com/gravitee-io/gravitee-parent contient un `pom.xml` _parent_ qui définit la configuration de 3 repo maven distants :
     * 2 `snapshots` : https://oss.sonatype.org/content/repositories/snapshots et http://oss.sonatype.org/content/repositories/snapshots
