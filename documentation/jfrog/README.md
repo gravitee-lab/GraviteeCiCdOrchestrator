@@ -113,6 +113,7 @@ git clone https://github.com/gravitee-io/gravitee-parent
     *  :
 
 ```bash
+export RELEASE_VERSION=<ça, cest la prop JSON au top level de release.json définissant la version de release>
 export SCM_BRANCH=<valeur passée en paramètre ${GRAVITEEIO_VERSION} du pipeline  https://ci.gravitee.io/view/Release/job/Release_Gravitee.io>
 export NEXT_BRANCH_NAME=<se déduit de ${SCM_BRANCH} ?>
 export NEXT_FIX_SNAPSHOT_VERSION=<se déduit de ${SCM_BRANCH} ?>
@@ -132,8 +133,9 @@ git rev-parse HEAD > GIT_COMMIT
 mvn -B -U clean install` puis `mvn enforcer:enforce`
 # la voilà la release pour envoyer sur `nexus`
 mvn -B -U -P gravitee-release clean deploy
+# // commit, tag the release
 git add --update`
-git commit -m 'release(${c.version.releaseVersion()})`
+git commit -m "release(${RELEASE_VERSION})"
 git tag ${c.version.releaseVersion()}` : ok, APRES, avoir fait le `maven deploy`, est créée le tag de release : possibilité d'utiliser le git flow ici, sans pousser la branche `develop`.
 
 # https://github.com/gravitee-io/jenkins-scripts/blob/master/src/main/groovy/releasemaven.groovys
