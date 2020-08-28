@@ -103,7 +103,10 @@ git clone https://github.com/gravitee-io/gravitee-parent
   * `src/main/groovy/release.groovy` : s'exécutant dans le pipeline https://ci.gravitee.io/view/Release/job/Release_Gravitee.io, celui ci invoque `src/main/groovy/releasemaven.groovy`
   * `src/main/groovy/releasemaven.groovy` : contient la procédure de build `maven` de chaque composant, et voici la liste des commandes maven exécutées :
     * `mvn -B versions:set -DnewVersion=${c.version.releaseVersion()} -DgenerateBackupPoms=false` commentaire : `// set version`
-    * `mvn -B -U versions:update-properties -Dincludes=io.gravitee.*:* -DallowMajorUpdates=false -DallowMinorUpdates=false -DallowIncrementalUpdates=true -DgenerateBackupPoms=false`,  commentaire : `// set version`
+    * `mvn -B -U versions:update-properties -Dincludes=io.gravitee.*:* -DallowMajorUpdates=false -DallowMinorUpdates=false -DallowIncrementalUpdates=true -DgenerateBackupPoms=false`,  commentaire : `// use release version of each -SNAPSHOT gravitee artifact`
+    * `git rev-parse HEAD > GIT_COMMIT` : génération du GIT_COMMIT_ID (chercher le git comit id maven plugin s'il est utilisé)
+    * `mvn -B -U clean install` puis `mvn enforcer:enforce` :  pour faire un dry run
+    * `ccc`
     * `ccc`
   * `src/main/groovy/updateParentVersion.groovy` agit sur https://github.com/gravitee-io/gravitee-parent
   * `src/main/groovy/releaseParent.groovy` : s'exécute avec le pipeline https://ci.gravitee.io/view/Release/job/Release%20Parent/ agissant sur https://github.com/gravitee-io/gravitee-parent
