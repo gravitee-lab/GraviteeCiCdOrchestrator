@@ -113,11 +113,31 @@ git clone https://github.com/gravitee-io/gravitee-parent
     *  :
 
 ```bash
-export RELEASE_VERSION=<ça, cest la prop JSON au top level de release.json définissant la version de release>
-export SCM_BRANCH=<valeur passée en paramètre ${GRAVITEEIO_VERSION} du pipeline  https://ci.gravitee.io/view/Release/job/Release_Gravitee.io>
-export NEXT_BRANCH_NAME=<se déduit de ${SCM_BRANCH} ?>
-export NEXT_FIX_SNAPSHOT_VERSION=<se déduit de ${SCM_BRANCH} ?>
-export NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH=<se déduit de ${SCM_BRANCH} ?>
+# --- general tools execution environment
+#
+# def mvnHome = tool 'MVN33'
+# def javaHome = tool 'JDK 8'
+# def nodeHome = tool 'NodeJS 0.12.4'
+# withEnv(["PATH+MAVEN=${mvnHome}/bin",
+#         "PATH+NODE=${nodeHome}/bin",
+#         "M2_HOME=${mvnHome}",
+#         "JAVA_HOME=${javaHome}"]) {
+
+
+# lnked to M2_HOME
+# MAVEN version 3.3
+# JDK 8
+# NodeJS '0.12.4' ???... 12.4 ?
+MVN_HOME="where maven 3.3 is installed, has [./bin] as subfolder"
+JAVA_HOME="JDK 8 as usual"
+NODE_HOME="where NodeJS ['0.12.4' ???... 12.4 ?] is installed, has [./bin] as subfolder"
+
+# --- Project specific execution environment for each component
+export RELEASE_VERSION='<ça, cest la prop JSON au top level de release.json définissant la version de release>'
+export SCM_BRANCH='<valeur passée en paramètre ${GRAVITEEIO_VERSION} du pipeline  https://ci.gravitee.io/view/Release/job/Release_Gravitee.io>'
+export NEXT_BRANCH_NAME='<se déduit de ${SCM_BRANCH} ?>'
+export NEXT_FIX_SNAPSHOT_VERSION='<se déduit de ${SCM_BRANCH} ?>'
+export NEW_SNAPSHOT_VERSION_ON_CURRENT_BRANCH='<se déduit de ${SCM_BRANCH} ?>'
 
 # commentaire : // set version
 mvn -B versions:set -DnewVersion="${RELEASE_VERSION}" -DgenerateBackupPoms=false
