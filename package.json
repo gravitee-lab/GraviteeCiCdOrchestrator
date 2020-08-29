@@ -7,7 +7,7 @@
     "test": "echo 'no tests yet'",
     "dev": "npm run build && ./node_modules/ts-node/dist/bin.js ./src/index.ts",
     "start": "node ./dist/index.js",
-    "doc": "./node_modules/typedoc/bin/typedoc --out docs/ ./src ",
+    "doc": "./node_modules/typedoc/bin/typedoc --out docs/ ./src --theme node_modules/eledoc/bin/default/",
     "compile": "tsc --outDir dist/ ./**/*.ts",
     "build": "npm run compile && npm run test && npm run doc && npm run oci",
     "oci": "docker version && docker ps -a && docker images"
@@ -45,6 +45,7 @@
     "@types/axios": "^0.14.0",
     "@types/node": "^14.0.27",
     "axios": "^0.19.2",
+    "eledoc": "^0.2.1",
     "typedoc": "^0.18.0"
   }
 }

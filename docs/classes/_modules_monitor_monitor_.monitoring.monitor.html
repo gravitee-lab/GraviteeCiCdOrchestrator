@@ -4,8 +4,9 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Monitor | GraviteeReleaseOrchestrator</title>
-	<meta name="description" content="Documentation for GraviteeReleaseOrchestrator">
+	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../assets/css/main.css">
 </head>
 <body>
@@ -13,7 +14,7 @@
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -65,13 +66,77 @@
 					<a href="_modules_monitor_monitor_.monitoring.monitor.html">Monitor</a>
 				</li>
 			</ul>
-			<h1>Class Monitor</h1>
 		</div>
 	</div>
 </header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
+<div class="container">
+	<div class="row container container-main">
+		<div class="col-3 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul>
+					<ul class="before-current">
+						<li class=" tsd-kind-class tsd-parent-kind-namespace">
+							<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html" class="tsd-kind-icon">Abstract<wbr>Monitor</a>
+						</li>
+					</ul>
+					<ul class="current">
+						<li class="current tsd-kind-class tsd-parent-kind-namespace">
+							<a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-kind-icon">Monitor</a>
+							<ul>
+								<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+									<a href="_modules_monitor_monitor_.monitoring.monitor.html#constructor" class="tsd-kind-icon">constructor</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_monitor_monitor_.monitoring.monitor.html#rest_endpoint" class="tsd-kind-icon">rest_<wbr>endpoint</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_monitor_monitor_.monitoring.monitor.html#timeout" class="tsd-kind-icon">timeout</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class">
+									<a href="_modules_monitor_monitor_.monitoring.monitor.html#demoretrywhen" class="tsd-kind-icon">demo<wbr>Retry<wbr>When</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class">
+									<a href="_modules_monitor_monitor_.monitoring.monitor.html#fetch" class="tsd-kind-icon">fetch</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="after-current">
+						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+							<a href="../interfaces/_modules_monitor_monitor_.monitoring.abstractmonitorargs.html" class="tsd-kind-icon">Abstract<wbr>Monitor<wbr>Args</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+							<a href="../interfaces/_modules_monitor_monitor_.monitoring.fetchresult.html" class="tsd-kind-icon">Fetch<wbr>Result</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+							<a href="../interfaces/_modules_monitor_monitor_.monitoring.imonitor.html" class="tsd-kind-icon">IMonitor</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
+							<a href="../interfaces/_modules_monitor_monitor_.monitoring.monitorargs.html" class="tsd-kind-icon">Monitor<wbr>Args</a>
+						</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>📑 Index</li>
+					<li><br></li>
+					<li class=" ">
+						<a href="../globals.html">Globals</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_index_.html">&quot;index&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_lib_errors_.html">&quot;lib/errors&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/<wbr>Circle<wbr>CiOrchestrator&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_json_releasemanifestfilter_.html">&quot;modules/json/<wbr>Release<wbr>Manifest<wbr>Filter&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_monitor_monitor_.html">&quot;modules/monitor/<wbr>Monitor&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_template_mypootype_.html">&quot;modules/template/<wbr>MyPOOType&quot;</a>
+				</li>                </ul>
+			</nav>
+		</div>
+		<div class="col-9 col-content">
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -92,206 +157,179 @@
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_modules_monitor_monitor_.monitoring.monitor.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+										<a href="_modules_monitor_monitor_.monitoring.monitor.html#constructor" class="tsd-kind-icon">constructor</a>
+									</li>
+								</ul>
+							</div>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_monitor_monitor_.monitoring.monitor.html#rest_endpoint" class="tsd-kind-icon">rest_<wbr>endpoint</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_modules_monitor_monitor_.monitoring.monitor.html#timeout" class="tsd-kind-icon">timeout</a></li>
-							</ul>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_monitor_monitor_.monitoring.monitor.html#rest_endpoint" class="tsd-kind-icon">rest_<wbr>endpoint</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_monitor_monitor_.monitoring.monitor.html#timeout" class="tsd-kind-icon">timeout</a>
+									</li>
+								</ul>
+							</div>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_monitor_monitor_.monitoring.monitor.html#demoretrywhen" class="tsd-kind-icon">demo<wbr>Retry<wbr>When</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_modules_monitor_monitor_.monitoring.monitor.html#fetch" class="tsd-kind-icon">fetch</a></li>
-							</ul>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class">
+										<a href="_modules_monitor_monitor_.monitoring.monitor.html#demoretrywhen" class="tsd-kind-icon">demo<wbr>Retry<wbr>When</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class">
+										<a href="_modules_monitor_monitor_.monitoring.monitor.html#fetch" class="tsd-kind-icon">fetch</a>
+									</li>
+								</ul>
+							</div>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite tsd-descriptions">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Monitor<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_monitor_monitor_.monitoring.monitorargs.html" class="tsd-signature-type">MonitorArgs</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-signature-type">Monitor</a></li>
 					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html">AbstractMonitor</a>.<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html#constructor">constructor</a></p>
-								<ul>
-									<li>Defined in modules/monitor/Monitor.ts:49</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>args: <a href="../interfaces/_modules_monitor_monitor_.monitoring.monitorargs.html" class="tsd-signature-type">MonitorArgs</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-signature-type">Monitor</a></h4>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">name</span>: <span class="tsd-signature-type">string</span>
+						</li>
+						<li>
+							<span class="name">args</span>: <a href="../interfaces/_modules_monitor_monitor_.monitoring.monitorargs.html" class="tsd-signature-type">MonitorArgs</a>
 						</li>
 					</ul>
+					<h4 class="tsd-returns-title">Returns <a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-signature-type">Monitor</a></h4>
+					</ul>
+					<aside class="tsd-sources">
+						<p>Overrides <a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html">AbstractMonitor</a>.<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html#constructor">constructor</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/dabcff9/src/modules/monitor/Monitor.ts#L49">modules/monitor/Monitor.ts:49</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
 					<a name="rest_endpoint" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> rest_<wbr>endpoint</h3>
-					<div class="tsd-signature tsd-kind-icon">rest_<wbr>endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">rest_endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in modules/monitor/Monitor.ts:43</li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/dabcff9/src/modules/monitor/Monitor.ts#L43">modules/monitor/Monitor.ts:43</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
 					<a name="timeout" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> timeout</h3>
 					<div class="tsd-signature tsd-kind-icon">timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in modules/monitor/Monitor.ts:49</li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
+					<div class="tsd-comment">
 						<div class="lead">
 							<p>Timeout for the execution of this module</p>
 						</div>
 					</div>
+					<div class="tsd-comment">
+					</div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/dabcff9/src/modules/monitor/Monitor.ts#L49">modules/monitor/Monitor.ts:49</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-descriptions">
 					<a name="demoretrywhen" class="tsd-anchor"></a>
 					<h3>demo<wbr>Retry<wbr>When</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">demo<wbr>Retry<wbr>When<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in modules/monitor/Monitor.ts:108</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>    </h4>
 					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/dabcff9/src/modules/monitor/Monitor.ts#L108">modules/monitor/Monitor.ts:108</a></li>
+						</ul>
+					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-descriptions">
 					<a name="fetch" class="tsd-anchor"></a>
 					<h3>fetch</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">fetch<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in modules/monitor/Monitor.ts:69</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>    </h4>
 					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/dabcff9/src/modules/monitor/Monitor.ts#L69">modules/monitor/Monitor.ts:69</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-namespace">
-						<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html" class="tsd-kind-icon">Abstract<wbr>Monitor</a>
-					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-namespace">
-						<a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-kind-icon">Monitor</a>
-						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="_modules_monitor_monitor_.monitoring.monitor.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_modules_monitor_monitor_.monitoring.monitor.html#rest_endpoint" class="tsd-kind-icon">rest_<wbr>endpoint</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_modules_monitor_monitor_.monitoring.monitor.html#timeout" class="tsd-kind-icon">timeout</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_modules_monitor_monitor_.monitoring.monitor.html#demoretrywhen" class="tsd-kind-icon">demo<wbr>Retry<wbr>When</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_modules_monitor_monitor_.monitoring.monitor.html#fetch" class="tsd-kind-icon">fetch</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="../interfaces/_modules_monitor_monitor_.monitoring.abstractmonitorargs.html" class="tsd-kind-icon">Abstract<wbr>Monitor<wbr>Args</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="../interfaces/_modules_monitor_monitor_.monitoring.fetchresult.html" class="tsd-kind-icon">Fetch<wbr>Result</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="../interfaces/_modules_monitor_monitor_.monitoring.imonitor.html" class="tsd-kind-icon">IMonitor</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-						<a href="../interfaces/_modules_monitor_monitor_.monitoring.monitorargs.html" class="tsd-kind-icon">Monitor<wbr>Args</a>
-					</li>
-				</ul>
-			</nav>
+			<footer class="with-border-bottom">
+				<div class="tsd-legend-group">
+					<ul class="tsd-legend">
+						<li class="tsd-is-inherited"><span class="tsd-kind-icon">Inherited</span></li>
+						<li class="tsd-is-protected"><span class="tsd-kind-icon">Protected</span></li>
+						<li class="tsd-is-private"><span class="tsd-kind-icon">Private</span></li>
+						<li class="tsd-is-static"><span class="tsd-kind-icon">Static</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+						<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object</span></li>
+						<li class="tsd-kind-property"><span class="tsd-kind-icon">Property</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+						<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+						<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type</span></li>
+						<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+						<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enum</span></li>
+						<li class="tsd-kind-constructor"><span class="tsd-kind-icon">Constructor</span></li>
+						<li class="tsd-kind-accessor"><span class="tsd-kind-icon">Getter/Setter</span></li>
+					</ul>
+				</div>
+			</footer>
+			<div>Made with ❤️ by <a href="https://github.com/pirix-gh/eledoc" target="_blank">pirix-gh</a>. Documentation generated by <a href="http://typedoc.org/" target="_blank">TypeDoc.</a></div>
 		</div>
 	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
-				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
