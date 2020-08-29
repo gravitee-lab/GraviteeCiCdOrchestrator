@@ -1,0 +1,1966 @@
+
+> GraviteeReleaseOrchestrator@0.0.2 dev /home/jibl/gravitee-orchestra
+> npm run build && ./node_modules/ts-node/dist/bin.js ./src/index.ts
+
+
+> GraviteeReleaseOrchestrator@0.0.2 build /home/jibl/gravitee-orchestra
+> npm run compile && npm run test && npm run doc && npm run oci
+
+
+> GraviteeReleaseOrchestrator@0.0.2 compile /home/jibl/gravitee-orchestra
+> tsc --outDir dist/ ./**/*.ts
+
+
+> GraviteeReleaseOrchestrator@0.0.2 test /home/jibl/gravitee-orchestra
+> echo 'no tests yet'
+
+no tests yet
+
+> GraviteeReleaseOrchestrator@0.0.2 doc /home/jibl/gravitee-orchestra
+> ./node_modules/typedoc/bin/typedoc --out docs/ ./src 
+
+
+Using TypeScript 3.9.7 from /home/jibl/gravitee-orchestra/node_modules/typescript/lib
+
+Documentation generated at /home/jibl/gravitee-orchestra/docs
+
+
+> GraviteeReleaseOrchestrator@0.0.2 oci /home/jibl/gravitee-orchestra
+> docker version && docker ps -a && docker images
+
+Client: Docker Engine - Community
+ Version:           19.03.6
+ API version:       1.40
+ Go version:        go1.12.16
+ Git commit:        369ce74a3c
+ Built:             Thu Feb 13 01:27:59 2020
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          19.03.6
+  API version:      1.40 (minimum version 1.12)
+  Go version:       go1.12.16
+  Git commit:       369ce74a3c
+  Built:            Thu Feb 13 01:26:33 2020
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.2.12
+  GitCommit:        35bd7a5f69c13e1563af8a93431411cd9ecf5021
+ runc:
+  Version:          1.0.0-rc10
+  GitCommit:        dc9208a3303feef5b3839f4323d9beb36df0a9dd
+ docker-init:
+  Version:          0.18.0
+  GitCommit:        fec3683
+CONTAINER ID        IMAGE                                  COMMAND                  CREATED             STATUS                 PORTS               NAMES
+dc2d3c3efede        pegasusio/creshtest_aws-cli-v2:0.0.1   "/aws/bee.sh /bin/ba…"   6 days ago          Up 6 hours (healthy)                       awscli_bee
+REPOSITORY                       TAG                 IMAGE ID            CREATED             SIZE
+maven                            latest              54f7526e726b        44 hours ago        625MB
+pegasusio/creshtest_aws-cli-v2   0.0.1               a15237a9860a        6 days ago          460MB
+{[.DOTENV]} - validating [release_manifest_path] 
+{[.DOTENV]} - validating [release_manifest_path] NO error should be thrown
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+I am the Gravitee Release Orchestrator !
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+{[.DOTENV]} RELEASE_MANIFEST_PATH is set to tests-data/apim/1.30.x/release.test4-20-conccurrent.json
+{[.DOTENV]} PRODUCT is set to Gravitee APIM
+{[.DOTENV]} RETRIES_BEFORE_FAILURE is set to 2
+{[.DOTENV]} SSH_RELEASE_GIT_REPO is set to undefined
+{[.DOTENV]} HTTP_RELEASE_GIT_REPO is set to https://github.com/gravitee-io/release.git
+{[.DOTENV]} RELEASE_BRANCHES is set to master, 3.1.x, 3.0.x, 1.30.x, 1.29.x, 1.25.x, 1.20.x
+{[.DOTENV]} SECRETS_FILE_PATH is set to ./.secrets.json
+
+{[ReleaseManifestFilter]} - found release.json release manifest located at [tests-data/apim/1.30.x/release.test4-20-conccurrent.json]
+{[ReleaseManifestFilter]} - Parsing release.json Release Manifest file located at [tests-data/apim/1.30.x/release.test4-20-conccurrent.json]
+{[ReleaseManifestFilter]} - Parsed Manifest is [undefined]
+{[ReleaseManifestFilter]} - Loading Parallelization Constraints Matrix from Release Manifest... 
+{[ReleaseManifestFilter]} - Loaded Parallelization Constraints Matrix from Release Manifest : 
+[
+  [
+    'gravitee-common'
+  ],
+  [
+    'gravitee-repository,gravitee-expression-language,gravitee-service-discovery-api,gravitee-notifier-api'
+  ],
+  [
+    'gravitee-repository-test,gravitee-service-discovery-consul,gravitee-service-discovery-eureka'
+  ],
+  [
+    'gravitee-reporter-api,gravitee-resource-api,gravitee-definition,gravitee-repository-mongodb,gravitee-repository-redis,gravitee-repository-jdbc,gravitee-repository-gateway-bridge-http,gravitee-fetcher-api,gravitee-alert-api,gravitee-notifier-email'
+  ],
+  [
+    'gravitee-gateway-api'
+  ],
+  [
+    'gravitee-policy-api'
+  ],
+  [
+    'gravitee-plugin'
+  ],
+  [
+    'graviteeio-node'
+  ],
+  [
+    'gravitee-gateway,gravitee-resource-oauth2-provider-api'
+  ],
+  [
+    'gravitee-resource-cache,gravitee-resource-oauth2-provider-generic,gravitee-resource-oauth2-provider-am,gravitee-resource-oauth2-provider-keycloak'
+  ],
+  [
+    'gravitee-policy-apikey,gravitee-policy-ratelimit,gravitee-policy-request-content-limit,gravitee-policy-transformheaders,gravitee-policy-rest-to-soap,gravitee-policy-transformqueryparams,gravitee-policy-ipfiltering,gravitee-policy-mock,gravitee-policy-cache,gravitee-policy-xslt,gravitee-policy-xml-json,gravitee-policy-oauth2,gravitee-policy-html-json,gravitee-policy-groovy,gravitee-policy-dynamic-routing,gravitee-policy-jwt,gravitee-policy-resource-filtering,gravitee-policy-json-to-json,gravitee-policy-keyless,gravitee-policy-override-http-method,gravitee-policy-request-validation,gravitee-policy-openid-connect-userinfo,gravitee-policy-latency,gravitee-policy-assign-content,gravitee-policy-jws,gravitee-policy-url-rewriting,gravitee-policy-json-validation,gravitee-policy-callout-http,gravitee-policy-generate-jwt,gravitee-policy-assign-attributes,gravitee-policy-role-based-access-control,gravitee-policy-ssl-enforcement,gravitee-elasticsearch,gravitee-reporter-file,gravitee-reporter-kafka,gravitee-fetcher-http,gravitee-fetcher-git,gravitee-fetcher-gitlab,gravitee-fetcher-bitbucket,gravitee-fetcher-github'
+  ],
+  [
+    'gravitee-management-rest-api,gravitee-management-webui'
+  ],
+]
+{[ReleaseManifestFilter]} - Initializing Empty Execution Plan from Parallelization Constraints Matrix... 
+{[ReleaseManifestFilter]} - Initialized Empty Execution Plan with 12 empty arrays : 
+[
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+  [
+    ''
+  ],
+]
+{[ReleaseManifestFilter]} - Parsed Manifest is [{
+  "name": "Gravitee.io",
+  "version": "1.30.20",
+  "buildTimestamp": "2020-08-12T10:25:24+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "components": [
+    {
+      "name": "gravitee-common",
+      "version": "1.17.2"
+    },
+    {
+      "name": "gravitee-definition",
+      "version": "1.20.3"
+    },
+    {
+      "name": "gravitee-gateway",
+      "version": "1.30.19"
+    },
+    {
+      "name": "gravitee-gateway-api",
+      "version": "1.20.0"
+    },
+    {
+      "name": "gravitee-management-rest-api",
+      "version": "1.30.19"
+    },
+    {
+      "name": "gravitee-management-webui",
+      "version": "1.30.19-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-plugin",
+      "version": "1.11.0"
+    },
+    {
+      "name": "gravitee-policy-api",
+      "version": "1.7.0"
+    },
+    {
+      "name": "gravitee-policy-apikey",
+      "version": "1.8.0"
+    },
+    {
+      "name": "gravitee-policy-ratelimit",
+      "version": "1.8.1"
+    },
+    {
+      "name": "gravitee-policy-request-content-limit",
+      "version": "1.5.0"
+    },
+    {
+      "name": "gravitee-policy-transformheaders",
+      "version": "1.6.1"
+    },
+    {
+      "name": "gravitee-policy-rest-to-soap",
+      "version": "1.6.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-transformqueryparams",
+      "version": "1.4.1-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-ipfiltering",
+      "version": "1.3.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-mock",
+      "version": "1.8.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-cache",
+      "version": "1.6.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-xslt",
+      "version": "1.4.0"
+    },
+    {
+      "name": "gravitee-policy-xml-json",
+      "version": "1.4.0"
+    },
+    {
+      "name": "gravitee-policy-oauth2",
+      "version": "1.12.1"
+    },
+    {
+      "name": "gravitee-policy-html-json",
+      "version": "1.4.0"
+    },
+    {
+      "name": "gravitee-policy-groovy",
+      "version": "1.9.2"
+    },
+    {
+      "name": "gravitee-policy-dynamic-routing",
+      "version": "1.9.1"
+    },
+    {
+      "name": "gravitee-policy-jwt",
+      "version": "1.14.3"
+    },
+    {
+      "name": "gravitee-policy-override-http-method",
+      "version": "1.1.0"
+    },
+    {
+      "name": "gravitee-policy-request-validation",
+      "version": "1.7.3"
+    },
+    {
+      "name": "gravitee-policy-resource-filtering",
+      "version": "1.5.1"
+    },
+    {
+      "name": "gravitee-policy-json-to-json",
+      "version": "1.4.0"
+    },
+    {
+      "name": "gravitee-policy-keyless",
+      "version": "1.2.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-openid-connect-userinfo",
+      "version": "1.2.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-latency",
+      "version": "1.1.0"
+    },
+    {
+      "name": "gravitee-policy-assign-content",
+      "version": "1.4.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-jws",
+      "version": "1.1.0"
+    },
+    {
+      "name": "gravitee-policy-callout-http",
+      "version": "1.8.0"
+    },
+    {
+      "name": "gravitee-policy-assign-attributes",
+      "version": "1.2.0"
+    },
+    {
+      "name": "gravitee-reporter-api",
+      "version": "1.17.1"
+    },
+    {
+      "name": "gravitee-reporter-file",
+      "version": "1.6.2"
+    },
+    {
+      "name": "gravitee-repository",
+      "version": "1.30.7"
+    },
+    {
+      "name": "gravitee-repository-test",
+      "version": "1.30.6"
+    },
+    {
+      "name": "gravitee-repository-mongodb",
+      "version": "1.30.9"
+    },
+    {
+      "name": "gravitee-repository-redis",
+      "version": "1.30.5-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-elasticsearch",
+      "version": "1.30.9-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-repository-jdbc",
+      "version": "1.30.8-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-api",
+      "version": "1.1.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-cache",
+      "version": "1.2.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-api",
+      "version": "1.3.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-generic",
+      "version": "1.13.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-am",
+      "version": "1.10.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-keycloak",
+      "version": "1.6.0"
+    },
+    {
+      "name": "gravitee-fetcher-api",
+      "version": "1.3.0"
+    },
+    {
+      "name": "gravitee-fetcher-http",
+      "version": "1.10.0"
+    },
+    {
+      "name": "gravitee-fetcher-git",
+      "version": "1.6.0"
+    },
+    {
+      "name": "gravitee-fetcher-gitlab",
+      "version": "1.9.2"
+    },
+    {
+      "name": "gravitee-fetcher-bitbucket",
+      "version": "1.5.0"
+    },
+    {
+      "name": "gravitee-fetcher-github",
+      "version": "1.4.0"
+    },
+    {
+      "name": "gravitee-expression-language",
+      "version": "1.3.1"
+    },
+    {
+      "name": "gravitee-repository-gateway-bridge-http",
+      "version": "1.30.2"
+    },
+    {
+      "name": "gravitee-policy-url-rewriting",
+      "version": "1.2.0"
+    },
+    {
+      "name": "gravitee-policy-json-validation",
+      "version": "1.3.0"
+    },
+    {
+      "name": "gravitee-reporter-kafka",
+      "version": "1.2.0"
+    },
+    {
+      "name": "graviteeio-node",
+      "version": "1.6.6"
+    },
+    {
+      "name": "gravitee-notifier-api",
+      "version": "1.2.1"
+    },
+    {
+      "name": "gravitee-notifier-email",
+      "version": "1.2.3-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-alert-api",
+      "version": "1.5.0"
+    },
+    {
+      "name": "gravitee-service-discovery-api",
+      "version": "1.1.1"
+    },
+    {
+      "name": "gravitee-service-discovery-consul",
+      "version": "1.1.1-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-generate-jwt",
+      "version": "1.3.0"
+    },
+    {
+      "name": "gravitee-service-discovery-eureka",
+      "version": "1.1.1"
+    },
+    {
+      "name": "gravitee-policy-role-based-access-control",
+      "version": "1.0.1"
+    },
+    {
+      "name": "gravitee-policy-ssl-enforcement",
+      "version": "1.0.1-SNAPSHOT"
+    }
+  ],
+  "buildDependencies": [
+    [
+      "gravitee-common"
+    ],
+    [
+      "gravitee-repository",
+      "gravitee-expression-language",
+      "gravitee-service-discovery-api",
+      "gravitee-notifier-api"
+    ],
+    [
+      "gravitee-repository-test",
+      "gravitee-service-discovery-consul",
+      "gravitee-service-discovery-eureka"
+    ],
+    [
+      "gravitee-reporter-api",
+      "gravitee-resource-api",
+      "gravitee-definition",
+      "gravitee-repository-mongodb",
+      "gravitee-repository-redis",
+      "gravitee-repository-jdbc",
+      "gravitee-repository-gateway-bridge-http",
+      "gravitee-fetcher-api",
+      "gravitee-alert-api",
+      "gravitee-notifier-email"
+    ],
+    [
+      "gravitee-gateway-api"
+    ],
+    [
+      "gravitee-policy-api"
+    ],
+    [
+      "gravitee-plugin"
+    ],
+    [
+      "graviteeio-node"
+    ],
+    [
+      "gravitee-gateway",
+      "gravitee-resource-oauth2-provider-api"
+    ],
+    [
+      "gravitee-resource-cache",
+      "gravitee-resource-oauth2-provider-generic",
+      "gravitee-resource-oauth2-provider-am",
+      "gravitee-resource-oauth2-provider-keycloak"
+    ],
+    [
+      "gravitee-policy-apikey",
+      "gravitee-policy-ratelimit",
+      "gravitee-policy-request-content-limit",
+      "gravitee-policy-transformheaders",
+      "gravitee-policy-rest-to-soap",
+      "gravitee-policy-transformqueryparams",
+      "gravitee-policy-ipfiltering",
+      "gravitee-policy-mock",
+      "gravitee-policy-cache",
+      "gravitee-policy-xslt",
+      "gravitee-policy-xml-json",
+      "gravitee-policy-oauth2",
+      "gravitee-policy-html-json",
+      "gravitee-policy-groovy",
+      "gravitee-policy-dynamic-routing",
+      "gravitee-policy-jwt",
+      "gravitee-policy-resource-filtering",
+      "gravitee-policy-json-to-json",
+      "gravitee-policy-keyless",
+      "gravitee-policy-override-http-method",
+      "gravitee-policy-request-validation",
+      "gravitee-policy-openid-connect-userinfo",
+      "gravitee-policy-latency",
+      "gravitee-policy-assign-content",
+      "gravitee-policy-jws",
+      "gravitee-policy-url-rewriting",
+      "gravitee-policy-json-validation",
+      "gravitee-policy-callout-http",
+      "gravitee-policy-generate-jwt",
+      "gravitee-policy-assign-attributes",
+      "gravitee-policy-role-based-access-control",
+      "gravitee-policy-ssl-enforcement",
+      "gravitee-elasticsearch",
+      "gravitee-reporter-file",
+      "gravitee-reporter-kafka",
+      "gravitee-fetcher-http",
+      "gravitee-fetcher-git",
+      "gravitee-fetcher-gitlab",
+      "gravitee-fetcher-bitbucket",
+      "gravitee-fetcher-github"
+    ],
+    [
+      "gravitee-management-rest-api",
+      "gravitee-management-webui"
+    ]
+  ]
+}]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{[ReleaseManifestFilter]} - Selected components are [{
+  "components": [
+    {
+      "name": "gravitee-management-webui",
+      "version": "1.30.19-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-rest-to-soap",
+      "version": "1.6.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-transformqueryparams",
+      "version": "1.4.1-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-ipfiltering",
+      "version": "1.3.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-mock",
+      "version": "1.8.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-cache",
+      "version": "1.6.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-keyless",
+      "version": "1.2.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-openid-connect-userinfo",
+      "version": "1.2.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-assign-content",
+      "version": "1.4.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-repository-redis",
+      "version": "1.30.5-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-elasticsearch",
+      "version": "1.30.9-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-repository-jdbc",
+      "version": "1.30.8-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-api",
+      "version": "1.1.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-cache",
+      "version": "1.2.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-api",
+      "version": "1.3.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-generic",
+      "version": "1.13.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-resource-oauth2-provider-am",
+      "version": "1.10.0-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-notifier-email",
+      "version": "1.2.3-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-service-discovery-consul",
+      "version": "1.1.1-SNAPSHOT"
+    },
+    {
+      "name": "gravitee-policy-ssl-enforcement",
+      "version": "1.0.1-SNAPSHOT"
+    }
+  ]
+}]
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-management-webui into Parallel Execution Set no. [11] : 
+
+{
+  "name": "gravitee-management-webui",
+  "version": "1.30.19-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [11] for the following component : 
+{
+  "name": "gravitee-management-webui",
+  "version": "1.30.19-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-rest-to-soap into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-rest-to-soap",
+  "version": "1.6.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-rest-to-soap",
+  "version": "1.6.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-transformqueryparams into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-transformqueryparams",
+  "version": "1.4.1-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-transformqueryparams",
+  "version": "1.4.1-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-ipfiltering into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-ipfiltering",
+  "version": "1.3.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-ipfiltering",
+  "version": "1.3.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-mock into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-mock",
+  "version": "1.8.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-mock",
+  "version": "1.8.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-cache into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-cache",
+  "version": "1.6.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-cache",
+  "version": "1.6.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-keyless into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-keyless",
+  "version": "1.2.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-keyless",
+  "version": "1.2.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-openid-connect-userinfo into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-openid-connect-userinfo",
+  "version": "1.2.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-openid-connect-userinfo",
+  "version": "1.2.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-assign-content into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-assign-content",
+  "version": "1.4.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-assign-content",
+  "version": "1.4.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-repository-redis into Parallel Execution Set no. [3] : 
+
+{
+  "name": "gravitee-repository-redis",
+  "version": "1.30.5-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [3] for the following component : 
+{
+  "name": "gravitee-repository-redis",
+  "version": "1.30.5-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-elasticsearch into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-elasticsearch",
+  "version": "1.30.9-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-elasticsearch",
+  "version": "1.30.9-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-repository-jdbc into Parallel Execution Set no. [3] : 
+
+{
+  "name": "gravitee-repository-jdbc",
+  "version": "1.30.8-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [3] for the following component : 
+{
+  "name": "gravitee-repository-jdbc",
+  "version": "1.30.8-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-resource-api into Parallel Execution Set no. [3] : 
+
+{
+  "name": "gravitee-resource-api",
+  "version": "1.1.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [3] for the following component : 
+{
+  "name": "gravitee-resource-api",
+  "version": "1.1.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-resource-cache into Parallel Execution Set no. [9] : 
+
+{
+  "name": "gravitee-resource-cache",
+  "version": "1.2.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [9] for the following component : 
+{
+  "name": "gravitee-resource-cache",
+  "version": "1.2.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-resource-oauth2-provider-api into Parallel Execution Set no. [8] : 
+
+{
+  "name": "gravitee-resource-oauth2-provider-api",
+  "version": "1.3.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [8] for the following component : 
+{
+  "name": "gravitee-resource-oauth2-provider-api",
+  "version": "1.3.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-resource-oauth2-provider-generic into Parallel Execution Set no. [9] : 
+
+{
+  "name": "gravitee-resource-oauth2-provider-generic",
+  "version": "1.13.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [9] for the following component : 
+{
+  "name": "gravitee-resource-oauth2-provider-generic",
+  "version": "1.13.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-resource-oauth2-provider-am into Parallel Execution Set no. [9] : 
+
+{
+  "name": "gravitee-resource-oauth2-provider-am",
+  "version": "1.10.0-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [9] for the following component : 
+{
+  "name": "gravitee-resource-oauth2-provider-am",
+  "version": "1.10.0-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-notifier-email into Parallel Execution Set no. [3] : 
+
+{
+  "name": "gravitee-notifier-email",
+  "version": "1.2.3-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [3] for the following component : 
+{
+  "name": "gravitee-notifier-email",
+  "version": "1.2.3-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-service-discovery-consul into Parallel Execution Set no. [2] : 
+
+{
+  "name": "gravitee-service-discovery-consul",
+  "version": "1.1.1-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [2] for the following component : 
+{
+  "name": "gravitee-service-discovery-consul",
+  "version": "1.1.1-SNAPSHOT"
+} 
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for gravitee-policy-ssl-enforcement into Parallel Execution Set no. [10] : 
+
+{
+  "name": "gravitee-policy-ssl-enforcement",
+  "version": "1.0.1-SNAPSHOT"
+}
+
+--- 
+
+{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [10] for the following component : 
+{
+  "name": "gravitee-policy-ssl-enforcement",
+  "version": "1.0.1-SNAPSHOT"
+} 
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "built_execution_plan_is": [
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-service-discovery-consul",
+    "version": "1.1.1-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-repository-redis",
+    "version": "1.30.5-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-repository-jdbc",
+    "version": "1.30.8-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-api",
+    "version": "1.1.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-notifier-email",
+    "version": "1.2.3-SNAPSHOT"
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-resource-oauth2-provider-api",
+    "version": "1.3.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-resource-cache",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-oauth2-provider-generic",
+    "version": "1.13.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-oauth2-provider-am",
+    "version": "1.10.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-policy-rest-to-soap",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-transformqueryparams",
+    "version": "1.4.1-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-ipfiltering",
+    "version": "1.3.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-mock",
+    "version": "1.8.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-cache",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-keyless",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-openid-connect-userinfo",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-assign-content",
+    "version": "1.4.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-elasticsearch",
+    "version": "1.30.9-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-ssl-enforcement",
+    "version": "1.0.1-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-management-webui",
+    "version": "1.30.19-SNAPSHOT"
+   }
+  ]
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+
+[{CircleCiOrchestrator}] - secrets file content :
+
+{
+  circleci: {
+    auth: {
+      username: 'Jean-Baptiste-Lasselle',
+      token: '286911b9678155b1a5636018a3c40278cf7997a5'
+    }
+  }
+}
+
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [0]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [1]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [2]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [3]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [4]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [5]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [6]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [7]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [8]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [9]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [10]  
+[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. [11]  
+[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry 5 times executing a [Circle CI] pipeline before giving up.
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "execution_plan_is": [
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-service-discovery-consul",
+    "version": "1.1.1-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-repository-redis",
+    "version": "1.30.5-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-repository-jdbc",
+    "version": "1.30.8-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-api",
+    "version": "1.1.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-notifier-email",
+    "version": "1.2.3-SNAPSHOT"
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-resource-oauth2-provider-api",
+    "version": "1.3.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-resource-cache",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-oauth2-provider-generic",
+    "version": "1.13.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-oauth2-provider-am",
+    "version": "1.10.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-policy-rest-to-soap",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-transformqueryparams",
+    "version": "1.4.1-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-ipfiltering",
+    "version": "1.3.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-mock",
+    "version": "1.8.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-cache",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-keyless",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-openid-connect-userinfo",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-assign-content",
+    "version": "1.4.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-elasticsearch",
+    "version": "1.30.9-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-ssl-enforcement",
+    "version": "1.0.1-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-management-webui",
+    "version": "1.30.19-SNAPSHOT"
+   }
+  ]
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [0] will trigger the following [Circle CI] pipelines : 
+[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. [0] because it is empty
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [1] will trigger the following [Circle CI] pipelines : 
+[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. [1] because it is empty
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [2] will trigger the following [Circle CI] pipelines : 
+[
+  {
+    name: 'gravitee-service-discovery-consul',
+    version: '1.1.1-SNAPSHOT'
+  }
+]
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "parallelExecutionsSet": [
+  {
+   "name": "gravitee-service-discovery-consul",
+   "version": "1.1.1-SNAPSHOT"
+  }
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [3] will trigger the following [Circle CI] pipelines : 
+[
+  { name: 'gravitee-repository-redis', version: '1.30.5-SNAPSHOT' },
+  { name: 'gravitee-repository-jdbc', version: '1.30.8-SNAPSHOT' },
+  { name: 'gravitee-resource-api', version: '1.1.0-SNAPSHOT' },
+  { name: 'gravitee-notifier-email', version: '1.2.3-SNAPSHOT' }
+]
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "parallelExecutionsSet": [
+  {
+   "name": "gravitee-repository-redis",
+   "version": "1.30.5-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-repository-jdbc",
+   "version": "1.30.8-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-resource-api",
+   "version": "1.1.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-notifier-email",
+   "version": "1.2.3-SNAPSHOT"
+  }
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [4] will trigger the following [Circle CI] pipelines : 
+[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. [4] because it is empty
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [5] will trigger the following [Circle CI] pipelines : 
+[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. [5] because it is empty
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [6] will trigger the following [Circle CI] pipelines : 
+[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. [6] because it is empty
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [7] will trigger the following [Circle CI] pipelines : 
+[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. [7] because it is empty
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [8] will trigger the following [Circle CI] pipelines : 
+[
+  {
+    name: 'gravitee-resource-oauth2-provider-api',
+    version: '1.3.0-SNAPSHOT'
+  }
+]
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "parallelExecutionsSet": [
+  {
+   "name": "gravitee-resource-oauth2-provider-api",
+   "version": "1.3.0-SNAPSHOT"
+  }
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [9] will trigger the following [Circle CI] pipelines : 
+[
+  { name: 'gravitee-resource-cache', version: '1.2.0-SNAPSHOT' },
+  {
+    name: 'gravitee-resource-oauth2-provider-generic',
+    version: '1.13.0-SNAPSHOT'
+  },
+  {
+    name: 'gravitee-resource-oauth2-provider-am',
+    version: '1.10.0-SNAPSHOT'
+  }
+]
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "parallelExecutionsSet": [
+  {
+   "name": "gravitee-resource-cache",
+   "version": "1.2.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-resource-oauth2-provider-generic",
+   "version": "1.13.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-resource-oauth2-provider-am",
+   "version": "1.10.0-SNAPSHOT"
+  }
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [10] will trigger the following [Circle CI] pipelines : 
+[
+  { name: 'gravitee-policy-rest-to-soap', version: '1.6.0-SNAPSHOT' },
+  {
+    name: 'gravitee-policy-transformqueryparams',
+    version: '1.4.1-SNAPSHOT'
+  },
+  { name: 'gravitee-policy-ipfiltering', version: '1.3.0-SNAPSHOT' },
+  { name: 'gravitee-policy-mock', version: '1.8.0-SNAPSHOT' },
+  { name: 'gravitee-policy-cache', version: '1.6.0-SNAPSHOT' },
+  { name: 'gravitee-policy-keyless', version: '1.2.0-SNAPSHOT' },
+  {
+    name: 'gravitee-policy-openid-connect-userinfo',
+    version: '1.2.0-SNAPSHOT'
+  },
+  { name: 'gravitee-policy-assign-content', version: '1.4.0-SNAPSHOT' },
+  { name: 'gravitee-elasticsearch', version: '1.30.9-SNAPSHOT' },
+  {
+    name: 'gravitee-policy-ssl-enforcement',
+    version: '1.0.1-SNAPSHOT'
+  }
+]
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "parallelExecutionsSet": [
+  {
+   "name": "gravitee-policy-rest-to-soap",
+   "version": "1.6.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-transformqueryparams",
+   "version": "1.4.1-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-ipfiltering",
+   "version": "1.3.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-mock",
+   "version": "1.8.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-cache",
+   "version": "1.6.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-keyless",
+   "version": "1.2.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-openid-connect-userinfo",
+   "version": "1.2.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-assign-content",
+   "version": "1.4.0-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-elasticsearch",
+   "version": "1.30.9-SNAPSHOT"
+  },
+  {
+   "name": "gravitee-policy-ssl-enforcement",
+   "version": "1.0.1-SNAPSHOT"
+  }
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
+[{CircleCiOrchestrator}] - processing Parallel Execution Set no. [11] will trigger the following [Circle CI] pipelines : 
+[ { name: 'gravitee-management-webui', version: '1.30.19-SNAPSHOT' } ]
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "parallelExecutionsSet": [
+  {
+   "name": "gravitee-management-webui",
+   "version": "1.30.19-SNAPSHOT"
+  }
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+curl -X POST -d {"parameters":{},"branch":"dependabot/npm_and_yarn/handlebars-4.5.3"} -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: 286911b9678155b1a5636018a3c40278cf7997a5' https://circleci.com/api/v2/project/gh/gravitee-lab/testrepo1/pipeline
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : 
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ ---
+{
+ "execution_plan_is": [
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-service-discovery-consul",
+    "version": "1.1.1-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-repository-redis",
+    "version": "1.30.5-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-repository-jdbc",
+    "version": "1.30.8-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-api",
+    "version": "1.1.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-notifier-email",
+    "version": "1.2.3-SNAPSHOT"
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-resource-oauth2-provider-api",
+    "version": "1.3.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-resource-cache",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-oauth2-provider-generic",
+    "version": "1.13.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-resource-oauth2-provider-am",
+    "version": "1.10.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-policy-rest-to-soap",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-transformqueryparams",
+    "version": "1.4.1-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-ipfiltering",
+    "version": "1.3.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-mock",
+    "version": "1.8.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-cache",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-keyless",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-openid-connect-userinfo",
+    "version": "1.2.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-assign-content",
+    "version": "1.4.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-elasticsearch",
+    "version": "1.30.9-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-ssl-enforcement",
+    "version": "1.0.1-SNAPSHOT"
+   }
+  ],
+  [
+   {
+    "name": "gravitee-management-webui",
+    "version": "1.30.19-SNAPSHOT"
+   }
+  ]
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+Hey i am AbstractMonitor 's constructor 
+Hey i am AbstractMonitor 's constructor 
+What is passed on to tap >>  [{
+  "message": "Request failed with status code 401",
+  "name": "Error",
+  "stack": "Error: Request failed with status code 401\n    at createError (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/createError.js:16:15)\n    at settle (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/settle.js:17:12)\n    at IncomingMessage.handleStreamEnd (/home/jibl/gravitee-orchestra/node_modules/axios/lib/adapters/http.js:236:11)\n    at IncomingMessage.emit (events.js:327:22)\n    at IncomingMessage.EventEmitter.emit (domain.js:485:12)\n    at endReadableNT (_stream_readable.js:1224:12)\n    at processTicksAndRejections (internal/process/task_queues.js:84:21)",
+  "config": {
+    "url": "https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine",
+    "method": "delete",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "User-Agent": "axios/0.19.2"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  }
+}],
+now retrying
+[data] =>  {
+  name: null,
+  login: 'Jean-Baptiste-Lasselle',
+  id: 'a159e94e-3763-474d-8c51-d1ea6ed602d4'
+}
+[complete]
+fetching https://randomuser.me/api which you won't see 
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+ >>>>>>>>>>>>>> I am the Gravitee CICD MONITOR !
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+ subscriber got fetchedResult = [{"results":[{"gender":"male","name":{"title":"Monsieur","first":"Lenny","last":"Brun"},"location":{"street":{"number":3344,"name":"Rue Chazière"},"city":"Brenzikofen","state":"Ticino","country":"Switzerland","postcode":7818,"coordinates":{"latitude":"-52.4541","longitude":"-78.3383"},"timezone":{"offset":"+3:00","description":"Baghdad, Riyadh, Moscow, St. Petersburg"}},"email":"lenny.brun@example.com","login":{"uuid":"818571c4-d6f6-4def-8606-ce0fcaabce5b","username":"angrygorilla780","password":"having","salt":"1y0z260G","md5":"2baca73953d10e3b3317a69415229b0d","sha1":"c53548fae30c18d770f674b4e571022833ecde33","sha256":"49d6ac0b2b85328ac0077d588a2723e18bb01ebd4ed779f8a34cb06cbaa16a01"},"dob":{"date":"1992-01-26T12:40:23.922Z","age":28},"registered":{"date":"2002-04-26T18:33:27.805Z","age":18},"phone":"078 678 93 77","cell":"077 335 10 51","id":{"name":"AVS","value":"756.6797.9335.62"},"picture":{"large":"https://randomuser.me/api/portraits/men/96.jpg","medium":"https://randomuser.me/api/portraits/med/men/96.jpg","thumbnail":"https://randomuser.me/api/portraits/thumb/men/96.jpg"},"nat":"CH"}],"info":{"seed":"ab30d1f31a879159","results":1,"page":1,"version":"1.3"}}]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 539,
+  state: 'pending',
+  id: '7001f35f-f64f-4992-a0e7-efb206261c05',
+  created_at: '2020-08-29T14:41:39.579Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 540,
+  state: 'pending',
+  id: 'bca7b023-fd50-4435-89d0-0f9bc602dca2',
+  created_at: '2020-08-29T14:41:39.624Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 541,
+  state: 'pending',
+  id: 'e2c16342-f01c-47a4-8068-8c6a81921f6c',
+  created_at: '2020-08-29T14:41:39.634Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 542,
+  state: 'pending',
+  id: '5cbee0b2-4a75-4f12-93ea-5259682043c6',
+  created_at: '2020-08-29T14:41:39.629Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 543,
+  state: 'pending',
+  id: 'df5688fd-7c78-4fe3-82c1-d463a5cf6239',
+  created_at: '2020-08-29T14:41:39.633Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 544,
+  state: 'pending',
+  id: '21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3',
+  created_at: '2020-08-29T14:41:39.638Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 545,
+  state: 'pending',
+  id: 'ea03c713-8c31-4765-a603-87f41fd6d47a',
+  created_at: '2020-08-29T14:41:39.642Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 546,
+  state: 'pending',
+  id: '8067033b-1ba2-446d-964e-294f5ca5143a',
+  created_at: '2020-08-29T14:41:39.648Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 547,
+  state: 'pending',
+  id: '2b82cc86-335c-47a8-a2ec-db085706f433',
+  created_at: '2020-08-29T14:41:39.644Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 548,
+  state: 'pending',
+  id: 'c651d972-f6b4-4978-8a94-0aa999090150',
+  created_at: '2020-08-29T14:41:39.649Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 549,
+  state: 'pending',
+  id: '13915545-2806-4ba0-83fb-1f0242b8c2ff',
+  created_at: '2020-08-29T14:41:39.662Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 550,
+  state: 'pending',
+  id: '7c913262-280c-4344-b32b-dc27910e0a0d',
+  created_at: '2020-08-29T14:41:39.646Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 551,
+  state: 'pending',
+  id: '58902c49-64af-45e4-917b-8911929f562b',
+  created_at: '2020-08-29T14:41:39.644Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 552,
+  state: 'pending',
+  id: 'a3ab7fbc-b299-40b2-8189-1701a34792bf',
+  created_at: '2020-08-29T14:41:39.663Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 553,
+  state: 'pending',
+  id: 'c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab',
+  created_at: '2020-08-29T14:41:39.666Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}},{"pipeline":{"execution_index":"553","id":"c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab","created_at":"2020-08-29T14:41:39.666Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 554,
+  state: 'pending',
+  id: '383f86ae-1ab9-41da-b54f-353726f2a26c',
+  created_at: '2020-08-29T14:41:39.667Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}},{"pipeline":{"execution_index":"553","id":"c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab","created_at":"2020-08-29T14:41:39.666Z","exec_state":"pending"}},{"pipeline":{"execution_index":"554","id":"383f86ae-1ab9-41da-b54f-353726f2a26c","created_at":"2020-08-29T14:41:39.667Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 555,
+  state: 'pending',
+  id: '3bb0e598-f41c-4c0b-b624-245a11fc3440',
+  created_at: '2020-08-29T14:41:39.661Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}},{"pipeline":{"execution_index":"553","id":"c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab","created_at":"2020-08-29T14:41:39.666Z","exec_state":"pending"}},{"pipeline":{"execution_index":"554","id":"383f86ae-1ab9-41da-b54f-353726f2a26c","created_at":"2020-08-29T14:41:39.667Z","exec_state":"pending"}},{"pipeline":{"execution_index":"555","id":"3bb0e598-f41c-4c0b-b624-245a11fc3440","created_at":"2020-08-29T14:41:39.661Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 556,
+  state: 'pending',
+  id: '3fa142a8-232d-41d7-a756-75640475fa7a',
+  created_at: '2020-08-29T14:41:39.659Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}},{"pipeline":{"execution_index":"553","id":"c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab","created_at":"2020-08-29T14:41:39.666Z","exec_state":"pending"}},{"pipeline":{"execution_index":"554","id":"383f86ae-1ab9-41da-b54f-353726f2a26c","created_at":"2020-08-29T14:41:39.667Z","exec_state":"pending"}},{"pipeline":{"execution_index":"555","id":"3bb0e598-f41c-4c0b-b624-245a11fc3440","created_at":"2020-08-29T14:41:39.661Z","exec_state":"pending"}},{"pipeline":{"execution_index":"556","id":"3fa142a8-232d-41d7-a756-75640475fa7a","created_at":"2020-08-29T14:41:39.659Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 557,
+  state: 'pending',
+  id: 'cff1ee14-5ecd-4c92-86c6-0bc0e9219f5e',
+  created_at: '2020-08-29T14:41:39.718Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}},{"pipeline":{"execution_index":"553","id":"c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab","created_at":"2020-08-29T14:41:39.666Z","exec_state":"pending"}},{"pipeline":{"execution_index":"554","id":"383f86ae-1ab9-41da-b54f-353726f2a26c","created_at":"2020-08-29T14:41:39.667Z","exec_state":"pending"}},{"pipeline":{"execution_index":"555","id":"3bb0e598-f41c-4c0b-b624-245a11fc3440","created_at":"2020-08-29T14:41:39.661Z","exec_state":"pending"}},{"pipeline":{"execution_index":"556","id":"3fa142a8-232d-41d7-a756-75640475fa7a","created_at":"2020-08-29T14:41:39.659Z","exec_state":"pending"}},{"pipeline":{"execution_index":"557","id":"cff1ee14-5ecd-4c92-86c6-0bc0e9219f5e","created_at":"2020-08-29T14:41:39.718Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] =>  {
+  number: 558,
+  state: 'pending',
+  id: '4ffde312-14f0-4adf-b6bf-86a6cb62c73e',
+  created_at: '2020-08-29T14:41:39.674Z'
+}
+
+[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  
+{"progressMatrix":[{"pipeline":{"execution_index":"539","id":"7001f35f-f64f-4992-a0e7-efb206261c05","created_at":"2020-08-29T14:41:39.579Z","exec_state":"pending"}},{"pipeline":{"execution_index":"540","id":"bca7b023-fd50-4435-89d0-0f9bc602dca2","created_at":"2020-08-29T14:41:39.624Z","exec_state":"pending"}},{"pipeline":{"execution_index":"541","id":"e2c16342-f01c-47a4-8068-8c6a81921f6c","created_at":"2020-08-29T14:41:39.634Z","exec_state":"pending"}},{"pipeline":{"execution_index":"542","id":"5cbee0b2-4a75-4f12-93ea-5259682043c6","created_at":"2020-08-29T14:41:39.629Z","exec_state":"pending"}},{"pipeline":{"execution_index":"543","id":"df5688fd-7c78-4fe3-82c1-d463a5cf6239","created_at":"2020-08-29T14:41:39.633Z","exec_state":"pending"}},{"pipeline":{"execution_index":"544","id":"21d4c901-0fd8-40b0-8bcd-c8d6e9cf22b3","created_at":"2020-08-29T14:41:39.638Z","exec_state":"pending"}},{"pipeline":{"execution_index":"545","id":"ea03c713-8c31-4765-a603-87f41fd6d47a","created_at":"2020-08-29T14:41:39.642Z","exec_state":"pending"}},{"pipeline":{"execution_index":"546","id":"8067033b-1ba2-446d-964e-294f5ca5143a","created_at":"2020-08-29T14:41:39.648Z","exec_state":"pending"}},{"pipeline":{"execution_index":"547","id":"2b82cc86-335c-47a8-a2ec-db085706f433","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"548","id":"c651d972-f6b4-4978-8a94-0aa999090150","created_at":"2020-08-29T14:41:39.649Z","exec_state":"pending"}},{"pipeline":{"execution_index":"549","id":"13915545-2806-4ba0-83fb-1f0242b8c2ff","created_at":"2020-08-29T14:41:39.662Z","exec_state":"pending"}},{"pipeline":{"execution_index":"550","id":"7c913262-280c-4344-b32b-dc27910e0a0d","created_at":"2020-08-29T14:41:39.646Z","exec_state":"pending"}},{"pipeline":{"execution_index":"551","id":"58902c49-64af-45e4-917b-8911929f562b","created_at":"2020-08-29T14:41:39.644Z","exec_state":"pending"}},{"pipeline":{"execution_index":"552","id":"a3ab7fbc-b299-40b2-8189-1701a34792bf","created_at":"2020-08-29T14:41:39.663Z","exec_state":"pending"}},{"pipeline":{"execution_index":"553","id":"c6f99edb-6ea6-4428-b5c7-0d3bb6c05aab","created_at":"2020-08-29T14:41:39.666Z","exec_state":"pending"}},{"pipeline":{"execution_index":"554","id":"383f86ae-1ab9-41da-b54f-353726f2a26c","created_at":"2020-08-29T14:41:39.667Z","exec_state":"pending"}},{"pipeline":{"execution_index":"555","id":"3bb0e598-f41c-4c0b-b624-245a11fc3440","created_at":"2020-08-29T14:41:39.661Z","exec_state":"pending"}},{"pipeline":{"execution_index":"556","id":"3fa142a8-232d-41d7-a756-75640475fa7a","created_at":"2020-08-29T14:41:39.659Z","exec_state":"pending"}},{"pipeline":{"execution_index":"557","id":"cff1ee14-5ecd-4c92-86c6-0bc0e9219f5e","created_at":"2020-08-29T14:41:39.718Z","exec_state":"pending"}},{"pipeline":{"execution_index":"558","id":"4ffde312-14f0-4adf-b6bf-86a6cb62c73e","created_at":"2020-08-29T14:41:39.674Z","exec_state":"pending"}}]}
+
+[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]
+What is passed on to tap >>  [{
+  "message": "Request failed with status code 401",
+  "name": "Error",
+  "stack": "Error: Request failed with status code 401\n    at createError (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/createError.js:16:15)\n    at settle (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/settle.js:17:12)\n    at IncomingMessage.handleStreamEnd (/home/jibl/gravitee-orchestra/node_modules/axios/lib/adapters/http.js:236:11)\n    at IncomingMessage.emit (events.js:327:22)\n    at IncomingMessage.EventEmitter.emit (domain.js:485:12)\n    at endReadableNT (_stream_readable.js:1224:12)\n    at processTicksAndRejections (internal/process/task_queues.js:84:21)",
+  "config": {
+    "url": "https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine",
+    "method": "delete",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "User-Agent": "axios/0.19.2"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  }
+}],
+now retrying
+What is passed on to tap >>  [{
+  "message": "Request failed with status code 401",
+  "name": "Error",
+  "stack": "Error: Request failed with status code 401\n    at createError (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/createError.js:16:15)\n    at settle (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/settle.js:17:12)\n    at IncomingMessage.handleStreamEnd (/home/jibl/gravitee-orchestra/node_modules/axios/lib/adapters/http.js:236:11)\n    at IncomingMessage.emit (events.js:327:22)\n    at IncomingMessage.EventEmitter.emit (domain.js:485:12)\n    at endReadableNT (_stream_readable.js:1224:12)\n    at processTicksAndRejections (internal/process/task_queues.js:84:21)",
+  "config": {
+    "url": "https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine",
+    "method": "delete",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "User-Agent": "axios/0.19.2"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  }
+}],
+now retrying
+What is passed on to tap >>  [{
+  "message": "Request failed with status code 401",
+  "name": "Error",
+  "stack": "Error: Request failed with status code 401\n    at createError (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/createError.js:16:15)\n    at settle (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/settle.js:17:12)\n    at IncomingMessage.handleStreamEnd (/home/jibl/gravitee-orchestra/node_modules/axios/lib/adapters/http.js:236:11)\n    at IncomingMessage.emit (events.js:327:22)\n    at IncomingMessage.EventEmitter.emit (domain.js:485:12)\n    at endReadableNT (_stream_readable.js:1224:12)\n    at processTicksAndRejections (internal/process/task_queues.js:84:21)",
+  "config": {
+    "url": "https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine",
+    "method": "delete",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "User-Agent": "axios/0.19.2"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  }
+}],
+now retrying
+What is passed on to tap >>  [{
+  "message": "Request failed with status code 401",
+  "name": "Error",
+  "stack": "Error: Request failed with status code 401\n    at createError (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/createError.js:16:15)\n    at settle (/home/jibl/gravitee-orchestra/node_modules/axios/lib/core/settle.js:17:12)\n    at IncomingMessage.handleStreamEnd (/home/jibl/gravitee-orchestra/node_modules/axios/lib/adapters/http.js:236:11)\n    at IncomingMessage.emit (events.js:327:22)\n    at IncomingMessage.EventEmitter.emit (domain.js:485:12)\n    at endReadableNT (_stream_readable.js:1224:12)\n    at processTicksAndRejections (internal/process/task_queues.js:84:21)",
+  "config": {
+    "url": "https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine",
+    "method": "delete",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "User-Agent": "axios/0.19.2"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1
+  }
+}],
+now retrying
