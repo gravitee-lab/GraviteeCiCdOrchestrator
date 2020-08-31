@@ -7,7 +7,7 @@ jobs:
     machine:
       resource_class: small
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      docker_layer_caching: true    # default - false
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
       DESIRED_DOCKER_TAG: ${DESIRED_DOCKER_TAG}
       DOCKER_LOGIN_USERNAME: 'ccc'
