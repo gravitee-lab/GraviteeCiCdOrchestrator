@@ -19,10 +19,10 @@ export class ReleaseManifestFilter {
     executionPlan : any [][];
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
+        this.validateJSon();
         this.loadParallelizationContraints();
         // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
-        //this.releaseManifest = {}; /// defaults to the empty JSON Object
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
         this.selectedComponents = { "components" : []};

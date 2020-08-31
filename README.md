@@ -2,9 +2,24 @@
 
 https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/
 
-A custom component in `Gravitee`'s CICD, that brings distributed builds in :
+A Component in `Gravitee`'s CICD, that orchestrates Gravitee CICD, bringing distributed builds in.
 
-* will parse release.json to determine which `Gravitee APIM` dependencies have to be released,
+## How it works
+
+The following branches are present on https://github.com/gravitee-lab/release :
+
+* `1.20.x`
+* `1.25.x`
+* `1.30.x`
+* `3.0.0-beta`
+* `3.0.x`
+* `3.0.0-beta`
+* `3.1.x`
+* (and There will be other support branches for future Major / Minor versions.)
+
+To make a new release, the process is the following :
+
+* will parse `release.json` to determine which `Gravitee APIM` dependencies have to be released,
 * will then request Circle CI REST API to trigger , for each selected `Gravitee APIM` dependency, the Pipeline defined in the `.circleci/config.yml` of each of those dependencies, to actually distribute the build (and scale it out)
 * will trigger the Circle CI Pipelines respecting the paralellization constriants defined by the  `buildDependencies` property in the `release.json`, to maximize scale out.
 * confer to  the specs specified in `CICD_APIM_TheGroovyGraviteeReleaseProcess.png` (team privately shared document)
@@ -16,7 +31,7 @@ The **Gravitee Release Orchestrator** makes use of the following technologies :
 * `typedoc`
 * `RxJS` to process asynchronous Circle CI API calls
 * [CLI Progess](https://www.npmjs.com/package/cli-progress#multi-bar-mode), to display a "multi progess bar", in the std output, and inform of execution progress for each dependency in a parallel execution set.
-
+* `Docker`, to containerize the Gravitee CICD Orchestrator
 
 
 # Buld, test n run

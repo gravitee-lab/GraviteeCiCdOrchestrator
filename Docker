@@ -1,0 +1,75 @@
+#
+# ---- Base Node ----
+FROM node:14.9.0-alpine3.10 AS base
+# --- Install TypeScript
+RUN npm install -g typescript @types/node
+# --- create and set working directory
+RUN mkdir -p /graviteeio/cicd
+WORKDIR /graviteeio/cicd
+# --- add entrypoint
+COPY start.sh /graviteeio/cicd
+# Set [start.sh] as entrypoint
+ENTRYPOINT [“/graviteeio/cicd/start.sh”, “--”]
+# Copy project file
+COPY package.json /graviteeio/cicd
+COPY tsconfig*.json /graviteeio/cicd
+
+#
+# ---- Resolve Dependencies and Build ----
+FROM base AS dependencies
+# --- Resolve project dependencies
+RUN npm set progress=false && npm config set depth 0
+RUN npm install --only=production
+# --- copy production node_modules aside
+RUN cp -R node_modules prod_node_modules
+# --- Install ALL node_modules, including 'devDependencies'
+RUN npm install
+RUN npm run compile
+
+#
+# ---- Test ----
+# run linters, setup and tests
+FROM dependencies AS test
+COPY . .
+# RUN  npm run lint && npm run setup && npm run test
+# RUN  npm run lint && npm run setup && npm run test
+
+
+#
+# ---- Release ----
+FROM base AS release
+# --- copy production node_modules
+COPY --from=dependencies /graviteeio/cicd/prod_node_modules ./node_modules
+# --- Copy built TypeScript app
+COPY --from=dependencies /graviteeio/cicd/dist ./dist
+# --- Do not Copy Environment file, volume mapping, as of
+# https://support.circleci.com/hc/en-us/articles/360007324514-How-can-I-use-Docker-volume-mounting-on-CircleCI-
+# requires using 'Circle CI' machine executor
+#  
+COPY .env /graviteeio/cicd
+RUN echo "quick check peek [PWD=$(pwd)]" && ls -allh .
+RUN echo "quick check peek [PWD/dist=$(pwd)/dist]" && ls -allh ./dist
+
+RUN chmod +x /graviteeio/cicd/start.sh
+
+
+
+
+
+
+
+RUN npm set progress=false && \
+    npm config set depth 0 && \
+    npm install
+
+COPY src/ /graviteeio/cicd
+RUN ls -allh /graviteeio/cicd/src
+RUN npm run compile
+COPY .env /graviteeio/cicd
+
+
+# Set [start.sh] as entrypoint
+ENTRYPOINT [“/graviteeio/cicd/start.sh”, “--”]
+
+
+CMD ["/graviteeio/cicd/start.sh"]

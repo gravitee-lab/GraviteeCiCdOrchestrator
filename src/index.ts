@@ -5,7 +5,6 @@ import { ReleaseManifestFilter } from "./modules/json/ReleaseManifestFilter"
 import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator"
 import * as monit from  './modules/monitor/Monitor';
 
-/// import axios from 'axios';
 /// Welcome
 console.log('')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -30,11 +29,16 @@ console.log('');
 errorReporter.report(new Error("{[.DOTENV]} - GraviteeReleaseOrchestrator .DOTENV. Error Manager"))
 
 
-/// Processing now
-
+/// ---
+/// ReleaseManifestFilter runs inside the Circle CI pipeline defined in the
+/// 
+///
+/// ---
 let manifestParser = new ReleaseManifestFilter("45.21.78", "This will be an awesome release, won't it ? :) ")
-
-/// First, parsing the release.json, and returning a 2-dimensional array : the execution Plan
+/// ---
+/// First, parses the locally git cloned [release.json], and returns a
+/// 2-dimensional array : the execution Plan
+/// ---
 let executionPlan : string [][] = manifestParser.buildExecutionPlan();
 
 /// then, using the execution plan, we are going to process parallel executions one after the other
@@ -74,6 +78,7 @@ export const someOtherMonitor = new monit.monitoring.Monitor("mymonitorDemo", {
   timeout: 10000
 });
 const demoResponse$ = someOtherMonitor.demoRetryWhen();
+
 const demoSubscription = demoResponse$.subscribe(fetchedResult => {
   console.log('')
   console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
