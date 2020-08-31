@@ -38,6 +38,46 @@ COPY . .
 #
 # ---- Release ----
 FROM base AS release
+
+# Define General Docker environment
+# --- DEFINE DOTENV Environment
+# PRODUCT='Gravitee APIM'
+ARG PRODUCT='Gravitee APIM'
+ENV PRODUCT=${PRODUCT}
+
+# RELEASE_MANIFEST_PATH=tests-data/apim/1.30.x/release.test1.json
+# RELEASE_MANIFEST_PATH=tests-data/apim/1.30.x/release.test4-20-conccurrent.json
+ARG RELEASE_MANIFEST_PATH=/release/release.json
+ENV RELEASE_MANIFEST_PATH=${RELEASE_MANIFEST_PATH}
+
+ENV RETRIES_BEFORE_FAILURE=${RETRIES_BEFORE_FAILURE}
+# SSH_RELEASE_GIT_REPO='git@github.com:gravitee-io/release.git'
+# HTTP_RELEASE_GIT_REPO='https://github.com/gravitee-io/release.git'
+ENV HTTP_RELEASE_GIT_REPO=${HTTP_RELEASE_GIT_REPO}
+# String.split()
+# RELEASE_BRANCHES="master, 3.1.x, 3.0.x, 1.30.x, 1.29.x, 1.25.x, 1.20.x"
+ENV RELEASE_BRANCHES=${RELEASE_BRANCHES}
+
+# SECRETS_FILE_PATH=./.secrets.json
+ENV SECRETS_FILE_PATH=${SECRETS_FILE_PATH}
+# The Gravitee Release Orchestrator must eventually timeout :
+# It must stop fetching the Circle CI API
+# Expressed in seconds :
+# PIPELINES_TIMEOUT=360s # defaults to 360s
+# Or minutes
+# PIPELINES_TIMEOUT=10m
+# Or hours
+# PIPELINES_TIMEOUT=1h
+
+# +++ GITHUB
+# +
+# + Git Service Provider Organization in which all
+#   the https://github.com Git repos live.
+#
+# GH_ORG=gravitee-io
+# GH_ORG=gravitee-lab
+ENV GH_ORG=${GH_ORG}
+
 # --- copy production node_modules
 COPY --from=dependencies /graviteeio/cicd/prod_node_modules ./node_modules
 # --- Copy built TypeScript app
@@ -45,7 +85,7 @@ COPY --from=dependencies /graviteeio/cicd/dist ./dist
 # --- Do not Copy Environment file, volume mapping, as of
 # https://support.circleci.com/hc/en-us/articles/360007324514-How-can-I-use-Docker-volume-mounting-on-CircleCI-
 # requires using 'Circle CI' machine executor
-#  
+#
 COPY .env /graviteeio/cicd
 RUN echo "quick check peek [PWD=$(pwd)]" && ls -allh .
 RUN echo "quick check peek [PWD/dist=$(pwd)/dist]" && ls -allh ./dist

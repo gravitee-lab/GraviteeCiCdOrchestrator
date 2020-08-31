@@ -1,0 +1,50 @@
+# Machine executor, set the machine key to true in .circleci/config.yml:
+version: 2.1
+orbs:
+  secrethub: secrethub/cli@1.0.0
+jobs:
+  build:
+    machine:
+    resource_class: small
+      image: ubuntu-1604:201903-01    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      docker_layer_caching: true    # default - false
+    environment:
+      DESIRED_DOCKER_TAG: ${DESIRED_DOCKER_TAG}
+      DOCKER_LOGIN_USERNAME: 'ccc'
+      DOCKER_LOGIN_SECRET: 'ccc'
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Testing local env"
+          command: ls -allh .
+      - run: # print the name of the branch we're on
+          name: "What branch am I on?"
+          command: echo ${CIRCLE_BRANCH}
+      - run:
+          name: "Testing DESIRED_DOCKER_TAG"
+          command: echo "Docker tag is [${DESIRED_DOCKER_TAG}]"
+      - run: # print the name of the branch we're on
+          name: "Docker build and push"
+          command: echo ${CIRCLE_BRANCH}
+            pwd
+            ls -allh
+            # [gravitee-lab/apim-gateway/staging/docker/quay/botuser/username]
+            # and
+            # [gravitee-lab/apim-gateway/staging/docker/quay/botoken/token]
+            # --> are to be set with secrethub cli, and 2 Circle CI Env. Var. have to
+            # be set for [Secrethub CLI Auth], at project, or context level
+            QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/apim-gateway/staging/docker/quay/botuser/username)
+            QUAY_BOT_SECRET=$(secrethub read gravitee-lab/apim-gateway/staging/docker/quay/botoken/token)
+            echo "QUAY_BOT_USERNAME=[${QUAY_BOT_USERNAME}]"
+            # echo "QUAY_BOT_SECRET=[${QUAY_BOT_SECRET}]"
+            docker build --no-cache -t "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" -f ./Dockerfile .
+            docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
+            docker push "quay.io/gravitee-lab/apim-gateway:${DESIRED_DOCKER_TAG}"
+
+workflows:
+  version: 2.1
+  docker_build_and_psuh:
+    jobs:
+      - build
+          context: gravitee-lab

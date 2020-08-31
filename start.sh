@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# First , interpolate .env file
-echo "Generate .env file FROM Environment"
+# --- First , interpolate .env file
+echo "Generate .env file From Docker Environment"
 ls -allh ./.env
 
 # ---
@@ -42,6 +42,12 @@ SECRETS_FILE_PATH=${SECRETS_FILE_PATH}
 # GH_ORG=gravitee-lab
 GH_ORG=${GH_ORG}
 
-
-
+echo ''
+echo 'Generated DOTENV [./.env] file'
+echo ''
+cat ./.env
+echo ''
+echo ''
+echo "Starting Orchestrator on [${PRODUCT}]"
+echo ''
 npm start
