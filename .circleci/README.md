@@ -1,7 +1,7 @@
 # Pipeline defintion
 
 
-## Secethub
+## Secrethub
 
 
 ```bash
@@ -24,6 +24,31 @@ drwxr-xr-x 243 jibl jibl  16K Aug 31 10:44 ..
 
 * content of `~/.secrethub/credential` is the value of the Secrethub token :
   * for a `Circle CI` project, or Organization Context, create the `SECRETHUB_CREDENTIAL` env. variable, and set its value to the secrethub token : then `secrethub cli` will be able to auth. against secrethub SAAS service.
+
+
+* Now we need to create the secrets :
+
+```bash
+
+echo "Implementation not finished TODO"
+exit 1
+# ---> [gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username]
+# secrethub repo init to create a repository
+secrethub repo init gravitee-lab/cicd-orchestrator
+secrethub repo inspect gravitee-lab/cicd-orchestrator
+secrethub repo ls gravitee-lab/cicd-orchestrator
+
+# secrethub mkdir to create a directory
+secrethub mkdir gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/
+secrethub repo ls gravitee-lab/cicd-orchestrator/staging/
+secrethub repo ls gravitee-lab/cicd-orchestrator/staging/docker
+secrethub repo ls gravitee-lab/cicd-orchestrator/staging/docker/quay
+
+# secrethub write to write some secrets
+secrethub write username
+# ---> [gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/token]
+
+```
 
 
 **Reference Documentation** :
