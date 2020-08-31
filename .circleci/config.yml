@@ -19,7 +19,7 @@ jobs:
           name: "Testing local env"
           command: ls -allh .
       - run: # print the name of the branch we're on
-          name: "What branch am I on?"
+          name: "What branch am I on ?"
           command: echo ${CIRCLE_BRANCH}
       - run:
           name: "Testing DESIRED_DOCKER_TAG"
