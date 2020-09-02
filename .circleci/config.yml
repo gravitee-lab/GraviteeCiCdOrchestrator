@@ -36,7 +36,7 @@ jobs:
           name: "Docker push"
           command: |
                     # checking docker image built in previous step is there
-                    # docker images
+                    docker images
                     # [gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username]
                     # and
                     # [gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token]
