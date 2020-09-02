@@ -1,6 +1,8 @@
 #
 # ---- Base Node ----
 FROM node:14.9.0-alpine3.10 AS base
+# -- add a few utils
+RUN apk update && apk add tree
 # --- Install TypeScript
 RUN npm install -g typescript @types/node
 # --- create and set working directory
@@ -9,13 +11,13 @@ WORKDIR /graviteeio/cicd
 # --- add entrypoint
 COPY oci/start.sh /graviteeio/cicd
 COPY oci/generate-dotenv.sh /graviteeio/cicd
+RUN chmod +x /graviteeio/cicd/*.sh
 
 # Set [start.sh] as entrypoint
 ENTRYPOINT ["/graviteeio/cicd/start.sh", "--"]
 # Copy project file
 COPY package.json /graviteeio/cicd
 COPY tsconfig*.json /graviteeio/cicd
-
 #
 # ---- Resolve Dependencies and Build ----
 FROM base AS dependencies
@@ -24,11 +26,15 @@ RUN npm set progress=false && npm config set depth 0
 RUN npm install --only=production
 # --- copy production node_modules aside
 RUN cp -R node_modules prod_node_modules
+RUN echo "Content [prod_node_modules/] in PWD=[$(pwd)/prod_node_modules]"
 # --- Install ALL node_modules, including 'devDependencies'
 RUN npm install
-COPY src/ ./
-RUN pwd 
+RUN mkdir -p /graviteeio/cicd/src
+COPY src/ ./src
+RUN echo "Before npm run compile, Is [src/] in PWD=[$(pwd)] ? " && ls -allh && ls -allh src/ && tree src/
 RUN npm run compile
+RUN echo "After npm run compile, Is [dist/] in PWD=[$(pwd)] ? " && ls -allh && ls -allh dist/ && tree dist/
+
 #
 # ---- Test ----
 # run linters, setup and tests
@@ -36,7 +42,7 @@ FROM dependencies AS test
 COPY . .
 # RUN  npm run lint && npm run setup && npm run test
 # RUN  npm run lint && npm run setup && npm run test
-
+RUN npm run test
 
 #
 # ---- Release ----
@@ -92,10 +98,9 @@ COPY --from=dependencies /graviteeio/cicd/dist ./dist
 COPY .env /graviteeio/cicd
 RUN echo "quick check peek [PWD=$(pwd)]" && ls -allh .
 RUN echo "quick check peek [PWD/dist=$(pwd)/dist]" && ls -allh ./dist
-
-RUN chmod +x /graviteeio/cicd/start.sh
+RUN echo "Inside [FROM base AS release] npm run compile, Is [dist/] in PWD=[$(pwd)] ? (and what is its content ?)" && ls -allh && ls -allh dist/
+RUN echo "Inside [FROM base AS release] npm run compile, Is [node_modules/] in PWD=[$(pwd)] ? (and what is its content ?)" && ls -allh && ls -allh node_modules/
 
 
 # Set [start.sh] as entrypoint
-
-# CMD ["/graviteeio/cicd/start.sh"]
+CMD ["/graviteeio/cicd/start.sh"]
