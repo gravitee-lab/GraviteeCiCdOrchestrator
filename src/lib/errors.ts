@@ -20,11 +20,18 @@ class ErrorReporter {
   private http_release_git_repo: string
   private release_branches: string
   private secrets_file_path: string
-  /// for example '360s' for 360 seconds before stopping  fething the Circle CI API
-  private pipelines_timeout: string;
+  /// --- time outs
+  /// timeout to trigger a pipeline
+  /// TRIGGER_TIMEOUT=360s
+  private trigger_timeout: string;
+  /// timeout to fetch for Build complete status
+  /// PIPELINE_COMPLETE_TIMEOUT=360s
+  private pipeline_complete_timeout: string;
   /// The Gihub.com Organization whre all the git repos live.
   private gh_org: string;
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, pipelines_timeout: string, gh_org: string) {
+
+
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_complete_timeout: string, gh_org: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -66,11 +73,17 @@ class ErrorReporter {
       }
       this.retries_before_failure = retries_before_failure;
     }
-    if (pipelines_timeout === undefined) {
-      console.warn("{[.DOTENV]} - [PIPELINES_TIMEOUT] is undefined, defaulting value to '360s'")
-      this.pipelines_timeout = "360s";
+    if (pipeline_complete_timeout === undefined) {
+      console.warn("{[.DOTENV]} - [PIPELINE_COMPLETE_TIMEOUT] is undefined, defaulting value to '360' (seconds)")
+      this.pipeline_complete_timeout = "360";
     } else {
-      this.pipelines_timeout = pipelines_timeout;
+      this.pipeline_complete_timeout = pipeline_complete_timeout;
+    }
+    if (trigger_timeout === undefined) {
+      console.warn("{[.DOTENV]} - [TRIGGER_TIMEOUT] is undefined, defaulting value to '360' (seconds)")
+      this.trigger_timeout = "360";
+    } else {
+      this.trigger_timeout = trigger_timeout;
     }
     if (gh_org === undefined || gh_org === "") {
       console.warn("{[.DOTENV]} - [GH_ORG] is undefined, defaulting value to 'graviteeio-lab'")
@@ -87,4 +100,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.PIPELINES_TIMEOUT, process.env.GH_ORG);
+export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETE_TIMEOUT, process.env.GH_ORG);

@@ -91,16 +91,18 @@ ENV GH_ORG=${GH_ORG}
 COPY --from=dependencies /graviteeio/cicd/prod_node_modules ./node_modules
 # --- Copy built TypeScript app
 COPY --from=dependencies /graviteeio/cicd/dist ./dist
-# --- Do not Copy Environment file, volume mapping, as of
-# https://support.circleci.com/hc/en-us/articles/360007324514-How-can-I-use-Docker-volume-mounting-on-CircleCI-
-# requires using 'Circle CI' machine executor
+# --- Do not Copy Environment file, it is generated on the fly, based on environment variables
 #
-COPY .env /graviteeio/cicd
+# COPY .env /graviteeio/cicd
 RUN echo "quick check peek [PWD=$(pwd)]" && ls -allh .
 RUN echo "quick check peek [PWD/dist=$(pwd)/dist]" && ls -allh ./dist
 RUN echo "Inside [FROM base AS release] npm run compile, Is [dist/] in PWD=[$(pwd)] ? (and what is its content ?)" && ls -allh && ls -allh dist/
 RUN echo "Inside [FROM base AS release] npm run compile, Is [node_modules/] in PWD=[$(pwd)] ? (and what is its content ?)" && ls -allh && ls -allh node_modules/
 
-
+# ---
+# Inside pipeline, is checked-out the github repo which triggered the pipeline
+# So docker volume mapping [-v $PWD/graviteeio/cicd/pipeline]
+RUN mkdir -p /graviteeio/cicd/pipeline
+VOLUME [ "/graviteeio/cicd/pipeline" ]
 # Set [start.sh] as entrypoint
 CMD ["/graviteeio/cicd/start.sh"]

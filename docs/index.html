@@ -90,9 +90,24 @@
 					<h1>The Gravitee Release Orchestrator</h1>
 				</a>
 				<p><a href="https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/">https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/</a></p>
-				<p>A custom component in <code>Gravitee</code>&#39;s CICD, that brings distributed builds in :</p>
+				<p>A Component in <code>Gravitee</code>&#39;s CICD, that orchestrates Gravitee CICD, bringing distributed builds in.</p>
+				<a href="#how-it-works" id="how-it-works" style="color: inherit; text-decoration: none;">
+					<h2>How it works</h2>
+				</a>
+				<p>The following branches are present on <a href="https://github.com/gravitee-lab/release">https://github.com/gravitee-lab/release</a> :</p>
 				<ul>
-					<li>will parse release.json to determine which <code>Gravitee APIM</code> dependencies have to be released,</li>
+					<li><code>1.20.x</code></li>
+					<li><code>1.25.x</code></li>
+					<li><code>1.30.x</code></li>
+					<li><code>3.0.0-beta</code></li>
+					<li><code>3.0.x</code></li>
+					<li><code>3.0.0-beta</code></li>
+					<li><code>3.1.x</code></li>
+					<li>(and There will be other support branches for future Major / Minor versions.)</li>
+				</ul>
+				<p>To make a new release, the process is the following :</p>
+				<ul>
+					<li>will parse <code>release.json</code> to determine which <code>Gravitee APIM</code> dependencies have to be released,</li>
 					<li>will then request Circle CI REST API to trigger , for each selected <code>Gravitee APIM</code> dependency, the Pipeline defined in the <code>.circleci/config.yml</code> of each of those dependencies, to actually distribute the build (and scale it out)</li>
 					<li>will trigger the Circle CI Pipelines respecting the paralellization constriants defined by the  <code>buildDependencies</code> property in the <code>release.json</code>, to maximize scale out.</li>
 					<li>confer to  the specs specified in <code>CICD_APIM_TheGroovyGraviteeReleaseProcess.png</code> (team privately shared document)</li>
@@ -105,6 +120,7 @@
 					<li><code>typedoc</code></li>
 					<li><code>RxJS</code> to process asynchronous Circle CI API calls</li>
 					<li><a href="https://www.npmjs.com/package/cli-progress#multi-bar-mode">CLI Progess</a>, to display a &quot;multi progess bar&quot;, in the std output, and inform of execution progress for each dependency in a parallel execution set.</li>
+					<li><code>Docker</code>, to containerize the Gravitee CICD Orchestrator</li>
 				</ul>
 				<a href="#buld-test-n-run" id="buld-test-n-run" style="color: inherit; text-decoration: none;">
 					<h1>Buld, test n run</h1>

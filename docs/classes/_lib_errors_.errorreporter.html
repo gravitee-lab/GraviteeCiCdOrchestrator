@@ -87,7 +87,7 @@
 									<a href="_lib_errors_.errorreporter.html#http_release_git_repo" class="tsd-kind-icon">http_<wbr>release_<wbr>git_<wbr>repo</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-									<a href="_lib_errors_.errorreporter.html#pipelines_timeout" class="tsd-kind-icon">pipelines_<wbr>timeout</a>
+									<a href="_lib_errors_.errorreporter.html#pipeline_complete_timeout" class="tsd-kind-icon">pipeline_<wbr>complete_<wbr>timeout</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 									<a href="_lib_errors_.errorreporter.html#product" class="tsd-kind-icon">product</a>
@@ -106,6 +106,9 @@
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 									<a href="_lib_errors_.errorreporter.html#ssh_release_git_repo" class="tsd-kind-icon">ssh_<wbr>release_<wbr>git_<wbr>repo</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_lib_errors_.errorreporter.html#trigger_timeout" class="tsd-kind-icon">trigger_<wbr>timeout</a>
 								</li>
 								<li class=" tsd-kind-method tsd-parent-kind-class">
 									<a href="_lib_errors_.errorreporter.html#report" class="tsd-kind-icon">report</a>
@@ -189,7 +192,7 @@
 							<div class="tsd-navigation secondary">
 								<ul>
 									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-										<a href="_lib_errors_.errorreporter.html#pipelines_timeout" class="tsd-kind-icon">pipelines_<wbr>timeout</a>
+										<a href="_lib_errors_.errorreporter.html#pipeline_complete_timeout" class="tsd-kind-icon">pipeline_<wbr>complete_<wbr>timeout</a>
 									</li>
 								</ul>
 							</div>
@@ -235,6 +238,13 @@
 									</li>
 								</ul>
 							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_lib_errors_.errorreporter.html#trigger_timeout" class="tsd-kind-icon">trigger_<wbr>timeout</a>
+									</li>
+								</ul>
+							</div>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
@@ -255,7 +265,7 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Error<wbr>Reporter<span class="tsd-signature-symbol">(</span>product<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, release_manifest_path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, retries_before_failure<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ssh_release_git_repo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, http_release_git_repo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, release_branches<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, secrets_file_path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, pipelines_timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gh_org<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_lib_errors_.errorreporter.html" class="tsd-signature-type">ErrorReporter</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Error<wbr>Reporter<span class="tsd-signature-symbol">(</span>product<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, release_manifest_path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, retries_before_failure<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ssh_release_git_repo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, http_release_git_repo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, release_branches<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, secrets_file_path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, trigger_timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, pipeline_complete_timeout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, gh_org<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_lib_errors_.errorreporter.html" class="tsd-signature-type">ErrorReporter</a></li>
 					</ul>
 					<h4 class="tsd-parameters-title">Parameters</h4>
 					<ul class="tsd-parameters">
@@ -281,7 +291,10 @@
 							<span class="name">secrets_file_path</span>: <span class="tsd-signature-type">string</span>
 						</li>
 						<li>
-							<span class="name">pipelines_timeout</span>: <span class="tsd-signature-type">string</span>
+							<span class="name">trigger_timeout</span>: <span class="tsd-signature-type">string</span>
+						</li>
+						<li>
+							<span class="name">pipeline_complete_timeout</span>: <span class="tsd-signature-type">string</span>
 						</li>
 						<li>
 							<span class="name">gh_org</span>: <span class="tsd-signature-type">string</span>
@@ -291,7 +304,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L26">lib/errors.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L31">lib/errors.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -304,7 +317,7 @@
 					<div class="tsd-signature tsd-kind-icon">gh_org<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L26">lib/errors.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L31">lib/errors.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -314,17 +327,17 @@
 					<div class="tsd-signature tsd-kind-icon">http_release_git_repo<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L20">lib/errors.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L20">lib/errors.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
-					<a name="pipelines_timeout" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pipelines_<wbr>timeout</h3>
-					<div class="tsd-signature tsd-kind-icon">pipelines_timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="pipeline_complete_timeout" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> pipeline_<wbr>complete_<wbr>timeout</h3>
+					<div class="tsd-signature tsd-kind-icon">pipeline_complete_timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L24">lib/errors.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L29">lib/errors.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -334,7 +347,7 @@
 					<div class="tsd-signature tsd-kind-icon">product<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L14">lib/errors.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L14">lib/errors.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -344,7 +357,7 @@
 					<div class="tsd-signature tsd-kind-icon">release_branches<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L21">lib/errors.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L21">lib/errors.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -354,7 +367,7 @@
 					<div class="tsd-signature tsd-kind-icon">release_manifest_path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L15">lib/errors.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L15">lib/errors.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -364,7 +377,7 @@
 					<div class="tsd-signature tsd-kind-icon">retries_before_failure<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L17">lib/errors.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L17">lib/errors.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -374,7 +387,7 @@
 					<div class="tsd-signature tsd-kind-icon">secrets_file_path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L22">lib/errors.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L22">lib/errors.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -384,7 +397,17 @@
 					<div class="tsd-signature tsd-kind-icon">ssh_release_git_repo<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L19">lib/errors.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L19">lib/errors.ts:19</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="trigger_timeout" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> trigger_<wbr>timeout</h3>
+					<div class="tsd-signature tsd-kind-icon">trigger_timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L26">lib/errors.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -407,7 +430,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/6c87574/src/lib/errors.ts#L83">lib/errors.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/d859893/src/lib/errors.ts#L96">lib/errors.ts:96</a></li>
 						</ul>
 					</aside>
 				</section>
