@@ -27,7 +27,7 @@ RUN cp -R node_modules prod_node_modules
 # --- Install ALL node_modules, including 'devDependencies'
 RUN npm install
 COPY src/ ./
-RUN pwd && echo " -jbl- " && ls -allh . && " just before nom run compile"
+RUN pwd && echo " -jbl- " && ls -allh . && echo " Just before nom run compile"
 RUN npm run compile
 #
 # ---- Test ----
