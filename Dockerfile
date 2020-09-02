@@ -26,8 +26,9 @@ RUN npm install --only=production
 RUN cp -R node_modules prod_node_modules
 # --- Install ALL node_modules, including 'devDependencies'
 RUN npm install
+COPY src/ ./
+RUN pwd && echo " -jbl- " && ls -allh . && " just before nom run compile"
 RUN npm run compile
-
 #
 # ---- Test ----
 # run linters, setup and tests
@@ -95,21 +96,6 @@ RUN echo "quick check peek [PWD/dist=$(pwd)/dist]" && ls -allh ./dist
 RUN chmod +x /graviteeio/cicd/start.sh
 
 
-
-
-
-
-
-RUN npm set progress=false && \
-    npm config set depth 0 && \
-    npm install
-
-COPY src/ /graviteeio/cicd
-RUN ls -allh /graviteeio/cicd/src
-RUN npm run compile
-COPY .env /graviteeio/cicd
-
-
 # Set [start.sh] as entrypoint
 
-CMD ["/graviteeio/cicd/start.sh"]
+# CMD ["/graviteeio/cicd/start.sh"]
