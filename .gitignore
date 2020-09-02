@@ -8,3 +8,5 @@ dist/
 .secrets.json
 # privately versioned files
 documentation/global-process
+# quickie
+brouillons/

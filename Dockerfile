@@ -7,9 +7,11 @@ RUN npm install -g typescript @types/node
 RUN mkdir -p /graviteeio/cicd
 WORKDIR /graviteeio/cicd
 # --- add entrypoint
-COPY start.sh /graviteeio/cicd
+COPY oci/start.sh /graviteeio/cicd
+COPY oci/generate-dotenv.sh /graviteeio/cicd
+
 # Set [start.sh] as entrypoint
-ENTRYPOINT [“/graviteeio/cicd/start.sh”, “--”]
+ENTRYPOINT ["/graviteeio/cicd/start.sh", "--"]
 # Copy project file
 COPY package.json /graviteeio/cicd
 COPY tsconfig*.json /graviteeio/cicd
@@ -109,7 +111,5 @@ COPY .env /graviteeio/cicd
 
 
 # Set [start.sh] as entrypoint
-ENTRYPOINT [“/graviteeio/cicd/start.sh”, “--”]
-
 
 CMD ["/graviteeio/cicd/start.sh"]
