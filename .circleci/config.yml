@@ -25,7 +25,24 @@ jobs:
           name: "Testing DESIRED_DOCKER_TAG"
           command: echo "Docker tag is [${DESIRED_DOCKER_TAG}]"
       - run: # print the name of the branch we're on
-          name: "Docker build and push"
+          name: "Docker build"
+          command: |
+                    pwd
+                    ls -allh
+                    docker build --no-cache -t "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" -f ./Dockerfile .
+                    # [gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username]
+                    # and
+                    # [gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token]
+                    # --> are to be set with secrethub cli, and 2 Circle CI Env. Var. have to
+                    # be set for [Secrethub CLI Auth], at project, or context level
+                    QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username)
+                    QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token)
+                    echo "QUAY_BOT_USERNAME=[${QUAY_BOT_USERNAME}]"
+                    # echo "QUAY_BOT_SECRET=[${QUAY_BOT_SECRET}]"
+                    docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
+                    docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
+      - run: # print the name of the branch we're on
+          name: "Docker push"
           command: |
                     pwd
                     ls -allh
