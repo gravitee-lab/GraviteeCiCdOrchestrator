@@ -30,7 +30,8 @@ jobs:
           command: |
                     pwd
                     ls -allh
-                    docker build --no-cache -t "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" -f ./Dockerfile .
+                    # docker build --no-cache -t "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" -f ./Dockerfile .
+                    docker build -t "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" -f ./Dockerfile .
       - run: # print the name of the branch we're on
           name: "Docker push"
           command: |
