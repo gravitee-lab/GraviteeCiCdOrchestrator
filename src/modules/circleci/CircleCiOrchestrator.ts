@@ -2,9 +2,8 @@
 import { Observable } from 'rxjs';
 import axios from 'axios';
 import * as fs from 'fs';
-import * as cliProgress from 'cli-progress';
 import * as Collections from 'typescript-collections';
-
+import * as Monitor from './modules/monitor/Monitor'
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
@@ -14,7 +13,8 @@ import * as Collections from 'typescript-collections';
  **/
 export class CircleCiOrchestrator {
     private github_org: string;
-
+    private currentSubscriptionSet: any[];
+    private monitor: monitoring.Monitor;
     /**
     * <p>
     * The Execution plan listing all the components that should be included in the release :
@@ -132,24 +132,6 @@ export class CircleCiOrchestrator {
     private circleci_client: CircleCIClient;
     private secrets: any;
 
-    /**
-     *
-     * For each Parallel Execution Set of the {@see this.execution_plan}, an instance of {@see ParallelExectionSetProgressBar} is instantiated
-     *
-     * So for every Parallel Executions Set that is processed, using {@see CircleCiOrchestrator#processExecutionSet()}, there will be a progress bar
-     *
-     * Also above the progress bars, all pipeline HTTP links will be given.
-     *
-     * One HTTP Link can be constructed, per githbu repo, if not found in REST API calls JSON responses :
-     *
-     * => For a repo named  "testrepo1", in the github org "gravitee-lab", and a branch named "dependabot/npm_and_yarn/handlebars-4.5.3", HTTP Link is :
-     *
-     * ==> https://app.circleci.com/pipelines/github/gravitee-lab/testrepo1?branch=dependabot%2Fnpm_and_yarn%2Fhandlebars-4.5.3
-     *
-     * ==> Knowing that this link will display page of latest pipeline executions of the https://github.com/gravitee-lab/testrepo1.git repo on the "dependabot/npm_and_yarn/handlebars-4.5.3" branch
-     * Note : the key for each {@see ParallelExectionSetProgressBar} is the Parallel Execution Set itself : an array of string
-     **/
-    private progressBars: Collections.Dictionary<string [],ParallelExectionSetProgressBar>;
 
     constructor(execution_plan: string [][], retries: number) {
       this.execution_plan = execution_plan;
@@ -158,18 +140,8 @@ export class CircleCiOrchestrator {
       this.circleci_client = new CircleCIClient(this.secrets);
       this.progressMatrix = [];
       this.monitorReport = [];
-      this.initProgressBars();
       this.github_org = process.env.GH_ORG;
-    }
-    /**
-     * initializes a new progress bar for every Parallel Executions Set (every entry int this.execution_plan)
-     **/
-    initProgressBars () : void {
-      this.progressBars = new Collections.Dictionary<string [],ParallelExectionSetProgressBar>();
-      this.execution_plan.forEach((parallelExecutionsSet, index) => {
-        console.info("[{CircleCiOrchestrator}] - initializing Progress Bar for Parallel Execution Set no. ["+`${index}`+"]  ");
-        this.progressBars.setValue(parallelExecutionsSet, new ParallelExectionSetProgressBar(parallelExecutionsSet));
-      });
+      this.currentSubscriptionSet = [];
     }
 
     loadCircleCISecrets () : void {
@@ -191,9 +163,10 @@ export class CircleCiOrchestrator {
       console.info("[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
       console.info("");
       let whoamiSubscription = this.circleci_client.whoami().subscribe({
-        next: data => console.log( '[data] => ', data ),
+        next: data => console.log( '[Whomai data] => ', data ),
         complete: data => console.log( '[complete]' )
       });
+
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -237,8 +210,9 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-
-      parallelExecutionsSet.forEach((componentName, index) => {
+      this.currentSubscriptionSet = [];
+      /// First, trigger all pipelines in the parallel execution set
+      parallelExecutionsSet.forEach(((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {}};
         let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
@@ -248,8 +222,11 @@ export class CircleCiOrchestrator {
             },
             error: this.errorHandlerTriggerCCIPipeline.bind(this)
         });
+        /// for the current Parallel execution set, we store all
+        /// RxJS ObservableStreams in [this.currentSubscriptionSet]
+        this.currentSubscriptionSet.push(triggerPipelineSubscription);
 
-      });
+      }).bind(this));
 
     }
     /**
@@ -617,154 +594,4 @@ export class CircleCIClient {
       } );
       return observableRequest;
     }
-}
-
-/**
- * {@see ParallelExectionSetProgressBar} :
- *
- * <ul>
- * <li>
- * Displays a multi progress bar for a Parallel Execution Set
- * </li>
- * <li>
- * based on https://www.npmjs.com/package/cli-progress#multi-bar-mode
- * </li>
- * </ul>
- *
- * Each Progress Bar, notifies the progress status of one Pipeline Execution. As of Circle CI API v2, there are 3 possible states for a pipeline execution :
- *
- * <ul>
- * <li>
- * <pre>pending</pre> (pipeline was triggered and pipeline  execution is  <strong>running</strong>)
- * </li>
- * <li>
- * <pre>errored</pre> (pipeline execution  <strong>completed with errors</strong>)
- * </li>
- * <li>
- * <pre>created</pre> (pipeline execution  <strong>succcessfully completed</strong>, with no <strong>errors</strong> )
- * </li>
- * </ul>
- *
- * Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
- * So I added a fourth one, <strong>untriggered</strong> , in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
- *
- * <ul>
- * <li>
- * <pre>untriggered</pre> (pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the Circle CI API v2)
- * </li>
- * <li>
- * <pre>pending</pre> (pipeline was triggered and pipeline  execution is  <strong>running</strong>)
- * </li>
- * <li>
- * <pre>errored</pre> (pipeline execution  <strong>completed with errors</strong>)
- * </li>
- * <li>
- * <pre>created</pre> (pipeline execution  <strong>succcessfully completed</strong>, with no <strong>errors</strong> )
- * </li>
- * </ul>
- *
- * Also [see **barGlue** option](https://www.npmjs.com/package/cli-progress#options-1), to have custom text displayed with status'
- *
- * @comment Zero Circle CI API calls here, this just a progress bar, and it does nothing, unless someone tells him to do something (change singleBar progress status, etc...). Also, the progress Bar does not rmember any state, it just allows update the progress State of one component see {@see ParallelExectionSetProgressBar#updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus)}
- **/
-export class ParallelExectionSetProgressBar {
-  private static COMPLETED_SCALE: number = 100;
-  private bars: Collections.Dictionary<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
-
-  /**
-   * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
-   * -----
-   * Example Parallel Execution Set (very simple, 1-dim. string[] Array, see {@see CircleCiOrchestrator#execution_plan} ) :
-   * -----
-   * <pre>
-   *
-   *    [
-   *        "gravitee-policy-apikey",
-   *        "gravitee-policy-ratelimit",
-   *        "gravitee-policy-request-content-limit",
-   *        "gravitee-policy-dynamic-routing",
-   *        "gravitee-policy-jwt",
-   *        "gravitee-policy-callout-http",
-   *        "gravitee-fetcher-github"
-   *    ]
-   *
-   * </pre>
-   *
-   **/
-  private parallelExecutionsSet: string[] /// or progressMatrix ? that is the question. I think I'll instantiate a new ParallelExectionSetProgressBar() instance for every non-empty (array of lentgh zero) entry in the progressMatrix
-
-  constructor(parallelExecutionsSet: string[]) {
-    this.parallelExecutionsSet = parallelExecutionsSet;
-    if (parallelExecutionsSet === undefined || parallelExecutionsSet === null) {
-      throw new Error("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is null or undefined, so can't work on any status to report.")
-    }
-    if (parallelExecutionsSet.length == 0) {
-      console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.")
-    }
-
-    this.start();
-  }
-
-
-  updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus) {
-    let singleBar = this.bars.getValue(componentName);
-    singleBar.update(newStatus, {filename: `${componentName}`});
-  }
-  /**
-   * ---
-   * Starts all the single Bars initializing them to the initial state {@see ParallelExectionSetProgressStatus.UNTRIGGERED}
-   *
-   * @throws {@see Error} when bars Dictionary is undefinied or empty (there must be at least one single bar)
-   *
-   **/
-  private start() : void {
-
-
-  }
-
-}
-
-/**
- *
- * The {@see ParallelExectionSetProgressStatus} enumerates all possible Execution Status' of a pipeline Execution
- * <p>
- * Before a pipeline is triggered, the pipeline execution does not exists, as far as the Circle CI API is concerned.
- * So I added a fourth one, <strong>untriggered</strong>, in order to display the progress bar for all planed pipeline executions, before they even exists in the CircleCI API v2 :
- * </p>
- * <ul>
- * <li>
- * <pre>untriggered</pre> (pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the Circle CI API v2)
- * </li>
- * <li>
- * <pre>pending</pre> (pipeline execution was triggered and is running)
- * </li>
- * <li>
- * <pre>errored</pre> (pipeline execution completed with <strong>erros</strong>)
- * </li>
- * <li>
- * <pre>created</pre> (pipeline execution succcessfully completed, with no <strong>errors</strong>)
- * </li>
- * </ul>
- *
- * @comment see {@see ParallelExectionSetProgressBar}
- * @comment Note this might be truned into an internal type (like java inner classes/interfaces) for the {@see ParallelExectionSetProgressBar}
- **/
-export enum ParallelExectionSetProgressStatus {
-  /**
-   * Pipeline execution was <strong>not triggered yet</strong>, and does not exsits for the <strong>Circle CI API v2</strong>
-   **/
-  UNTRIGGERED = 25,
-  /**
-   * Pipeline execution was triggered and is running.
-   **/
-  PENDING = 50,
-  /**
-   * <p>Pipeline  execution completed with <strong>erros</strong></p>
-   * <p>Because fifty-one is far from being one hundred percent, just like completing execution with errors is far from completing successfully (without errors)</p>
-   **/
-  ERRORED = 51,
-  /**
-   * Pipeline execution succcessfully completed, with no <strong>errors</strong>.
-   **/
-  CREATED = 100
 }
