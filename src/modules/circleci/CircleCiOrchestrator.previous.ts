@@ -670,7 +670,7 @@ export class CircleCIClient {
 export class ParallelExectionSetProgressBar {
   private static COMPLETED_SCALE: number = 100;
   private bars: Collections.Dictionary<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
-
+  private multibar: cliProgress.MultiBar;
   /**
    * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
    * -----
@@ -701,11 +701,32 @@ export class ParallelExectionSetProgressBar {
     if (parallelExecutionsSet.length == 0) {
       console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.")
     }
-
+    this.initMultiBar();
     this.start();
   }
 
+  /**
+   * Initializes the {@see cliProgress.MultiBar} <strong>this.multibar</strong> and the {@see Collections.Dictionnary<string, cliProgress.SingleBar>}  <strong>this.bars</strong> https://www.npmjs.com/package/cli-progress component, from
+   * the {@see this.parallelExecutionsSet} Parallel Executions Set
+   **/
+  initMultiBar (): void {
+    this.bars = new Collections.Dictionary<string, cliProgress.SingleBar>();
+    ///
+    // create new MultiBar container
+    this.multibar = new cliProgress.MultiBar({
+        clearOnComplete: false,
+        hideCursor: true,
+        barCompleteChar: '\u2588',
+        barIncompleteChar: '\u2591'
+    }, cliProgress.Presets.shades_grey);
 
+    this.parallelExecutionsSet.forEach((componentName, index) => {
+      // add single bar
+      let singleBar = this.multibar.create(ParallelExectionSetProgressBar.COMPLETED_SCALE, 0);
+      this.bars.setValue(componentName, singleBar);
+    });
+
+  }
   updateStatus(componentName: string, newStatus: ParallelExectionSetProgressStatus) {
     let singleBar = this.bars.getValue(componentName);
     singleBar.update(newStatus, {filename: `${componentName}`});
@@ -718,8 +739,24 @@ export class ParallelExectionSetProgressBar {
    *
    **/
   private start() : void {
-
-
+    if (this.bars === undefined || this.bars === null) {
+      throw new Error("[{ParallelExectionSetProgressBar}] - Starting Progress Bar failed because [this.bars] is undefined or null, which is unexpected, and should never ever happen.");
+    }
+    if (this.parallelExecutionsSet.length == 0) {
+      console.warn("[{ParallelExectionSetProgressBar}] - parallelExecutionsSet is empty, so can't work on any status to report.");
+      console.warn("[{ParallelExectionSetProgressBar}] - stopped Progress Bar.");
+    } else {
+      this.bars.forEach((componentName, singleBar) => {
+        // sets the single bar initial State
+        singleBar.start(ParallelExectionSetProgressBar.COMPLETED_SCALE, ParallelExectionSetProgressStatus.UNTRIGGERED, {filename: `${componentName}`});
+      });
+    }
+  }
+  /**
+  * Releases TTY to let the stdout proceed
+   **/
+  stop() {
+    this.multibar.stop();
   }
 
 }
