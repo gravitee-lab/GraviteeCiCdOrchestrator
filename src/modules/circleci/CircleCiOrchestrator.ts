@@ -670,7 +670,7 @@ export class CircleCIClient {
 export class ParallelExectionSetProgressBar {
   private static COMPLETED_SCALE: number = 100;
   private bars: Collections.Dictionary<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
-  /// private multibar: cliProgress.MultiBar;
+  private multibar: cliProgress.MultiBar;
   /**
    * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
    * -----
