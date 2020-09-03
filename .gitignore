@@ -8,5 +8,7 @@ dist/
 .secrets.json
 # privately versioned files
 documentation/global-process
-# quickie
-brouillons/
+# docker volume mapped to Circle CI pipeline
+graviteeio/
+graviteeio/cicd/
+graviteeio/cicd/pipeline/

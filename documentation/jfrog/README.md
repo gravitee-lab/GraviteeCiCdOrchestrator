@@ -123,16 +123,16 @@ git clone https://github.com/gravitee-io/gravitee-parent
 #         "JAVA_HOME=${javaHome}"]) {
 
 
-# lnked to M2_HOME
+# linked to M2_HOME
 # MAVEN version 3.3
 # JDK 8
 # NodeJS '0.12.4' ???... 12.4 ?
-MVN_HOME="where maven 3.3 is installed, has [./bin] as subfolder"
+MVN_HOME="where maven 3.3 is installed"
 JAVA_HOME="JDK 8 as usual"
-NODE_HOME="where NodeJS ['0.12.4' ???... 12.4 ?] is installed, has [./bin] as subfolder"
+NODE_HOME="where NodeJS ['0.12.4' ???... 12.4 ?] is installed"
 
 # --- Project specific execution environment for each component
-export RELEASE_VERSION='<ça, cest la prop JSON au top level de release.json définissant la version de release>'
+export RELEASE_VERSION='<ça, c est la propriété JSON au top level de release.json définissant la version de release>'
 export SCM_BRANCH='<valeur passée en paramètre ${GRAVITEEIO_VERSION} du pipeline  https://ci.gravitee.io/view/Release/job/Release_Gravitee.io>'
 export NEXT_BRANCH_NAME='<se déduit de ${SCM_BRANCH} ?>'
 export NEXT_FIX_SNAPSHOT_VERSION='<se déduit de ${SCM_BRANCH} ?>'
@@ -152,7 +152,7 @@ mvn -B -U clean install
 #  les composant ne comprend que le dépendance qu'est le maven enforcer plugin ).
 # Les contraintes sont exeprimées par les tags XML utilisés comme DSL.
 mvn enforcer:enforce
-# la voilà la release pour envoyer sur nexus
+# La voilà la release pour envoyer sur nexus ou Jfrog
 mvn -B -U -P gravitee-release clean deploy
 # // commit, tag the release
 git add --update
@@ -198,7 +198,7 @@ git checkout "${SCM_BRANCH}"
 # ==>>> Create the NEXT version, retagging -SNAPSHOT
 # uses the maven version plugin to
 # =>  increment version number
-# => add -SNASHOT label
+# => add '-SNASHOT' label
 # https://www.mojohaus.org/versions-maven-plugin/set-mojo.html
 # ------------------------------------------------------------
 # update next version

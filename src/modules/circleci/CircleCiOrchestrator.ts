@@ -188,7 +188,7 @@ export class CircleCiOrchestrator {
      * returning an A 2-dimensional array
      **/
     start()  : void {
-      console.info("[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry " + this.retries + " times executing a [Circle CI] pipeline before giving up.")
+      console.info("[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
       console.info("");
       let whoamiSubscription = this.circleci_client.whoami().subscribe({
         next: data => console.log( '[data] => ', data ),
@@ -610,12 +610,11 @@ export class CircleCIClient {
           .then( ( response ) => {
               observer.next( response.data );
               observer.complete();
-          } )
+          })
           .catch( ( error ) => {
               observer.error( error );
-          } );
+          });
       } );
-
       return observableRequest;
     }
 }
@@ -671,7 +670,7 @@ export class CircleCIClient {
 export class ParallelExectionSetProgressBar {
   private static COMPLETED_SCALE: number = 100;
   private bars: Collections.Dictionary<string, cliProgress.SingleBar>; /// dunno there, it's just that I wanna remmber for each bar, which component it stands for
-  private multibar: cliProgress.MultiBar;
+  /// private multibar: cliProgress.MultiBar;
   /**
    * A Parallel Execution Set, is an entry in the {@see CircleCiOrchestrator#execution_plan}. It might be an empty array (Array of length zero)
    * -----

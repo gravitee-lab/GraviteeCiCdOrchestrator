@@ -31,7 +31,7 @@ errorReporter.report(new Error("{[.DOTENV]} - GraviteeReleaseOrchestrator .DOTEN
 
 /// ---
 /// ReleaseManifestFilter runs inside the Circle CI pipeline defined in the
-/// 
+///
 ///
 /// ---
 let manifestParser = new ReleaseManifestFilter("45.21.78", "This will be an awesome release, won't it ? :) ")
@@ -46,14 +46,12 @@ let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
 orchestrator.start();
 
 
-
-
-
-/// QUICKTEST MONITORING
+/// MONITORING
 
 // perfect test is :
 // curl -X DELETE https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine
 // {"message":"No JWT token found","http_status":401}
+
 export const someMonitor = new monit.monitoring.Monitor("mymonitortest", {rest_endpoint: 'https://randomuser.me/api', timeout: 10000});
 const someResponse$ = someMonitor.fetch();
 
@@ -93,3 +91,4 @@ const demoSubscription = demoResponse$.subscribe(fetchedResult => {
   console.log('')
   console.log(` subscriber got fetchedResult = [${JSON.stringify(fetchedResult.data)}]`)
 });
+/*   */
