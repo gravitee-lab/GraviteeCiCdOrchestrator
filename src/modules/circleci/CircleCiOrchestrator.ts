@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as Collections from 'typescript-collections';
-import * as Monitor from './modules/monitor/Monitor'
+import { monitoring }  from '../../modules/monitor/Monitor'
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
