@@ -13,8 +13,8 @@
 
   /**
    * Represents a gravitee component, made of :
-   * a name : determines the github repo, with {process.env.GH_ORG} [https://github.com/process.env.GH_ORG/`${name}`]
-   *
+   * a name : determines the github repo, with {process.env.GH_ORG} e.g. [repo_http_uri] [https://github.com/process.env.GH_ORG/`${name}`]
+   * a semver version number as a string, eventually 
    * ''
    *
    **/

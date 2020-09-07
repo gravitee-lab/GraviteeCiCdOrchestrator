@@ -17,10 +17,7 @@ import * as executionsets from './ParallelExecutionSet';
   export class ExecutionPlan {
 
     public readonly parallelExecutionSet: executionsets.ParallelExecutionSet[];
-    public readonly completed: boolean;
-
-    ///
-
+    private completed: boolean;
 
     constructor (
       args: ExecutionPlanArgs
@@ -31,11 +28,11 @@ import * as executionsets from './ParallelExecutionSet';
       this.parallelExecutionSet = args.parallelExecutionSet;
       this.completed = false;
 
-
-      const something = 'ccc';
-
-
     }
-
-
+    setCompleted() {
+      this.completed = true;
+    }
+    isCompleted(): boolean {
+      return this.completed;
+    }
   }

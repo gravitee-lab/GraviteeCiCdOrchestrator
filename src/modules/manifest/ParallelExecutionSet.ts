@@ -4,13 +4,12 @@ import * as giocomponents from './GraviteeComponent';
 /**
  * Args for the constructor of {@see ParallelExecutionSet}
  **/
-
   export interface ParallelExecutionSetArgs {
     components: giocomponents.GraviteeComponent[];
   }
 
   /**
-   * Represents a paralell execution set
+   * Represents a Paralell Execution Set
    *
    **/
   export class ParallelExecutionSet {
@@ -21,12 +20,7 @@ import * as giocomponents from './GraviteeComponent';
       args: ParallelExecutionSetArgs
     ) {
       /// super(`valueofContructorParamOne`, args)
-
-
       this.components = args.components;
-
-
-
     }
 
 
