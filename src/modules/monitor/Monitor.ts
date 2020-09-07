@@ -31,7 +31,7 @@ export namespace monitoring {
   }
 
   export interface MonitorArgs extends monitoring.AbstractMonitorArgs {
-    rest_endpoint: string;
+    rest_endpoint: string; // to delete, just for demo purposes.
   }
 
   /**
@@ -107,9 +107,8 @@ export namespace monitoring {
     // {"message":"No JWT token found","http_status":401}
     public demoRetryWhen (): rxjs.Observable<AxiosResponse<any>> {
 
-
             const source = rxjs.from(axios.delete(`${this.rest_endpoint}`)).pipe(
-            tap(val => console.log(`fetching ${this.rest_endpoint} which you won't see `)),)
+            tap(val => console.log(`fetching ${this.rest_endpoint} which you won't see `)))
             const response$ = source.pipe(
               map(axiosResponse => {
                 if (!(axiosResponse.status == 200 || axiosResponse.status == 201 || axiosResponse.status == 203)) {

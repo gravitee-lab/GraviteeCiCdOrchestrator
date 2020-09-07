@@ -3,7 +3,7 @@
 /**
  * A Template prototype POO structure for all  Orchestrator types :
  * classes, abstract classes, interfaces, and namespaces. Also on how
- * to handle Args type checking. 
+ * to handle Args type checking.
  **/
 export namespace mynamespace { /// not sureI wanna use namespaces we'll see how unseful it is.
 
@@ -52,13 +52,6 @@ export namespace mynamespace { /// not sureI wanna use namespaces we'll see how 
       super(`valueofContructorParamOne`, args)
 
 
-      // ---------------------------------
-      // Helm Charts common properties
-      // --
-      // Initialization : helm repo add graviteeio https://helm.gravitee.io
-      // --
-      // cf. la méthode [ executerUnHelmChart () {} ]
-      // --
       this.paramOne = "graviteeio";
 
       const something = 'ccc';

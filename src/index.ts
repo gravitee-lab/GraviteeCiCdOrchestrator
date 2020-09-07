@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import "./lib/env"
 import errorReporter from "./lib/errors"
-import { ReleaseManifestFilter } from "./modules/json/ReleaseManifestFilter"
+import { ReleaseManifestFilter } from "./modules/manifest/ReleaseManifestFilter"
 import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator"
 import { monitoring }  from './modules/monitor/Monitor'
 /// Welcome
@@ -39,6 +39,10 @@ let manifestParser = new ReleaseManifestFilter("45.21.78", "This will be an awes
 /// 2-dimensional array : the execution Plan
 /// ---
 let executionPlan : string [][] = manifestParser.buildExecutionPlan();
+
+
+
+throw new Error("DEBUG POINT");
 
 /// then, using the execution plan, we are going to process parallel executions one after the other
 let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
