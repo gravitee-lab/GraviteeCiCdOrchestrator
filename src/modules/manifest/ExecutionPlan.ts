@@ -5,8 +5,9 @@
  * classes, abstract classes, interfaces, and namespaces. Also on how
  * to handle Args type checking.
  **/
+export namespace manifest { /// not sureI wanna use namespaces we'll see how unseful it is.
 
-  export interface GraviteeComponentArgs {
+  export interface ExecutionPlanArgs {
     name: string;
     version: string;
   }
@@ -15,7 +16,7 @@
    *
    *
    **/
-  export class GraviteeComponent {
+  export class ExecutionPlan {
 
     public readonly name: string;
     public readonly version: string;
@@ -24,7 +25,7 @@
 
 
     constructor (
-      args: GraviteeComponentArgs
+      args: ExecutionPlanArgs
     ) {
       /// super(`valueofContructorParamOne`, args)
 
@@ -40,3 +41,5 @@
 
 
   }
+
+}
