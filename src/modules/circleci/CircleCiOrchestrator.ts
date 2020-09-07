@@ -458,8 +458,8 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
-    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): Observable<AxiosResponse<any>> {
-      let observableRequest = Observable.create( ( observer ) => {
+    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any/*Observable<any><AxiosResponse<any>>*/ {
+      let observableRequest: any = Observable.create( ( observer ) => {
           let config = {
             headers: {
               "Circle-Token": this.secrets.circleci.auth.token,

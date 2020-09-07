@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AbstractMonitor | GraviteeReleaseOrchestrator</title>
+	<title>GraviteeComponent | GraviteeReleaseOrchestrator</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
@@ -57,13 +57,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_modules_monitor_monitor_.html">&quot;modules/monitor/Monitor&quot;</a>
+					<a href="../modules/_modules_manifest_graviteecomponent_.html">&quot;modules/manifest/GraviteeComponent&quot;</a>
 				</li>
 				<li>
-					<a href="../modules/_modules_monitor_monitor_.monitoring.html">monitoring</a>
-				</li>
-				<li>
-					<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html">AbstractMonitor</a>
+					<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html">GraviteeComponent</a>
 				</li>
 			</ul>
 		</div>
@@ -77,30 +74,30 @@
 					<ul class="before-current">
 					</ul>
 					<ul class="current">
-						<li class="current tsd-kind-class tsd-parent-kind-namespace">
-							<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html" class="tsd-kind-icon">Abstract<wbr>Monitor</a>
+						<li class="current tsd-kind-class tsd-parent-kind-module">
+							<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html" class="tsd-kind-icon">Gravitee<wbr>Component</a>
 							<ul>
 								<li class=" tsd-kind-constructor tsd-parent-kind-class">
-									<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html#constructor" class="tsd-kind-icon">constructor</a>
+									<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#constructor" class="tsd-kind-icon">constructor</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#name" class="tsd-kind-icon">name</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#repo_http_uri" class="tsd-kind-icon">repo_<wbr>http_<wbr>uri</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#repo_ssh_uri" class="tsd-kind-icon">repo_<wbr>ssh_<wbr>uri</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#version" class="tsd-kind-icon">version</a>
 								</li>
 							</ul>
 						</li>
 					</ul>
 					<ul class="after-current">
-						<li class=" tsd-kind-class tsd-parent-kind-namespace">
-							<a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-kind-icon">Monitor</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-							<a href="../interfaces/_modules_monitor_monitor_.monitoring.abstractmonitorargs.html" class="tsd-kind-icon">Abstract<wbr>Monitor<wbr>Args</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-							<a href="../interfaces/_modules_monitor_monitor_.monitoring.fetchresult.html" class="tsd-kind-icon">Fetch<wbr>Result</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-							<a href="../interfaces/_modules_monitor_monitor_.monitoring.imonitor.html" class="tsd-kind-icon">IMonitor</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-namespace">
-							<a href="../interfaces/_modules_monitor_monitor_.monitoring.monitorargs.html" class="tsd-kind-icon">Monitor<wbr>Args</a>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_manifest_graviteecomponent_.graviteecomponentargs.html" class="tsd-kind-icon">Gravitee<wbr>Component<wbr>Args</a>
 						</li>
 					</ul>
 				</ul>
@@ -117,7 +114,7 @@
 						<a href="../modules/_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/<wbr>Circle<wbr>CiOrchestrator&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="../modules/_modules_manifest_executionplan_.html">&quot;modules/manifest/<wbr>Execution<wbr>Plan&quot;</a>
-						</li>                        <li class=" tsd-kind-module">
+						</li>                        <li class="current tsd-kind-module">
 						<a href="../modules/_modules_manifest_graviteecomponent_.html">&quot;modules/manifest/<wbr>Gravitee<wbr>Component&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="../modules/_modules_manifest_parallelexecutionset_.html">&quot;modules/manifest/<wbr>Parallel<wbr>Execution<wbr>Set&quot;</a>
@@ -131,23 +128,22 @@
 			</nav>
 		</div>
 		<div class="col-9 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment">
+					<div class="lead">
+						<p>Represents a gravitee component, made of :
+							a name : determines the github repo, with {process.env.GH_ORG} e.g. [repo_http_uri] [<a href="https://github.com/process.env.GH_ORG/%60$%7Bname%7D%60%5D">https://github.com/process.env.GH_ORG/`${name}`]</a>
+							a semver version number as a string, eventually
+						&#39;&#39;</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">AbstractMonitor</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="_modules_monitor_monitor_.monitoring.monitor.html" class="tsd-signature-type">Monitor</a>
-							</li>
-						</ul>
+						<span class="target">GraviteeComponent</span>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/_modules_monitor_monitor_.monitoring.imonitor.html" class="tsd-signature-type">IMonitor</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -158,7 +154,38 @@
 							<div class="tsd-navigation secondary">
 								<ul>
 									<li class="tsd-kind-constructor tsd-parent-kind-class">
-										<a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html#constructor" class="tsd-kind-icon">constructor</a>
+										<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#constructor" class="tsd-kind-icon">constructor</a>
+									</li>
+								</ul>
+							</div>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#name" class="tsd-kind-icon">name</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#repo_http_uri" class="tsd-kind-icon">repo_<wbr>http_<wbr>uri</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#repo_ssh_uri" class="tsd-kind-icon">repo_<wbr>ssh_<wbr>uri</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_manifest_graviteecomponent_.graviteecomponent.html#version" class="tsd-kind-icon">version</a>
 									</li>
 								</ul>
 							</div>
@@ -172,22 +199,62 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Abstract<wbr>Monitor<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, args<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_monitor_monitor_.monitoring.abstractmonitorargs.html" class="tsd-signature-type">AbstractMonitorArgs</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html" class="tsd-signature-type">AbstractMonitor</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Gravitee<wbr>Component<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_manifest_graviteecomponent_.graviteecomponentargs.html" class="tsd-signature-type">GraviteeComponentArgs</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_manifest_graviteecomponent_.graviteecomponent.html" class="tsd-signature-type">GraviteeComponent</a></li>
 					</ul>
 					<h4 class="tsd-parameters-title">Parameters</h4>
 					<ul class="tsd-parameters">
 						<li>
-							<span class="name">name</span>: <span class="tsd-signature-type">string</span>
-						</li>
-						<li>
-							<span class="name">args</span>: <a href="../interfaces/_modules_monitor_monitor_.monitoring.abstractmonitorargs.html" class="tsd-signature-type">AbstractMonitorArgs</a>
+							<span class="name">args</span>: <a href="../interfaces/_modules_manifest_graviteecomponent_.graviteecomponentargs.html" class="tsd-signature-type">GraviteeComponentArgs</a>
 						</li>
 					</ul>
-					<h4 class="tsd-returns-title">Returns <a href="_modules_monitor_monitor_.monitoring.abstractmonitor.html" class="tsd-signature-type">AbstractMonitor</a></h4>
+					<h4 class="tsd-returns-title">Returns <a href="_modules_manifest_graviteecomponent_.graviteecomponent.html" class="tsd-signature-type">GraviteeComponent</a></h4>
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/86886fb/src/modules/monitor/Monitor.ts#L12">modules/monitor/Monitor.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/86886fb/src/modules/manifest/GraviteeComponent.ts#L26">modules/manifest/GraviteeComponent.ts:26</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/86886fb/src/modules/manifest/GraviteeComponent.ts#L23">modules/manifest/GraviteeComponent.ts:23</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="repo_http_uri" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> repo_<wbr>http_<wbr>uri</h3>
+					<div class="tsd-signature tsd-kind-icon">repo_http_uri<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/86886fb/src/modules/manifest/GraviteeComponent.ts#L24">modules/manifest/GraviteeComponent.ts:24</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="repo_ssh_uri" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> repo_<wbr>ssh_<wbr>uri</h3>
+					<div class="tsd-signature tsd-kind-icon">repo_ssh_uri<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/86886fb/src/modules/manifest/GraviteeComponent.ts#L25">modules/manifest/GraviteeComponent.ts:25</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="version" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> version</h3>
+					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/86886fb/src/modules/manifest/GraviteeComponent.ts#L26">modules/manifest/GraviteeComponent.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>

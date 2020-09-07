@@ -9,7 +9,6 @@
 
 ```bash
 npm install rxjs --save --save-dev
-npm  install @angular/common --save
 # --- #
 # In ts file : [import { HttpClient, HttpHeaders } from '@angular/common/http';]
 #
