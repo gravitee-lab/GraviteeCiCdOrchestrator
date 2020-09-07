@@ -1,15 +1,13 @@
-/// import * as whatever from '@some/pkgIneed';
+import * as executionsets from './ParallelExecutionSet';
 
 /**
  * A Template prototype POO structure for all  Orchestrator types :
  * classes, abstract classes, interfaces, and namespaces. Also on how
  * to handle Args type checking.
  **/
-export namespace manifest { /// not sureI wanna use namespaces we'll see how unseful it is.
 
   export interface ExecutionPlanArgs {
-    name: string;
-    version: string;
+    parallelExecutionSet: executionsets.ParallelExecutionSet[];
   }
 
   /**
@@ -18,8 +16,8 @@ export namespace manifest { /// not sureI wanna use namespaces we'll see how uns
    **/
   export class ExecutionPlan {
 
-    public readonly name: string;
-    public readonly version: string;
+    public readonly parallelExecutionSet: executionsets.ParallelExecutionSet[];
+    public readonly completed: boolean;
 
     ///
 
@@ -30,8 +28,8 @@ export namespace manifest { /// not sureI wanna use namespaces we'll see how uns
       /// super(`valueofContructorParamOne`, args)
 
 
-      this.name = args.name;
-      this.version = args.version;
+      this.parallelExecutionSet = args.parallelExecutionSet;
+      this.completed = false;
 
 
       const something = 'ccc';
@@ -41,5 +39,3 @@ export namespace manifest { /// not sureI wanna use namespaces we'll see how uns
 
 
   }
-
-}

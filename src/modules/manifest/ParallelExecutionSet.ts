@@ -8,8 +8,7 @@ import * as giocomponents from './GraviteeComponent';
  **/
 
   export interface ParallelExecutionSetArgs {
-    name: string;
-    version: string;
+    components: giocomponents.GraviteeComponent[];
   }
 
   /**
@@ -18,8 +17,7 @@ import * as giocomponents from './GraviteeComponent';
    **/
   export class ParallelExecutionSet {
 
-    public readonly name: string;
-    public readonly version: string;
+    public readonly components: giocomponents.GraviteeComponent[];
 
     ///
 
@@ -30,8 +28,7 @@ import * as giocomponents from './GraviteeComponent';
       /// super(`valueofContructorParamOne`, args)
 
 
-      this.name = args.name;
-      this.version = args.version;
+      this.components = args.components;
 
 
       const something = 'ccc';
