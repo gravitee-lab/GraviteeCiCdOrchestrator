@@ -1,6 +1,7 @@
 /// import { CircleCI } from 'circleci';
 import { Observable } from 'rxjs';
 import axios from 'axios';
+import {AxiosResponse} from 'axios';
 import * as fs from 'fs';
 import * as Collections from 'typescript-collections';
 import { monitoring }  from '../../modules/monitor/Monitor'
@@ -457,7 +458,7 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
-    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
+    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): Observable<AxiosResponse<any>> {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
             headers: {
@@ -466,7 +467,7 @@ export class CircleCIClient {
               "Content-Type": "application/json"
             }
           };
-// curl -X POST
+          // curl -X POST
           let jsonPayload: any = pipelineParameters;
           jsonPayload.branch = `${branch}`;
 

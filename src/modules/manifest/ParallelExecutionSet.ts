@@ -1,6 +1,31 @@
 /// import * as whatever from '@some/pkgIneed';
 import * as giocomponents from './GraviteeComponent';
 
+
+/**
+ * Args for the constructor of {@see PipelineExecution}
+ **/
+  export interface PipelineExecutionArgs {
+    component: giocomponents.GraviteeComponent;
+    execution: {
+      observableRequest: {},
+      result: {}
+    }
+  }
+
+export class PipelineExecution {
+
+  public readonly component: giocomponents.GraviteeComponent;
+
+  constructor (
+    args: PipelineExecution
+  ) {
+    this.component = args.component;
+  }
+
+
+}
+
 /**
  * Args for the constructor of {@see ParallelExecutionSet}
  **/
@@ -15,7 +40,7 @@ import * as giocomponents from './GraviteeComponent';
   export class ParallelExecutionSet {
 
     public readonly components: giocomponents.GraviteeComponent[];
-
+    public readonly pipelineExecution: giocomponents.GraviteeComponent[];
     constructor (
       args: ParallelExecutionSetArgs
     ) {
