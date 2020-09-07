@@ -2,9 +2,7 @@
 import * as giocomponents from './GraviteeComponent';
 
 /**
- * A Template prototype POO structure for all  Orchestrator types :
- * classes, abstract classes, interfaces, and namespaces. Also on how
- * to handle Args type checking.
+ * Args for the constructor of {@see ParallelExecutionSet}
  **/
 
   export interface ParallelExecutionSetArgs {
@@ -12,15 +10,12 @@ import * as giocomponents from './GraviteeComponent';
   }
 
   /**
-   *
+   * Represents a paralell execution set
    *
    **/
   export class ParallelExecutionSet {
 
     public readonly components: giocomponents.GraviteeComponent[];
-
-    ///
-
 
     constructor (
       args: ParallelExecutionSetArgs
@@ -30,8 +25,6 @@ import * as giocomponents from './GraviteeComponent';
 
       this.components = args.components;
 
-
-      const something = 'ccc';
 
 
     }

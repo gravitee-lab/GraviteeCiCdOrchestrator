@@ -12,12 +12,17 @@
   }
 
   /**
+   * Represents a gravitee component, made of :
+   * a name : determines the github repo, with {process.env.GH_ORG} [https://github.com/process.env.GH_ORG/`${name}`]
    *
+   * ''
    *
    **/
   export class GraviteeComponent {
 
     public readonly name: string;
+    public readonly repo_http_uri: string;
+    public readonly repo_ssh_uri: string;
     public readonly version: string;
 
     ///
@@ -30,10 +35,9 @@
 
 
       this.name = args.name;
+      this.repo_http_uri = `https://github.com/${process.env.GH_ORG}/${name}`;
+      this.repo_ssh_uri = `git@github.com:${process.env.GH_ORG}/${name}`;
       this.version = args.version;
-
-
-      const something = 'ccc';
 
 
     }
