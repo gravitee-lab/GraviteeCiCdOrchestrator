@@ -24,7 +24,7 @@ import * as giocomponents from './GraviteeComponent';
     CREATED = 100
   }
   export interface CircleCiApiResponsePipeline {
-        execution_index: "16",
+        execution_index: number,
         /**
          * [id] is alpha numeric : it is UUID issued by CircleCI api
          * to uniquely identify a pipeine (a pipeline execution)
@@ -72,7 +72,7 @@ export class PipelineExecution {
  * Args for the constructor of {@see ParallelExecutionSet}
  **/
   export interface ParallelExecutionSetArgs {
-    components: giocomponents.GraviteeComponent[];
+    pipelineExecutions: PipelineExecution[];
   }
 
   /**
@@ -81,13 +81,12 @@ export class PipelineExecution {
    **/
   export class ParallelExecutionSet {
 
-    public readonly components: giocomponents.GraviteeComponent[];
-    public readonly pipelineExecution: giocomponents.GraviteeComponent[];
+    public readonly pipelineExecutions: PipelineExecution[];
     constructor (
       args: ParallelExecutionSetArgs
     ) {
       /// super(`valueofContructorParamOne`, args)
-      this.components = args.components;
+      this.pipelineExecutions = args.pipelineExecutions;
     }
 
 
