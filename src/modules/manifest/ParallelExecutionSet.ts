@@ -64,9 +64,8 @@ export class PipelineExecution {
     args: PipelineExecution
   ) {
     this.component = args.component;
+    this.cci_response = args.cci_response;
   }
-
-
 }
 
 /**
