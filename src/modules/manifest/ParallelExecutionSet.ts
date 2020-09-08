@@ -58,6 +58,7 @@ import * as giocomponents from './GraviteeComponent';
 export class PipelineExecution {
 
   public readonly component: giocomponents.GraviteeComponent;
+  public readonly cci_response: CircleCiApiResponsePipeline;
 
   constructor (
     args: PipelineExecution
