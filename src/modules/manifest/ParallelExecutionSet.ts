@@ -11,8 +11,9 @@ import * as giocomponents from './GraviteeComponent';
 
   /**
    * Represents a Paralell Execution Set:
-   * a Set of Gravitee Components whose  can be released in Pa
-   *
+   * a Set of Gravitee Components whose pipelines can
+   * be triggered in parallel
+   * see release.json 'buildDependencies' property
    **/
   export class ParallelExecutionSet {
 
