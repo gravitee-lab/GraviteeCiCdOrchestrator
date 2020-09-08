@@ -1,9 +1,8 @@
 import * as executionsets from './ParallelExecutionSet';
 
 /**
- * A Template prototype POO structure for all  Orchestrator types :
- * classes, abstract classes, interfaces, and namespaces. Also on how
- * to handle Args type checking.
+ * An Execution Plan represents a Matrix (2-dim. array), of {@see executionsets.ParallelExecutionSet}s :
+ *  
  **/
 
   export interface ExecutionPlanArgs {
