@@ -5,10 +5,6 @@ import * as executionsets from './ParallelExecutionSet';
  *
  **/
 
-  export interface ExecutionPlanArgs {
-    parallelExecutionSets: executionsets.ParallelExecutionSet[];
-  }
-
   /**
    *
    *
@@ -17,25 +13,30 @@ import * as executionsets from './ParallelExecutionSet';
 
     public readonly parallelExecutionSets: executionsets.ParallelExecutionSet[];
 
-    constructor (
-      args: ExecutionPlanArgs
-    ) {
+    constructor () {
       /// super(`valueofContructorParamOne`, args)
-
-
-      this.parallelExecutionSets = args.parallelExecutionSets;
-
+      this.parallelExecutionSets = [];
     }
     /**
      * Returns the {@see executionsets.ParallelExecutionSet} which will be executed as <code>ofIndex</code>-th place :
      *
      * It will be executed after the <code>ofIndex - 1</code> previous ones have completed their execution
      *
-     * @argument <code>ofIndex</code> the index of the {@see ParallelExecutionSet}
-     * @returns the {@see executionsets.ParallelExecutionSet} which will be executed as <code>ofIndex</code>-th 
+     * @argument <code>ofIndex</code> the execution index of the {@see ParallelExecutionSet}
+     * @returns the {@see executionsets.ParallelExecutionSet} which will be executed as <code>ofIndex</code>-th
      *
      **/
-    getparallelExecutionSet(ofIndex: number): executionsets.ParallelExecutionSet {
+    getParallelExecutionSet(ofIndex: number): executionsets.ParallelExecutionSet {
       return this.parallelExecutionSets[ofIndex];
+    }
+
+    /**
+     * Pushes the {@see ParallelExecutionSet} provided as argument, on top of this {@see ExecutionPlan}
+     *
+     * @argument <code>execSet</code> the {@see ParallelExecutionSet} to push on top of this {@see ExecutionPlan}
+     * @returns the execution index assigned to the pushed {@see ParallelExecutionSet} <code>execSet</code>
+     **/
+    addParallelExecutionSet(execSet: executionsets.ParallelExecutionSet): number {
+      return this.parallelExecutionSets.push(execSet);
     }
   }
