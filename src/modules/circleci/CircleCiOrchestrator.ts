@@ -306,7 +306,7 @@ export class CircleCiOrchestrator {
      *
      *
      **/
-    handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any) : void {
+    handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any, component: GraviteeComponent) : void {
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
       let entry: any = {};
       entry.pipeline = {
