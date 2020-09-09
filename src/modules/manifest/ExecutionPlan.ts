@@ -39,6 +39,33 @@ import * as giocomponents from './GraviteeComponent';
      * Returns a JSON Object with only one JSON property, named 'components' which is an array of {@see giocomponents.GraviteeComponents}s.
      * the 'components' array lists all components which will be invovled in /impacted by this {@see ExecutionPlan} :
      * The Gravitee Components for which this {@see ExecutionPlan} will trigger a 'Circle CI' Pipeline
+     *
+     * The returned JSON Object will look like this :
+     *
+     * <code>
+     * {
+     *   components: [
+     *                  {name: 'policy'}
+     *                  {
+     *                     "name": "gravitee-common",
+     *                     "version": "1.17.2"
+     *                  },
+     *                  {
+     *                     "name": "gravitee-definition",
+     *                     "version": "1.20.3"
+     *                  },
+     *                  {
+     *                     "name": "gravitee-gateway",
+     *                     "version": "1.30.19"
+     *                  },
+     *                  {
+     *                     "name": "gravitee-gateway-api",
+     *                     "version": "1.20.0"
+     *                  }
+     *               ]
+     * }
+     * </code>
+     *
      * @returns  a JSON Object with only one JSON property, named 'components', array which lists all {@see giocomponents.GraviteeComponents}s for which this {@see ExecutionPlan} will trigger a 'Circle CI' Pipeline.
      **/
     getPlanImpact() : giocomponents.GraviteeComponent[] {
