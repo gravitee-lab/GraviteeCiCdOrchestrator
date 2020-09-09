@@ -1,4 +1,5 @@
-import * as manifest from '../manifest/ParallelExecutionSet';
+import { ParallelExecutionSet } from '../manifest/ParallelExecutionSet';
+import { ExecutionPlan } from '../manifest/ExecutionPlan';
 
 /**
  * A ExecPlanProgress represents the progress matrix of all pipeline
@@ -6,7 +7,7 @@ import * as manifest from '../manifest/ParallelExecutionSet';
  **/
 
   export interface ExecPlanProgressArgs {
-    parallelExecutionSet: manifest.ParallelExecutionSet[];
+    executionPlan: ExecutionPlan;
   }
 
   /**
@@ -15,7 +16,7 @@ import * as manifest from '../manifest/ParallelExecutionSet';
    **/
   export class ExecPlanProgress {
 
-    public readonly parallelExecutionSet: manifest.ParallelExecutionSet[];
+    public readonly executionPlan: ExecutionPlan;
     private completed: boolean;
 
     constructor (
@@ -24,7 +25,7 @@ import * as manifest from '../manifest/ParallelExecutionSet';
       /// super(`valueofContructorParamOne`, args)
 
 
-      this.parallelExecutionSet = args.parallelExecutionSet;
+      this.executionPlan = args.executionPlan;
       this.completed = false;
 
     }
