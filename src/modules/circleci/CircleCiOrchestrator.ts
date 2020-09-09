@@ -249,10 +249,12 @@ export class CircleCiOrchestrator {
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       let parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress = new parallel.ParallelExecutionSetProgress();
-
+      let parallelExecutionsSetArray: GraviteeComponent[] = parallelExecutionsSet.getComponents();
+      let parallelExecSetArrayLength: number = parallelExecutionsSetArray.length;
       /// First, trigger all pipelines in the parallel execution set
-      parallelExecutionsSet.getComponents().forEach(((comp: GraviteeComponent, index: number) => {
-        /// pipeline execution parameters, same as Jenkins build parameters
+      for (let i=0; i < parallelExecSetArrayLength; i++){
+        let comp = parallelExecutionsSetArray[i];
+        /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {}};
         let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
         let pipelExec: parallel.PipelineExecution = {
@@ -263,25 +265,16 @@ export class CircleCiOrchestrator {
             cci_response: {
               created_at: '',
               exec_state: parallel.CciPipelineExecutionState.PENDING,
-              execution_index: 2,
+              execution_index: i,
               id: ''
             }
           }
         };
-        parallelExecutionSetProgress.addPipelineExecution(pipelExec)
-        /* .subscribe({
-            next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
-            complete: data => {
-              console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
-            },
-            error: this.errorHandlerTriggerCCIPipeline.bind(this)
-        });*/
+        parallelExecutionSetProgress.addPipelineExecution(pipelExec);
+      }
+      /// Now, passing on [parallelExecutionSetProgress] to Monitor
+      
 
-        /// for the current Parallel execution set, we store all
-        /// RxJS ObservableStreams in [this.currentSubscriptionSet]
-        /// this.currentSubscriptionSet.push(triggerPipelineSubscription);
-
-      }).bind(this));
 
     }
 /// ParallelExecutionSetProgress
