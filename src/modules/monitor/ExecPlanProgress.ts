@@ -1,8 +1,8 @@
 import * as manifest from '../manifest/ParallelExecutionSet';
 
 /**
- * A ExecPlanProgress represents the progress matrix of an
-*  executions of each {@see manifest.ExecutionPlan}
+ * A ExecPlanProgress represents the progress matrix of all pipeline
+*  executions planned by an {@see manifest.ExecutionPlan}
  **/
 
   export interface ExecPlanProgressArgs {
