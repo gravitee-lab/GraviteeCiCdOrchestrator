@@ -4,7 +4,7 @@ import { ParallelExecutionSetProgress } from '../monitor/ParallelExecutionSetPro
 
 /**
  * A ExecPlanProgress represents the progress matrix of all pipeline
-*  executions planned by an {@see ExecutionPlan}
+ * executions planned by an {@see ExecutionPlan}
  **/
 
   export interface ExecPlanProgressArgs {
