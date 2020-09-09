@@ -1,9 +1,5 @@
 import * as executionsets from './ParallelExecutionSet';
-
-/**
- * An Execution Plan represents a Matrix (2-dim. array), of {@see executionsets.ParallelExecutionSet}s :
- *
- **/
+import * as giocomponents from './GraviteeComponent';
 
   /**
    * An Execution Plan represents an ordered set of {@see executionsets.ParallelExecutionSet}s :
@@ -33,11 +29,27 @@ import * as executionsets from './ParallelExecutionSet';
     }
     /**
      * Returns a positive integer, which can be zero, of the number of  {@see ParallelExecutionSet}s in this {@see ExecutionPlan}
-     * 
+     *
      * @returns the number of  {@see ParallelExecutionSet}s in this {@see ExecutionPlan}
      **/
     getPlanLength() : number {
       return this.parallelExecutionSets.length;
+    }
+    /**
+     * Returns a JSON Object with only one JSON property, named 'components' which is an array of {@see giocomponents.GraviteeComponents}s.
+     * the 'components' array lists all components which will be invovled in /impacted by this {@see ExecutionPlan} :
+     * The Gravitee Components for which this {@see ExecutionPlan} will trigger a 'Circle CI' Pipeline
+     * @returns  a JSON Object with only one JSON property, named 'components', array which lists all {@see giocomponents.GraviteeComponents}s for which this {@see ExecutionPlan} will trigger a 'Circle CI' Pipeline.
+     **/
+    getPlanImpact() : giocomponents.GraviteeComponent[] {
+      let toReturn: any = {
+        components: giocomponents.GraviteeComponent[]
+      };
+      let execPlanLentgh = this.getPlanLength();
+      for (let i: number = 0; i < execPlanLentgh; i++) {
+         toReturn.push
+      }
+      return toReturn;
     }
     /**
      * Pushes the {@see ParallelExecutionSet} provided as argument, on top of this {@see ExecutionPlan}
