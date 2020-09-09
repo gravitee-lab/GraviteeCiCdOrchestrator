@@ -26,7 +26,13 @@ import * as executionsets from './ParallelExecutionSet';
       this.parallelExecutionSets = args.parallelExecutionSets;
 
     }
-
+    /**
+     * Returns the {@see executionsets.ParallelExecutionSet} which will be executed <code>ofIndex</code> 
+     *
+     * @argument component must be a JSon Object, with only two properties : "name", and "version", just like in the [release.json]
+     * @returns number a positive integer, between zero and length of the [this.parallelizationConstraint] array
+     *
+     **/
     getparallelExecutionSet(ofIndex: number): executionsets.ParallelExecutionSet {
       return this.parallelExecutionSets[ofIndex];
     }
