@@ -1,9 +1,10 @@
 import { ParallelExecutionSet } from '../manifest/ParallelExecutionSet';
 import { ExecutionPlan } from '../manifest/ExecutionPlan';
+import { ParallelExecutionSetProgress } from '../monitor/ParallelExecutionSetProgress';
 
 /**
  * A ExecPlanProgress represents the progress matrix of all pipeline
-*  executions planned by an {@see manifest.ExecutionPlan}
+*  executions planned by an {@see ExecutionPlan}
  **/
 
   export interface ExecPlanProgressArgs {
@@ -23,8 +24,6 @@ import { ExecutionPlan } from '../manifest/ExecutionPlan';
       args: ExecPlanProgressArgs
     ) {
       /// super(`valueofContructorParamOne`, args)
-
-
       this.executionPlan = args.executionPlan;
       this.completed = false;
 

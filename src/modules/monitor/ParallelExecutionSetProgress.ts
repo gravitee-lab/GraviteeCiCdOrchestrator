@@ -1,5 +1,5 @@
 /// import * as whatever from '@some/pkgIneed';
-import * as giocomponents from './GraviteeComponent';
+import * as giocomponents from '../manifest/GraviteeComponent';
 
   export enum CciPipelineExecutionState  {
     /**
@@ -14,7 +14,7 @@ import * as giocomponents from './GraviteeComponent';
      **/
     PENDING = 50,
     /**
-     * <p>Pipeline  execution completed with <strong>erros</strong></p>
+     * <p>Pipeline  execution completed with <strong>errors</strong></p>
      * <p>Because fifty-one is far from being one hundred percent, just like completing execution with errors is far from completing successfully (without errors)</p>
      **/
     ERRORED = 51,
