@@ -48,19 +48,27 @@ import * as giocomponents from './GraviteeComponent';
      *                  {name: 'policy'}
      *                  {
      *                     "name": "gravitee-common",
-     *                     "version": "1.17.2"
+     *                     "version": "1.17.2",
+     *                     "repo_http_uri": "https://github.com/gravitee-io/ccc",
+     *                     "repo_ssh_uri": "git@github.com:gravitee-io/ccc",
      *                  },
      *                  {
      *                     "name": "gravitee-definition",
-     *                     "version": "1.20.3"
+     *                     "version": "1.20.3",
+     *                     "repo_http_uri": "https://github.com/gravitee-io/gravitee-definition",
+     *                     "repo_ssh_uri": "git@github.com:gravitee-io/gravitee-definition",
      *                  },
      *                  {
      *                     "name": "gravitee-gateway",
-     *                     "version": "1.30.19"
+     *                     "version": "1.30.19",
+     *                     "repo_http_uri": "https://github.com/gravitee-io/gravitee-gateway",
+     *                     "repo_ssh_uri": "git@github.com:gravitee-io/gravitee-gateway",
      *                  },
      *                  {
      *                     "name": "gravitee-gateway-api",
-     *                     "version": "1.20.0"
+     *                     "version": "1.20.0",
+     *                     "repo_http_uri": "https://github.com/gravitee-io/gravitee-gateway-api",
+     *                     "repo_ssh_uri": "git@github.com:gravitee-io/gravitee-gateway-api",
      *                  }
      *               ]
      * }
@@ -70,11 +78,22 @@ import * as giocomponents from './GraviteeComponent';
      **/
     getPlanImpact() : giocomponents.GraviteeComponent[] {
       let toReturn: any = {
-        components: giocomponents.GraviteeComponent[]
+        components: []
       };
       let execPlanLentgh = this.getPlanLength();
       for (let i: number = 0; i < execPlanLentgh; i++) {
-         toReturn.push
+        let currentExecSet: executionsets.ParallelExecutionSet = this.getParallelExecutionSet(i);
+        let currentExecSetLength: number = currentExecSet.getComponents().length;
+        if (currentExecSetLength != 0) {
+           for (let j: number = 0; j < currentExecSetLength; j++) {
+             toReturn.components.push({
+               name: currentExecSetLength[j].name,
+               version: currentExecSetLength[j].version,
+               repo_http_uri: currentExecSetLength[j].repo_http_uri,
+               repo_ssh_uri: currentExecSetLength[j].repo_ssh_uri,
+             })
+           }
+        }
       }
       return toReturn;
     }
