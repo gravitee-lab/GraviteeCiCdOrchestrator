@@ -3,7 +3,7 @@ import * as giocomponents from './GraviteeComponent';
 
 
 /**
- * Args for the constructor of {@see ParallelExecutionSet}
+ * Args for a constructor of {@see ParallelExecutionSet}
  **/
   export interface ParallelExecutionSetArgs {
     components: giocomponents.GraviteeComponent[];
@@ -18,11 +18,27 @@ import * as giocomponents from './GraviteeComponent';
   export class ParallelExecutionSet {
 
     public readonly components: giocomponents.GraviteeComponent[];
-    constructor (
+    /*constructor (
       args: ParallelExecutionSetArgs
     ) {
       /// super(`valueofContructorParamOne`, args)
       this.components = args.components;
+    }*/
+    constructor () {
+      /// super(`valueofContructorParamOne`, args)
+      this.components = [];
+    }
+    /**
+     * Adds a component to this {@see ParallelExecutionSet}
+     **/
+    public addComponent(component: giocomponents.GraviteeComponent ): void {
+      this.components.push(component);
+    }
+    /**
+     * Gets the array of components of this {@see ParallelExecutionSet}
+     **/
+    public getComponents(): giocomponents.GraviteeComponent[] {
+      return this.components;
     }
 
 
