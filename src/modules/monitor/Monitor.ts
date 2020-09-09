@@ -44,13 +44,17 @@ export namespace monitoring {
 
     }
   start(){
-    this.parallelExecutionSetProgress.pipeline_executions[1].execution.observableRequest.subscribe({
-        next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
-        complete: (data) => {
-          console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
-        },
-        error: this.errorHandlerTriggerCCIPipeline.bind(this)
-    });
+    let arrayLength = this.parallelExecutionSetProgress.pipeline_executions.length;
+    for (let i: number; i < arrayLength ; i++){
+      this.parallelExecutionSetProgress.pipeline_executions[i].execution.observableRequest.subscribe({
+          next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+          complete: (data) => {
+            console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
+          },
+          error: this.errorHandlerTriggerCCIPipeline.bind(this)
+      });
+    }
+
   }
   public fetch (): rxjs.Observable<AxiosResponse<any>> {
 
