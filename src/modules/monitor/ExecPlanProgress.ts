@@ -7,6 +7,7 @@ import { ParallelExecutionSetProgress } from '../monitor/ParallelExecutionSetPro
    * executions planned by an {@see ExecutionPlan}
    **/
   export interface ExecPlanProgressArgs {
+    // allParallelExecutionSetProgress: ParallelExecutionSetProgress;
     executionPlan: ExecutionPlan;
   }
 
@@ -15,8 +16,18 @@ import { ParallelExecutionSetProgress } from '../monitor/ParallelExecutionSetPro
    *
    **/
   export class ExecPlanProgress {
-
+    /**
+     * Not used to run any execution, justy there to keep a
+     * refrence on the executionPlan
+     **/
     public readonly executionPlan: ExecutionPlan;
+    /**
+     * Used to follow up progress of each {@see ParallelExecutionSetProgress}
+     **/
+    public readonly allParallelExecutionSetProgress: ParallelExecutionSetProgress[];
+    /**
+     * True as soon as all Pipeline execution have completed, regardless of pipeline execution final status (failure/success)
+     **/
     private completed: boolean;
 
     constructor (
