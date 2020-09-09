@@ -310,13 +310,12 @@ export class CircleCiOrchestrator {
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
       let entry: any = {};
       entry.pipeline = {
-        execution_index: `${circleCiJsonResponse.number}`,
+        pipeline_exec_number: `${circleCiJsonResponse.number}`,
         id : `${circleCiJsonResponse.id}`,
         created_at: `${circleCiJsonResponse.created_at}`,
         exec_state: `${circleCiJsonResponse.state}`
       }
 
-      this.progressMatrix.push(entry);
 
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
