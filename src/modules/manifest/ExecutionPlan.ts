@@ -2,11 +2,11 @@ import * as executionsets from './ParallelExecutionSet';
 
 /**
  * An Execution Plan represents a Matrix (2-dim. array), of {@see executionsets.ParallelExecutionSet}s :
- *  
+ *
  **/
 
   export interface ExecutionPlanArgs {
-    parallelExecutionSet: executionsets.ParallelExecutionSet[];
+    parallelExecutionSets: executionsets.ParallelExecutionSet[];
   }
 
   /**
@@ -15,7 +15,7 @@ import * as executionsets from './ParallelExecutionSet';
    **/
   export class ExecutionPlan {
 
-    public readonly parallelExecutionSet: executionsets.ParallelExecutionSet[];
+    public readonly parallelExecutionSets: executionsets.ParallelExecutionSet[];
     private completed: boolean;
 
     constructor (
@@ -24,7 +24,7 @@ import * as executionsets from './ParallelExecutionSet';
       /// super(`valueofContructorParamOne`, args)
 
 
-      this.parallelExecutionSet = args.parallelExecutionSet;
+      this.parallelExecutionSets = args.parallelExecutionSets;
       this.completed = false;
 
     }
