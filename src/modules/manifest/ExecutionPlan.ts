@@ -6,7 +6,9 @@ import * as executionsets from './ParallelExecutionSet';
  **/
 
   /**
-   *
+   * An Execution Plan represents an ordered set of {@see executionsets.ParallelExecutionSet}s :
+   * they are executed in the order defined by the index of
+   * the [public readonly parallelExecutionSets: executionsets.ParallelExecutionSet[];] Array
    *
    **/
   export class ExecutionPlan {
@@ -29,7 +31,14 @@ import * as executionsets from './ParallelExecutionSet';
     getParallelExecutionSet(ofIndex: number): executionsets.ParallelExecutionSet {
       return this.parallelExecutionSets[ofIndex];
     }
-
+    /**
+     * Returns a positive integer, which can be zero, of the number of  {@see ParallelExecutionSet}s in this {@see ExecutionPlan}
+     * 
+     * @returns the number of  {@see ParallelExecutionSet}s in this {@see ExecutionPlan}
+     **/
+    getPlanLength() : number {
+      return this.parallelExecutionSets.length;
+    }
     /**
      * Pushes the {@see ParallelExecutionSet} provided as argument, on top of this {@see ExecutionPlan}
      *
@@ -39,4 +48,5 @@ import * as executionsets from './ParallelExecutionSet';
     addParallelExecutionSet(execSet: executionsets.ParallelExecutionSet): number {
       return this.parallelExecutionSets.push(execSet);
     }
+
   }
