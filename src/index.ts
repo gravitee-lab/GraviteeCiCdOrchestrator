@@ -1,9 +1,12 @@
 #!/usr/bin/env node
-import "./lib/env"
-import errorReporter from "./lib/errors"
-import { ReleaseManifestFilter } from "./modules/manifest/ReleaseManifestFilter"
-import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator"
-import { monitoring }  from './modules/monitor/Monitor'
+import "./lib/env":
+import errorReporter from "./lib/errors";
+import { ReleaseManifestFilter } from "./modules/manifest/ReleaseManifestFilter";
+import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator";
+import { monitoring }  from './modules/monitor/Monitor';
+import { monitoring2 }  from './modules/monitor/ExperimentalMonitor';
+
+
 /// Welcome
 console.log('')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -42,7 +45,7 @@ let executionPlan : string [][] = manifestParser.buildExecutionPlan();
 
 
 
-throw new Error("DEBUG POINT");
+/// throw new Error("DEBUG POINT");
 
 /// then, using the execution plan, we are going to process parallel executions one after the other
 let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
@@ -74,7 +77,12 @@ const subscription = someResponse$.subscribe(fetchedResult => {
   console.log(` subscriber got fetchedResult = [${JSON.stringify(fetchedResult.data)}]`)
 });
 
-export const someOtherMonitor = new monitoring.Monitor("mymonitorDemo", {
+
+
+/**
+ * Experiment on retryWhen
+ **/
+export const someOtherMonitor = new monitoring2.ExperimentalMonitor("mymonitorDemo", {
   rest_endpoint: 'https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine',
   timeout: 10000
 });

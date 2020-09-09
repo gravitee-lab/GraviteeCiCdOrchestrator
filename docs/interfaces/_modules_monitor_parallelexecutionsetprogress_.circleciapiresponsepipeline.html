@@ -78,9 +78,6 @@
 						<li class=" tsd-kind-class tsd-parent-kind-module">
 							<a href="../classes/_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html" class="tsd-kind-icon">Parallel<wbr>Execution<wbr>Set<wbr>Progress</a>
 						</li>
-						<li class=" tsd-kind-class tsd-parent-kind-module">
-							<a href="../classes/_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-kind-icon">Pipeline<wbr>Execution</a>
-						</li>
 					</ul>
 					<ul class="current">
 						<li class="current tsd-kind-interface tsd-parent-kind-module">
@@ -103,10 +100,7 @@
 					</ul>
 					<ul class="after-current">
 						<li class=" tsd-kind-interface tsd-parent-kind-module">
-							<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogressargs.html" class="tsd-kind-icon">Parallel<wbr>Execution<wbr>Set<wbr>Progress<wbr>Args</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-module">
-							<a href="_modules_monitor_parallelexecutionsetprogress_.pipelineexecutionargs.html" class="tsd-kind-icon">Pipeline<wbr>Execution<wbr>Args</a>
+							<a href="_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-kind-icon">Pipeline<wbr>Execution</a>
 						</li>
 					</ul>
 				</ul>
@@ -196,7 +190,7 @@
 					<div class="tsd-signature tsd-kind-icon">created_at<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/59f43e4/src/modules/monitor/ParallelExecutionSetProgress.ts#L33">modules/monitor/ParallelExecutionSetProgress.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L36">modules/monitor/ParallelExecutionSetProgress.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -206,16 +200,21 @@
 					<div class="tsd-signature tsd-kind-icon">exec_state<span class="tsd-signature-symbol">:</span> <a href="../enums/_modules_monitor_parallelexecutionsetprogress_.ccipipelineexecutionstate.html" class="tsd-signature-type">CciPipelineExecutionState</a></div>
 					<div class="tsd-comment">
 						<div class="lead">
-							<p>[exec_state] is the execution state of the pipeline
+							<p>[exec_state] is the current execution state of the pipeline
 								this value can be :
-							&quot;UNTRIGGERED&quot; &quot;CREATED&quot;, &quot;PENDING&quot; or &quot;ERRORED&quot;</p>
+								&quot;UNTRIGGERED&quot; &quot;CREATED&quot;, &quot;PENDING&quot; or &quot;ERRORED&quot;
+								and this state is :
+								&#39;UNTRIGGERED&#39;, before the pipeline has been triggered using the Circle CI API
+								&#39;PENDING&#39;, right after the pipeline has been triggered using the Circle CI API
+								&#39;CREATED&#39;, when the pipeline execution has actually started in Circle CI infra
+							&#39;ERRORED&#39;, when the pipeline execution has actually started in Circle CI infra, and at least one Job has completed with errors.</p>
 						</div>
 					</div>
 					<div class="tsd-comment">
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/59f43e4/src/modules/monitor/ParallelExecutionSetProgress.ts#L39">modules/monitor/ParallelExecutionSetProgress.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L47">modules/monitor/ParallelExecutionSetProgress.ts:47</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -225,7 +224,7 @@
 					<div class="tsd-signature tsd-kind-icon">execution_index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/59f43e4/src/modules/monitor/ParallelExecutionSetProgress.ts#L27">modules/monitor/ParallelExecutionSetProgress.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L27">modules/monitor/ParallelExecutionSetProgress.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -236,14 +235,14 @@
 					<div class="tsd-comment">
 						<div class="lead">
 							<p>[id] is alpha numeric : it is UUID issued by CircleCI api
-							to uniquely identify a pipeine (a pipeline execution)</p>
+							to uniquely identify a triggered pipeline (a pipeline execution)</p>
 						</div>
 					</div>
 					<div class="tsd-comment">
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/59f43e4/src/modules/monitor/ParallelExecutionSetProgress.ts#L32">modules/monitor/ParallelExecutionSetProgress.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L32">modules/monitor/ParallelExecutionSetProgress.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>

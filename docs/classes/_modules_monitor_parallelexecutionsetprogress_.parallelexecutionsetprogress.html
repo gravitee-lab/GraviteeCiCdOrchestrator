@@ -84,23 +84,20 @@
 									<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#constructor" class="tsd-kind-icon">constructor</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class">
-									<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#pipelineexecutions" class="tsd-kind-icon">pipeline<wbr>Executions</a>
+									<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#pipeline_executions" class="tsd-kind-icon">pipeline_<wbr>executions</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class">
+									<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#addpipelineexecution" class="tsd-kind-icon">add<wbr>Pipeline<wbr>Execution</a>
 								</li>
 							</ul>
 						</li>
 					</ul>
 					<ul class="after-current">
-						<li class=" tsd-kind-class tsd-parent-kind-module">
-							<a href="_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-kind-icon">Pipeline<wbr>Execution</a>
-						</li>
 						<li class=" tsd-kind-interface tsd-parent-kind-module">
 							<a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.circleciapiresponsepipeline.html" class="tsd-kind-icon">Circle<wbr>CiApi<wbr>Response<wbr>Pipeline</a>
 						</li>
 						<li class=" tsd-kind-interface tsd-parent-kind-module">
-							<a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogressargs.html" class="tsd-kind-icon">Parallel<wbr>Execution<wbr>Set<wbr>Progress<wbr>Args</a>
-						</li>
-						<li class=" tsd-kind-interface tsd-parent-kind-module">
-							<a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.pipelineexecutionargs.html" class="tsd-kind-icon">Pipeline<wbr>Execution<wbr>Args</a>
+							<a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-kind-icon">Pipeline<wbr>Execution</a>
 						</li>
 					</ul>
 				</ul>
@@ -140,7 +137,10 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment">
 					<div class="lead">
-						<p>Represents a Paralell Execution Set</p>
+						<p>JSON Object Schema to Represent a Parallel Execution Set  &#39;s Execution Progress
+							Does not trigger any Pipeline execution, or subscribe to any ObservableStream : it just
+							keeps a reference on every Observable Stream the {@see Monitor} will subscribe to, and
+						remembers to which {@see GraviteeComponent} the ObservableStream is related.</p>
 					</div>
 				</div>
 			</section>
@@ -170,7 +170,17 @@
 							<div class="tsd-navigation secondary">
 								<ul>
 									<li class="tsd-kind-property tsd-parent-kind-class">
-										<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#pipelineexecutions" class="tsd-kind-icon">pipeline<wbr>Executions</a>
+										<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#pipeline_executions" class="tsd-kind-icon">pipeline_<wbr>executions</a>
+									</li>
+								</ul>
+							</div>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class">
+										<a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html#addpipelineexecution" class="tsd-kind-icon">add<wbr>Pipeline<wbr>Execution</a>
 									</li>
 								</ul>
 							</div>
@@ -184,19 +194,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Parallel<wbr>Execution<wbr>Set<wbr>Progress<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogressargs.html" class="tsd-signature-type">ParallelExecutionSetProgressArgs</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html" class="tsd-signature-type">ParallelExecutionSetProgress</a></li>
-					</ul>
-					<h4 class="tsd-parameters-title">Parameters</h4>
-					<ul class="tsd-parameters">
-						<li>
-							<span class="name">args</span>: <a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogressargs.html" class="tsd-signature-type">ParallelExecutionSetProgressArgs</a>
-						</li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Parallel<wbr>Execution<wbr>Set<wbr>Progress<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html" class="tsd-signature-type">ParallelExecutionSetProgress</a></li>
 					</ul>
 					<h4 class="tsd-returns-title">Returns <a href="_modules_monitor_parallelexecutionsetprogress_.parallelexecutionsetprogress.html" class="tsd-signature-type">ParallelExecutionSetProgress</a></h4>
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/59f43e4/src/modules/monitor/ParallelExecutionSetProgress.ts#L84">modules/monitor/ParallelExecutionSetProgress.ts:84</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L81">modules/monitor/ParallelExecutionSetProgress.ts:81</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -204,12 +208,49 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
-					<a name="pipelineexecutions" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> pipeline<wbr>Executions</h3>
-					<div class="tsd-signature tsd-kind-icon">pipelineExecutions<span class="tsd-signature-symbol">:</span> <a href="_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-signature-type">PipelineExecution</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="pipeline_executions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> pipeline_<wbr>executions</h3>
+					<div class="tsd-signature tsd-kind-icon">pipeline_executions<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-signature-type">PipelineExecution</a><span class="tsd-signature-symbol">[]</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
+							follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress</p>
+						</div>
+					</div>
+					<div class="tsd-comment">
+					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/59f43e4/src/modules/monitor/ParallelExecutionSetProgress.ts#L84">modules/monitor/ParallelExecutionSetProgress.ts:84</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L81">modules/monitor/ParallelExecutionSetProgress.ts:81</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-descriptions">
+					<a name="addpipelineexecution" class="tsd-anchor"></a>
+					<h3>add<wbr>Pipeline<wbr>Execution</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Pipeline<wbr>Execution<span class="tsd-signature-symbol">(</span>pipeExec<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-signature-type">PipelineExecution</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_manifest_graviteecomponent_.graviteecomponent.html" class="tsd-signature-type">GraviteeComponent</a></li>
+					</ul>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>Adds a {@see PipelineExecution} to this {@see ParallelExecutionSetProgress}</p>
+						</div>
+					</div>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">pipeExec</span>: <a href="../interfaces/_modules_monitor_parallelexecutionsetprogress_.pipelineexecution.html" class="tsd-signature-type">PipelineExecution</a>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <a href="_modules_manifest_graviteecomponent_.graviteecomponent.html" class="tsd-signature-type">GraviteeComponent</a></h4>
+					<p>the {@see GraviteeComponent} of the added pipeline execution</p>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/blob/db59d71/src/modules/monitor/ParallelExecutionSetProgress.ts#L90">modules/monitor/ParallelExecutionSetProgress.ts:90</a></li>
 						</ul>
 					</aside>
 				</section>

@@ -3,32 +3,44 @@ import * as rxjs from 'rxjs';
 import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
 import {AxiosResponse} from 'axios';
-import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
-/// import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
-/// import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
+
 /// import * as Collections from 'typescript-collections';
 
-export namespace monitoring {
+export namespace monitoring2 {
 
+
+  export abstract class AbstractExperimentalMonitor implements monitoring2.IExperimentalMonitor {
+    constructor (
+      name: string,
+      args: AbstractExperimentalMonitorArgs
+    ) {
+      console.log('Hey i am AbstractExperimentalMonitor \'s constructor ')
+    }
+  }
+  export interface IExperimentalMonitor {
+
+  }
 
   export interface FetchResult {
      httpCode: number;
      JSONresponse: any; // the resulting JSON Response from the fetched API
   }
 
+  export interface AbstractExperimentalMonitorArgs {
+    timeout: number; // in milliseconds
+  }
 
-  export interface MonitorArgs  {
-    parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-    timeout: number;
+  export interface ExperimentalMonitorArgs extends monitoring2.AbstractExperimentalMonitorArgs {
+    rest_endpoint: string; // to delete, just for demo purposes.
   }
 
   /**
    *
    *
    **/
-  export class Monitor {
+  export class ExperimentalMonitor extends monitoring2.AbstractExperimentalMonitor {
 
-    public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
+    public readonly rest_endpoint: string
     ///
     ///
     /**
@@ -38,20 +50,22 @@ export namespace monitoring {
 
     constructor (
       name: string,
-      args: MonitorArgs
+      args: ExperimentalMonitorArgs
     ) {
+      super(`valueofContructorParamOne`, args)
+
       this.timeout = args.timeout;
 
+      const apiObjID: string = "69d67c0a-fa60-451f-848e-f8eb4695bbf8";
+      const jsonPayload: string = "69d67c0a-fa60-451f-848e-f8eb4695bbf8";
+      const config: any = {};
+      // const rest_endpoint = `https://api.circleci.com/pipelines/${apiObjID}`;
+      this.rest_endpoint = `https://randomuser.me/api`;
+      this.rest_endpoint = args.rest_endpoint;// on purpose miscofiguration to test retryWhen
+
+
     }
-  start(){
-    this.parallelExecutionSetProgress.pipeline_executions[1].execution.observableRequest.subscribe({
-        next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
-        complete: (data) => {
-          console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
-        },
-        error: this.errorHandlerTriggerCCIPipeline.bind(this)
-    });
-  }
+
   public fetch (): rxjs.Observable<AxiosResponse<any>> {
 
           //emit fetch result every 1s

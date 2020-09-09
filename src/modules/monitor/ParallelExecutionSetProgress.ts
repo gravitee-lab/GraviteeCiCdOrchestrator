@@ -24,17 +24,25 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         CREATED = 100
       }
       export interface CircleCiApiResponsePipeline {
-            execution_index: number,
+            pipeline_exec_number: number, /// In CircleCI API v2, this API response property is named [number], see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
-             * to uniquely identify a pipeine (a pipeline execution)
+             * to uniquely identify a triggered pipeline (a pipeline execution)
              **/
             id: string,
+            /**
+             *
+             **/
             created_at: string,
             /**
-             * [exec_state] is the execution state of the pipeline
+             * [exec_state] is the current execution state of the pipeline
              * this value can be :
              * "UNTRIGGERED" "CREATED", "PENDING" or "ERRORED"
+             * and this state is :
+             * 'UNTRIGGERED', before the pipeline has been triggered using the Circle CI API
+             * 'PENDING', right after the pipeline has been triggered using the Circle CI API
+             * 'CREATED', when the pipeline execution has actually started in Circle CI infra
+             * 'ERRORED', when the pipeline execution has actually started in Circle CI infra, and at least one Job has completed with errors.
              **/
             exec_state: CciPipelineExecutionState
       } /*, for example : {
@@ -63,7 +71,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
       * JSON Object Schema to Represent a Parallel Execution Set  's Execution Progress
       * Does not trigger any Pipeline execution, or subscribe to any ObservableStream : it just
       * keeps a reference on every Observable Stream the {@see Monitor} will subscribe to, and
-      * remembers to which {@see GraviteeComponent} the ObservableStream is related. 
+      * remembers to which {@see GraviteeComponent} the ObservableStream is related.
       **/
       export class ParallelExecutionSetProgress {
         /**
