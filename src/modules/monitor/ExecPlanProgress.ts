@@ -26,7 +26,7 @@ import { ParallelExecutionSetProgress } from '../monitor/ParallelExecutionSetPro
      **/
     public readonly allParallelExecutionSetProgress: ParallelExecutionSetProgress[];
     /**
-     * True as soon as all Pipeline execution have completed, regardless of pipeline execution final status (failure/success)
+     * True as soon as all Pipeline execution have completed, regardless of pipeline execution final status (failure/success, etc...)
      **/
     private completed: boolean;
 

@@ -37,7 +37,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
              * "UNTRIGGERED" "CREATED", "PENDING" or "ERRORED"
              **/
             exec_state: CciPipelineExecutionState
-          }/*, for example : {
+      } /*, for example : {
             "execution_index": "16",
             "id": "952de923-293b-4829-add4-056c4f95940a",
             "created_at": "2020-08-16T22:34:58.273Z",
@@ -45,49 +45,27 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           }
           */
       /**
-      * Args for the constructor of {@see PipelineExecution}
+      * JSON Object Schema to Represent a pipeline execution
       **/
-      export interface PipelineExecutionArgs {
+      export interface PipelineExecution {
         component: giocomponents.GraviteeComponent;
         execution: {
           observableRequest: any,
+          /**
+           * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
+           **/
+          completed: boolean,
           cci_response: CircleCiApiResponsePipeline;
         }
       }
-
-      export class PipelineExecution {
-
-        public readonly component: giocomponents.GraviteeComponent;
-        public readonly cci_response: CircleCiApiResponsePipeline;
-
-        constructor (
-          args: PipelineExecution
-        ) {
-          this.component = args.component;
-          this.cci_response = args.cci_response;
-        }
-      }
-
-      /**
-      * Args for the constructor of {@see ParallelExecutionSetProgress}
+     /**
+      * JSON Object Schema to Represent a Parallel Execution Set  's Execution Progress
       **/
-      export interface ParallelExecutionSetProgressArgs {
-        pipelineExecutions: PipelineExecution[];
+      export class ParallelExecutionSetProgress {
+        /**
+         * Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
+         * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
+         **/
+        public readonly pipeline_executions: PipelineExecution[];
+
       }
-
-  /**
-   * Represents a Paralell Execution Set
-   *
-   **/
-  export class ParallelExecutionSetProgress {
-
-    public readonly pipelineExecutions: PipelineExecution[];
-    constructor (
-      args: ParallelExecutionSetProgressArgs
-    ) {
-      /// super(`valueofContructorParamOne`, args)
-      this.pipelineExecutions = args.pipelineExecutions;
-    }
-
-
-  }
