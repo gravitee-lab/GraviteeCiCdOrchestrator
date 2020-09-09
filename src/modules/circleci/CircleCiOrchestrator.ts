@@ -4,7 +4,11 @@ import axios from 'axios';
 import {AxiosResponse} from 'axios';
 import * as fs from 'fs';
 import * as Collections from 'typescript-collections';
-import { monitoring }  from '../../modules/monitor/Monitor'
+import { monitoring }  from '../../modules/monitor/Monitor';
+import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
+import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
+import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
+
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
@@ -207,7 +211,7 @@ export class CircleCiOrchestrator {
       console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
-      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet}, null, " "));
+      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet }, null, " "));
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
@@ -230,6 +234,60 @@ export class CircleCiOrchestrator {
       }).bind(this));
 
     }
+
+    /**
+     * refonte de la méthode [processExecutionSet]
+     **/
+    processExecutionSet2 (parallelExecutionsSet: ParallelExecutionSet) : void {
+      console.info("");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info(" ---");
+      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet }, null, " "));
+      console.info(" ---");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("");
+      let parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress = new parallel.ParallelExecutionSetProgress();
+
+      /// First, trigger all pipelines in the parallel execution set
+      parallelExecutionsSet.getComponents().forEach(((comp: GraviteeComponent, index: number) => {
+        /// pipeline execution parameters, same as Jenkins build parameters
+        let pipelineParameters = { parameters: {}};
+        let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
+        let pipelExec: parallel.PipelineExecution = {
+          component: comp,
+          execution: {
+            completed: false,
+            observableRequest: observableSentRequest,
+            cci_response: {
+              created_at: '',
+              exec_state: parallel.CciPipelineExecutionState.PENDING,
+              execution_index: 2,
+              id: ''
+            }
+          }
+        };
+        parallelExecutionSetProgress.addPipelineExecution(pipelExec)
+        /* .subscribe({
+            next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+            complete: data => {
+              console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
+            },
+            error: this.errorHandlerTriggerCCIPipeline.bind(this)
+        });*/
+
+        /// for the current Parallel execution set, we store all
+        /// RxJS ObservableStreams in [this.currentSubscriptionSet]
+        /// this.currentSubscriptionSet.push(triggerPipelineSubscription);
+
+      }).bind(this));
+
+    }
+/// ParallelExecutionSetProgress
+
+
+
     /**
      * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
      * Every time this method is invoked, it adds an entry  in the {@see this.progressMatrix}, from the <pre>data</pre> returned by the <strong>Circle CI</strong> API call
