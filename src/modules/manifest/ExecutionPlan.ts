@@ -27,10 +27,12 @@ import * as executionsets from './ParallelExecutionSet';
 
     }
     /**
-     * Returns the {@see executionsets.ParallelExecutionSet} which will be executed <code>ofIndex</code> 
+     * Returns the {@see executionsets.ParallelExecutionSet} which will be executed as <code>ofIndex</code>-th place :
      *
-     * @argument component must be a JSon Object, with only two properties : "name", and "version", just like in the [release.json]
-     * @returns number a positive integer, between zero and length of the [this.parallelizationConstraint] array
+     * It will be executed after the <code>ofIndex - 1</code> previous ones have completed their execution
+     *
+     * @argument <code>ofIndex</code> the index of the {@see ParallelExecutionSet}
+     * @returns the {@see executionsets.ParallelExecutionSet} which will be executed as <code>ofIndex</code>-th 
      *
      **/
     getparallelExecutionSet(ofIndex: number): executionsets.ParallelExecutionSet {
