@@ -58,6 +58,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           cci_response: CircleCiApiResponsePipeline;
         }
       }
+
      /**
       * JSON Object Schema to Represent a Parallel Execution Set  's Execution Progress
       **/
@@ -67,5 +68,16 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
          **/
         public readonly pipeline_executions: PipelineExecution[];
-
+        constructor() {
+          this.pipeline_executions = []
+        }
+        /**
+         * Adds a {@see PipelineExecution} to this {@see ParallelExecutionSetProgress}
+         * @param <code>pipeExec</code> the {@see PipelineExecution} to add to this {@øee ParallelExecutionSetProgress}
+         * @returns the {@see GraviteeComponent} of the added pipeline execution
+         **/
+        addPipelineExecution(pipeExec: PipelineExecution): giocomponents.GraviteeComponent {
+          this.pipeline_executions.push(pipeExec);
+          return pipeExec.component;
+        }
       }
