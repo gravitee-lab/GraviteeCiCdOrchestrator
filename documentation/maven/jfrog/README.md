@@ -98,7 +98,7 @@ git clone https://github.com/gravitee-io/gravitee-parent
 </parent>
 ```
 
-* Dans aucun composant `Java` Gravitee.io, on ne trouve de configuration de remote maven de type 'release' : uniquement `snapshot` et `staging`
+* Dans aucun composant `Java` Gravitee.io, on ne trouve pas de configuration de remote maven de type 'release' : uniquement `snapshot` et `staging`
 
 ### Back to `bash`
 
@@ -310,3 +310,63 @@ node() {
 
 * https://www.jfrog.com/confluence/display/JFROG/Get+Started%3A+Cloud
 * https://www.jfrog.com/confluence/display/JFROG/Maven+Repository
+
+# ANNEXE : Simple maven project JFrog setup
+
+
+* `[orgPath]/[module]/[baseRev](-[folderItegRev])/[module]-[baseRev](-[fileItegRev])(-[classifier]).[ext]`
+* https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
+
+* Exemple pour déployer le projet maven exemple https://github.com/jfrog/project-examples vers `JFrog` :
+
+```bash
+
+# commandes maven
+
+export MVN_LAB=~/mvn-lab
+git clone https://github.com/jfrog/project-examples ${MVN_LAB}
+cd ${MVN_LAB}
+
+export ARTIFACTORY_EX_URL="<contextUrl>http://localhost:8081/artifactory</contextUrl>"
+export ARTIFACTORY_GIO_URL="<contextUrl>https://gravitee.jfrog.io/artifactory</contextUrl>"
+
+cp ./pom.xml ./pom.example.xml
+
+sed -i "s#${ARTIFACTORY_EX_URL}#${ARTIFACTORY_GIO_URL}#g" ./pom.xml
+
+# maaping [ -v "$PWD/target:/usr/src/mymaven/target" ] requires to create a docker image to manage UID GID of linux user inside and outside container
+# docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD/target:/usr/src/mymaven/target" -w /usr/src/mymaven maven mvn clean package
+
+# To run mvn clean package:
+# [-v "$PWD":/usr/src/mymaven] :  maps the source code inside container
+# [-v "$HOME/.m2":/root/.m2] : maps the maven [.m2] on my workstation to the one inside the container. I will ust this one to use settings.xml
+docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven maven mvn clean package
+# To run mvn clean package release :
+# all gravtiee java pom projects are [https://github.com/gravitee-io/gravitee-parent/]
+
+
+
+```
+
+* Exemple pour déployer https://github.com/gravitee-io/gravitee-gateway vers `JFrog` :
+```bash
+
+# commandes maven
+
+export MVN_LAB=~/mvn-lab
+git clone https://github.com/gravitee-lab/gravitee-gateway ${MVN_LAB}
+cd ${MVN_LAB}
+
+# maaping [ -v "$PWD/target:/usr/src/mymaven/target" ] requires to create a docker image to manage UID GID of linux user inside and outside container
+# docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD/target:/usr/src/mymaven/target" -w /usr/src/mymaven maven mvn clean package
+
+# To run mvn clean package:
+# [-v "$PWD":/usr/src/mymaven] :  maps the source code inside container
+# [-v "$HOME/.m2":/root/.m2] : maps the maven [.m2] on my workstation to the one inside the container. I will ust this one to use settings.xml
+docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven maven mvn clean package
+# To run mvn clean package release :
+# all gravtiee java pom projects are [https://github.com/gravitee-io/gravitee-parent/]
+
+
+
+```
