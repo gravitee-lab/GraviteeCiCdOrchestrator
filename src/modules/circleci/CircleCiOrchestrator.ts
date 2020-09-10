@@ -263,10 +263,10 @@ export class CircleCiOrchestrator {
             completed: false,
             observableRequest: observableSentRequest,
             cci_response: {
-              created_at: '',
+              created_at: null,
               exec_state: parallel.CciPipelineExecutionState.UNTRIGGERED,
-              pipeline_exec_number: 0,
-              id: ''
+              pipeline_exec_number: null,
+              id: null
             }
           }
         };
