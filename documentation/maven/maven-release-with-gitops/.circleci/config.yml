@@ -1,0 +1,54 @@
+# Machine executor, set the machine key to true in .circleci/config.yml:
+version: 2.1
+orbs:
+  secrethub: secrethub/cli@1.0.0
+jobs:
+  build:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_RELEASE_TAG: 5.27.1
+      JFROG_BUILD_NUMBER: 1524548
+    filters:
+      tags:
+        # only: /^v.*/
+        only: /*/
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Git Tagging the Release, on Release Branch"
+          command: |
+                    echo " Release branch is [${CIRCLE_BRANCH}], and must match major/minor verions of DESIRED_RELEASE_TAG=[${DESIRED_RELEASE_TAG}]"
+                    git tag ${DESIRED_RELEASE_TAG} -m "Gravitee Bot tagging release from Circle CI Pipeline"
+                    git push -u origin --tags ${CIRCLE_BRANCH}
+      - run:
+          name: "Maven Test the Gravitee Component"
+          command: |
+                    echo "Run Maven Tests"
+                    mvn clean test
+      - run:
+          name: "Maven Package the Gravitee Component"
+          command: |
+                    echo "Run Maven Package"
+                    mvn clean package
+      - run: # print the name of the branch we're on
+          name: "Maven Deploy the Gravitee Component to Central Maven Repo : JFrog"
+          command: |
+                    # rebuilding package freshly, now that wzee know it won't fail
+                    mvn clean package
+                    # using JFrog Maven Plugin
+                    # see https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
+                    JFROG_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username)
+                    JFROG_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token)
+                    echo "JFROG_USERNAME=[${JFROG_USERNAME}]"
+                    # echo "JFROG_SECRET=[${JFROG_SECRET}]"
+                    mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}
+workflows:
+  version: 2.1
+  git_n_maven_release:
+    jobs:
+      - build:
+          context: gravitee-lab
