@@ -236,7 +236,7 @@ export class CircleCiOrchestrator {
     }
 
     /**
-     * refonte de la méthode [processExecutionSet]
+     * Refonte de la méthode [processExecutionSet]
      **/
     processExecutionSet2 (parallelExecutionsSet: ParallelExecutionSet) : void {
       console.info("");
