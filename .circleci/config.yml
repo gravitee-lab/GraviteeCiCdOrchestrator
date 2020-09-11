@@ -57,3 +57,7 @@ workflows:
     jobs:
       - build:
           context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              only: /*/
