@@ -21,6 +21,9 @@ jobs:
       - checkout
       - secrethub/install
       - run:
+          name: "Testing local docker installation"
+          command: docker version
+      - run:
           name: "Testing local env"
           command: ls -allh .
       - run: # print the name of the branch we're on

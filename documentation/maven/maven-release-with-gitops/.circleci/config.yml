@@ -2,8 +2,9 @@
 version: 2.1
 orbs:
   secrethub: secrethub/cli@1.0.0
+  docker: circleci/docker@1.4.0
 jobs:
-  build:
+  mvn_release:
     machine:
       resource_class: medium
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
@@ -11,6 +12,7 @@ jobs:
     environment:
       DESIRED_RELEASE_TAG: 5.27.1
       JFROG_BUILD_NUMBER: 1524548
+      MAVEN_VERSION: 3.6.3
     filters:
       tags:
         # only: /^v.*/
@@ -18,6 +20,7 @@ jobs:
     steps:
       - checkout
       - secrethub/install
+      - 
       - run:
           name: "Git Tagging the Release, on Release Branch"
           command: |
@@ -41,14 +44,48 @@ jobs:
                     mvn clean package
                     # using JFrog Maven Plugin
                     # see https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
-                    JFROG_USERNAME=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
-                    JFROG_SECRET=$(secrethub read gravitee-io/cicd/staging/jfrog/password)
+                    export JFROG_USERNAME=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
+                    export JFROG_SECRET=$(secrethub read gravitee-io/cicd/staging/jfrog/password)
                     echo "JFROG_USERNAME=[${JFROG_USERNAME}]"
                     # echo "JFROG_SECRET=[${JFROG_SECRET}]"
+                    export JFROG_USERNAME=test
+                    export JFROG_SECRET=test
                     mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}
+
+  tests_before_deployment:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_RELEASE_TAG: 5.27.1
+      JFROG_BUILD_NUMBER: 1524548
+    filters:
+      tags:
+        # only: /^v.*/
+        only: /*/
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Git Tagging the Release, on Release Branch"
+          command: |
+                    echo " Release branch is [${CIRCLE_BRANCH}], and must match major/minor verions of DESIRED_RELEASE_TAG=[${DESIRED_RELEASE_TAG}]"
+                    git tag ${DESIRED_RELEASE_TAG} -m "Gravitee Bot tagging release from Circle CI Pipeline"
+                    git push -u origin --tags ${CIRCLE_BRANCH}
 workflows:
   version: 2.1
   git_n_maven_release:
     jobs:
-      - build:
+      - mvn_release:
+          context: gravitee-lab
+  pull_requests_review:
+    jobs:
+      - build
+          context: gravitee-lab
+      - tests_before_deployment
+          context: gravitee-lab
+      - deploy
+          context: gravitee-lab
+      - tests_after_deployment
           context: gravitee-lab
