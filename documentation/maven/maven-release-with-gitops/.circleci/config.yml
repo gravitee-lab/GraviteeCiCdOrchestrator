@@ -107,7 +107,7 @@ workflows:
           filters:
             tags:
               # only: /^v.*/
-              # will be triggered only when on release branches
+              # will run only when on release branches
               only:
                 - 1.20.x
                 - 1.25.x
@@ -115,6 +115,8 @@ workflows:
                 - 3.0.x
                 - 3.1.x
                 - /^*.x/
+              # will not run on pull requests from
+              #
               ignore:
                 - /^fix*/
                 - /^issues*/
@@ -127,17 +129,21 @@ workflows:
   #
   pull_requests_review:
     jobs:
-      - pr_review
+      - build:
           context: gravitee-lab
           filters:
             branches:
-              # will be triggered only when pulll request
+              # will run only when pull request is from
+              # Gravitee Dev / Support Team members
               only:
                 - /^fix*/
                 - /^issues*/
                 - /^*support/
-                - /^*snyk*/
-                - /^*dependabot*/
+                # - /^*snyk*/
+                # - /^*dependabot*/
+              # will not run on pull requests from one
+              # release branche, to another, for
+              # STS / LTS support Releases
               ignore:
                 - 1.20.x
                 - 1.25.x
@@ -148,21 +154,38 @@ workflows:
                 # - /^*snyk*/
                 # - /^*dependabot*/
       # Will run all tests before deployment, and then run the [deployment]
-      - tests_before_deployment
+      - tests_before_deployment:
+          requires:
+            - build
           context: gravitee-lab
-          filters:
-            tags:
-              # only: /^v.*/
-              only: /^*/
-      - deploy
+          # filters:
+      - deploy_integration_env:
+          # not worth spending money if unit/coverage tests did not pass
+          requires:
+            - tests_before_deployment
           context: gravitee-lab
-          filters:
-            tags:
-              # only: /^v.*/
-              only: /^*/
-      - tests_after_deployment
+          # filters:
+        # ---
+        # among Integration Tests :
+        # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
+        # => User Stories End 2 End Tests
+      - integration_tests:
+          requires:
+            - deploy_integration_env
           context: gravitee-lab
-          filters:
-            tags:
-              # only: /^v.*/
-              only: /^*/
+          # filters:
+      - deploy_staging_env:
+          # not worth spending money if integration tests did not pass
+          requires:
+            - integration_tests
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among staging tests :
+        # => performance tests
+        # => big database End 2 End Tests
+      - staging_tests:
+          requires:
+            - deploy_staging_env
+          context: gravitee-lab
+          # filters:
