@@ -124,9 +124,10 @@ workflows:
                 - /^*snyk*/
                 - /^*dependabot*/
   # ---
-  # Celui-là uniquement pour chaque
-  # review de pull request
-  #
+  # This workflow runs only
+  # to conduct pull request reviews from :
+  # => Dev Team During Development
+  # => Support Team During Support Cases Sprints
   pull_requests_review:
     jobs:
       - build:
