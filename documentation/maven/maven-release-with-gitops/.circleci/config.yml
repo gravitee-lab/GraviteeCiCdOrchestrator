@@ -124,7 +124,7 @@ workflows:
         # among Integration Tests :
         # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
         # => User Stories End 2 End Tests
-      - integration_tests:
+      - product_integration_tests:
           requires:
             - deploy_integration_env
           context: gravitee-lab
@@ -139,7 +139,7 @@ workflows:
         # among staging tests :
         # => performance tests
         # => big database End 2 End Tests
-      - staging_tests:
+      - product_staging_tests:
           requires:
             - deploy_staging_env
           context: gravitee-lab
@@ -214,7 +214,8 @@ workflows:
                 - /^*.x/
                 # - /^*snyk*/
                 # - /^*dependabot*/
-      # Will run all tests before deployment, and then run the [deployment]
+      # Will run all tests before deployment, all of which are suppoesed to be
+      # unit tests : their result won't change after any merge happened.
       - tests_before_deployment:
           requires:
             - build
@@ -230,7 +231,7 @@ workflows:
         # among Integration Tests :
         # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
         # => User Stories End 2 End Tests
-      - integration_tests:
+      - sprint_integration_tests:
           requires:
             - deploy_integration_env
           context: gravitee-lab
@@ -245,7 +246,7 @@ workflows:
         # among staging tests :
         # => performance tests
         # => big database End 2 End Tests
-      - staging_tests:
+      - sprint_staging_tests:
           requires:
             - deploy_staging_env
           context: gravitee-lab
