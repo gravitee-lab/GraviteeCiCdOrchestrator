@@ -99,17 +99,21 @@ workflows:
   # ---
   # Runs only when Pipeline invoked
   # using Circle CI API v2 to
-  # Release the Product
+  # Releases the Product
+  # ---
+  # When releasing Product :
+  # => we assume unit/source code quality tests have successfully passed
+  #
+  # => we re-run all integration tests AFTER merge happened  :
+  #    Cause Integration tests may pass on branch, and not pass after merge, whole
+  #    point of Integration, is to Integrate, not only different developers work on a branch,
+  #    but to integrate, the work done by a Team on a bracnh, to the
+  #    work already done before, on its base branch.
+  # => we re-run all staging tests after merge happened : Performance tests, big data
+  #    load tests, production grade tests in a word. We release Production Grade Product.
+  #
   git_n_maven_release:
     jobs:
-      # ---
-      # When releasing, Product :
-      # => we assume unit/source code quality  :
-      # we re-run all integration tests after merge happened
-      # we re-run all integration tests after merge happened
-      # 
-      # have successfully passed
-      # we do not release product if it does not pass
       - deploy_integration_env:
           # not worth spending money if unit/coverage tests did not pass
           # requires:
