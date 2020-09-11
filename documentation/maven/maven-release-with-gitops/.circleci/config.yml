@@ -177,6 +177,17 @@ workflows:
   # to conduct pull request reviews from :
   # => Dev Team During Development
   # => Support Team During Support Cases Sprints
+  # ---
+  # When reviewing Dev or Support Team deliveries :
+  # => we run unit/source code quality tests
+  # => we run all integration tests BEFORE merge happened  :
+  #    Whole point of Integration, during Dev / Support Team Sprints, is to
+  #    Integrate different developers work on a branch.
+  #    In a word, We want to detect and fix asap any regression, and any new issue.
+  # => we run all staging tests BEFORE merge happened : Performance tests, big data
+  #    load tests, production grade tests in a word. We want to avoid regression on
+  #    our Product Production Grade.
+  #
   pull_requests_review:
     jobs:
       - build:
