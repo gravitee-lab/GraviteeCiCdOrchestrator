@@ -181,7 +181,7 @@ workflows:
   # => we run unit / source code quality tests, but only on a reduced scope : tests on
   #    the components which are modified during the Dev Sprint.
   # => we run all integration tests BEFORE merge happens  :
-  #    Whole point of Integration, during Dev Team Sprints, is to
+  #    Whole point of Integration, during Dev  Team Sprints, is to
   #    Integrate different developers work on a branch.
   #    In a word, We want to detect and fix asap any regression, and any new issue.
   # => we run all staging tests BEFORE merge happens : Performance tests, big data
@@ -307,7 +307,7 @@ workflows:
             - build
           context: gravitee-lab
           # filters:
-          # this deployment should be exetremely quick, like only a docker-compose inside Circle CI Pipeline.
+          # this deployment should be exetremely quick, like only a docker-compose inside one AWS EC2 instance.
       - support_deploy_integration_env:
           # not worth spending money if unit / source code quality tests did not pass
           requires:

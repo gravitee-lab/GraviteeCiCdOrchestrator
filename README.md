@@ -94,3 +94,12 @@ cf. [How to contribute guide](https://github.com/gravitee-lab/GraviteeReleaseOrc
 <!--
      (feature branch) cf. [How to contribute guide](https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/tree/feature/specs_implementation/documentation/contribute)
 -->
+
+
+# The Gravitee CICD testing model : An Optimization problem
+
+The problem :
+
+* When pull request are created, from Support or Dev Team, we need to automatically run tests, with Gravitee deloyed.
+* For those tests requiring `Gravitee` deployment ready, deployment will always be done in a `Kubernetes` Cluster : `Gravitee` is a `Kubernetes` native / `Kubernetes` first Product.
+* `Gravitee` Support and Dev Work Flows are creating a huge number of pull requests
