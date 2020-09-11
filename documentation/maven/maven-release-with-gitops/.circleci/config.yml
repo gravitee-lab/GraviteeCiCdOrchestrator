@@ -115,7 +115,7 @@ workflows:
   git_n_maven_release:
     jobs:
       - deploy_integration_env:
-          # not worth spending money if unit/coverage tests did not pass
+          # not worth spending money if unit/ source code quality tests did not pass
           # requires:
             # - tests_before_deployment
           context: gravitee-lab
@@ -176,11 +176,10 @@ workflows:
   # This workflow runs only
   # to conduct pull request reviews from :
   # => Dev Team During Development
-  # => Support Team During Support Cases Sprints
   # ---
   # When reviewing Dev or Support Team deliveries :
   # => we run unit / source code quality tests, but only on a reduced scope : tests on
-  #    the components which are modified iruing the Dev / Support Sprint.
+  #    the components which are modified during the Dev / Support Sprint.
   # => we run all integration tests BEFORE merge happens  :
   #    Whole point of Integration, during Dev / Support Team Sprints, is to
   #    Integrate different developers work on a branch.
@@ -198,9 +197,7 @@ workflows:
               # will run only when pull request is from
               # Gravitee Dev / Support Team members
               only:
-                - /^fix*/
                 - /^issues*/
-                - /^*support/
                 # - /^*snyk*/
                 # - /^*dependabot*/
               # will not run on pull requests from one
@@ -213,18 +210,22 @@ workflows:
                 - 3.0.x
                 - 3.1.x
                 - /^*.x/
+                - /^fix*/
+                - /^*support/
                 # - /^*snyk*/
                 # - /^*dependabot*/
       # ---
       # Will run all tests before deployment, but only on a reduced scope : tests on
-      # the components which are modified iruing the Dev / Support Sprint.
+      # the components which are modified during the Dev / Support Sprint.
       - sprint_tests_before_deployment:
           requires:
             - build
           context: gravitee-lab
           # filters:
+      # ---
+      # A small 3-nodes kubernetes Cluster on AWS, with minimum storage capacity
       - deploy_integration_env:
-          # not worth spending money if unit/coverage tests did not pass
+          # not worth spending money if unit/ source code quality tests did not pass
           requires:
             - tests_before_deployment
           context: gravitee-lab
@@ -238,6 +239,8 @@ workflows:
             - deploy_integration_env
           context: gravitee-lab
           # filters:
+      # ---
+      # A bigger 9-nodes kubernetes Cluster on AWS, with production-grade storage capacity
       - deploy_staging_env:
           # not worth spending money if integration tests did not pass
           requires:
@@ -247,9 +250,75 @@ workflows:
         # ---
         # among staging tests :
         # => performance tests
-        # => big database End 2 End Tests
+        # => big data load, and End 2 End Tests
       - sprint_staging_tests:
           requires:
             - deploy_staging_env
+          context: gravitee-lab
+          # filters:
+  # ---
+  # This workflow runs only
+  # to conduct pull request reviews from :
+  # => Support Team During Support Cases Sprints
+  # ---
+  # When reviewing Dev or Support Team deliveries :
+  # => we run unit / source code quality tests, but only on a reduced scope : tests on
+  #    the components which are modified during the Support Sprint.
+  # => we run a few integration tests BEFORE merge happens :
+  #    Whole point of Integration, during  Support Team Sprints, is to
+  #    Integrate different support engineers work on a branch, quiclkly, therefore, on a
+  #    reduced scope, I.e. integration tests on the components which are modified during the Support Sprint.
+  #    In a word, We want to detect and fix asap any integration regression, and any new issue caused by support case or quick bugfix.
+  #
+  support_pull_requests_review:
+    jobs:
+      - build:
+          context: gravitee-lab
+          filters:
+            branches:
+              # ---
+              # Will run only when pull request is from
+              # Gravitee Support Team members
+              # ---
+              # Will also run on pull requests from one
+              # release branch, to another, for
+              # STS / LTS support Releases
+              only:
+                - /^fix*/
+                - /^*support/
+                - 1.20.x
+                - 1.25.x
+                - 1.30.x
+                - 3.0.x
+                - 3.1.x
+              # will not run on pull requests from one
+              # release branch, to another, for
+              # STS / LTS support Releases
+              ignore:
+                - /^*.x/
+                - /^issues*/
+                - /^*snyk*/
+                - /^*dependabot*/
+      # ---
+      # Will run all tests before deployment, but only on a reduced scope : tests on
+      # the components which are modified during the Support Sprint.
+      - support_tests_before_deployment:
+          requires:
+            - build
+          context: gravitee-lab
+          # filters:
+          # this deployment should be exetremely quick, like only a docker-compose inside Circle CI Pipeline.
+      - support_deploy_integration_env:
+          # not worth spending money if unit / source code quality tests did not pass
+          requires:
+            - tests_before_deployment
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among Integration Tests :
+        # => A few User Stories End 2 End Tests
+      - support_integration_tests:
+          requires:
+            - deploy_integration_env
           context: gravitee-lab
           # filters:
