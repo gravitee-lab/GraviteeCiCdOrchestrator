@@ -179,12 +179,13 @@ workflows:
   # => Support Team During Support Cases Sprints
   # ---
   # When reviewing Dev or Support Team deliveries :
-  # => we run unit/source code quality tests
-  # => we run all integration tests BEFORE merge happened  :
+  # => we run unit / source code quality tests, but only on a reduced scope : tests on
+  #    the components which are modified iruing the Dev / Support Sprint.
+  # => we run all integration tests BEFORE merge happens  :
   #    Whole point of Integration, during Dev / Support Team Sprints, is to
   #    Integrate different developers work on a branch.
   #    In a word, We want to detect and fix asap any regression, and any new issue.
-  # => we run all staging tests BEFORE merge happened : Performance tests, big data
+  # => we run all staging tests BEFORE merge happens : Performance tests, big data
   #    load tests, production grade tests in a word. We want to avoid regression on
   #    our Product Production Grade.
   #
@@ -214,9 +215,10 @@ workflows:
                 - /^*.x/
                 # - /^*snyk*/
                 # - /^*dependabot*/
-      # Will run all tests before deployment, all of which are suppoesed to be
-      # unit tests : their result won't change after any merge happened.
-      - tests_before_deployment:
+      # ---
+      # Will run all tests before deployment, but only on a reduced scope : tests on
+      # the components which are modified iruing the Dev / Support Sprint.
+      - sprint_tests_before_deployment:
           requires:
             - build
           context: gravitee-lab
