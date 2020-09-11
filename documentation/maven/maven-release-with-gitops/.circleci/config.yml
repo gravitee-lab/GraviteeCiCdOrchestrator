@@ -2,7 +2,6 @@
 version: 2.1
 orbs:
   secrethub: secrethub/cli@1.0.0
-  docker: circleci/docker@1.4.0
 jobs:
   mvn_release:
     machine:
@@ -12,15 +11,10 @@ jobs:
     environment:
       DESIRED_RELEASE_TAG: 5.27.1
       JFROG_BUILD_NUMBER: 1524548
-      MAVEN_VERSION: 3.6.3
-    filters:
-      tags:
-        # only: /^v.*/
-        only: /*/
+      DESIRED_MAVEN_VERSION: 3.6.3
     steps:
       - checkout
       - secrethub/install
-      - 
       - run:
           name: "Git Tagging the Release, on Release Branch"
           command: |
@@ -31,18 +25,26 @@ jobs:
           name: "Maven Test the Gravitee Component"
           command: |
                     echo "Run Maven Tests"
-                    mvn clean test
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean test"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
       - run:
           name: "Maven Package the Gravitee Component"
           command: |
                     echo "Run Maven Package"
-                    mvn clean package
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean package"
+                    echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
       - run: # print the name of the branch we're on
           name: "Maven Deploy the Gravitee Component to Central Maven Repo : JFrog"
           command: |
-                    # rebuilding package freshly, now that wzee know it won't fail
-                    mvn clean package
-                    # using JFrog Maven Plugin
+                    echo "Run Maven Deploy using JFrog Maven Plugin"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    #
                     # see https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
                     export JFROG_USERNAME=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
                     export JFROG_SECRET=$(secrethub read gravitee-io/cicd/staging/jfrog/password)
@@ -50,7 +52,28 @@ jobs:
                     # echo "JFROG_SECRET=[${JFROG_SECRET}]"
                     export JFROG_USERNAME=test
                     export JFROG_SECRET=test
-                    mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}
+                    export MAVEN_COMMAND="mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+  build:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_MAVEN_VERSION: 3.6.3
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Maven Package n Install the Gravitee Component"
+          command: |
+                    echo "Run Maven Package"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean package install"
+                    echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
   tests_before_deployment:
     machine:
@@ -58,34 +81,88 @@ jobs:
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
-      DESIRED_RELEASE_TAG: 5.27.1
-      JFROG_BUILD_NUMBER: 1524548
-    filters:
-      tags:
-        # only: /^v.*/
-        only: /*/
+      DESIRED_MAVEN_VERSION: 3.6.3
     steps:
       - checkout
       - secrethub/install
       - run:
-          name: "Git Tagging the Release, on Release Branch"
+          name: "Maven Test the Gravitee Component"
           command: |
-                    echo " Release branch is [${CIRCLE_BRANCH}], and must match major/minor verions of DESIRED_RELEASE_TAG=[${DESIRED_RELEASE_TAG}]"
-                    git tag ${DESIRED_RELEASE_TAG} -m "Gravitee Bot tagging release from Circle CI Pipeline"
-                    git push -u origin --tags ${CIRCLE_BRANCH}
+                    echo "Run Maven Tests"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean test"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
 workflows:
   version: 2.1
+  # ---
+  # Celui-là uniquement par
+  # invocation de la Circle CI API pour
+  # la Release Produit
   git_n_maven_release:
     jobs:
       - mvn_release:
           context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              # will be triggered only when on release branches
+              only:
+                - 1.20.x
+                - 1.25.x
+                - 1.30.x
+                - 3.0.x
+                - 3.1.x
+                - /^*.x/
+              ignore:
+                - /^fix*/
+                - /^issues*/
+                - /^*support/
+                - /^*snyk*/
+                - /^*dependabot*/
+  # ---
+  # Celui-là uniquement pour chaque
+  # review de pull request
+  #
   pull_requests_review:
     jobs:
-      - build
+      - pr_review
           context: gravitee-lab
+          filters:
+            branches:
+              # will be triggered only when pulll request
+              only:
+                - /^fix*/
+                - /^issues*/
+                - /^*support/
+                - /^*snyk*/
+                - /^*dependabot*/
+              ignore:
+                - 1.20.x
+                - 1.25.x
+                - 1.30.x
+                - 3.0.x
+                - 3.1.x
+                - /^*.x/
+                # - /^*snyk*/
+                # - /^*dependabot*/
+      # Will run all tests before deployment, and then run the [deployment]
       - tests_before_deployment
           context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              only: /^*/
       - deploy
           context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              only: /^*/
       - tests_after_deployment
           context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              only: /^*/

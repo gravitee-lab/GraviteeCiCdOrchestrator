@@ -54,3 +54,9 @@ secrethub write username
 **Reference Documentation** :
 
 * https://secrethub.io/docs/guides/circleci/ :
+
+# ANNEXE: Circle CI Workflow level filtering
+
+https://discuss.circleci.com/t/can-you-filter-on-a-workflow-level/30624/4
+
+Use Yaml References
