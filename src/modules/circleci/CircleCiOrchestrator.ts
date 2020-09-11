@@ -18,7 +18,6 @@ import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSe
  **/
 export class CircleCiOrchestrator {
     private github_org: string;
-    private currentSubscriptionSet: any[];
     private monitor: monitoring.Monitor;
     /**
     * <p>
@@ -146,7 +145,6 @@ export class CircleCiOrchestrator {
       this.progressMatrix = [];
       this.monitorReport = [];
       this.github_org = process.env.GH_ORG;
-      this.currentSubscriptionSet = [];
     }
 
     loadCircleCISecrets () : void {
@@ -215,7 +213,6 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-      this.currentSubscriptionSet = [];
       /// First, trigger all pipelines in the parallel execution set
       parallelExecutionsSet.forEach(((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
@@ -227,10 +224,6 @@ export class CircleCiOrchestrator {
             },
             error: this.errorHandlerTriggerCCIPipeline.bind(this)
         });
-        /// for the current Parallel execution set, we store all
-        /// RxJS ObservableStreams in [this.currentSubscriptionSet]
-        this.currentSubscriptionSet.push(triggerPipelineSubscription);
-
       }).bind(this));
 
     }

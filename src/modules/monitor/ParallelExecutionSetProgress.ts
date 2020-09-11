@@ -23,8 +23,8 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          **/
         CREATED = 100
       }
-      export interface CircleCiApiResponsePipeline {
-            pipeline_exec_number: number, /// In CircleCI API v2, this API response property is named [number], see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
+      export interface CircleCiApiResponse {
+            pipeline_exec_number: string, /// In CircleCI API v2, this API response property is named [number], see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
              * to uniquely identify a triggered pipeline (a pipeline execution)
@@ -63,7 +63,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
            * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
            **/
           completed: boolean,
-          cci_response: CircleCiApiResponsePipeline;
+          cci_response: CircleCiApiResponse;
         }
       }
 
@@ -90,5 +90,19 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         addPipelineExecution(pipeExec: PipelineExecution): giocomponents.GraviteeComponent {
           this.pipeline_executions.push(pipeExec);
           return pipeExec.component;
+        }
+        updatePipelineExecution(aComponent: giocomponents.GraviteeComponent, theCci_response: any) {
+          /// first, must find the Pipeline execution for the [component]
+          for (let i:number; i < this.pipeline_executions.length; i++) {
+            if (this.pipeline_executions[i].component.name == aComponent.name && this.pipeline_executions[i].component.version == aComponent.version) {
+              this.pipeline_executions[i].execution.cci_response.pipeline_exec_number = theCci_response.number;
+              this.pipeline_executions[i].execution.cci_response.created_at = theCci_response.created_at;
+              this.pipeline_executions[i].execution.cci_response.exec_state = theCci_response.created_at;
+              this.pipeline_execu tions[i].execution.cci_response.id = theCci_response.id;
+
+              this.pipeline_executions[i].execution.completed = true;
+              break;
+            }
+          }
         }
       }

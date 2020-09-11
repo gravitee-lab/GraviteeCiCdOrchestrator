@@ -4,6 +4,7 @@ import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
 import {AxiosResponse} from 'axios';
 import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
+
 /// import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
 /// import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
 /// import * as Collections from 'typescript-collections';
@@ -56,6 +57,41 @@ export namespace monitoring {
     }
 
   }
+  /**
+   * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
+   * Every time this method is invoked, it adds an entry  in the {@see this.progressMatrix}, from the <pre>data</pre> returned by the <strong>Circle CI</strong> API call
+   * then, the {@see this.progressMatrix}
+   *
+   *
+   * @argument data A JSOn Object returned by the Circle CI API as Response of a Pipeline trigger
+   * -----
+   * <pre>
+   * {
+   *
+   *    "number": "17",
+   *    "id": "c08fe570-a3ea-4232-9ed8-432ed65921a1",
+   *    "state": "pending",
+   *    "created_at": "2020-08-16T18:18:01.891Z"
+   *
+   *  }
+   * </pre>
+   * -----
+   *
+   *
+   **/
+  handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any, component: .GraviteeComponent) : void {
+    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
+
+
+    /**
+     * CircleCiApiResponse
+     **/
+    this.parallelExecutionSetProgress.updatePipelineExecution(component, pipeline_exec)
+  }
+
+
+
+
   public fetch (): rxjs.Observable<AxiosResponse<any>> {
 
           //emit fetch result every 1s
