@@ -12,10 +12,6 @@ jobs:
       DESIRED_DOCKER_TAG: 5.27.1
       DOCKER_LOGIN_USERNAME: 'ccc'
       DOCKER_LOGIN_SECRET: 'ccc'
-    filters:
-      tags:
-        # only: /^v.*/
-        only: /*/
     steps:
       - checkout
       - secrethub/install
