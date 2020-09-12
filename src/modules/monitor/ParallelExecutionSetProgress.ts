@@ -136,7 +136,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
       * JSON Object Schema to Represent a Parallel Execution Set's Execution Progress
       * Does not trigger any Pipeline execution, or subscribe to any ObservableStream : it just
       * keeps a reference on every Observable Stream the {@see Monitor} will subscribe to, and
-      * remembers to which {@see GraviteeComponent} the ObservableStream is related.
+      * remembers which {@see GraviteeComponent} each ObservableStream is related to.
       **/
       export class ParallelExecutionSetProgress {
         /**
