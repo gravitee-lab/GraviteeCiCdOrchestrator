@@ -100,15 +100,29 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           this.pipeline_executions.push(pipeExec);
           return pipeExec.component;
         }
-        updatePipelineExecution(aGioComponent: giocomponents.GraviteeComponent, theCci_response: any) {
+        /**
+         *
+         * Updates the {@see PipelineExecution} associated with the provided <code>someGioComponent</code> {@see GraviteeComponent}, with the provided CircleCI API response <code>theCci_Api_response</code>, and the provided CircleCI API error <code>theCci_Api_error</code>
+         *
+         * @paramter <code>someGioComponent</code>
+         * @paramter <code>theCci_Api_response</code> The Circle CI API returned JSON response, set it to null if error returned
+         * @paramter <code>theCci_Api_error</code> The Circle CI API returned error, set it to null if no error returned
+         **/
+        updatePipelineExecution(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
           /// first, must find the Pipeline execution for the [component]
-          for (let i:number; i < this.pipeline_executions.length; i++) {
-            if (this.pipeline_executions[i].component.name == aGioComponent.name && this.pipeline_executions[i].component.version == aGioComponent.version) {
-              this.pipeline_executions[i].execution.cci_response = theCci_response;
-              this.pipeline_executions[i].execution.completed = true;
-              break;
-            }
+          if (theCci_Api_response == null) {
+            this.getPipelineExecutionFrom(someGioComponent).execution.cci_response = {
+              created_at: null,
+              state: null,
+              number: null,
+              id: null
+            };
+          } else {
+            this.getPipelineExecutionFrom(someGioComponent).execution.cci_response = theCci_Api_response;
           }
+          this.getPipelineExecutionFrom(someGioComponent).execution.error = theCci_Api_error;
+          this.getPipelineExecutionFrom(someGioComponent).execution.completed = true;
+
         }
         /**
          *
