@@ -1,4 +1,4 @@
-# Circle CI API : how to check execution status of a pipeline
+# `Circle CI` API `v2` : how to check execution status of a pipeline
 
 ### About Circle CI Pipelines Workflow execution `status` values : One question
 
