@@ -69,7 +69,8 @@ export namespace monitoring {
         }
       }
       /**
-       * Used to Subscribe to the ObservableStream for each Circle CI API invocation to triugger a pipeline execution
+       * Used to Subscribe to the ObservableStream for each Circle CI API invocation
+       * to trigger a pipeline execution
        **/
       export class CciApiTriggerPipelineSubscriber implements ICciApiSubscriber {
 
