@@ -143,7 +143,7 @@ export namespace monitoring {
      *
      **/
     public fetch (): rxjs.Observable<AxiosResponse<any>> {
-
+            const demo_rest_endpoint: string = "https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine"
             //emit fetch result every 1s
             //emit value every 1s
             //emit value every 1s
