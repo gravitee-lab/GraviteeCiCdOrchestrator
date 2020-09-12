@@ -298,6 +298,7 @@ export class CircleCiOrchestrator {
       /// will subscribe to all Observable Streams,
       let someMonitor = new monitoring.Monitor(`monitor`, {
         parallelExecutionSetProgress: parallelExecutionSetProgress,
+        secrets: this.secrets,
         timeout:10000 // 10 seconds
       });
 

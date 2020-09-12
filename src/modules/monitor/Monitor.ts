@@ -190,7 +190,7 @@ export namespace monitoring {
         }
       };
       const cci_rest_endpoint = "https://circleci.com/api/v2/pipeline";
-      const source = rxjs.from(axios.post( `${cci_rest_endpoint}` + "/" + `${pipeline_uuid}` + "/workflow", jsonPayload, requestConfig )).pipe(
+      const source = rxjs.from(axios.post(`${cci_rest_endpoint}` + "/" + `${pipeline_uuid}` + "/workflow", null, requestConfig )).pipe(
       tap(val => console.log(`fetching ${cci_rest_endpoint} which you won't see `)),)
       const response$ = source.pipe(
         map(axiosResponse => {
@@ -219,14 +219,16 @@ export namespace monitoring {
       return response$;
     }
     private start(){
-      /// okay, so first let's
-      /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
+      /// okay, so now let's launch all http requests to Circle CI API, to check Pipelines Workflows Execution Status
+      let arrLength = this.parallelExecutionSetProgress.all_pipeline_execution_progress.length;
+
+      for (let  i = 0; i < arrLength; i++) {
+        let pipeline_uuid = this.parallelExecutionSetProgress.all_pipeline_execution_progress[i].pipeline_execution.cci_trigger.response.id;
+        this.parallelExecutionSetProgress.all_pipeline_execution_progress[i].pipeline_execution.cci_statuscheck.observableRequest = this.checkCciWorkflowsExecStatusFor(pipeline_uuid);
+      }
+      // Ok, now we need to init status checks subscribers
+      this.initStatusSubscribers();
       
-      let observableSentRequest = this.checkCciWorkflowsExecStatusFor(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
-
-
-
-      /// then let's init status checks subscribers
       ///
       /// And finally we have to determine when all status checks have
       /// detected Pipeline Execution Completed, to then emit an
