@@ -111,6 +111,10 @@ export namespace monitoring {
   export class Monitor {
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
+    // subscribe to this one, to find out when all trigers HTTP Responses have all been received
+    private triggersObservable: rxjs.Subject<parallel.PipelineExecutionProgress>;
+    private statusObservable: rxjs.Subject<parallel.PipelineExecutionProgress>;
+
     /**
      *
      * Those help the Monitor find out when all CircleCI API HTTP Responses
@@ -144,6 +148,7 @@ export namespace monitoring {
       this.initTriggerSubscribers();
       // Then, we need to find out when all triggers actually received Circle CI API Response
       // this is done using an RxJS "Subject"
+
     }
 
     private initTriggerSubscribers() : void {
@@ -154,6 +159,24 @@ export namespace monitoring {
         // keep a reference over the new subscriber
         this.triggerSubscribers.push(thisSubscriber);
       }
+    }
+
+    /**
+     *
+     **/
+    private haveAllPipelineTriggersResponseBeenReceived(): boolean {
+      let haveHttpResponsesBeenReceived: boolean = true;
+      let arrayLength: number = this.parallelExecutionSetProgress.all_pipeline_execution_progress.length;
+      for (let i: number; i < arrayLength ; i++){
+        let currPipeExecProgress: parallel.PipelineExecutionProgress = this.parallelExecutionSetProgress.all_pipeline_execution_progress[i];
+
+        ///  As soon as at least one trigger has both error and pipeline 'id' set to null, well there is one Pripeline Execution Trigger which did not complete
+        if (currPipeExecProgress.pipeline_execution.cci_trigger.error === null && currPipeExecProgress.pipeline_execution.cci_trigger.response.id  === null) {
+          haveHttpResponsesBeenReceived = false;
+          break; // no need to keep on looping
+        }
+      }
+      return haveHttpResponsesBeenReceived;
     }
 
   }

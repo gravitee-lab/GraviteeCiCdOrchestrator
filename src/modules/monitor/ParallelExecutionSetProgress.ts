@@ -90,6 +90,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
             error: any
           }
         }
+
       }
 
       /**
@@ -177,9 +178,20 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * @returns the {@see GraviteeComponent} of the added pipeline execution
          **/
         addPipelineExecutionProgress(pipeExecProgress: PipelineExecutionProgress): giocomponents.GraviteeComponent {
-
           this.all_pipeline_execution_progress.push(pipeExecProgress);
           return pipeExecProgress.component;
+        }
+        private haveAllPipelineTriggersResponseBeenReceived(): boolean {
+          let haveHttpResponsesBeenReceived: boolean = true;
+          let arrayLength: number = this.all_pipeline_execution_progress.length;
+          for (let i: number; i < arrayLength ; i++){
+            ///  As soon as at least one trigger has both error and pipeline 'id' set to null, well there is one Pripeline Execution Trigger which did not complete
+            if (this.all_pipeline_execution_progress[i].pipeline_execution.cci_trigger.error === null && this.all_pipeline_execution_progress[i].pipeline_execution.cci_trigger.response.id  === null) {
+              haveHttpResponsesBeenReceived = false;
+              break; // no need to keep on looping
+            }
+          }
+          return haveHttpResponsesBeenReceived;
         }
         /**
          *
@@ -191,7 +203,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          **/
         updatePipelineExecutionProgress(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
           /// first, must find the Pipeline execution for the [component]
-          if (theCci_Api_response == null) {
+          if (theCci_Api_response === null) {
             this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = {
               created_at: null,
               state: null,
