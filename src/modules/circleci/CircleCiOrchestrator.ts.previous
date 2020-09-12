@@ -241,7 +241,7 @@ export class CircleCiOrchestrator {
       parallelExecutionsSet.forEach((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {}};
-        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
+        let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
             next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
             complete: data => {
               console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
@@ -480,7 +480,7 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
-    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
+    triggerCciPipeline(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
       let observableRequest = Observable.create( ( observer ) => {
           let config = {
             headers: {

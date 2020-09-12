@@ -11,19 +11,6 @@ import * as orchestra from '../circleci/CircleCiOrchestrator';
 
 export namespace monitoring {
 
-
-  export interface FetchResult {
-     httpCode: number;
-     JSONresponse: any; // the resulting JSON Response from the fetched API
-  }
-
-
-  export interface MonitorArgs  {
-    parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress,
-    timeout: number,
-    secrets: orchestra.CircleCISecrets
-  }
-
   export namespace subscribers {
 
       interface ICciApiSubscriberNext {
@@ -105,6 +92,18 @@ export namespace monitoring {
 
 
 
+      export interface FetchResult {
+         httpCode: number;
+         JSONresponse: any; // the resulting JSON Response from the fetched API
+      }
+
+
+      export interface MonitorArgs  {
+        parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress,
+        timeout: number,
+        secrets: orchestra.CircleCISecrets
+      }
+
   /**
    *
    *
@@ -177,12 +176,12 @@ export namespace monitoring {
       })
     }
 
-    private start(){
-      /// okay, so first let's
-      /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
-      let pipelineParameters = { parameters: {} };
-      /// let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
-
+    /**
+     * Queries the Circle CI API to check execution status of workflows of a given Circle CI Pipeline
+     *
+     * @paramter <code>pipeline_uuid</code> the UUID of the Pipeline you want to check Workflows execution status for. CircleCI API simply names 'id' this pipline uuid
+     **/
+    private checkCciWorkflowsExecStatusFor(pipeline_uuid: string) : rxjs.Observable<AxiosResponse<any>> {
       let requestConfig = {
         headers: {
           "Circle-Token": this.secrets.circleci.auth.token,
@@ -190,9 +189,8 @@ export namespace monitoring {
           "Content-Type": "application/json"
         }
       };
-      let jsonPayload: any = pipelineParameters;
-      const cci_rest_endpoint = "https://circleci.com/api/v2/project/gh/";
-      const source = rxjs.from(axios.post( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, requestConfig )).pipe(
+      const cci_rest_endpoint = "https://circleci.com/api/v2/pipeline";
+      const source = rxjs.from(axios.post( `${cci_rest_endpoint}` + "/" + `${pipeline_uuid}` + "/workflow", jsonPayload, requestConfig )).pipe(
       tap(val => console.log(`fetching ${cci_rest_endpoint} which you won't see `)),)
       const response$ = source.pipe(
         map(axiosResponse => {
@@ -206,9 +204,9 @@ export namespace monitoring {
           errors.pipe(
             //log error message
             tap(axiosResponse => {
-              console.log(`Error occured, trying to fetch [${cci_rest_endpoint}], HTTP Response is : `);
+              console.log(`Error occured, trying to check workflows execution status of pipeline [${pipeline_uuid}], HTTP Response is : `);
               console.log(`Error occured, trying to fetch [${JSON.stringify(axiosResponse.data)}], now retrying`);
-              console.log(`Error occured, trying to fetch [${cci_rest_endpoint}], now retrying`);
+              console.log(`Error occured, now retrying`);
             }),
             //restart in 5 seconds
             delay(3000), /// wait 3 seconds before retrying
@@ -218,6 +216,15 @@ export namespace monitoring {
           )
         )
       );
+      return response$;
+    }
+    private start(){
+      /// okay, so first let's
+      /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
+      
+      let observableSentRequest = this.checkCciWorkflowsExecStatusFor(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
+
+
 
       /// then let's init status checks subscribers
       ///

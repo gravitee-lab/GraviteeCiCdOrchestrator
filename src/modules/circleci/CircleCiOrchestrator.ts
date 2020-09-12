@@ -11,12 +11,11 @@ import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSe
 
 
 export interface CircleCISecrets {
-  circleci: {auth:
-    {
+  circleci: {
+    auth: {
       username: string,
-      secret: string
+      token: string
     }
-
   }
 }
 /**
@@ -236,7 +235,7 @@ export class CircleCiOrchestrator {
       parallelExecutionsSet.forEach(((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {}};
-        let triggerPipelineSubscription = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
+        let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
             next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
             complete: data => {
               console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
@@ -269,7 +268,7 @@ export class CircleCiOrchestrator {
         let comp = parallelExecutionsSetArray[i];
         /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {} };
-        let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
+        let observableSentRequest = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
         let pipelExecProgress: parallel.PipelineExecutionProgress = {
           component: comp,
           pipeline_execution: {
@@ -536,7 +535,7 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
-    triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any/*Observable<any><AxiosResponse<any>>*/ {
+    triggerCciPipeline(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any/*Observable<any><AxiosResponse<any>>*/ {
       /*
       let observableRequest: any = rxjs.Observable.create( ( observer ) => {
           let config = {
