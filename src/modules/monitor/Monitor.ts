@@ -108,9 +108,9 @@ export namespace monitoring {
        **/
       this.timeout = args.timeout; // unsued yet
       this.subscribers = [];
-      this.subscribeToAllTriggers();
+      this.initSubscribers();
     }
-  private subscribeToAllTriggers() : void {
+  private initSubscribers() : void {
     let arrayLength = this.parallelExecutionSetProgress.pipeline_executions.length;
     for (let i: number; i < arrayLength ; i++){
       // create a new Subscriber which immediately subscribes to PipelineExecution 's observableRequest
