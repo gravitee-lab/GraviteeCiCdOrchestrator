@@ -140,8 +140,8 @@ import * as giocomponents from '../manifest/GraviteeComponent';
       **/
       export class ParallelExecutionSetProgress {
         /**
-         * Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
-         * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
+         * Used by {@see Monitor} to subscribe to all {@see PipelineExecutionProgress}s <code>observableRequest</code>s and
+         * follow up progress of each {@see PipelineExecutionProgress} in this ParallelExecutionSetProgress
          **/
         public readonly all_pipeline_execution_progress: PipelineExecutionProgress[];
 
@@ -149,8 +149,8 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           this.all_pipeline_execution_progress = [];
         }
         /**
-         * Adds a {@see PipelineExecution} to this {@see ParallelExecutionSetProgress}
-         * @param <code>pipeExec</code> the {@see PipelineExecution} to add to this {@øee ParallelExecutionSetProgress}
+         * Adds a {@see PipelineExecutionProgress} to this {@see ParallelExecutionSetProgress}
+         * @param <code>pipeExec</code> the {@see PipelineExecutionProgress} to add to this {@øee ParallelExecutionSetProgress}
          * @returns the {@see GraviteeComponent} of the added pipeline execution
          **/
         addPipelineExecutionProgress(pipeExecProgress: PipelineExecutionProgress): giocomponents.GraviteeComponent {
@@ -160,7 +160,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         }
         /**
          *
-         * Updates the {@see PipelineExecution} associated with the provided <code>someGioComponent</code> {@see GraviteeComponent}, with the provided CircleCI API response <code>theCci_Api_response</code>, and the provided CircleCI API error <code>theCci_Api_error</code>
+         * Updates the {@see PipelineExecutionProgress} associated with the provided <code>someGioComponent</code> {@see GraviteeComponent}, with the provided CircleCI API response <code>theCci_Api_response</code>, and the provided CircleCI API error <code>theCci_Api_error</code>
          *
          * @paramter <code>someGioComponent</code>
          * @paramter <code>theCci_Api_response</code> The Circle CI API returned JSON response, set it to null if error returned
