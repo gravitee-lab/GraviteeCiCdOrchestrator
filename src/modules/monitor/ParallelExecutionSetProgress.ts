@@ -112,9 +112,9 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         }
         /**
          *
-         * 
+         * Use this method to retrieve a {@see PipelineExecution} from its {@see GraviteeComponent}
          *
-         * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the assoicated {@see PipelineExecution}
+         * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the associated {@see PipelineExecution}
          * @returns the {@see PipelineExecution} associated with the provided {@see GraviteeComponent} <code>gioComponent</code>
          **/
         public getPipelineExecutionFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecution {
