@@ -1,6 +1,10 @@
 /// import * as whatever from '@some/pkgIneed';
 import * as giocomponents from '../manifest/GraviteeComponent';
 
+
+      /**
+       * Unsued yet
+       **/
       export enum CciPipelineExecutionState  {
         /**
          * Pipeline execution was <strong>not triggered yet</strong>, and does not exists for the <strong>Circle CI API v2</strong>
@@ -23,8 +27,11 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          **/
         CREATED = 100
       }
-      export interface CircleCiApiResponse {
-            pipeline_exec_number: string, /// In CircleCI API v2, this API response property is named [number], see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
+      /**
+       * In CircleCI API v2,  API response , see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
+       **/
+      export interface CircleCiApiTriggerPipelineResponse {
+            number: string, // in Circle CI API v2, a pipeline may be executed many times : each execution is indexed with that number
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
              * to uniquely identify a triggered pipeline (a pipeline execution)
@@ -44,7 +51,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
              * 'CREATED', when the pipeline execution has actually started in Circle CI infra
              * 'ERRORED', when the pipeline execution has actually started in Circle CI infra, and at least one Job has completed with errors.
              **/
-            exec_state: CciPipelineExecutionState
+            state: string
       } /*, for example : {
             "execution_index": "16",
             "id": "952de923-293b-4829-add4-056c4f95940a",
@@ -63,7 +70,8 @@ import * as giocomponents from '../manifest/GraviteeComponent';
            * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
            **/
           completed: boolean,
-          cci_response: CircleCiApiResponse;
+          cci_response: CircleCiApiTriggerPipelineResponse;
+          error: any;
         }
       }
 
@@ -88,21 +96,38 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * @returns the {@see GraviteeComponent} of the added pipeline execution
          **/
         addPipelineExecution(pipeExec: PipelineExecution): giocomponents.GraviteeComponent {
+
           this.pipeline_executions.push(pipeExec);
           return pipeExec.component;
         }
-        updatePipelineExecution(aComponent: giocomponents.GraviteeComponent, theCci_response: any) {
+        updatePipelineExecution(aGioComponent: giocomponents.GraviteeComponent, theCci_response: any) {
           /// first, must find the Pipeline execution for the [component]
           for (let i:number; i < this.pipeline_executions.length; i++) {
-            if (this.pipeline_executions[i].component.name == aComponent.name && this.pipeline_executions[i].component.version == aComponent.version) {
-              this.pipeline_executions[i].execution.cci_response.pipeline_exec_number = theCci_response.number;
-              this.pipeline_executions[i].execution.cci_response.created_at = theCci_response.created_at;
-              this.pipeline_executions[i].execution.cci_response.exec_state = theCci_response.created_at;
-              this.pipeline_execu tions[i].execution.cci_response.id = theCci_response.id;
-
+            if (this.pipeline_executions[i].component.name == aGioComponent.name && this.pipeline_executions[i].component.version == aGioComponent.version) {
+              this.pipeline_executions[i].execution.cci_response = theCci_response;
               this.pipeline_executions[i].execution.completed = true;
               break;
             }
           }
+        }
+        /**
+         *
+         * 
+         *
+         * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the assoicated {@see PipelineExecution}
+         * @returns the {@see PipelineExecution} associated with the provided {@see GraviteeComponent} <code>gioComponent</code>
+         **/
+        public getPipelineExecutionFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecution {
+          let toReturn : PipelineExecution = null;
+          for (let i:number; i < this.pipeline_executions.length; i++) {
+            if (this.pipeline_executions[i].component.name == gioComponent.name && this.pipeline_executions[i].component.version == gioComponent.version) {
+              toReturn = this.pipeline_executions[i];
+              break;
+            }
+          }
+          return toReturn;
+        }
+        public toString(): string {
+          return JSON.stringify(this.pipeline_executions);
         }
       }

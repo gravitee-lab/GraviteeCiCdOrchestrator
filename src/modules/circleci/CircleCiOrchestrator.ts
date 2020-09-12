@@ -241,11 +241,12 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
+
       let parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress = new parallel.ParallelExecutionSetProgress();
       let parallelExecutionsSetArray: GraviteeComponent[] = parallelExecutionsSet.getComponents();
-      let parallelExecSetArrayLength: number = parallelExecutionsSetArray.length;
+      let parallelExecSetLength: number = parallelExecutionsSetArray.length;
       /// First, trigger all pipelines in the parallel execution set
-      for (let i=0; i < parallelExecSetArrayLength; i++){
+      for (let i = 0; i < parallelExecSetLength; i++) {
         let comp = parallelExecutionsSetArray[i];
         /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {} };
@@ -257,10 +258,11 @@ export class CircleCiOrchestrator {
             observableRequest: observableSentRequest,
             cci_response: {
               created_at: null,
-              exec_state: parallel.CciPipelineExecutionState.UNTRIGGERED,
-              pipeline_exec_number: null,
+              state: null,
+              number: null,
               id: null
-            }
+            },
+            error: null
           }
         };
         parallelExecutionSetProgress.addPipelineExecution(pipelExec);

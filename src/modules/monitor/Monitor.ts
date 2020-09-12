@@ -4,9 +4,7 @@ import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
 import {AxiosResponse} from 'axios';
 import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
-
-/// import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
-/// import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
+import * as giocomponents from '../manifest/GraviteeComponent';
 /// import * as Collections from 'typescript-collections';
 
 export namespace monitoring {
@@ -30,8 +28,7 @@ export namespace monitoring {
   export class Monitor {
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-    ///
-    ///
+
     /**
      * Timeout for the execution of this module
      **/
@@ -41,18 +38,22 @@ export namespace monitoring {
       name: string,
       args: MonitorArgs
     ) {
+      /**
+       * Monitor subscribes to all crated ObservableStreams
+       * for all Circle CI v2 invocations to trigger all pipeline executions
+       **/
+      this.subscribeToAllTriggers();
       this.timeout = args.timeout;
-
     }
-  start(){
+  private subscribeToAllTriggers() : void {
     let arrayLength = this.parallelExecutionSetProgress.pipeline_executions.length;
     for (let i: number; i < arrayLength ; i++){
       this.parallelExecutionSetProgress.pipeline_executions[i].execution.observableRequest.subscribe({
-          next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+          next: this.handleTriggerPipelineCciResponse.bind(this),
           complete: (data) => {
             console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
           },
-          error: this.errorHandlerTriggerCCIPipeline.bind(this)
+          error: this.handleTriggerPipelineCciResponseError.bind(this)
       });
     }
 
@@ -79,17 +80,32 @@ export namespace monitoring {
    *
    *
    **/
-  handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any, component: .GraviteeComponent) : void {
-    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
-
-
+  private handleTriggerPipelineCciResponse (circleCiJsonResponse: any, component: giocomponents.GraviteeComponent) : void {
+    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCciResponse] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
     /**
-     * CircleCiApiResponse
+     * CircleCiApiTriggerPipelineResponse
      **/
-    this.parallelExecutionSetProgress.updatePipelineExecution(component, pipeline_exec)
+    this.parallelExecutionSetProgress.updatePipelineExecution(component, circleCiJsonResponse);
   }
 
+  private handleTriggerPipelineCciResponseError (error: any) : void {
+    console.info( '[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
+    let entry: any = {};
+    entry.pipeline = {
+      execution_index: null,
+      id : null,
+      created_at: null,
+      exec_state: null,
+      error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
+    }
 
+    this.progressMatrix.push(entry);
+
+    console.info('')
+    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
+    console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
+    console.info('')
+  }
 
 
   public fetch (): rxjs.Observable<AxiosResponse<any>> {
