@@ -48,11 +48,12 @@ export namespace monitoring {
       export class CciApiSubscriber {
 
         public readonly pipelineExecution: parallel.PipelineExecution;
-
         constructor (
           somePipelineExecution: parallel.PipelineExecution
         ) {
            this.pipelineExecution = somePipelineExecution;
+           // immediately subscribes to PipelineExecution 's observableRequest (which is an RxJS {@see ObservableStream} )
+           this.pipelineExecution.execution.observableRequest.subscribe(this);
         }
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
@@ -105,19 +106,17 @@ export namespace monitoring {
        * Monitor subscribes to all crated ObservableStreams
        * for all Circle CI v2 invocations to trigger all pipeline executions
        **/
+      this.timeout = args.timeout; // unsued yet
+      this.subscribers = [];
       this.subscribeToAllTriggers();
-      this.timeout = args.timeout;
     }
   private subscribeToAllTriggers() : void {
     let arrayLength = this.parallelExecutionSetProgress.pipeline_executions.length;
     for (let i: number; i < arrayLength ; i++){
-      this.parallelExecutionSetProgress.pipeline_executions[i].execution.observableRequest.subscribe({
-          next: this.handleTriggerPipelineCciResponse.bind(this),
-          complete: (data) => {
-            console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
-          },
-          error: this.handleTriggerPipelineCciResponseError.bind(this.parallelExecutionSetProgress.pipeline_executions[i])
-      });
+      // create a new Subscriber which immediately subscribes to PipelineExecution 's observableRequest
+      let thisSubscriber = new monitoring.subscribers.CciApiSubscriber(this.parallelExecutionSetProgress.pipeline_executions[i]);
+      // keep a reference over the new subscriber
+      this.subscribers.push(thisSubscriber);
     }
 
   }
