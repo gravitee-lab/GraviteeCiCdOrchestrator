@@ -125,7 +125,7 @@ export namespace monitoring {
      **/
     public readonly completed: boolean;
     /**
-     * Timeout for the execution of this module
+     * Timeout for the status checks and trigerring of all Pipelines 
      **/
     public readonly timeout: number;
 
