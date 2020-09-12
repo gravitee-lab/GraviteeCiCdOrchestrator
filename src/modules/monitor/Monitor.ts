@@ -44,7 +44,7 @@ export namespace monitoring {
       }
 
       export class CciApiPipelineStatusSubscriber implements ICciApiSubscriber {
-        
+
         public readonly pipelineStatus: parallel.PipelineExecutionProgress;
 
         constructor (
@@ -111,6 +111,12 @@ export namespace monitoring {
   export class Monitor {
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
+    /**
+     *
+     * Those help the Monitor find out when all CircleCI API HTTP Responses
+     * have been received, when triggering pipline executions
+     *
+     **/
     public readonly triggerSubscribers: monitoring.subscribers.CciApiTriggerPipelineSubscriber[];
     public readonly statusSubscribers: monitoring.subscribers.CciApiPipelineStatusSubscriber[];
     /**
