@@ -25,27 +25,53 @@ export namespace monitoring {
 
   export namespace subscribers {
 
-    interface ICciApiSubscriberNext {
-      (data: any): void;
-    }
+      interface ICciApiSubscriberNext {
+        (data: any): void;
+      }
 
-    interface ICciApiSubscriberComplete {
-      (data: any): void;
-    }
+      interface ICciApiSubscriberComplete {
+        (data: any): void;
+      }
 
-    interface ICciApiSubscriberError {
-      (error: any): void;
-    }
+      interface ICciApiSubscriberError {
+        (error: any): void;
+      }
 
-    export interface ICciApiSubscriber {
-      next: ICciApiSubscriberNext, /// method with signature (data: any) => {}
-      complete: ICciApiSubscriberComplete,/// method with signature (data: any) => {}
-      error: ICciApiSubscriberError /// method with signature (error: any) => {}
-    }
+      export interface ICciApiSubscriber {
+        next: ICciApiSubscriberNext, /// method with signature (data: any) => {}
+        complete: ICciApiSubscriberComplete,/// method with signature (data: any) => {}
+        error: ICciApiSubscriberError /// method with signature (error: any) => {}
+      }
+
+      export class CciApiPipelineStatusSubscriber implements ICciApiSubscriber {
+        public readonly pipelineExecution: parallel.PipelineExecution;
+        constructor (
+          somePipelineExecution: parallel.PipelineExecution
+        ) {
+           this.pipelineExecution = somePipelineExecution;
+           // immediately subscribes to PipelineExecution 's observableRequest (which is an RxJS {@see ObservableStream} )
+           this.pipelineExecution.execution.observableRequest.subscribe(this);
+        }
+        public next (theCci_Api_response: any) : void {
+          console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status : response received ! (below received Circle CI answer) :)]')
+          console.log( JSON.stringify(theCci_Api_response, null, " "));
+          this.pipelineExecution.execution.cci_response = theCci_Api_response;
+          this.pipelineExecution.execution.completed = true;
+        }
+        public complete(theCci_Api_response: any) : void {
+          console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status completed! (below received Circle CI answer) :)]')
+          console.log( JSON.stringify(theCci_Api_response, null, " "));
+        }
+        public error(theCci_Api_error: any) : void { // handleTriggerPipelineCciResponseError
+          console.log( '[{[Monitor]} -  querying Circle CI API to check Pipeline Status returned HTTP error! :o  (below received Circle CI answer)]')
+          console.log( JSON.stringify(theCci_Api_error, null, " "));
+          this.pipelineExecution.execution.error = theCci_Api_error;
+        }
+      }
       /**
        * Used to Subscribe to the ObservableStream for each Circle CI API invocation to triugger a pipeline execution
        **/
-      export class CciApiSubscriber {
+      export class CciApiTriggerPipelineSubscriber implements ICciApiSubscriber {
 
         public readonly pipelineExecution: parallel.PipelineExecution;
         constructor (
@@ -57,21 +83,23 @@ export namespace monitoring {
         }
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
-          console.log( JSON.stringify(theCci_Api_response));
+          console.log( JSON.stringify(theCci_Api_response, null, " "));
           this.pipelineExecution.execution.cci_response = theCci_Api_response;
           this.pipelineExecution.execution.completed = true;
         }
         public complete(theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline completed! (below received Circle CI answer) :)]')
-          console.log( JSON.stringify(theCci_Api_response));
+          console.log( JSON.stringify(theCci_Api_response, null, " "));
         }
-        public error(error: any) : void { // handleTriggerPipelineCciResponseError
-          console.log( '[{[Monitor]} - triggering Circle CI Pipeline completed! :)]')
-          this.pipelineExecution.execution.error = error;
+        public error(theCci_Api_error: any) : void { // handleTriggerPipelineCciResponseError
+          console.log( '[{[Monitor]} - triggering Circle CI Pipeline returned HTTP error :o ! (below received HTTP error) ]')
+          console.log( JSON.stringify(theCci_Api_error, null, " "));
+          this.pipelineExecution.execution.error = theCci_Api_error;
         }
 
       }
-    }
+
+    } // end of [subscribers] namespace
 
 
 
@@ -82,8 +110,8 @@ export namespace monitoring {
   export class Monitor {
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-    public readonly triggerSubscribers: monitoring.subscribers.CciApiSubscriber[];
-    public readonly statusSubscribers: monitoring.subscribers.CciApiSubscriber[];
+    public readonly triggerSubscribers: monitoring.subscribers.CciApiTriggerPipelineSubscriber[];
+    public readonly statusSubscribers: monitoring.subscribers.CciApiPipelineStatusSubscriber[];
 
     /**
      * Timeout for the execution of this module
@@ -108,7 +136,7 @@ export namespace monitoring {
       let arrayLength = this.parallelExecutionSetProgress.pipeline_executions.length;
       for (let i: number; i < arrayLength ; i++){
         // create a new Subscriber which immediately subscribes to PipelineExecution 's observableRequest
-        let thisSubscriber = new monitoring.subscribers.CciApiSubscriber(this.parallelExecutionSetProgress.pipeline_executions[i]);
+        let thisSubscriber = new monitoring.subscribers.CciApiTriggerPipelineSubscriber(this.parallelExecutionSetProgress.pipeline_executions[i]);
         // keep a reference over the new subscriber
         this.triggerSubscribers.push(thisSubscriber);
       }
