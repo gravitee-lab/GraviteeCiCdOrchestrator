@@ -181,7 +181,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           this.all_pipeline_execution_progress.push(pipeExecProgress);
           return pipeExecProgress.component;
         }
-        private haveAllPipelineTriggersResponseBeenReceived(): boolean {
+        public haveAllPipelineTriggersResponseBeenReceived(): boolean {
           let haveHttpResponsesBeenReceived: boolean = true;
           let arrayLength: number = this.all_pipeline_execution_progress.length;
           for (let i: number; i < arrayLength ; i++){
