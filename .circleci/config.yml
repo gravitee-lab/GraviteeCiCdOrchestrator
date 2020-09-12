@@ -79,7 +79,7 @@ workflows:
               only: /^*/
   docker_build_and_push:
     jobs:
-      - build:
+      - docker_build:
           context: gravitee-lab
           filters:
             tags:
