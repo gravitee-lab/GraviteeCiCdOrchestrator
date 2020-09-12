@@ -172,6 +172,25 @@ export namespace monitoring {
     }
 
     private start(){
+      /// okay, so first let's
+      /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
+      let pipelineParameters = { parameters: {} };
+      let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
+
+
+      /// then let's init status checks subscribers
+      ///
+      /// And finally we have to determine when all status checks have
+      /// detected Pipeline Execution Completed, to then emit an
+      /// Observable Stream event, to the Main Orchestrator, who then
+      /// knows all Pipeline Executions have completed, and :
+      ///
+      /// => Store All Pipeline Execution in the {@see ParallelExecutionSet} in the Global Pipeline Execution Report (printed when all {@see ParallelExecutionSet} have completed)
+      /// => Print the report to the Winston logger, (and Filebeat forwards to Logstash / ElasticSearch, with CICD Process label)
+      /// => Proceed with next {@see ParallelExecutionSet}, if no pipeline execution completed with 'failed' status
+      ///
+
+
 
     }
     // -----
