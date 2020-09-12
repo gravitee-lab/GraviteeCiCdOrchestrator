@@ -1,7 +1,27 @@
 # Circle CI API : how to check execution status of a pipeline
 
+### About Circle CI Pipelines Workflow execution `status` values : One question
 
-* you need the pipeline execution Id, which is a UUID. Below, you can see that the `ìtems` array in JSON response, lists all "`workflow`" executions (and give their status):
+
+
+* The `status`, returned for the workflow execution (`https://circleci.com/api/v2/pipeline/${PIPELINE_ID}/workflow`), of a `Circle CI` pipeline, can have one of the following values :
+
+| CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
+|----------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `success`                                          |  execution completed without any error                                                          |
+| `running`                                          |  execution is running                                                                           |
+| `not_run`                                          |  execution is scheduled, but did not start yet                                                  |
+| `failed`                                           |  execution completed with errors                                                                |
+| `error`                                            |  execution was canceled, because of `.circleci/config.yml` syntax errors                        |
+| `failing`                                          |  execution is still running, and at least one error already occured, without stopping execution |
+| `on_hold`                                          |  someone paused the execution                                                                   |
+| `canceled`                                         |  someone canceled the execution                                                                 |
+| `unauthorized`                                     |  an unauthorized Circle CI user requested the execution, using `Circle CI` API, and it was therefore denied |
+
+* My question is : are all _Descriptions of what happened_ definitely right? On which of them am I wrong ? Where I am wrong, what does the value means (What happened) ?
+
+
+* You need the pipeline execution Id, which is a UUID, to browse workflows executions, of a pipeline execution. Below, you can see that the `ìtems` array in JSON response, lists all "`workflow`" executions (and give their status):
 
 ```bash
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ curl -X GET https://circleci.com/api/v2/project/gh/gravitee-lab/GraviteeReleaseOrchestrator/pipeline/126 -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}" | jq .
