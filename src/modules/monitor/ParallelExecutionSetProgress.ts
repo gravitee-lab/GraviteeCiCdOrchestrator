@@ -35,7 +35,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
              * In Circle CI API v2, a pipeline may be executed many
              * times : each execution is indexed with that number
              **/
-            number: string,
+            number: number,
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
              * to uniquely identify a pipeline execution
@@ -102,33 +102,56 @@ import * as giocomponents from '../manifest/GraviteeComponent';
        *
        * see https://circleci.com/docs/api/v2/#get-a-pipeline-39-s-workflows
        **/
-      export interface CciApiPipelineStatusResponse {
-            number: string,
-            /**
-             * [id] is alpha numeric : it is UUID issued by CircleCI api
-             * to uniquely identify a pipeline execution
-             **/
-            id: string,
-            /**
-             *
-             **/
-            created_at: string,
-            /**
-             * [exec_state] is the current execution state of the pipeline
-             * this value can be :
-             * "UNTRIGGERED" "CREATED", "PENDING" or "ERRORED"
-             * and this state is :
-             * 'UNTRIGGERED', before the pipeline has been triggered using the Circle CI API
-             * 'PENDING', right after the pipeline has been triggered using the Circle CI API
-             * 'CREATED', when the pipeline execution has actually started in Circle CI infra
-             * 'ERRORED', when the pipeline execution has actually started in Circle CI infra, and at least one Job has completed with errors.
-             **/
-            state: string
+      export interface CciWorkflowStatus {
+        pipeline_id: string,
+        id: string,
+        name: string,
+        project_slug: string,
+        status: string,
+        started_by: string,
+        pipeline_number: number,
+        created_at: string,
+        stopped_at: string
       } /*, for example : {
-            "execution_index": "16",
-            "id": "952de923-293b-4829-add4-056c4f95940a",
-            "created_at": "2020-08-16T22:34:58.273Z",
-            "exec_state": "pending"
+                    "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+                    "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+                    "name": "docker_build_and_push",
+                    "project_slug": "gh/gravitee-lab/GraviteeReleaseOrchestrator",
+                    "status": "failed",
+                    "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+                    "pipeline_number": 126,
+                    "created_at": "2020-09-12T17:47:21Z",
+                    "stopped_at": "2020-09-12T17:48:26Z"
+                  }
+          */
+      export interface CciApiPipelineStatusResponse {
+        items: CciWorkflowStatus[]
+      } /*, for example : {
+                "next_page_token": null,
+                "items": [
+                  {
+                    "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+                    "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+                    "name": "docker_build_and_push",
+                    "project_slug": "gh/gravitee-lab/GraviteeReleaseOrchestrator",
+                    "status": "failed",
+                    "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+                    "pipeline_number": 126,
+                    "created_at": "2020-09-12T17:47:21Z",
+                    "stopped_at": "2020-09-12T17:48:26Z"
+                  },
+                  {
+                    "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+                    "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
+                    "name": "yet_another_test_workflow",
+                    "project_slug": "gh/gravitee-lab/GraviteeReleaseOrchestrator",
+                    "status": "success",
+                    "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+                    "pipeline_number": 126,
+                    "created_at": "2020-09-12T17:47:21Z",
+                    "stopped_at": "2020-09-12T17:48:11Z"
+                  }
+                ]
           }
           */
 
