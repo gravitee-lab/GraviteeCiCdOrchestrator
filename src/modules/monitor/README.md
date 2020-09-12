@@ -18,7 +18,7 @@
 | `canceled`                                         |  someone canceled the execution                                                                 |
 | `unauthorized`                                     |  an unauthorized Circle CI user requested the execution, using `Circle CI` API, and it was therefore denied |
 
-* My question is : are all _Descriptions of what happened_ definitely right? On which of them am I wrong ? Where I am wrong, what does the value means (What happened) ?
+* My question is : Are all _Descriptions of what happened_ definitely right? On which of them am I wrong ? Where I am wrong, what does the value means (What happened) ?
 
 
 * You need the pipeline execution Id, which is a UUID, to browse workflows executions, of a pipeline execution. Below, you can see that the `ìtems` array in JSON response, lists all "`workflow`" executions (and give their status):
