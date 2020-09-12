@@ -133,10 +133,12 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
          * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
          **/
-         public readonly pipeline_execution_triggers: PipelineExecutionTrigger[];
+        public readonly pipeline_execution_triggers: PipelineExecutionTrigger[];
+        public readonly pipeline_execution_statuschecks: PipelineExecutionStatusCheck[];
 
         constructor() {
-          this.pipeline_execution_triggers = []
+          this.pipeline_execution_triggers = [];
+          this.pipeline_execution_statuschecks = [];
         }
         /**
          * Adds a {@see PipelineExecution} to this {@see ParallelExecutionSetProgress}
