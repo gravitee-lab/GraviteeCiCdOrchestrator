@@ -43,7 +43,7 @@ export namespace monitoring {
         error: ICciApiSubscriberError /// method with signature (error: any) => {}
       }
 
-      export class CciApiPipelineStatusSubscriber implements ICciApiSubscriber {
+      export class CciApiPipelineStatusChecksSubscriber implements ICciApiSubscriber {
 
         public readonly pipelineStatus: parallel.PipelineExecutionProgress;
 
@@ -126,7 +126,7 @@ export namespace monitoring {
      *
      **/
     public readonly triggerSubscribers: monitoring.subscribers.CciApiTriggerPipelineSubscriber[];
-    public readonly statusSubscribers: monitoring.subscribers.CciApiPipelineStatusSubscriber[];
+    public readonly statusSubscribers: monitoring.subscribers.CciApiPipelineStatusChecksSubscriber[];
     /**
      * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of
      * pipeline execution final status (failure/success, etc...)
@@ -153,7 +153,55 @@ export namespace monitoring {
       // Then, we need to find out when all triggers actually received Circle CI API Response
       // this is done using an RxJS "Subject"
 
+      this.trigger$.subscribe({
+        next: ((pipeExecProgress: parallel.PipelineExecutionProgress) => {
+          console.log("NEXT Subject for PipelineExecutionProgress Trigger : ")
+
+          if (this.haveAllPipelineTriggersResponseBeenReceived()) {
+             console.log("All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D ")
+             this.start();
+          }
+        }).bind(this),
+        error: ((error: parallel.CciApiPipelineStatusResponse) => {
+
+        }).bind(this),
+        complete: ((data: parallel.PipelineExecutionProgress) => {
+
+        }).bind(this)
+      })
     }
+
+    private start(){
+
+    }
+    // -----
+    // -----
+    // ----- Pipeline Executions Monitoring
+    // -----
+    // -----
+
+    private initStatusSubscribers() : void {
+      let arrayLength = this.parallelExecutionSetProgress.all_pipeline_execution_progress.length;
+      for (let i: number; i < arrayLength ; i++){
+        // create a new Subscriber which immediately subscribes to PipelineExecution 's observableRequest
+        let thisSubscriber = new monitoring.subscribers.CciApiPipelineStatusChecksSubscriber(this.parallelExecutionSetProgress.all_pipeline_execution_progress[i]);
+        // keep a reference over the new subscriber
+        this.statusSubscribers.push(thisSubscriber);
+      }
+    }
+    /**
+     * When this one returns true : all triggers HTTP Respense have been received from Circle CI API :
+     * So Monitor can proceed with checking pipeline status
+     **/
+    private haveAllPipelineStatusChecksResponseBeenReceived(): boolean {
+      return this.parallelExecutionSetProgress.haveAllPipelineTriggersResponseBeenReceived();
+    }
+
+    // -----
+    // -----
+    // ----- Pipeline Triggers Monitoring
+    // -----
+    // -----
 
     private initTriggerSubscribers() : void {
       let arrayLength = this.parallelExecutionSetProgress.all_pipeline_execution_progress.length;
