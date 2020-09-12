@@ -193,6 +193,15 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           }
           return haveHttpResponsesBeenReceived;
         }
+        /**
+         * Circle CI Pipeline Workflows execution status is checked repeatedly, until it is not worth checking anymore.
+         *
+         * This method returns <code>true</code> when all Pipelines Workflow status have been checked at least a first time.
+         *
+         * @returns <code>true</code> when all Pipelines Workflow status have been checked at least a first time.
+         * 
+         *  I WAS THERE AND NEEDED RETRY WHEN AND THROW ERROR TO BE SURE THERE IS NEVER A PROGRESS LEFT WITH ERROR WITHOUT STOPPING ALL CICD OPERATIONS
+         **/
         public haveAllPipelineStatusChecksResponseBeenReceived(): boolean {
           let haveHttpResponsesBeenReceived: boolean = true;
           let arrayLength: number = this.all_pipeline_execution_progress.length;
@@ -239,11 +248,29 @@ import * as giocomponents from '../manifest/GraviteeComponent';
 
           return toReturn;
         }
+        /**
+         * This method checks status of all pipeline workflow executions, and, according
+         * https://github.com/gravitee-io/kb/wiki/The-Gravitee-CICD-Reference-Guide#circle-ci-api-v2--how-to-check-execution-status-of-a-pipeline
+         * will return true if at least one pipeline workflow is not running (but will)
+         **/
         public isOneWorkflowNotYetRunning(): boolean {
           let toReturn: boolean = true;
 
           return toReturn;
         }
+        /**
+         * This method checks status of all pipeline workflow executions, and, according
+         * https://github.com/gravitee-io/kb/wiki/The-Gravitee-CICD-Reference-Guide#circle-ci-api-v2--how-to-check-execution-status-of-a-pipeline
+         * will return true if at least one pipeline workflow is not running (but will)
+         **/
+        public isOneWorkflowStillRunning(): boolean {
+          let toReturn: boolean = true;
+
+          return toReturn;
+        }
+
+
+
         /**
          *
          * Updates the {@see PipelineExecutionProgress} associated with the provided <code>someGioComponent</code> {@see GraviteeComponent}, with the provided CircleCI API response <code>theCci_Api_response</code>, and the provided CircleCI API error <code>theCci_Api_error</code>
