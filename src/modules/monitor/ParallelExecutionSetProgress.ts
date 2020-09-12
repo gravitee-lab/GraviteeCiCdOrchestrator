@@ -81,12 +81,12 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         pipeline_execution: {
           cci_trigger: {
             observableRequest: any,
-            reponse: CciApiTriggerPipelineResponse,
+            response: CciApiTriggerPipelineResponse,
             error: any
           },
           cci_statuscheck_response: {
             observableRequest: any,
-            reponse: CciApiTriggerPipelineResponse,
+            response: CciApiTriggerPipelineResponse,
             error: any
           }
         }
@@ -192,14 +192,14 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         updatePipelineExecutionProgress(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
           /// first, must find the Pipeline execution for the [component]
           if (theCci_Api_response == null) {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.reponse = {
+            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = {
               created_at: null,
               state: null,
               number: null,
               id: null
             };
           } else {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.reponse = theCci_Api_response;
+            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = theCci_Api_response;
           }
           this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.error = theCci_Api_error;
 
