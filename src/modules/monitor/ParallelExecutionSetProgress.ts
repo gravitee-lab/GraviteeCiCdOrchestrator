@@ -31,10 +31,15 @@ import * as giocomponents from '../manifest/GraviteeComponent';
        * In CircleCI API v2,  API response , see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
        **/
       export interface CciApiTriggerPipelineResponse {
-            number: string, // in Circle CI API v2, a pipeline may be executed many times : each execution is indexed with that number
+            /**
+             * In Circle CI API v2, a pipeline may be executed many
+             * times : each execution is indexed with that number
+             **/
+            number: string,
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
-             * to uniquely identify a triggered pipeline (a pipeline execution)
+             * to uniquely identify a pipeline execution
+             * This one identifier will be used to 
              **/
             id: string,
             /**
@@ -60,43 +65,48 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           }
           */
       /**
-      * JSON Object Schema to Represent a pipeline execution trigger, made of :
-      * - the RxJS Observable Stream for the HTTP request
-      * - the Circle CI API JSON Response
-      * - the Circle CI API HTTP Response error
+      * JSON Object Schema to Represent a pipeline execution, made of :
       * - the Gravitee Component for which the pipeline is triggered
+      * - For the HTTP request to trigger the pipeline execution :
+      *   --> the RxJS Observable Stream
+      *   --> the Circle CI API JSON Response
+      *   --> the Circle CI API HTTP Response error
+      * - For the HTTP request to check status of the pipeline execution
+      *   --> the RxJS Observable Stream
+      *   --> the Circle CI API JSON Response
+      *   --> the Circle CI API HTTP Response error
       **/
-      export interface PipelineExecutionTrigger {
+      export interface PipelineExecutionProgress {
         component: giocomponents.GraviteeComponent;
-        execution: {
-          observableRequest: any,
-          cci_response: CciApiTriggerPipelineResponse,
-          error: any
+        pipeline_execution: {
+          cci_trigger: {
+            observableRequest: any,
+            reponse: CciApiTriggerPipelineResponse,
+            error: any
+          },
+          cci_statuscheck_response: {
+            observableRequest: any,
+            reponse: CciApiTriggerPipelineResponse,
+            error: any
+          }
         }
       }
+
       /**
-      * JSON Object Schema to Represent a Query to Circle CI made to chek status of a given Pipeline execution, made of :
-      * - the RxJS Observable Stream for the HTTP request
-      * - the Circle CI API JSON Response
-      * - the Circle CI API HTTP Response error
-      * - the Gravitee Component for which the pipeline is triggered
-      **/
-      export interface PipelineExecutionStatusCheck {
-        execution: {
-          number: string, ///
-          observableRequest: any,
-          cci_response: CciApiPipelineStatusResponse,
-          error: any
-        }
-      }
-      /**
-       * In CircleCI API v2,  API response , see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
+       * In CircleCI API v2, API response, of the HTTP Request made to
+       * check the Pipeline Execution status :
+       *
+       * curl -X GET https://circleci.com/api/v2/pipeline/${PIPELINE_ID}/workflow \
+       *   -H 'Accept: application/json' \
+       *   -H 'Circle-Token: API_KEY'
+       *
+       * see https://circleci.com/docs/api/v2/#get-a-pipeline-39-s-workflows
        **/
       export interface CciApiPipelineStatusResponse {
-            number: string, // in Circle CI API v2, a pipeline may be executed many times : each execution is indexed with that number
+            number: string,
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
-             * to uniquely identify a triggered pipeline (a pipeline execution)
+             * to uniquely identify a pipeline execution
              **/
             id: string,
             /**
@@ -145,10 +155,10 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * @param <code>pipeExec</code> the {@see PipelineExecution} to add to this {@øee ParallelExecutionSetProgress}
          * @returns the {@see GraviteeComponent} of the added pipeline execution
          **/
-        addPipelineExecution(pipeExec: PipelineExecutionTrigger): giocomponents.GraviteeComponent {
+        addPipelineExecution(pipeExecTrigger: PipelineExecutionTrigger, pipeExecStatusCheck: PipelineExecutionStatusCheck): giocomponents.GraviteeComponent {
 
-          this.pipeline_execution_triggers.push(pipeExec);
-          return pipeExec.component;
+          this.pipeline_execution_triggers.push(pipeExecTrigger);
+          return pipeExecTrigger.component;
         }
         /**
          *
