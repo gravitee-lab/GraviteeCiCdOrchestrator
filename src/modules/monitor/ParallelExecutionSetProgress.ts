@@ -225,6 +225,25 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           return haveHttpResponsesBeenReceived;
         }
 
+
+        /**
+         * This method checks status of all pipeline workflow executions, and, according
+         * https://github.com/gravitee-io/kb/wiki/The-Gravitee-CICD-Reference-Guide#circle-ci-api-v2--how-to-check-execution-status-of-a-pipeline
+         * will return true if either :
+         *  => first Status Check has not happened (and 'pipeline_id' is 'null' )
+         *  => at least one pipeline workflow is still running,
+         *  => or at least one pipeline workflow is not running (but will)
+         **/
+        public isItStillWorthWaiting(): boolean {
+          let toReturn: boolean = true;
+
+          return toReturn;
+        }
+        public isOneWorkflowNotYetRunning(): boolean {
+          let toReturn: boolean = true;
+
+          return toReturn;
+        }
         /**
          *
          * Updates the {@see PipelineExecutionProgress} associated with the provided <code>someGioComponent</code> {@see GraviteeComponent}, with the provided CircleCI API response <code>theCci_Api_response</code>, and the provided CircleCI API error <code>theCci_Api_error</code>
