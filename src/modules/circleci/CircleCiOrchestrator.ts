@@ -260,21 +260,29 @@ export class CircleCiOrchestrator {
         /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {} };
         let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
-        let pipelExec: parallel.PipelineExecution = {
+        let pipelExecProgress: parallel.PipelineExecutionProgress = {
           component: comp,
-          execution: {
-            completed: false,
-            observableRequest: observableSentRequest,
-            cci_response: {
-              created_at: null,
-              state: null,
-              number: null,
-              id: null
+          pipeline_execution: {
+            cci_trigger: {
+              observableRequest: observableSentRequest,
+              response: {
+                created_at: null,
+                state: null,
+                number: null,
+                id: null
+              },
+              error: null
             },
-            error: null
+            cci_statuscheck: {
+              observableRequest: null,
+              response: {
+                items: []
+              },
+              error: null
+            }
           }
         };
-        parallelExecutionSetProgress.addPipelineExecution(pipelExec);
+        parallelExecutionSetProgress.addPipelineExecutionProgress(pipelExecProgress);
       }
 
       /// Now, passing on [parallelExecutionSetProgress] to Monitor which

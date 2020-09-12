@@ -84,9 +84,9 @@ import * as giocomponents from '../manifest/GraviteeComponent';
             response: CciApiTriggerPipelineResponse,
             error: any
           },
-          cci_statuscheck_response: {
+          cci_statuscheck: {
             observableRequest: any,
-            response: CciApiTriggerPipelineResponse,
+            response: CciApiPipelineStatusResponse,
             error: any
           }
         }
@@ -193,6 +193,21 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           }
           return haveHttpResponsesBeenReceived;
         }
+        public haveAllPipelineStatusChecksResponseBeenReceived(): boolean {
+          let haveHttpResponsesBeenReceived: boolean = true;
+          let arrayLength: number = this.all_pipeline_execution_progress.length;
+          for (let i: number; i < arrayLength ; i++){
+            ///  As soon as at least one trigger has both error and pipeline 'id' set to null, well there is one Pripeline Execution Trigger which did not complete
+            if (this.all_pipeline_execution_progress[i].pipeline_execution.cci_statuscheck.error === null && this.all_pipeline_execution_progress[i].pipeline_execution.cci_statuscheck.response.items.length == 0) {
+              haveHttpResponsesBeenReceived = false;
+              break; // no need to keep on looping
+            }
+          }
+          return haveHttpResponsesBeenReceived;
+        }
+
+
+
         /**
          *
          * Updates the {@see PipelineExecutionProgress} associated with the provided <code>someGioComponent</code> {@see GraviteeComponent}, with the provided CircleCI API response <code>theCci_Api_response</code>, and the provided CircleCI API error <code>theCci_Api_error</code>

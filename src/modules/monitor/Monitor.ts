@@ -52,12 +52,12 @@ export namespace monitoring {
         ) {
            this.pipelineStatus = somePipelineExecution;
            // immediately subscribes to Circle CI API HTTP request to check Pipeline Status 's observableRequest (which is an RxJS {@see ObservableStream} )
-           this.pipelineStatus.pipeline_execution.cci_statuscheck_response.observableRequest.subscribe(this);
+           this.pipelineStatus.pipeline_execution.cci_statuscheck.observableRequest.subscribe(this);
         }
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response, null, " "));
-          this.pipelineStatus.pipeline_execution.cci_statuscheck_response.response = theCci_Api_response;
+          this.pipelineStatus.pipeline_execution.cci_statuscheck.response = theCci_Api_response;
         }
         public complete(theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status completed! (below received Circle CI answer) :)]')
@@ -66,7 +66,7 @@ export namespace monitoring {
         public error(theCci_Api_error: any) : void { // handleTriggerPipelineCciResponseError
           console.log( '[{[Monitor]} -  querying Circle CI API to check Pipeline Status returned HTTP error! :o  (below received Circle CI answer)]')
           console.log( JSON.stringify(theCci_Api_error, null, " "));
-          this.pipelineStatus.pipeline_execution.cci_statuscheck_response.error = theCci_Api_error;
+          this.pipelineStatus.pipeline_execution.cci_statuscheck.error = theCci_Api_error;
         }
       }
       /**
@@ -194,7 +194,7 @@ export namespace monitoring {
      * So Monitor can proceed with checking pipeline status
      **/
     private haveAllPipelineStatusChecksResponseBeenReceived(): boolean {
-      return this.parallelExecutionSetProgress.haveAllPipelineTriggersResponseBeenReceived();
+      return this.parallelExecutionSetProgress.haveAllPipelineStatusChecksResponseBeenReceived();
     }
 
     // -----
