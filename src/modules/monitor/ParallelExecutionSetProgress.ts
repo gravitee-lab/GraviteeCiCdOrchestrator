@@ -30,7 +30,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
       /**
        * In CircleCI API v2,  API response , see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
        **/
-      export interface CircleCiApiTriggerPipelineResponse {
+      export interface CciApiTriggerPipelineResponse {
             number: string, // in Circle CI API v2, a pipeline may be executed many times : each execution is indexed with that number
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
@@ -60,26 +60,70 @@ import * as giocomponents from '../manifest/GraviteeComponent';
           }
           */
       /**
-      * JSON Object Schema to Represent a pipeline execution
+      * JSON Object Schema to Represent a pipeline execution trigger, made of :
+      * - the RxJS Observable Stream for the HTTP request
+      * - the Circle CI API JSON Response
+      * - the Circle CI API HTTP Response error
+      * - the Gravitee Component for which the pipeline is triggered
       **/
-      export interface PipelineExecution {
+      export interface PipelineExecutionTrigger {
         component: giocomponents.GraviteeComponent;
         execution: {
           observableRequest: any,
-          /**
-           * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
-           **/
-          completed: boolean,
-          cci_response: CircleCiApiTriggerPipelineResponse,
+          cci_response: CciApiTriggerPipelineResponse,
           error: any
         }
       }
-      export interface PipelineExecutionError {
-        message: string,
-        cause: any
+      /**
+      * JSON Object Schema to Represent a Query to Circle CI made to chek status of a given Pipeline execution, made of :
+      * - the RxJS Observable Stream for the HTTP request
+      * - the Circle CI API JSON Response
+      * - the Circle CI API HTTP Response error
+      * - the Gravitee Component for which the pipeline is triggered
+      **/
+      export interface PipelineExecutionStatusCheck {
+        execution: {
+          number: string, ///
+          observableRequest: any,
+          cci_response: CciApiPipelineStatusResponse,
+          error: any
+        }
       }
+      /**
+       * In CircleCI API v2,  API response , see https://circleci.com/docs/api/v2/#trigger-a-new-pipeline
+       **/
+      export interface CciApiPipelineStatusResponse {
+            number: string, // in Circle CI API v2, a pipeline may be executed many times : each execution is indexed with that number
+            /**
+             * [id] is alpha numeric : it is UUID issued by CircleCI api
+             * to uniquely identify a triggered pipeline (a pipeline execution)
+             **/
+            id: string,
+            /**
+             *
+             **/
+            created_at: string,
+            /**
+             * [exec_state] is the current execution state of the pipeline
+             * this value can be :
+             * "UNTRIGGERED" "CREATED", "PENDING" or "ERRORED"
+             * and this state is :
+             * 'UNTRIGGERED', before the pipeline has been triggered using the Circle CI API
+             * 'PENDING', right after the pipeline has been triggered using the Circle CI API
+             * 'CREATED', when the pipeline execution has actually started in Circle CI infra
+             * 'ERRORED', when the pipeline execution has actually started in Circle CI infra, and at least one Job has completed with errors.
+             **/
+            state: string
+      } /*, for example : {
+            "execution_index": "16",
+            "id": "952de923-293b-4829-add4-056c4f95940a",
+            "created_at": "2020-08-16T22:34:58.273Z",
+            "exec_state": "pending"
+          }
+          */
+
      /**
-      * JSON Object Schema to Represent a Parallel Execution Set  's Execution Progress
+      * JSON Object Schema to Represent a Parallel Execution Set's Execution Progress
       * Does not trigger any Pipeline execution, or subscribe to any ObservableStream : it just
       * keeps a reference on every Observable Stream the {@see Monitor} will subscribe to, and
       * remembers to which {@see GraviteeComponent} the ObservableStream is related.
@@ -89,20 +133,19 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
          * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
          **/
-         public readonly pipeline_executions: PipelineExecution[];
-         public readonly pipeline_executions_errors: PipelineExecution[];
+         public readonly pipeline_execution_triggers: PipelineExecutionTrigger[];
 
         constructor() {
-          this.pipeline_executions = []
+          this.pipeline_execution_triggers = []
         }
         /**
          * Adds a {@see PipelineExecution} to this {@see ParallelExecutionSetProgress}
          * @param <code>pipeExec</code> the {@see PipelineExecution} to add to this {@øee ParallelExecutionSetProgress}
          * @returns the {@see GraviteeComponent} of the added pipeline execution
          **/
-        addPipelineExecution(pipeExec: PipelineExecution): giocomponents.GraviteeComponent {
+        addPipelineExecution(pipeExec: PipelineExecutionTrigger): giocomponents.GraviteeComponent {
 
-          this.pipeline_executions.push(pipeExec);
+          this.pipeline_execution_triggers.push(pipeExec);
           return pipeExec.component;
         }
         /**
@@ -116,17 +159,16 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         updatePipelineExecution(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
           /// first, must find the Pipeline execution for the [component]
           if (theCci_Api_response == null) {
-            this.getPipelineExecutionFrom(someGioComponent).execution.cci_response = {
+            this.getPipelineExecutionTriggerFrom(someGioComponent).execution.cci_response = {
               created_at: null,
               state: null,
               number: null,
               id: null
             };
           } else {
-            this.getPipelineExecutionFrom(someGioComponent).execution.cci_response = theCci_Api_response;
+            this.getPipelineExecutionTriggerFrom(someGioComponent).execution.cci_response = theCci_Api_response;
           }
-          this.getPipelineExecutionFrom(someGioComponent).execution.error = theCci_Api_error;
-          this.getPipelineExecutionFrom(someGioComponent).execution.completed = true;
+          this.getPipelineExecutionTriggerFrom(someGioComponent).execution.error = theCci_Api_error;
 
         }
         /**
@@ -136,17 +178,17 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the associated {@see PipelineExecution}
          * @returns the {@see PipelineExecution} associated with the provided {@see GraviteeComponent} <code>gioComponent</code>
          **/
-        public getPipelineExecutionFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecution {
-          let toReturn : PipelineExecution = null;
-          for (let i:number; i < this.pipeline_executions.length; i++) {
-            if (this.pipeline_executions[i].component.name == gioComponent.name && this.pipeline_executions[i].component.version == gioComponent.version) {
-              toReturn = this.pipeline_executions[i];
+        public getPipelineExecutionTriggerFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecutionTrigger {
+          let toReturn : PipelineExecutionTrigger = null;
+          for (let i:number; i < this.pipeline_execution_triggers.length; i++) {
+            if (this.pipeline_execution_triggers[i].component.name == gioComponent.name && this.pipeline_execution_triggers[i].component.version == gioComponent.version) {
+              toReturn = this.pipeline_execution_triggers[i];
               break;
             }
           }
           return toReturn;
         }
         public toString(): string {
-          return JSON.stringify(this.pipeline_executions);
+          return JSON.stringify(this.pipeline_execution_triggers, null, " ");
         }
       }

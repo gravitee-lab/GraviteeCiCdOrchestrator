@@ -44,19 +44,20 @@ export namespace monitoring {
       }
 
       export class CciApiPipelineStatusSubscriber implements ICciApiSubscriber {
-        public readonly pipelineExecution: parallel.PipelineExecution;
+        /// public readonly pipelineExecution: parallel.PipelineExecutionTrigger;
+        public readonly pipelineStatus: parallel.PipelineStatus;
+
         constructor (
-          somePipelineExecution: parallel.PipelineExecution
+          somePipelineExecution: parallel.PipelineExecutionTrigger
         ) {
-           this.pipelineExecution = somePipelineExecution;
-           // immediately subscribes to PipelineExecution 's observableRequest (which is an RxJS {@see ObservableStream} )
-           this.pipelineExecution.execution.observableRequest.subscribe(this);
+           this.pipelineStatus = somePipelineExecution;
+           // immediately subscribes to Circle CI API HTTP request to check Pipeline Status 's observableRequest (which is an RxJS {@see ObservableStream} )
+           this.pipelineStatus.execution.observableRequest.subscribe(this);
         }
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response, null, " "));
-          this.pipelineExecution.execution.cci_response = theCci_Api_response;
-          this.pipelineExecution.execution.completed = true;
+          this.pipelineStatus.execution.cci_response = theCci_Api_response;
         }
         public complete(theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status completed! (below received Circle CI answer) :)]')
@@ -65,7 +66,7 @@ export namespace monitoring {
         public error(theCci_Api_error: any) : void { // handleTriggerPipelineCciResponseError
           console.log( '[{[Monitor]} -  querying Circle CI API to check Pipeline Status returned HTTP error! :o  (below received Circle CI answer)]')
           console.log( JSON.stringify(theCci_Api_error, null, " "));
-          this.pipelineExecution.execution.error = theCci_Api_error;
+          this.pipelineStatus.execution.error = theCci_Api_error;
         }
       }
       /**
@@ -74,9 +75,9 @@ export namespace monitoring {
        **/
       export class CciApiTriggerPipelineSubscriber implements ICciApiSubscriber {
 
-        public readonly pipelineExecution: parallel.PipelineExecution;
+        public readonly pipelineExecution: parallel.PipelineExecutionTrigger;
         constructor (
-          somePipelineExecution: parallel.PipelineExecution
+          somePipelineExecution: parallel.PipelineExecutionTrigger
         ) {
            this.pipelineExecution = somePipelineExecution;
            // immediately subscribes to PipelineExecution 's observableRequest (which is an RxJS {@see ObservableStream} )
@@ -86,7 +87,6 @@ export namespace monitoring {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response, null, " "));
           this.pipelineExecution.execution.cci_response = theCci_Api_response;
-          this.pipelineExecution.execution.completed = true;
         }
         public complete(theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline completed! (below received Circle CI answer) :)]')
@@ -113,7 +113,10 @@ export namespace monitoring {
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
     public readonly triggerSubscribers: monitoring.subscribers.CciApiTriggerPipelineSubscriber[];
     public readonly statusSubscribers: monitoring.subscribers.CciApiPipelineStatusSubscriber[];
-
+    /**
+     * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
+     **/
+    public readonly completed: boolean;
     /**
      * Timeout for the execution of this module
      **/
