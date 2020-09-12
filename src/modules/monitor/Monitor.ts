@@ -106,18 +106,12 @@ export namespace monitoring {
 
   /**
    *
-   *
+   * CircleCiOrchestrator will subscribe to the Monitor as RxJS Subject , in order to detect when
    **/
-  export class Monitor {
+  export class Monitor extends rxjs.Subject<parallel.PipelineExecutionProgress> { // CircleCiOrchestrator will subscribe to
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-    /**
-     * Subscribe to this one, to find out when all
-     * triggers HTTP Responses have all been received
-     *
-     **/
-    private trigger$ubject: rxjs.Subject<parallel.PipelineExecutionProgress>;
-    private statu$ubject: rxjs.Subject<parallel.PipelineExecutionProgress>;
+
 
     /**
      *
@@ -146,6 +140,7 @@ export namespace monitoring {
       name: string,
       args: monitoring.MonitorArgs
     ) {
+      super()
       /**
        * Monitor subscribes to all crated ObservableStreams
        * for all Circle CI v2 invocations to trigger all pipeline executions
@@ -158,24 +153,27 @@ export namespace monitoring {
       // Then, we need to find out when all triggers actually received Circle CI API Response
       // this is done using an RxJS "Subject"
 
-      throw new Error("Implementation not finished : need to instatiate RxJS Subject to detect when [this.parallelExecutionSetProgress.all_pipeline_execution_progress] have ")
+      // throw new Error("Implementation not finished : need to instatiate RxJS Subject to detect when [this.parallelExecutionSetProgress.all_pipeline_execution_progress] have ")
       /// see https://rxjs-dev.firebaseapp.com/guide/subject => PipelineExecutionProgress must be equiped with a Subject to subscribe to
-      this.trigger$ubject =  this.parallelExecutionSetProgress;
-      // this.parallelExecutionSetProgress.all_pipeline_execution_progress
-      this.trigger$ubject.subscribe({
-        next: ((pipeExecProgress: parallel.PipelineExecutionProgress) => {
-          console.log("NEXT Subject for PipelineExecutionProgress Trigger : ")
 
-          if (this.haveAllPipelineTriggersResponseBeenReceived()) {
-             console.log("All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D ")
+      this.parallelExecutionSetProgress.subscribe({ // subscription to Subject
+        next: ((pipeExecProgress: parallel.PipelineExecutionProgress) => {
+          console.log(">>>>>>>>>>Subject NEXT for PipelineExecutionProgress Circle CI Pipeline trigger of Gravitee Component : [" + pipeExecProgress.component.repo_http_uri + "]")
+
+          if (this.parallelExecutionSetProgress.haveAllPipelineTriggersResponseBeenReceived()) {
+             console.log(">>>>>>>>>>Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D (last was for Gravitee Component [" + pipeExecProgress.component + "] ");
              this.start();
+          } else {
+             console.log("Not All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 , proceeeding after Gravitee Component [" + pipeExecProgress.component + "] ");
           }
         }).bind(this),
         error: ((error: parallel.CciApiPipelineStatusResponse) => {
-
+           console.log(">>>>>>>>>>Subject ERROR for PipelineExecutionProgress Circle CI Pipeline trigger of Gravitee Components : " + error)
+           console.log(error)
         }).bind(this),
         complete: ((data: parallel.PipelineExecutionProgress) => {
-
+           console.log(">>>>>>>>>>Subject COMPLETE for PipelineExecutionProgress Circle CI Pipeline trigger of Gravitee Components : ");
+           console.log(data)
         }).bind(this)
       })
     }
@@ -286,13 +284,6 @@ export namespace monitoring {
       }
     }
 
-    /**
-     * When this one returns true : all triggers HTTP Respense have been received from Circle CI API :
-     * So Monitor can proceed with checking pipeline status
-     **/
-    private haveAllPipelineTriggersResponseBeenReceived(): boolean {
-      return this.parallelExecutionSetProgress.haveAllPipelineTriggersResponseBeenReceived();
-    }
 
   }
 

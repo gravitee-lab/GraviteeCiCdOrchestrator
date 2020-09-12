@@ -246,7 +246,6 @@ import * as rxjs from 'rxjs';
           return allCompletedSuccessfully;
         }
 
-
         /**
          * This method checks status of all pipeline workflow executions, and, according
          * https://github.com/gravitee-io/kb/wiki/The-Gravitee-CICD-Reference-Guide#circle-ci-api-v2--how-to-check-execution-status-of-a-pipeline
