@@ -120,7 +120,8 @@ export namespace monitoring {
     public readonly triggerSubscribers: monitoring.subscribers.CciApiTriggerPipelineSubscriber[];
     public readonly statusSubscribers: monitoring.subscribers.CciApiPipelineStatusSubscriber[];
     /**
-     * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
+     * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of
+     * pipeline execution final status (failure/success, etc...)
      **/
     public readonly completed: boolean;
     /**
