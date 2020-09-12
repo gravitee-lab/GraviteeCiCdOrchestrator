@@ -82,7 +82,7 @@ export namespace monitoring {
 
       }
     }
-  }
+
 
 
   /**
@@ -142,34 +142,8 @@ export namespace monitoring {
    *
    *
    **/
-  private handleTriggerPipelineCciResponse (circleCiJsonResponse: any, component: giocomponents.GraviteeComponent) : void {
-    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCciResponse] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
-    /**
-     * CircleCiApiTriggerPipelineResponse
-     **/
-    this.parallelExecutionSetProgress.updatePipelineExecution(component, circleCiJsonResponse, null);
-  }
 
-  private handleTriggerPipelineCciResponseError (error: any) : void {
-    console.info( '[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
-    let entry: any = {};
-    entry.pipeline = {
-      execution_index: null,
-      id : null,
-      created_at: null,
-      exec_state: null,
-      error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
-    }
 
-    this.parallelExecutionSetProgress.recordPipelineExecutionError(error);
-
-    this.progressMatrix.push(entry);
-
-    console.info('')
-    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
-    console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
-    console.info('')
-  }
 
 
   public fetch (): rxjs.Observable<AxiosResponse<any>> {
