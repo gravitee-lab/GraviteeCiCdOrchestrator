@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import "./lib/env":
+import "./lib/env";
 import errorReporter from "./lib/errors";
 import { ReleaseManifestFilter } from "./modules/manifest/ReleaseManifestFilter";
 import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator";
