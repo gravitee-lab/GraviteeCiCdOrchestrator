@@ -268,10 +268,11 @@ export class CircleCiOrchestrator {
         parallelExecutionSetProgress.addPipelineExecution(pipelExec);
       }
 
-      /// Now, passing on [parallelExecutionSetProgress] to Monitor
+      /// Now, passing on [parallelExecutionSetProgress] to Monitor which
+      /// will subscribe to all Observable Streams, 
       let someMonitor = new monitoring.Monitor(`monitor`, {
         parallelExecutionSetProgress: parallelExecutionSetProgress,
-        timeout:10000
+        timeout:10000 // 10 seconds
       });
 
 
