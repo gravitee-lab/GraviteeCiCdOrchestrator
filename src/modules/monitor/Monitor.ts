@@ -158,6 +158,10 @@ export namespace monitoring {
       // Then, we need to find out when all triggers actually received Circle CI API Response
       // this is done using an RxJS "Subject"
 
+      throw new Error("Implementation not finished : need to instatiate RxJS Subject to detect when [this.parallelExecutionSetProgress.all_pipeline_execution_progress] have ")
+      /// see https://rxjs-dev.firebaseapp.com/guide/subject => PipelineExecutionProgress must extend  
+      // this.trigger$ =  rxjs.Subject<parallel.PipelineExecutionProgress>;
+      // this.parallelExecutionSetProgress.all_pipeline_execution_progress
       this.trigger$.subscribe({
         next: ((pipeExecProgress: parallel.PipelineExecutionProgress) => {
           console.log("NEXT Subject for PipelineExecutionProgress Trigger : ")
@@ -228,7 +232,7 @@ export namespace monitoring {
       }
       // Ok, now we need to init status checks subscribers
       this.initStatusSubscribers();
-      
+
       ///
       /// And finally we have to determine when all status checks have
       /// detected Pipeline Execution Completed, to then emit an
