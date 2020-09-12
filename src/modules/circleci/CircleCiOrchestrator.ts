@@ -160,15 +160,23 @@ export class CircleCiOrchestrator {
 
     }
     /**
+     * Queries Circle CI API ti check identity of the
+     * authenticated Circle CI user
+     * @returns the JSON Object returned by Circle CI API
+     **/
+    public whoami(): any {
+      let whoamiSubscription = this.circleci_client.whoami().subscribe({
+        next: data => console.log( '[Whomai data] => ', data ),
+        complete: data => console.log( '[complete]' )
+      });
+    }
+    /**
      * returning an A 2-dimensional array
      **/
     start()  : void {
       console.info("[{CircleCiOrchestrator}] - STARTING PROCESSING EXECUTION PLAN - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
       console.info("");
-      let whoamiSubscription = this.circleci_client.whoami().subscribe({
-        next: data => console.log( '[Whomai data] => ', data ),
-        complete: data => console.log( '[complete]' )
-      });
+
 
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
@@ -269,7 +277,7 @@ export class CircleCiOrchestrator {
       }
 
       /// Now, passing on [parallelExecutionSetProgress] to Monitor which
-      /// will subscribe to all Observable Streams, 
+      /// will subscribe to all Observable Streams,
       let someMonitor = new monitoring.Monitor(`monitor`, {
         parallelExecutionSetProgress: parallelExecutionSetProgress,
         timeout:10000 // 10 seconds
