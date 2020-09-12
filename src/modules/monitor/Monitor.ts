@@ -116,8 +116,8 @@ export namespace monitoring {
      * triggers HTTP Responses have all been received
      *
      **/
-    private trigger$: rxjs.Subject<parallel.PipelineExecutionProgress>;
-    private statu$: rxjs.Subject<parallel.PipelineExecutionProgress>;
+    private trigger$ubject: rxjs.Subject<parallel.PipelineExecutionProgress>;
+    private statu$ubject: rxjs.Subject<parallel.PipelineExecutionProgress>;
 
     /**
      *
@@ -159,10 +159,10 @@ export namespace monitoring {
       // this is done using an RxJS "Subject"
 
       throw new Error("Implementation not finished : need to instatiate RxJS Subject to detect when [this.parallelExecutionSetProgress.all_pipeline_execution_progress] have ")
-      /// see https://rxjs-dev.firebaseapp.com/guide/subject => PipelineExecutionProgress must extend  
-      // this.trigger$ =  rxjs.Subject<parallel.PipelineExecutionProgress>;
+      /// see https://rxjs-dev.firebaseapp.com/guide/subject => PipelineExecutionProgress must be equiped with a Subject to subscribe to
+      this.trigger$ubject =  this.parallelExecutionSetProgress;
       // this.parallelExecutionSetProgress.all_pipeline_execution_progress
-      this.trigger$.subscribe({
+      this.trigger$ubject.subscribe({
         next: ((pipeExecProgress: parallel.PipelineExecutionProgress) => {
           console.log("NEXT Subject for PipelineExecutionProgress Trigger : ")
 

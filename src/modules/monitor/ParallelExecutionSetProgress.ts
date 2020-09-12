@@ -1,5 +1,6 @@
 /// import * as whatever from '@some/pkgIneed';
 import * as giocomponents from '../manifest/GraviteeComponent';
+import * as rxjs from 'rxjs';
 
 
       /**
@@ -161,8 +162,16 @@ import * as giocomponents from '../manifest/GraviteeComponent';
       * Does not trigger any Pipeline execution, or subscribe to any ObservableStream : it just
       * keeps a reference on every Observable Stream the {@see Monitor} will subscribe to, and
       * remembers which {@see GraviteeComponent} each ObservableStream is related to.
+      *
+      * It extends RxJS sujbject, to be able to subscribe to it
       **/
-      export class ParallelExecutionSetProgress {
+      export class ParallelExecutionSetProgress extends rxjs.Subject<PipelineExecutionProgress> {
+        /**
+         * Subscribe to this one, to find out when all
+         * triggers HTTP Responses have all been received
+         *
+         **/
+
         /**
          * Used by {@see Monitor} to subscribe to all {@see PipelineExecutionProgress}s <code>observableRequest</code>s and
          * follow up progress of each {@see PipelineExecutionProgress} in this ParallelExecutionSetProgress
@@ -170,6 +179,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         public readonly all_pipeline_execution_progress: PipelineExecutionProgress[];
 
         constructor() {
+          super();
           this.all_pipeline_execution_progress = [];
         }
         /**
@@ -284,16 +294,17 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         updatePipelineExecutionProgress(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
           /// first, must find the Pipeline execution for the [component]
           if (theCci_Api_response === null) {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = {
+            this.getPipelineExecutionProgressFrom(someGioComponent).pipeline_execution.cci_trigger.response = {
               created_at: null,
               state: null,
               number: null,
               id: null
             };
           } else {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = theCci_Api_response.data;
+            this.getPipelineExecutionProgressFrom(someGioComponent).pipeline_execution.cci_trigger.response = theCci_Api_response.data;
+            this.next(this.getPipelineExecutionProgressFrom(someGioComponent)); // Subscriber will now receive event every time
           }
-          this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.error = theCci_Api_error; // dot data cause its' comming from a retryWhen ...
+          this.getPipelineExecutionProgressFrom(someGioComponent).pipeline_execution.cci_trigger.error = theCci_Api_error; // dot data cause its' comming from a retryWhen ...
 
         }
         /**
@@ -303,7 +314,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the associated {@see PipelineExecutionProgress}
          * @returns the {@see PipelineExecutionProgress} associated with the provided {@see GraviteeComponent} <code>gioComponent</code>
          **/
-        public getPipelineExecutionTriggerFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecutionProgress {
+        public getPipelineExecutionProgressFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecutionProgress {
           let toReturn : PipelineExecutionProgress = null;
           for (let i:number; i < this.all_pipeline_execution_progress.length; i++) {
             if (this.all_pipeline_execution_progress[i].component.name == gioComponent.name && this.all_pipeline_execution_progress[i].component.version == gioComponent.version) {
