@@ -58,17 +58,7 @@ export namespace monitoring {
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response));
-          if (theCci_Api_response == null) {
-            this.pipelineExecution.execution.cci_response = {
-              created_at: null,
-              state: null,
-              number: null,
-              id: null
-            };
-          } else {
-            this.pipelineExecution.execution.cci_response = theCci_Api_response;
-          }
-
+          this.pipelineExecution.execution.cci_response = theCci_Api_response;
           this.pipelineExecution.execution.completed = true;
         }
         public complete(theCci_Api_response: any) : void {
@@ -92,7 +82,9 @@ export namespace monitoring {
   export class Monitor {
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-    public readonly subscribers: monitoring.subscribers.CciApiSubscriber[];
+    public readonly triggerSubscribers: monitoring.subscribers.CciApiSubscriber[];
+    public readonly statusSubscribers: monitoring.subscribers.CciApiSubscriber[];
+
     /**
      * Timeout for the execution of this module
      **/
@@ -107,7 +99,8 @@ export namespace monitoring {
        * for all Circle CI v2 invocations to trigger all pipeline executions
        **/
       this.timeout = args.timeout; // unsued yet
-      this.subscribers = [];
+      this.triggerSubscribers = [];
+      this.statusSubscribers = [];
       this.initSubscribers();
     }
 
@@ -117,7 +110,7 @@ export namespace monitoring {
         // create a new Subscriber which immediately subscribes to PipelineExecution 's observableRequest
         let thisSubscriber = new monitoring.subscribers.CciApiSubscriber(this.parallelExecutionSetProgress.pipeline_executions[i]);
         // keep a reference over the new subscriber
-        this.subscribers.push(thisSubscriber);
+        this.triggerSubscribers.push(thisSubscriber);
       }
     }
     /**

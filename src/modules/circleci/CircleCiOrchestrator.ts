@@ -320,11 +320,13 @@ export class CircleCiOrchestrator {
         created_at: `${circleCiJsonResponse.created_at}`,
         exec_state: `${circleCiJsonResponse.state}`
       }
-
+      this.progressMatrix.push(entry.pipeline)
 
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
-      console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
+      // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "))
+      console.info({progressMatrix: this.progressMatrix});
+
       console.info('')
     }
 
