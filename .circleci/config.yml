@@ -51,8 +51,32 @@ jobs:
                     docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
 
+  yet_another_test_job:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: 5.27.1
+      DOCKER_LOGIN_USERNAME: 'ccc'
+      DOCKER_LOGIN_SECRET: 'ccc'
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "YET ANOTHER TEST WORKFLOW"
+          command: echo "YET ANOTHER TEST WORKFLOW"
+          
 workflows:
   version: 2.1
+  yet_another_test_workflow:
+    jobs:
+      yet_another_test_job:
+          context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              only: /^*/
   docker_build_and_push:
     jobs:
       - build:
