@@ -66,12 +66,12 @@ jobs:
       - run:
           name: "YET ANOTHER TEST WORKFLOW"
           command: echo "YET ANOTHER TEST WORKFLOW"
-          
+
 workflows:
   version: 2.1
   yet_another_test_workflow:
     jobs:
-      yet_another_test_job:
+      - yet_another_test_job:
           context: gravitee-lab
           filters:
             tags:
