@@ -57,8 +57,6 @@ export namespace monitoring {
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response));
-          
-          /// first, must find the Pipeline execution for the [component]
           if (theCci_Api_response == null) {
             this.pipelineExecution.execution.cci_response = {
               created_at: null,
