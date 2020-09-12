@@ -39,7 +39,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
             /**
              * [id] is alpha numeric : it is UUID issued by CircleCI api
              * to uniquely identify a pipeline execution
-             * This one identifier will be used to 
+             * This one identifier will be used to
              **/
             id: string,
             /**
@@ -143,22 +143,20 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
          * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
          **/
-        public readonly pipeline_execution_triggers: PipelineExecutionTrigger[];
-        public readonly pipeline_execution_statuschecks: PipelineExecutionStatusCheck[];
+        public readonly all_pipeline_execution_progress: PipelineExecutionProgress[];
 
         constructor() {
-          this.pipeline_execution_triggers = [];
-          this.pipeline_execution_statuschecks = [];
+          this.all_pipeline_execution_progress = [];
         }
         /**
          * Adds a {@see PipelineExecution} to this {@see ParallelExecutionSetProgress}
          * @param <code>pipeExec</code> the {@see PipelineExecution} to add to this {@øee ParallelExecutionSetProgress}
          * @returns the {@see GraviteeComponent} of the added pipeline execution
          **/
-        addPipelineExecution(pipeExecTrigger: PipelineExecutionTrigger, pipeExecStatusCheck: PipelineExecutionStatusCheck): giocomponents.GraviteeComponent {
+        addPipelineExecutionProgress(pipeExecProgress: PipelineExecutionProgress): giocomponents.GraviteeComponent {
 
-          this.pipeline_execution_triggers.push(pipeExecTrigger);
-          return pipeExecTrigger.component;
+          this.all_pipeline_execution_progress.push(pipeExecProgress);
+          return pipeExecProgress.component;
         }
         /**
          *
@@ -168,39 +166,39 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * @paramter <code>theCci_Api_response</code> The Circle CI API returned JSON response, set it to null if error returned
          * @paramter <code>theCci_Api_error</code> The Circle CI API returned error, set it to null if no error returned
          **/
-        updatePipelineExecution(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
+        updatePipelineExecutionProgress(someGioComponent: giocomponents.GraviteeComponent, theCci_Api_response: any, theCci_Api_error: any) {
           /// first, must find the Pipeline execution for the [component]
           if (theCci_Api_response == null) {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).execution.cci_response = {
+            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.reponse = {
               created_at: null,
               state: null,
               number: null,
               id: null
             };
           } else {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).execution.cci_response = theCci_Api_response;
+            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.reponse = theCci_Api_response;
           }
-          this.getPipelineExecutionTriggerFrom(someGioComponent).execution.error = theCci_Api_error;
+          this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.error = theCci_Api_error;
 
         }
         /**
          *
-         * Use this method to retrieve a {@see PipelineExecution} from its {@see GraviteeComponent}
+         * Use this method to retrieve a {@see PipelineExecutionProgress} from its {@see GraviteeComponent}
          *
-         * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the associated {@see PipelineExecution}
-         * @returns the {@see PipelineExecution} associated with the provided {@see GraviteeComponent} <code>gioComponent</code>
+         * @parameter <code>gioComponent</code> the {@see GraviteeComponent} for which you want to retrieve the associated {@see PipelineExecutionProgress}
+         * @returns the {@see PipelineExecutionProgress} associated with the provided {@see GraviteeComponent} <code>gioComponent</code>
          **/
-        public getPipelineExecutionTriggerFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecutionTrigger {
-          let toReturn : PipelineExecutionTrigger = null;
-          for (let i:number; i < this.pipeline_execution_triggers.length; i++) {
-            if (this.pipeline_execution_triggers[i].component.name == gioComponent.name && this.pipeline_execution_triggers[i].component.version == gioComponent.version) {
-              toReturn = this.pipeline_execution_triggers[i];
+        public getPipelineExecutionTriggerFrom(gioComponent: giocomponents.GraviteeComponent) : PipelineExecutionProgress {
+          let toReturn : PipelineExecutionProgress = null;
+          for (let i:number; i < this.all_pipeline_execution_progress.length; i++) {
+            if (this.all_pipeline_execution_progress[i].component.name == gioComponent.name && this.all_pipeline_execution_progress[i].component.version == gioComponent.version) {
+              toReturn = this.all_pipeline_execution_progress[i];
               break;
             }
           }
           return toReturn;
         }
         public toString(): string {
-          return JSON.stringify(this.pipeline_execution_triggers, null, " ");
+          return JSON.stringify(this.all_pipeline_execution_progress, null, " ");
         }
       }
