@@ -9,6 +9,16 @@ import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
 import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
 import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
 
+
+export interface CircleCISecrets {
+  circleci: {auth:
+    {
+      username: string,
+      secret: string
+    }
+
+  }
+}
 /**
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
@@ -134,7 +144,7 @@ export class CircleCiOrchestrator {
     private monitorReport: any[];
     private retries: number;
     private circleci_client: CircleCIClient;
-    private secrets: any;
+    private secrets: CircleCISecrets;
 
 
     constructor(execution_plan: string [][], retries: number) {
@@ -320,13 +330,13 @@ export class CircleCiOrchestrator {
      *
      **/
     handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any, component: GraviteeComponent) : void {
-      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse )
+      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse.data )
       let entry: any = {};
       entry.pipeline = {
-        pipeline_exec_number: `${circleCiJsonResponse.number}`,
-        id : `${circleCiJsonResponse.id}`,
-        created_at: `${circleCiJsonResponse.created_at}`,
-        exec_state: `${circleCiJsonResponse.state}`
+        pipeline_exec_number: `${circleCiJsonResponse.data.number}`,
+        id : `${circleCiJsonResponse.data.id}`,
+        created_at: `${circleCiJsonResponse.data.created_at}`,
+        exec_state: `${circleCiJsonResponse.data.state}`
       }
       this.progressMatrix.push(entry.pipeline)
 

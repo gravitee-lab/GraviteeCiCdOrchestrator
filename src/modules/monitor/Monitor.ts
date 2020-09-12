@@ -4,7 +4,7 @@ import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
 import {AxiosResponse} from 'axios';
 import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
-import * as giocomponents from '../manifest/GraviteeComponent';
+import * as orchestra from '../circleci/CircleCiOrchestrator';
 
 
 /// import * as Collections from 'typescript-collections';
@@ -19,8 +19,9 @@ export namespace monitoring {
 
 
   export interface MonitorArgs  {
-    parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-    timeout: number;
+    parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress,
+    timeout: number,
+    secrets: orchestra.CircleCISecrets
   }
 
   export namespace subscribers {
@@ -57,7 +58,7 @@ export namespace monitoring {
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response, null, " "));
-          this.pipelineStatus.pipeline_execution.cci_statuscheck.response = theCci_Api_response;
+          this.pipelineStatus.pipeline_execution.cci_statuscheck.response = theCci_Api_response.data;
         }
         public complete(theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - querying Circle CI API to check Pipeline Status completed! (below received Circle CI answer) :)]')
@@ -86,7 +87,7 @@ export namespace monitoring {
         public next (theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
           console.log( JSON.stringify(theCci_Api_response, null, " "));
-          this.pipelineExecution.pipeline_execution.cci_trigger.response = theCci_Api_response;
+          this.pipelineExecution.pipeline_execution.cci_trigger.response = theCci_Api_response.data;
         }
         public complete(theCci_Api_response: any) : void {
           console.log( '[{[Monitor]} - triggering Circle CI Pipeline completed! (below received Circle CI answer) :)]')
@@ -137,6 +138,11 @@ export namespace monitoring {
      **/
     public readonly timeout: number;
 
+    /**
+     * Circle CI Secrets used byt his Monitor, like the (API Token) to authenticate to Circle CI API
+     **/
+    private secrets: orchestra.CircleCISecrets;
+
     constructor (
       name: string,
       args: monitoring.MonitorArgs
@@ -177,6 +183,41 @@ export namespace monitoring {
       let pipelineParameters = { parameters: {} };
       /// let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
 
+      let requestConfig = {
+        headers: {
+          "Circle-Token": this.secrets.circleci.auth.token,
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      };
+      let jsonPayload: any = pipelineParameters;
+      const cci_rest_endpoint = "https://circleci.com/api/v2/project/gh/";
+      const source = rxjs.from(axios.post( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, requestConfig )).pipe(
+      tap(val => console.log(`fetching ${cci_rest_endpoint} which you won't see `)),)
+      const response$ = source.pipe(
+        map(axiosResponse => {
+          if (!(axiosResponse.status == 200 || axiosResponse.status == 201 || axiosResponse.status == 203)) {
+            //error will be picked up by retryWhen
+            throw axiosResponse;
+          }
+          return axiosResponse; /// return value  HTTP Response Code si 200
+        }),
+        retryWhen(errors =>
+          errors.pipe(
+            //log error message
+            tap(axiosResponse => {
+              console.log(`Error occured, trying to fetch [${cci_rest_endpoint}], HTTP Response is : `);
+              console.log(`Error occured, trying to fetch [${JSON.stringify(axiosResponse.data)}], now retrying`);
+              console.log(`Error occured, trying to fetch [${cci_rest_endpoint}], now retrying`);
+            }),
+            //restart in 5 seconds
+            delay(3000), /// wait 3 seconds before retrying
+            /// delayWhen(val => timer(val * 1000)),
+            /// delayWhen(val => rxjs.timer(7 * 1000)), /// wait 7 seconds before retrying
+            take(1) // we only need ONE successful HTTP call, to trigger a pipeline, and after that, if ever Circle CI API v2 gets buggy, we ignore it.
+          )
+        )
+      );
 
       /// then let's init status checks subscribers
       ///

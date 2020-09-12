@@ -291,9 +291,9 @@ import * as giocomponents from '../manifest/GraviteeComponent';
               id: null
             };
           } else {
-            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = theCci_Api_response;
+            this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.response = theCci_Api_response.data;
           }
-          this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.error = theCci_Api_error;
+          this.getPipelineExecutionTriggerFrom(someGioComponent).pipeline_execution.cci_trigger.error = theCci_Api_error; // dot data cause its' comming from a retryWhen ...
 
         }
         /**
