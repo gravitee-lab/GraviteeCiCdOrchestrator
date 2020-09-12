@@ -125,7 +125,7 @@ export namespace monitoring {
      **/
     public readonly completed: boolean;
     /**
-     * Timeout for the status checks and trigerring of all Pipelines 
+     * Timeout for the status checks and trigerring of all Pipelines
      **/
     public readonly timeout: number;
 
@@ -140,10 +140,13 @@ export namespace monitoring {
       this.timeout = args.timeout; // unsued yet
       this.triggerSubscribers = [];
       this.statusSubscribers = [];
-      this.initSubscribers();
+      // ok, first, RxJS subscribe to Observable Streams for all Circle CI Pipeline triggers
+      this.initTriggerSubscribers();
+      // Then, we need to find out when all triggers actually received Circle CI API Response
+      // this is done using an RxJS "Subject"
     }
 
-    private initSubscribers() : void {
+    private initTriggerSubscribers() : void {
       let arrayLength = this.parallelExecutionSetProgress.all_pipeline_execution_progress.length;
       for (let i: number; i < arrayLength ; i++){
         // create a new Subscriber which immediately subscribes to PipelineExecution 's observableRequest
