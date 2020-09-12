@@ -199,7 +199,7 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * This method returns <code>true</code> when all Pipelines Workflow status have been checked at least a first time.
          *
          * @returns <code>true</code> when all Pipelines Workflow status have been checked at least a first time.
-         * 
+         *
          *  I WAS THERE AND NEEDED RETRY WHEN AND THROW ERROR TO BE SURE THERE IS NEVER A PROGRESS LEFT WITH ERROR WITHOUT STOPPING ALL CICD OPERATIONS
          **/
         public haveAllPipelineStatusChecksResponseBeenReceived(): boolean {
@@ -221,17 +221,19 @@ import * as giocomponents from '../manifest/GraviteeComponent';
         public haveAllPipelineExecutionSuccessfullyCompleted(): boolean {
           let allCompletedSuccessfully: boolean = false;
           let arrayLength: number = this.all_pipeline_execution_progress.length;
+          /*
           if (!this.haveAllPipelineStatusChecksResponseBeenReceived()) {
             return null;
           }
+
           for (let i: number; i < arrayLength ; i++){
             ///  As soon as at least one trigger has both error and pipeline 'id' set to null, well there is one Pripeline Execution Trigger which did not complete
             if (this.all_pipeline_execution_progress[i].pipeline_execution.cci_statuscheck.error === null && this.all_pipeline_execution_progress[i].pipeline_execution.cci_statuscheck.response.items.length == 0) {
               haveHttpResponsesBeenReceived = false;
               break; // no need to keep on looping
             }
-          }
-          return haveHttpResponsesBeenReceived;
+          }*/
+          return allCompletedSuccessfully;
         }
 
 

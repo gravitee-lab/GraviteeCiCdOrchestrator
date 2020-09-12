@@ -1,5 +1,5 @@
-/// import { CircleCI } from 'circleci';
-import { Observable } from 'rxjs';
+import * as rxjs from 'rxjs';
+import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
 import {AxiosResponse} from 'axios';
 import * as fs from 'fs';
@@ -527,7 +527,8 @@ export class CircleCIClient {
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
     triggerGhBuild(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any/*Observable<any><AxiosResponse<any>>*/ {
-      let observableRequest: any = Observable.create( ( observer ) => {
+      /*
+      let observableRequest: any = rxjs.Observable.create( ( observer ) => {
           let config = {
             headers: {
               "Circle-Token": this.secrets.circleci.auth.token,
@@ -553,9 +554,50 @@ export class CircleCIClient {
               console.log(error.response);
               observer.error( error );
           } );
+
       } );
-      return observableRequest;
+      return observableRequest; */
+
+
+      let requestConfig = {
+        headers: {
+          "Circle-Token": this.secrets.circleci.auth.token,
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      };
+      let jsonPayload: any = pipelineParameters;
+      const cci_rest_endpoint = "https://circleci.com/api/v2/project/gh/";
+      const source = rxjs.from(axios.post( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, requestConfig )).pipe(
+      tap(val => console.log(`fetching ${cci_rest_endpoint} which you won't see `)),)
+      const response$ = source.pipe(
+        map(axiosResponse => {
+          if (!(axiosResponse.status == 200 || axiosResponse.status == 201 || axiosResponse.status == 203)) {
+            //error will be picked up by retryWhen
+            throw axiosResponse;
+          }
+          return axiosResponse; /// return value  HTTP Response Code si 200
+        }),
+        retryWhen(errors =>
+          errors.pipe(
+            //log error message
+            tap(axiosResponse => {
+              console.log(`Error occured, trying to fetch [${cci_rest_endpoint}], HTTP Response is : `);
+              console.log(`Error occured, trying to fetch [${JSON.stringify(axiosResponse.data)}], now retrying`);
+              console.log(`Error occured, trying to fetch [${cci_rest_endpoint}], now retrying`);
+            }),
+            //restart in 5 seconds
+            delay(3000), /// wait 3 seconds before retrying
+            /// delayWhen(val => timer(val * 1000)),
+            /// delayWhen(val => rxjs.timer(7 * 1000)), /// wait 7 seconds before retrying
+            take(1) // we only need ONE successful HTTP call, to trigger a pipeline, and after that, if ever Circle CI API v2 gets buggy, we ignore it.
+          )
+        )
+      );
+
+      return response$;
     }
+
     getLatestGhBuilds(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
       throw new Error("Not impemented yet");
       /// return observableRequest;
@@ -564,7 +606,7 @@ export class CircleCIClient {
      * Retrieves the Github Repo URI from the PipelineID
      **/
     getPipelineGhRepo(circleCiPipelineID: string): any {
-      let observableRequest = Observable.create( ( observer ) => {
+      let observableRequest = rxjs.Observable.create( ( observer ) => {
           let config = {
             headers: {
               "Circle-Token": this.secrets.circleci.auth.token,
@@ -620,7 +662,7 @@ export class CircleCIClient {
      *
      **/
     getPipelineInfo(circleCiPipelineID: string): any {
-      let observableRequest = Observable.create( ( observer ) => {
+      let observableRequest = rxjs.Observable.create( ( observer ) => {
           let config = {
             headers: {
               "Circle-Token": this.secrets.circleci.auth.token,
@@ -645,7 +687,7 @@ export class CircleCIClient {
      * Hits the Circle CI API and return an {@see ObservableStream<any>} emitting the Circle CI JSON answer for the https://circleci.com/api/v2/me Endpoint
      **/
     whoami(): any {
-      let observableRequest = Observable.create( ( observer ) => {
+      let observableRequest = rxjs.Observable.create( ( observer ) => {
           let config = {
             headers: {
               "Circle-Token": this.secrets.circleci.auth.token,

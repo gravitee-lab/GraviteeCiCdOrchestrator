@@ -175,7 +175,7 @@ export namespace monitoring {
       /// okay, so first let's
       /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
       let pipelineParameters = { parameters: {} };
-      let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
+      /// let observableSentRequest = this.circleci_client.triggerGhBuild(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
 
 
       /// then let's init status checks subscribers
