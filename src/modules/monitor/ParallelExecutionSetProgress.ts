@@ -70,11 +70,14 @@ import * as giocomponents from '../manifest/GraviteeComponent';
            * Set to <code>true</code> as soon as this PipelineExecution has completed, regardless of pipeline execution final status (failure/success, etc...)
            **/
           completed: boolean,
-          cci_response: CircleCiApiTriggerPipelineResponse;
-          error: any;
+          cci_response: CircleCiApiTriggerPipelineResponse,
+          error: any
         }
       }
-
+      export interface PipelineExecutionError {
+        message: string,
+        cause: any
+      }
      /**
       * JSON Object Schema to Represent a Parallel Execution Set  's Execution Progress
       * Does not trigger any Pipeline execution, or subscribe to any ObservableStream : it just
@@ -86,7 +89,9 @@ import * as giocomponents from '../manifest/GraviteeComponent';
          * Used by {@see Monitor} to subscribe to all {@see PipelineExecution}s <code>observableRequest</code>s and
          * follow up progress of each {@see PipelineExecution} in this ParallelExecutionSetProgress
          **/
-        public readonly pipeline_executions: PipelineExecution[];
+         public readonly pipeline_executions: PipelineExecution[];
+         public readonly pipeline_executions_errors: PipelineExecution[];
+
         constructor() {
           this.pipeline_executions = []
         }

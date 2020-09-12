@@ -5,6 +5,8 @@ import axios from 'axios';
 import {AxiosResponse} from 'axios';
 import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
 import * as giocomponents from '../manifest/GraviteeComponent';
+
+
 /// import * as Collections from 'typescript-collections';
 
 export namespace monitoring {
@@ -21,6 +23,69 @@ export namespace monitoring {
     timeout: number;
   }
 
+  export namespace subscribers {
+
+    interface ICciApiSubscriberNext {
+      (data: any): void;
+    }
+
+    interface ICciApiSubscriberComplete {
+      (data: any): void;
+    }
+
+    interface ICciApiSubscriberError {
+      (error: any): void;
+    }
+
+    export interface ICciApiSubscriber {
+      next: ICciApiSubscriberNext, /// method with signature (data: any) => {}
+      complete: ICciApiSubscriberComplete,/// method with signature (data: any) => {}
+      error: ICciApiSubscriberError /// method with signature (error: any) => {}
+    }
+      /**
+       * Used to Subscribe to the ObservableStream for each Circle CI API invocation to triugger a pipeline execution
+       **/
+      export class CciApiSubscriber {
+
+        public readonly pipelineExecution: parallel.PipelineExecution;
+
+        constructor (
+          somePipelineExecution: parallel.PipelineExecution
+        ) {
+           this.pipelineExecution = somePipelineExecution;
+        }
+        public next (theCci_Api_response: any) : void {
+          console.log( '[{[Monitor]} - triggering Circle CI Pipeline : response received ! (below received Circle CI answer) :)]')
+          console.log( JSON.stringify(theCci_Api_response));
+          
+          /// first, must find the Pipeline execution for the [component]
+          if (theCci_Api_response == null) {
+            this.pipelineExecution.execution.cci_response = {
+              created_at: null,
+              state: null,
+              number: null,
+              id: null
+            };
+          } else {
+            this.pipelineExecution.execution.cci_response = theCci_Api_response;
+          }
+
+          this.pipelineExecution.execution.completed = true;
+        }
+        public complete(theCci_Api_response: any) : void {
+          console.log( '[{[Monitor]} - triggering Circle CI Pipeline completed! (below received Circle CI answer) :)]')
+          console.log( JSON.stringify(theCci_Api_response));
+        }
+        public error(error: any) : void { // handleTriggerPipelineCciResponseError
+          console.log( '[{[Monitor]} - triggering Circle CI Pipeline completed! :)]')
+          this.pipelineExecution.execution.error = error;
+        }
+
+      }
+    }
+  }
+
+
   /**
    *
    *
@@ -28,7 +93,7 @@ export namespace monitoring {
   export class Monitor {
 
     public readonly parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress;
-
+    public readonly subscribers: monitoring.subscribers.CciApiSubscriber[];
     /**
      * Timeout for the execution of this module
      **/
@@ -36,7 +101,7 @@ export namespace monitoring {
 
     constructor (
       name: string,
-      args: MonitorArgs
+      args: monitoring.MonitorArgs
     ) {
       /**
        * Monitor subscribes to all crated ObservableStreams
@@ -53,7 +118,7 @@ export namespace monitoring {
           complete: (data) => {
             console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
           },
-          error: this.handleTriggerPipelineCciResponseError.bind(this)
+          error: this.handleTriggerPipelineCciResponseError.bind(this.parallelExecutionSetProgress.pipeline_executions[i])
       });
     }
 
@@ -85,7 +150,7 @@ export namespace monitoring {
     /**
      * CircleCiApiTriggerPipelineResponse
      **/
-    this.parallelExecutionSetProgress.updatePipelineExecution(component, circleCiJsonResponse);
+    this.parallelExecutionSetProgress.updatePipelineExecution(component, circleCiJsonResponse, null);
   }
 
   private handleTriggerPipelineCciResponseError (error: any) : void {
@@ -98,6 +163,8 @@ export namespace monitoring {
       exec_state: null,
       error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
     }
+
+    this.parallelExecutionSetProgress.recordPipelineExecutionError(error);
 
     this.progressMatrix.push(entry);
 
