@@ -4,7 +4,7 @@ import errorReporter from "./lib/errors";
 import { ReleaseManifestFilter } from "./modules/manifest/ReleaseManifestFilter";
 import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator";
 import { monitoring }  from './modules/monitor/Monitor';
-import { monitoring2 }  from './modules/monitor/ExperimentalMonitor';
+import { monitoring_experiments }  from './modules/monitor/ExperimentalMonitor';
 
 
 /// Welcome
@@ -58,7 +58,7 @@ orchestrator.start();
 // curl -X DELETE https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine
 // {"message":"No JWT token found","http_status":401}
 
-export const someMonitor = new monitoring.Monitor("mymonitortest", {rest_endpoint: 'https://randomuser.me/api', timeout: 10000});
+export const someMonitor = new monitoring_experiments.ExperimentalMonitor("mymonitortest", {rest_endpoint: 'https://randomuser.me/api', timeout: 10000});
 const someResponse$ = someMonitor.fetch();
 
 
@@ -82,7 +82,7 @@ const subscription = someResponse$.subscribe(fetchedResult => {
 /**
  * Experiment on retryWhen
  **/
-export const someOtherMonitor = new monitoring2.ExperimentalMonitor("mymonitorDemo", {
+export const someOtherMonitor = new monitoring_experiments.ExperimentalMonitor("mymonitorDemo", {
   rest_endpoint: 'https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine',
   timeout: 10000
 });

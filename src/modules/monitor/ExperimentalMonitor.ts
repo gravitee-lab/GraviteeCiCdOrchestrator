@@ -6,10 +6,10 @@ import {AxiosResponse} from 'axios';
 
 /// import * as Collections from 'typescript-collections';
 
-export namespace monitoring2 {
+export namespace monitoring_experiments {
 
 
-  export abstract class AbstractExperimentalMonitor implements monitoring2.IExperimentalMonitor {
+  export abstract class AbstractExperimentalMonitor implements monitoring_experiments.IExperimentalMonitor {
     constructor (
       name: string,
       args: AbstractExperimentalMonitorArgs
@@ -30,7 +30,7 @@ export namespace monitoring2 {
     timeout: number; // in milliseconds
   }
 
-  export interface ExperimentalMonitorArgs extends monitoring2.AbstractExperimentalMonitorArgs {
+  export interface ExperimentalMonitorArgs extends monitoring_experiments.AbstractExperimentalMonitorArgs {
     rest_endpoint: string; // to delete, just for demo purposes.
   }
 
@@ -38,7 +38,7 @@ export namespace monitoring2 {
    *
    *
    **/
-  export class ExperimentalMonitor extends monitoring2.AbstractExperimentalMonitor {
+  export class ExperimentalMonitor extends monitoring_experiments.AbstractExperimentalMonitor {
 
     public readonly rest_endpoint: string
     ///
