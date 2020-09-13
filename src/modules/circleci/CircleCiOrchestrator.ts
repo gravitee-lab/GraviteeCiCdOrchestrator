@@ -137,7 +137,8 @@ export class CircleCiOrchestrator {
     private progressMatrix: any[];
     private progressMatrixSubject = new rxjs.Subject<any>();
     private pipelines_nb: number;
-    private parallelExecutionSetsNotifier = new rxjs.Subject<number>(); // this one will be used to find out when each parallelExecutionSet has completed
+    private parallelExecutionSetsNotifier: rxjs.Subject<number> = new rxjs.Subject<number>(); // this one will be used to find out when each parallelExecutionSet has completed
+    private parallelExecutionSetsNotifiers: rxjs.Subject<number>[]; // this one will be used to find out when each parallelExecutionSet has completed
     /**
      * The current parallel execution set being processed
      **/
@@ -163,6 +164,7 @@ export class CircleCiOrchestrator {
       this.progressMatrix = [];
 
       this.github_org = process.env.GH_ORG;
+      this.initializeNotifiers();
 
       this.parallelExecutionSetsNotifier.subscribe({
         next: (parallelExecutionSetIndex) => {
@@ -176,7 +178,32 @@ export class CircleCiOrchestrator {
         }
       })
     }
+    private initializeNotifiers() : void {
+      this.parallelExecutionSetsNotifiers = [];
+      for (let k: number = 0; k < this.execution_plan.length; k++) {
+        this.parallelExecutionSetsNotifiers[k] = new rxjs.Subject<number>();
+        this.parallelExecutionSetsNotifiers[k].subscribe({
+          next: ((parallelExecutionSetIndex) => {
+            console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+            console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+            console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
+            console.info("{[CircleCiOrchestrator]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
 
+            if (parallelExecutionSetIndex < this.execution_plan.length){
+              console.info("{[CircleCiOrchestrator]} - NOW EXECUTING NEXT PARALLEL EXECUTION SET NO.[" + (parallelExecutionSetIndex + 1) + "]  - ");
+              this.processExecutionSetNumber(parallelExecutionSetIndex + 1)
+            } else {
+              console.info("{[CircleCiOrchestrator]} - NOT EXECUTING NEXT PARALLEL EXECUTION SET, BECAUSE CURRENT IS LAST OF INDEX NO.[" + parallelExecutionSetIndex + "]  - ");
+            }
+
+            console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
+            console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+            console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+          }).bind(this)
+        })
+      }
+
+    }
     loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
       /// first load the secretfile
 
@@ -215,22 +242,33 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info(JSON.stringify({ third_is: this.execution_plan[3]}, null, " "));
       console.info(" ---");
+      console.info(JSON.stringify({ ninth_is: this.execution_plan[9]}, null, " "));
+      console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
 
 
-
-      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      /* WORKING TEST
+      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.triggerPipelines();
-      // ok, this test proves you need a new subject for each ReactiveParallelExecutionSet
-      let parallelExecSet2: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[9], 9, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
-      parallelExecSet2.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
-      parallelExecSet2.triggerPipelines();
-
+      */
+      this.processExecutionSetNumber(3);
+/*
+      for (let parallelExecutionsSetIndex: number = 0; parallelExecutionsSetIndex < this.execution_plan.length; parallelExecutionsSetIndex++) {
+        console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
+        if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
+          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty");
+        } else {
+          console.info(this.execution_plan[parallelExecutionsSetIndex]);
+          this.processExecutionSetNumber(parallelExecutionsSetIndex); /// must be synchronous : send all CircleCI Pipeline triggers, and then start monitoring.
+        }
+      }
+*/
       setTimeout(() => {
        throw new Error('>>>DEBUG STOP POINT');
-      }, 25000);
+      }, 15000);
 
 /*
       let arrLength: number = this.execution_plan.length;
@@ -304,7 +342,12 @@ export class CircleCiOrchestrator {
 
     }
 
-
+    private processExecutionSetNumber(parallelExecutionsSetIndex: number) : void {
+      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
+      parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
+      parallelExecSet1.triggerPipelines();
+    }
 
     processExecutionSet(parallelExecutionsSet: string[], parallelExecutionsSetIndex: number) : void {
 

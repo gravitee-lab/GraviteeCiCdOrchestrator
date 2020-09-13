@@ -12,7 +12,6 @@ export class ReactiveParallelExecutionSet {
 
   private circleci_client: CircleCIClient;
   private secrets: CircleCISecrets;
-
   private pipelines_nb: number;
 
   constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, secrets: CircleCISecrets, notifier: rxjs.Subject<number>) {
@@ -30,8 +29,8 @@ export class ReactiveParallelExecutionSet {
   public getRxSubject(): rxjs.Subject<any[]> {
     return this.progressMatrixSubject;
   }
-  public doSubscribe() {
-    this.getRxSubject().subscribe({
+  public doSubscribe() : rxjs.Subscription {
+    let toReturn : rxjs.Subscription = this.getRxSubject().subscribe({
      next: ((triggerProgress) => {
        console.log("[-----------------------------------------------]");
        console.log("[-----------------------------------------------]");
@@ -57,8 +56,19 @@ export class ReactiveParallelExecutionSet {
          console.log("[-----------------------------------------------]");
        }
 
-     }).bind(this)
+     }).bind(this),
+     complete: () => {
+       console.log("[-----------------------------------------------]");
+       console.log("[-----------------------------------------------]");
+       console.log(`[ --- progress Matrix Observer: COMPLETE  `);
+       console.log(`[ --- All Pipelines have been triggered !   `);
+       console.log(`[ --- [ReactiveParallelExecutionSet], this.pipelines_nb : [` + this.pipelines_nb + `]`);
+       console.log(`[ --- [ReactiveParallelExecutionSet], this.parallelExecutionSetIndex : [` + this.parallelExecutionSetIndex + `]`);
+       console.log("[-----------------------------------------------]");
+       console.log("[-----------------------------------------------]");
+     }
    })
+   return toReturn;
   }
   triggerPipelines(): void {
 
@@ -89,13 +99,20 @@ export class ReactiveParallelExecutionSet {
   }
 
   private handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any) : void {
-    console.info( '[{ReactiveParallelExecutionSet}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse.data )
+    console.info( '[{ReactiveParallelExecutionSet}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
     let entry: any = {};
     entry.pipeline = {
+      /*
+      // when retryWhen is used
       pipeline_exec_number: `${circleCiJsonResponse.data.number}`,
       id : `${circleCiJsonResponse.data.id}`,
       created_at: `${circleCiJsonResponse.data.created_at}`,
       exec_state: `${circleCiJsonResponse.data.state}`
+      */
+      pipeline_exec_number: `${circleCiJsonResponse.number}`,
+      id : `${circleCiJsonResponse.id}`,
+      created_at: `${circleCiJsonResponse.created_at}`,
+      exec_state: `${circleCiJsonResponse.state}`
     }
     this.progressMatrix.push(entry.pipeline);
     /// this.progressMatrixSubject.next(entry.pipeline);
