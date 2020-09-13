@@ -223,7 +223,7 @@ export class CircleCiOrchestrator {
       let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
       parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.triggerPipelines();
-
+      // ok, this test proves you need a new subject for each ReactiveParallelExecutionSet
       let parallelExecSet2: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[9], 9, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
       parallelExecSet2.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet2.triggerPipelines();
