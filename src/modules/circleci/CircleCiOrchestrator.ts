@@ -11,7 +11,8 @@ import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSe
 
 export class ProgressMatrix extends rxjs.Subject<any[]> {
   private progressMatrix: any[];
-  constructor(){
+  private parallelExecutionSetIndex: number;
+  constructor(ParallelExecutionSetIndex: number){
     super();
     this.progressMatrix = []
   }
@@ -19,11 +20,23 @@ export class ProgressMatrix extends rxjs.Subject<any[]> {
     this.progressMatrix[parallelExecutionsSetIndex].push(newCciJSONResponse);
     this.next(newCciJSONResponse);
   }
-  public getMatrix(): any[][] {
+  public getMatrix(): any[] {
     return this.progressMatrix;
   }
-  public getParallelExecSetLength(parallelExecutionsSetIndex: number): number {
-    return this.progressMatrix[parallelExecutionsSetIndex].length;
+  public getLength(): number {
+    return this.progressMatrix.length;
+  }
+  public getParallelExecutionSetIndex(): number {
+    return this.parallelExecutionSetIndex;
+  }
+  /**
+   * clears the matrix, and resets this.parallelExecutionSetIndex to desried value
+   **/
+  public clear(pExecutionSetIndex: number): void {
+    while(this.progressMatrix.length > 0) {
+      this.progressMatrix.pop();
+    }
+    this.parallelExecutionSetIndex = pExecutionSetIndex;
   }
 }
 export interface CircleCISecrets {
@@ -167,7 +180,7 @@ export class CircleCiOrchestrator {
       this.retries = retries;
       this.loadCircleCISecrets();
       this.circleci_client = new CircleCIClient(this.secrets);
-      this.progressMatrix = new ProgressMatrix();
+      this.progressMatrix = new ProgressMatrix(); /// will be emptied every time a new parallel execution set is processed
       this.monitorReport = [];
       this.github_org = process.env.GH_ORG;
     }
@@ -237,7 +250,8 @@ export class CircleCiOrchestrator {
 
 
 
-    processExecutionSet (parallelExecutionsSet: string[], parallelExecutionsSetIndex: number) : void {
+    processExecutionSet(parallelExecutionsSet: string[], parallelExecutionsSetIndex) : void {
+
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
@@ -248,6 +262,7 @@ export class CircleCiOrchestrator {
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       /// First, trigger all pipelines in the parallel execution set
+      this.progressMatrix.clear(parallelExecutionsSetIndex);
       parallelExecutionsSet.forEach(((componentName, index) => {
         /// pipeline execution parameters, same as Jenkins build parameters
         let pipelineParameters = { parameters: {}};
@@ -259,17 +274,24 @@ export class CircleCiOrchestrator {
             error: this.errorHandlerTriggerCCIPipeline.bind(this)
         });
       }).bind(this));
-      /// then subscribe to ProgressMatrix Rx JS Subject
+      /// then subscribe to ProgressMatrix RxJS Subject
       this.progressMatrix.subscribe({ // subscription to Subject
         next: ((cciResponse: any) => {
           console.log(">>>>>>>>>>Subject NEXT for ProgressMatrix Circle CI Pipeline trigger / response is : [" + cciResponse + "]")
 
-          if (this.progressMatrix.getLength() == this.progressMatrix[parallelExecutionsSetIndex]) {
-             console.log(">>>>>>>>>>Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D (last was for Gravitee Component [" + pipeExecProgress.component + "] ");
-             this.start();
-          } else {
-             console.log("Not All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 , proceeeding after Gravitee Component [" + pipeExecProgress.component + "] ");
-          }
+          if (this.progressMatrix.getLength() == this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length) {
+              console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
+              console.log(">>>>>>>>>>Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D  ProgressMatrix is now [" + this.progressMatrix + "] ");
+              console.log(">>>>>>>>>>Subject NEXT >>> ProgressMatrix is now : " + this.progressMatrix);
+              console.log(this.progressMatrix);
+              console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
+          } /* else {
+              console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
+              console.log(">>>>>>>>>>Subject NEXT >>> Not All Pipeline Triggers HTTP Responses have been received from Circle VI API v2.  ");
+              console.log(">>>>>>>>>>Subject NEXT >>> ProgressMatrix is now : " + this.progressMatrix);
+              console.log(this.progressMatrix);
+              console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
+          }*/
         }).bind(this),
         error: ((error: any) => {
            console.log(">>>>>>>>>>Subject ERROR for PipelineExecutionProgress Circle CI Pipeline trigger of Gravitee Components : " + error)
