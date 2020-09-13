@@ -202,8 +202,6 @@ export class CircleCiOrchestrator {
      * </pre>
      *
      **/
-    // private progressMatrix: ProgressMatrix; // don't know how to use RxJS to observe progress for now, leaving that aside.
-    // private progressMatrix: SimpleProgressMatrix;
     private progressMatrix: any[];
     private progressMatrixSubject = new rxjs.Subject<any>();
     private pipelines_nb: number;

@@ -6,6 +6,7 @@ import {AxiosResponse} from 'axios';
 import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
 import * as orchestra from '../circleci/CircleCiOrchestrator';
 
+import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 
 /// import * as Collections from 'typescript-collections';
 
@@ -101,7 +102,7 @@ export namespace monitoring {
       export interface MonitorArgs  {
         parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress,
         timeout: number,
-        secrets: orchestra.CircleCISecrets
+        secrets: CircleCISecrets
       }
 
   /**
@@ -134,7 +135,7 @@ export namespace monitoring {
     /**
      * Circle CI Secrets used byt his Monitor, like the (API Token) to authenticate to Circle CI API
      **/
-    private secrets: orchestra.CircleCISecrets;
+    private secrets: CircleCISecrets;
 
     constructor (
       name: string,
