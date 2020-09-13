@@ -165,8 +165,14 @@ export class CircleCiOrchestrator {
       this.github_org = process.env.GH_ORG;
 
       this.parallelExecutionSetsNotifier.subscribe({
-        next: (data) => {
-          console.log( '[CircleCiOrchestrator] => Parallel Execution Set no.['+ data +'] just completed triggering [Circle CI] Pipelines'  )
+        next: (parallelExecutionSetIndex) => {
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+          console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
+          console.info("{[CircleCiOrchestrator]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
+          console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
+          console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
         }
       })
     }
@@ -220,7 +226,7 @@ export class CircleCiOrchestrator {
 
       setTimeout(() => {
        throw new Error('>>>DEBUG STOP POINT');
-      }, 10000);
+     }, 25000);
 
 /*
       let arrLength: number = this.execution_plan.length;
