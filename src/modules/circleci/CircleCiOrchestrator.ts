@@ -191,20 +191,52 @@ export class CircleCiOrchestrator {
      * returning an A 2-dimensional array
      **/
     start()  : void {
-      console.info("");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - ");
-      console.info("[{CircleCiOrchestrator}] - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
-      console.info("{[CircleCiOrchestrator]} - Execution plan is the value of the 'execution_plan_is' below : ");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info(" ---");
-      console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
-      console.info(" ---");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("");
+        console.info("");
+        console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+        console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - ");
+        console.info("[{CircleCiOrchestrator}] - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
+        console.info("{[CircleCiOrchestrator]} - Execution plan is the value of the 'execution_plan_is' below : ");
+        console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+        console.info(" ---");
+        console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
+        console.info(" ---");
+        console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+        console.info("");
+
+        let parallelExecSet: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+        let subject: rxjs.Subject<any[]> = parallelExecSet.getRxSubject()
+        subject.subscribe({
+         next: ((triggerProgress) => {
+           console.log("[-----------------------------------------------]");
+           console.log("[-----------------------------------------------]");
+           console.log(`[ --- [ReactiveParallelExecutionSet], Progress Matrix is now  : `);
+           console.log("[-----------------------------------------------]");
+           console.log("[-----------------------------------------------]");
+           console.log(triggerProgress);
+           console.log("[-----------------------------------------------]");
+           console.log("[-----------------------------------------------]");
+           console.log(`[ --- [ReactiveParallelExecutionSet], this.pipelines_nb : [` + this.pipelines_nb + `]`);
+           console.log(`[ --- [ReactiveParallelExecutionSet], triggerProgress.length : [` + triggerProgress.length + `]`);
+           console.log("[-----------------------------------------------]");
+           console.log("[-----------------------------------------------]");
+           console.log(triggerProgress);
+           if (triggerProgress.length == this.pipelines_nb){
+             console.log("[-----------------------------------------------]");
+             console.log("[-----------------------------------------------]");
+             console.log(`[ --- progress Matrix Observer: NEXT  `);
+             console.log(`[ --- All Pipelines have been triggered !   `);
+             console.log("[-----------------------------------------------]");
+             console.log("[-----------------------------------------------]");
+           }
+
+         }).bind(parallelExecSet)
+       })
+       parallelExecSet.triggerPipelines();
+       throw new Error('>>>DEBUG STOP POINT');
       let arrLength: number = this.execution_plan.length;
       for (let parallelExecutionsSetIndex: number = 0; parallelExecutionsSetIndex < arrLength; parallelExecutionsSetIndex++) {
-        // this.progressMatrix.clear(parallelExecutionsSetIndex);// clearing progress matrix for next {@link ParallelExecutionSet}
+
+
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
         if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty");

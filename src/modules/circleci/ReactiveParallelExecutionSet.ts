@@ -15,15 +15,22 @@ export class ReactiveParallelExecutionSet {
 
   private pipelines_nb: number;
 
-  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient) {
+  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, secrets: CircleCISecrets) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
     this.parallelExecutionSet = parallelExecutionSet;
     this.circleci_client = circleci_client;
+    this.secrets = secrets;
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
   }
+  /**
+   *
+   **/
+  public getRxSubject(): rxjs.Subject<any[]> {
+    return this.progressMatrixSubject;
+  }
 
-  triggerPipelines(): rxjs.Subject<any[]> {
+  triggerPipelines(): void {
 
 
     console.info("");
@@ -48,8 +55,9 @@ export class ReactiveParallelExecutionSet {
           error: this.errorHandlerTriggerCCIPipeline.bind(this)
       });
     }).bind(this));
-    return this.progressMatrixSubject;
+
   }
+
   private handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any) : void {
     console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse.data )
     let entry: any = {};
