@@ -50,7 +50,7 @@ export class ReactiveParallelExecutionSet {
          console.log("[-----------------------------------------------]");
          console.log(`[ --- progress Matrix Observer: NEXT  `);
          console.log(`[ --- All Pipelines have been triggered !   `);
-         console.log(`[ --- notifier is :    ` + );
+         console.log(`[ --- notifier call :  `);
          this.notifier.next(this.parallelExecutionSetIndex);
          console.log("[-----------------------------------------------]");
          console.log("[-----------------------------------------------]");
