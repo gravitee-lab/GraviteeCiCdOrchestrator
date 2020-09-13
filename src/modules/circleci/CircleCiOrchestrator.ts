@@ -9,7 +9,23 @@ import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
 import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
 import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
 
-
+export class ProgressMatrix extends rxjs.Subject<any[]> {
+  private progressMatrix: any[];
+  constructor(){
+    super();
+    this.progressMatrix = []
+  }
+  public push(newCciJSONResponse: any, parallelExecutionsSetIndex: number) {
+    this.progressMatrix[parallelExecutionsSetIndex].push(newCciJSONResponse);
+    this.next(newCciJSONResponse);
+  }
+  public getMatrix(): any[][] {
+    return this.progressMatrix;
+  }
+  public getParallelExecSetLength(parallelExecutionsSetIndex: number): number {
+    return this.progressMatrix[parallelExecutionsSetIndex].length;
+  }
+}
 export interface CircleCISecrets {
   circleci: {
     auth: {
@@ -139,7 +155,7 @@ export class CircleCiOrchestrator {
      * </pre>
      *
      **/
-    private progressMatrix: any[];
+    private progressMatrix: ProgressMatrix;
     private monitorReport: any[];
     private retries: number;
     private circleci_client: CircleCIClient;
@@ -151,7 +167,7 @@ export class CircleCiOrchestrator {
       this.retries = retries;
       this.loadCircleCISecrets();
       this.circleci_client = new CircleCIClient(this.secrets);
-      this.progressMatrix = [];
+      this.progressMatrix = new ProgressMatrix();
       this.monitorReport = [];
       this.github_org = process.env.GH_ORG;
     }
@@ -202,7 +218,7 @@ export class CircleCiOrchestrator {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${index}`+"] because it is empty");
         } else {
           console.info(parallelExecutionsSet);
-          this.processExecutionSet(parallelExecutionsSet); /// must be synchronous : send all CircleCI Pipeline triggers, and then start monitoring.
+          this.processExecutionSet(parallelExecutionsSet, index); /// must be synchronous : send all CircleCI Pipeline triggers, and then start monitoring.
         }
 
       });
@@ -221,7 +237,7 @@ export class CircleCiOrchestrator {
 
 
 
-    processExecutionSet (parallelExecutionsSet: string[]) : void {
+    processExecutionSet (parallelExecutionsSet: string[], parallelExecutionsSetIndex: number) : void {
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
@@ -243,7 +259,27 @@ export class CircleCiOrchestrator {
             error: this.errorHandlerTriggerCCIPipeline.bind(this)
         });
       }).bind(this));
+      /// then subscribe to ProgressMatrix Rx JS Subject
+      this.progressMatrix.subscribe({ // subscription to Subject
+        next: ((cciResponse: any) => {
+          console.log(">>>>>>>>>>Subject NEXT for ProgressMatrix Circle CI Pipeline trigger / response is : [" + cciResponse + "]")
 
+          if (this.progressMatrix.getLength() == this.progressMatrix[parallelExecutionsSetIndex]) {
+             console.log(">>>>>>>>>>Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D (last was for Gravitee Component [" + pipeExecProgress.component + "] ");
+             this.start();
+          } else {
+             console.log("Not All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 , proceeeding after Gravitee Component [" + pipeExecProgress.component + "] ");
+          }
+        }).bind(this),
+        error: ((error: any) => {
+           console.log(">>>>>>>>>>Subject ERROR for PipelineExecutionProgress Circle CI Pipeline trigger of Gravitee Components : " + error)
+           console.log(error)
+        }).bind(this),
+        complete: ((cciResponse: any) => {
+           console.log(">>>>>>>>>>Subject COMPLETE for ProgressMatrix  Circle CI Pipeline trigger of Gravitee Components : ");
+           console.log(cciResponse)
+        }).bind(this)
+      })
     }
 
     /**
@@ -344,7 +380,6 @@ export class CircleCiOrchestrator {
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
       // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "))
       console.info({progressMatrix: this.progressMatrix});
-
       console.info('')
     }
 
@@ -381,7 +416,7 @@ export class CircleCiOrchestrator {
 
 
       /// I poll a first time.
-      this.progressMatrix.forEach((pipelineExecution, index) => {
+      this.progressMatrix.getMatrix().forEach((pipelineExecution, index) => {
         // 1./ I retrieve the pipeline info using the [GET /api/v2/pipeline/${circleci_pipeline_id}] Endpoint
         let getPipelineInfoSubscription = this.circleci_client.getPipelineInfo(pipelineExecution.pipeline.id).subscribe({
             next: this.handleGetPipelineInfoCircleCIResponseData.bind(this),
