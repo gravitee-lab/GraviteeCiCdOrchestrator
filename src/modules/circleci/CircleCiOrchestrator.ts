@@ -282,7 +282,8 @@ export class CircleCiOrchestrator {
           console.log(">>>>>>>>>> Subject NEXT");
           console.log(">>>>>>>>>> Subject NEXT DEBUG  : ");
           console.log(">>>>>>>>>> Subject NEXT DEBUG [this.progressMatrix.getLength()] =  " + this.progressMatrix.getLength() + "");
-          console.log(">>>>>>>>>> Subject NEXT DEBUG [this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length] =  " + this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length + ""); 
+          console.log(">>>>>>>>>> Subject NEXT DEBUG [this.progressMatrix.getParallelExecutionSetIndex()] =  " + this.progressMatrix.getParallelExecutionSetIndex() + "");
+          console.log(">>>>>>>>>> Subject NEXT DEBUG [this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length] =  " + this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length + "");
 
 
           if (this.progressMatrix.getLength() == this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length) {
