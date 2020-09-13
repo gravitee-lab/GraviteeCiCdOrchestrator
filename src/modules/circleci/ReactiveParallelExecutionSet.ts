@@ -22,6 +22,7 @@ export class ReactiveParallelExecutionSet {
     this.secrets = secrets;
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
+    this.notifier = notifier;
   }
   /**
    *
