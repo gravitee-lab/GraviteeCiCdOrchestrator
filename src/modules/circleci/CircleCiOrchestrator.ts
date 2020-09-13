@@ -343,10 +343,23 @@ export class CircleCiOrchestrator {
     }
 
     private processExecutionSetNumber(parallelExecutionsSetIndex: number) : void {
-      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
-      // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
-      parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
-      parallelExecSet1.triggerPipelines();
+
+      console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
+      if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
+
+        if (parallelExecutionsSetIndex < this.execution_plan.length) { // reccurrence stop condition
+          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, proceed with next");
+          this.processExecutionSetNumber(parallelExecutionsSetIndex + 1)
+        } else {
+          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, do not proceed with next, cause this was last.");
+        }
+      } else {
+        let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+        // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
+        parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
+        parallelExecSet1.triggerPipelines();
+      }
+
     }
 
     processExecutionSet(parallelExecutionsSet: string[], parallelExecutionsSetIndex: number) : void {
