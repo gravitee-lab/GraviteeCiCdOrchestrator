@@ -6,7 +6,7 @@ export class ReactiveParallelExecutionSet {
 
   private progressMatrix: any[]; // will be filled as requests are sent
   private progressMatrixSubject = new rxjs.Subject<any[]>();
-
+  private notifier: rxjs.Subject<number>;
   private parallelExecutionSet: any[]; // contains all the entires coming from execution_plan
   private parallelExecutionSetIndex: number; // [ParallelExecutionSet] index in execution plan
 
@@ -15,7 +15,7 @@ export class ReactiveParallelExecutionSet {
 
   private pipelines_nb: number;
 
-  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, secrets: CircleCISecrets) {
+  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, secrets: CircleCISecrets, notifier: rxjs.Subject<number>) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
     this.parallelExecutionSet = parallelExecutionSet;
     this.circleci_client = circleci_client;
@@ -50,11 +50,13 @@ export class ReactiveParallelExecutionSet {
          console.log("[-----------------------------------------------]");
          console.log(`[ --- progress Matrix Observer: NEXT  `);
          console.log(`[ --- All Pipelines have been triggered !   `);
+         console.log(`[ --- notifier is :    ` + );
+         this.notifier.next(this.parallelExecutionSetIndex);
          console.log("[-----------------------------------------------]");
          console.log("[-----------------------------------------------]");
        }
 
-     })
+     }).bind(this)
    })
   }
   triggerPipelines(): void {

@@ -137,7 +137,7 @@ export class CircleCiOrchestrator {
     private progressMatrix: any[];
     private progressMatrixSubject = new rxjs.Subject<any>();
     private pipelines_nb: number;
-    private parallelExecutionSetsSubject = new rxjs.Subject<number>(); // this one will be used to find out when each parallelExecutionSet has completed
+    private parallelExecutionSetsNotifier = new rxjs.Subject<number>(); // this one will be used to find out when each parallelExecutionSet has completed
     /**
      * The current parallel execution set being processed
      **/
@@ -163,6 +163,12 @@ export class CircleCiOrchestrator {
       this.progressMatrix = [];
 
       this.github_org = process.env.GH_ORG;
+
+      this.parallelExecutionSetsNotifier.subscribe({
+        next: (data) => {
+          console.log( '[CircleCiOrchestrator] => Parallel Execution Set no.['+ data +'] just completed triggering [Circle CI] Pipelines'  )
+        }
+      })
     }
 
     loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
@@ -206,8 +212,10 @@ export class CircleCiOrchestrator {
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
 
-      let parallelExecSet: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
-      parallelExecSet.doSubscribe(); // this.parallelExecutionSetsSubject // this.parallelExecutionSetsSubject.next(3)
+
+
+      let parallelExecSet: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      parallelExecSet.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet.triggerPipelines();
 
       setTimeout(() => {
