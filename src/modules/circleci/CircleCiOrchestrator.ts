@@ -50,6 +50,42 @@ export class ProgressMatrix extends rxjs.Subject<ProgressMatrix> { // does not w
 }
 
 
+export class SimpleProgressMatrix { // Without RxJS, to watch progress on a [ParallelExecutionSet]
+
+  /**
+   * those two change every time clear(someNumber) is called
+   **/
+  private matrix: any[];
+  private parallelExecutionSetIndex: number; // [ParallelExecutionSet] index in execution plan
+
+  constructor(){
+    this.parallelExecutionSetIndex = 0;
+    this.matrix = []
+  }
+  public push(newCciJSONResponse: any) {
+    this.matrix.push(newCciJSONResponse);
+  }
+  public getMatrix(): any[] {
+    return this.matrix;
+  }
+  public getLength(): number {
+    return this.matrix.length;
+  }
+  public getParallelExecutionSetIndex(): number {
+    return this.parallelExecutionSetIndex;
+  }
+  /**
+   * clears the matrix, and resets this.parallelExecutionSetIndex to desried value
+   **/
+  public clear(pExecutionSetIndex: number): void {
+    while(this.matrix.length > 0) {
+      this.matrix.pop();
+    }
+    this.parallelExecutionSetIndex = pExecutionSetIndex;
+    console.log("[SimpleProgressMatrix] - cleared, now [this.parallelExecutionSetIndex ]= [" + this.parallelExecutionSetIndex + "]");
+    console.log("[SimpleProgressMatrix] - cleared, now [this.matrix ]= [" + this.matrix + "]");
+  }
+}
 /*
 public next(cciResponse: any) : void {
   console.log(">>>>>>>>>> Subject NEXT for ProgressMatrix Circle CI Pipeline trigger / response is : ");
@@ -209,12 +245,12 @@ export class CircleCiOrchestrator {
      * </pre>
      *
      **/
-    // private progressMatrix: ProgressMatrix; // don'y know how to use RxJS to observe progress for now, leaving that aside.
-    private progressMatrix: any[][];
+    // private progressMatrix: ProgressMatrix; // don't know how to use RxJS to observe progress for now, leaving that aside.
+    private progressMatrix: SimpleProgressMatrix;
     /**
      * The current parallel execution set being processed
      **/
-    private currentParallelExecutionsSetIndex: number;
+    /// private currentParallelExecutionsSetIndex: number;
     private retries: number;
     private circleci_client: CircleCIClient;
     private secrets: CircleCISecrets;
@@ -226,11 +262,10 @@ export class CircleCiOrchestrator {
       this.loadCircleCISecrets();
       this.circleci_client = new CircleCIClient(this.secrets);
       /// initialiazing [this.progressMatrix] to an Array of same lentgh as [this.execution_plan], but with empty arrays as entries
-      this.progressMatrix = []
+      this.progressMatrix = new SimpleProgressMatrix();
       for (let i: number = 0; i < this.execution_plan.length; i ++ ) {
         this.progressMatrix.push([]);
       }
-      this.currentParallelExecutionsSetIndex = -1; /// is set to -1 before any Parallel Execution set is processed.
       this.github_org = process.env.GH_ORG;
     }
 
@@ -338,16 +373,12 @@ export class CircleCiOrchestrator {
       setTimeout((() => { /// starts for loop after N seconds
         //
         console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => [parallelExecutionsSetIndex] is ' + parallelExecutionsSetIndex);
-        console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => [this.currentParallelExecutionsSetIndex] is ' + this.currentParallelExecutionsSetIndex);
-        console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => this.progressMatrix[parallelExecutionsSetIndex].length is ' + this.progressMatrix[parallelExecutionsSetIndex].length);
+        console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => this.progressMatrix..getLength() is ' + this.progressMatrix.getLength());
         console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => this.execution_plan[parallelExecutionsSetIndex].length is ' + this.execution_plan[parallelExecutionsSetIndex].length);
         console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => this.execution_plan[parallelExecutionsSetIndex] is : ');
         console.log(this.execution_plan[parallelExecutionsSetIndex]);
-        console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => this.progressMatrix[parallelExecutionsSetIndex] is : ');
-        console.log(this.progressMatrix[parallelExecutionsSetIndex]);
-        console.info('')
-        console.info( '[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => [this.progressMatrix] is :  ');
-        console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
+        console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => this.progressMatrix is : ');
+        console.log(this.progressMatrix);
         console.info('')
         console.info( '[watchParallelExecutionsSetTriggersProgress] - BEFORE FOR LOOP => [this.execution_plan] is :  ');
         console.info(JSON.stringify({execution_plan: this.execution_plan}, null, " "));
@@ -472,7 +503,7 @@ export class CircleCiOrchestrator {
         created_at: `${circleCiJsonResponse.data.created_at}`,
         exec_state: `${circleCiJsonResponse.data.state}`
       }
-      this.progressMatrix[this.currentParallelExecutionsSetIndex].push(entry.pipeline);
+      this.progressMatrix.push(entry.pipeline);
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
       console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
@@ -494,7 +525,7 @@ export class CircleCiOrchestrator {
         error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
       }
 
-      this.progressMatrix[this.currentParallelExecutionsSetIndex].push(entry);
+      this.progressMatrix.push(entry);
 
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
