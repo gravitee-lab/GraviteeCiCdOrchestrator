@@ -220,13 +220,17 @@ export class CircleCiOrchestrator {
 
 
 
-      let parallelExecSet: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
-      parallelExecSet.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
-      parallelExecSet.triggerPipelines();
+      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
+      parallelExecSet1.triggerPipelines();
+
+      let parallelExecSet2: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[9], 9, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifier); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      parallelExecSet2.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
+      parallelExecSet2.triggerPipelines();
 
       setTimeout(() => {
        throw new Error('>>>DEBUG STOP POINT');
-     }, 25000);
+      }, 25000);
 
 /*
       let arrLength: number = this.execution_plan.length;
