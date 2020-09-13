@@ -29,7 +29,34 @@ export class ReactiveParallelExecutionSet {
   public getRxSubject(): rxjs.Subject<any[]> {
     return this.progressMatrixSubject;
   }
+  public doSubscribe() {
+    this.getRxSubject().subscribe({
+     next: ((triggerProgress) => {
+       console.log("[-----------------------------------------------]");
+       console.log("[-----------------------------------------------]");
+       console.log(`[ --- [ReactiveParallelExecutionSet], Progress Matrix is now  : `);
+       console.log("[-----------------------------------------------]");
+       console.log("[-----------------------------------------------]");
+       console.log(triggerProgress);
+       console.log("[-----------------------------------------------]");
+       console.log("[-----------------------------------------------]");
+       console.log(`[ --- [ReactiveParallelExecutionSet], this.pipelines_nb : [` + this.pipelines_nb + `]`);
+       console.log(`[ --- [ReactiveParallelExecutionSet], triggerProgress.length : [` + triggerProgress.length + `]`);
+       console.log("[-----------------------------------------------]");
+       console.log("[-----------------------------------------------]");
+       console.log(triggerProgress);
+       if (triggerProgress.length == this.pipelines_nb){
+         console.log("[-----------------------------------------------]");
+         console.log("[-----------------------------------------------]");
+         console.log(`[ --- progress Matrix Observer: NEXT  `);
+         console.log(`[ --- All Pipelines have been triggered !   `);
+         console.log("[-----------------------------------------------]");
+         console.log("[-----------------------------------------------]");
+       }
 
+     })
+   })
+  }
   triggerPipelines(): void {
 
 
@@ -38,7 +65,7 @@ export class ReactiveParallelExecutionSet {
     console.info("{[ReactiveParallelExecutionSet]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
     console.info(" ---");
-    console.info(JSON.stringify({ parallelExecutionsSet: this.progressMatrix }, null, " "));
+    console.info(JSON.stringify({ parallelExecutionsSet: this.parallelExecutionSet }, null, " "));
     console.info(" ---");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
     console.info("");
@@ -70,7 +97,6 @@ export class ReactiveParallelExecutionSet {
     this.progressMatrix.push(entry.pipeline);
     /// this.progressMatrixSubject.next(entry.pipeline);
     this.progressMatrixSubject.next(this.progressMatrix);
-
 
     /// console.info('')
     /// console.info( '[{ReactiveParallelExecutionSet}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
