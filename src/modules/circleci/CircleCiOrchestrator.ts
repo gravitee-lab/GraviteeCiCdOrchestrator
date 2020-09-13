@@ -10,7 +10,7 @@ import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
 import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
 import { CircleCIClient } from '../../modules/circleci/CircleCIClient'
 import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
-import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactiveParallelExecutionSet.ts'
+import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactiveParallelExecutionSet'
 
 
 export class SimpleProgressMatrix { // Without RxJS, to watch progress on a [ParallelExecutionSet]
