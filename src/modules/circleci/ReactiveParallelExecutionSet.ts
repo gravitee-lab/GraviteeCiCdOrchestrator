@@ -35,7 +35,7 @@ export class ReactiveParallelExecutionSet {
 
     console.info("");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-    console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
+    console.info("{[ReactiveParallelExecutionSet]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
     console.info(" ---");
     console.info(JSON.stringify({ parallelExecutionsSet: this.progressMatrix }, null, " "));
@@ -50,7 +50,7 @@ export class ReactiveParallelExecutionSet {
       let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
           next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
           complete: data => {
-            console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
+            console.log( '[{[ReactiveParallelExecutionSet]} - triggering Circle CI Build completed! :)]')
           },
           error: this.errorHandlerTriggerCCIPipeline.bind(this)
       });
@@ -59,7 +59,7 @@ export class ReactiveParallelExecutionSet {
   }
 
   private handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any) : void {
-    console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse.data )
+    console.info( '[{ReactiveParallelExecutionSet}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse.data )
     let entry: any = {};
     entry.pipeline = {
       pipeline_exec_number: `${circleCiJsonResponse.data.number}`,
@@ -73,30 +73,30 @@ export class ReactiveParallelExecutionSet {
 
 
     /// console.info('')
-    /// console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
+    /// console.info( '[{ReactiveParallelExecutionSet}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     /// console.info({progressMatrix: this.progressMatrix});
     /// console.info('')
   }
   private errorHandlerTriggerCCIPipeline (error: any) : void {
-    console.info( '[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
+    console.info( '[{ReactiveParallelExecutionSet}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
     let entry: any = {};
     entry.pipeline = {
       execution_index: null,
       id : null,
       created_at: null,
       exec_state: null,
-      error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
+      error : {message: "[{ReactiveParallelExecutionSet}] - Triggering Circle CI pipeline failed ", cause: error}
     }
 
     this.progressMatrix.push(entry);
 
     console.info('')
-    console.info( '[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
+    console.info( '[{ReactiveParallelExecutionSet}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info({progressMatrix: this.progressMatrix});
     console.info('')
-    throw new Error('[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+    throw new Error('[{ReactiveParallelExecutionSet}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
 
 }
