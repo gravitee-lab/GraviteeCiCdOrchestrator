@@ -325,16 +325,17 @@ export class CircleCiOrchestrator {
       }).bind(this));
       /// then start watching Progress of Circle CI API invocations to trigger pipelines
 
+      /// then send all Circle CI API requests to check execution status of each pipeline
 
-
+      /// finally proceed with next parallel execution set (if any error occured, the whole process stops)
     }
-    
+
     private watchParallelExecutionsSetTriggersProgress(parallelExecutionsSetIndex: number) {
 
       while(this.progressMatrix[parallelExecutionsSetIndex].length != this.execution_plan[parallelExecutionsSetIndex].length) {
         setTimeout(() => {
-          console.log('[watchParallelExecutionsSetTriggersProgress] => wait 0.5 seconds before checking again');
-        }, 500);
+          console.log('[watchParallelExecutionsSetTriggersProgress] => wait 0.25 seconds before checking again');
+        }, 250);
       }
       // when completed triggering Pipelines for Parallel Execution set, just log it
       console.log("All Circle CI API Pipeline triggers JSON response for parallel execution set no. [" + parallelExecutionsSetIndex + "] have been received without errors.");
@@ -461,6 +462,7 @@ export class CircleCiOrchestrator {
       console.info( '[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
       console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
       console.info('')
+      throw new Error('[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + {progressMatrix: this.progressMatrix}+ ']')
     }
 
 }
