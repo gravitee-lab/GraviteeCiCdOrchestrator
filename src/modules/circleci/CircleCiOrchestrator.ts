@@ -273,7 +273,7 @@ export class CircleCiOrchestrator {
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
       let arrLength: number = this.execution_plan.length;
-      for (let parallelExecutionsSetIndex: number; parallelExecutionsSetIndex < arrLength; parallelExecutionsSetIndex++){
+      for (let parallelExecutionsSetIndex: number = 0; parallelExecutionsSetIndex < arrLength; parallelExecutionsSetIndex++){
         this.currentParallelExecutionsSetIndex = parallelExecutionsSetIndex;
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
         if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
