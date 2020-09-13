@@ -400,8 +400,6 @@ export class CircleCiOrchestrator {
 
     }
 
-
-
     /**
      * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
      * Every time this method is invoked, it adds an entry  in the {@see this.progressMatrix}, from the <pre>data</pre> returned by the <strong>Circle CI</strong> API call
@@ -433,8 +431,7 @@ export class CircleCiOrchestrator {
         created_at: `${circleCiJsonResponse.data.created_at}`,
         exec_state: `${circleCiJsonResponse.data.state}`
       }
-      this.progressMatrix.push(entry.pipeline)
-
+      this.progressMatrix.push(entry.pipeline);
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
       // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "))
@@ -462,7 +459,7 @@ export class CircleCiOrchestrator {
       console.info( '[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
       console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
       console.info('')
-      throw new Error('[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + {progressMatrix: this.progressMatrix}+ ']')
+      throw new Error('[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
     }
 
 }
