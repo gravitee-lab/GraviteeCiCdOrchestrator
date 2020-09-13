@@ -277,14 +277,15 @@ export class CircleCiOrchestrator {
       /// then subscribe to ProgressMatrix RxJS Subject
       this.progressMatrix.subscribe({ // subscription to Subject
         next: ((cciResponse: any) => {
-          console.log(">>>>>>>>>>Subject NEXT for ProgressMatrix Circle CI Pipeline trigger / response is : [" + cciResponse + "]")
-
+          console.log(">>>>>>>>>> Subject NEXT for ProgressMatrix Circle CI Pipeline trigger / response is : ");
+          console.log(cciResponse);
+          console.log(">>>>>>>>>> Subject NEXT");
           if (this.progressMatrix.getLength() == this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length) {
-              console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
-              console.log(">>>>>>>>>>Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D  ProgressMatrix is now [" + this.progressMatrix + "] ");
-              console.log(">>>>>>>>>>Subject NEXT >>> ProgressMatrix is now : " + this.progressMatrix);
+              console.log(">>>>>>>>>> Subject NEXT >>> <<< ");
+              console.log(">>>>>>>>>> Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D  ProgressMatrix is now [" + this.progressMatrix + "] ");
+              console.log(">>>>>>>>>> Subject NEXT >>> ProgressMatrix is now : " + this.progressMatrix);
               console.log(this.progressMatrix);
-              console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
+              console.log(">>>>>>>>>> Subject NEXT >>> <<< ");
           } /* else {
               console.log(">>>>>>>>>>Subject NEXT >>> <<< ");
               console.log(">>>>>>>>>>Subject NEXT >>> Not All Pipeline Triggers HTTP Responses have been received from Circle VI API v2.  ");
