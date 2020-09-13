@@ -249,7 +249,7 @@ export class CircleCiOrchestrator {
     // private progressMatrix: ProgressMatrix; // don't know how to use RxJS to observe progress for now, leaving that aside.
     // private progressMatrix: SimpleProgressMatrix;
     private progressMatrix: any[];
-    private progressMatrixSubject = new rxjs.Subject<number>();
+    private progressMatrixSubject = new rxjs.Subject<any>();
     /**
      * The current parallel execution set being processed
      **/
@@ -520,7 +520,9 @@ export class CircleCiOrchestrator {
         exec_state: `${circleCiJsonResponse.data.state}`
       }
       this.progressMatrix.push(entry.pipeline);
-      this.progressMatrixSubject.next(1);
+      this.progressMatrixSubject.next({
+        progressMatrix: this.progressMatrix
+      });
 
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
