@@ -137,6 +137,7 @@ export class CircleCiOrchestrator {
     private progressMatrix: any[];
     private progressMatrixSubject = new rxjs.Subject<any>();
     private pipelines_nb: number;
+    private parallelExecutionSetsSubject = new rxjs.Subject<number>(); // this one will be used to find out when each parallelExecutionSet has completed
     /**
      * The current parallel execution set being processed
      **/
@@ -206,8 +207,7 @@ export class CircleCiOrchestrator {
       console.info("");
 
       let parallelExecSet: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
-      parallelExecSet.doSubscribe();
-
+      parallelExecSet.doSubscribe(); // this.parallelExecutionSetsSubject // this.parallelExecutionSetsSubject.next(3)
       parallelExecSet.triggerPipelines();
 
       setTimeout(() => {
