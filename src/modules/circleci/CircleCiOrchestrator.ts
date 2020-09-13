@@ -280,6 +280,11 @@ export class CircleCiOrchestrator {
           console.log(">>>>>>>>>> Subject NEXT for ProgressMatrix Circle CI Pipeline trigger / response is : ");
           console.log(cciResponse);
           console.log(">>>>>>>>>> Subject NEXT");
+          console.log(">>>>>>>>>> Subject NEXT DEBUG  : ");
+          console.log(">>>>>>>>>> Subject NEXT DEBUG [this.progressMatrix.getLength()] =  " + this.progressMatrix.getLength() + "");
+          console.log(">>>>>>>>>> Subject NEXT DEBUG [this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length] =  " + this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length + ""); 
+
+
           if (this.progressMatrix.getLength() == this.execution_plan[this.progressMatrix.getParallelExecutionSetIndex()].length) {
               console.log(">>>>>>>>>> Subject NEXT >>> <<< ");
               console.log(">>>>>>>>>> Subject NEXT >>> All Pipeline Triggers HTTP Responses have been received from Circle VI API v2 !!! :D  ProgressMatrix is now [" + this.progressMatrix + "] ");
