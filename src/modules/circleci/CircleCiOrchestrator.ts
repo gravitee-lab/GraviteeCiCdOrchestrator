@@ -324,7 +324,7 @@ export class CircleCiOrchestrator {
         });
       }).bind(this));
       /// then start watching Progress of Circle CI API invocations to trigger pipelines
-
+      this.watchParallelExecutionsSetTriggersProgress(parallelExecutionsSetIndex);
       /// then send all Circle CI API requests to check execution status of each pipeline
 
       /// finally proceed with next parallel execution set (if any error occured, the whole process stops)
@@ -333,13 +333,19 @@ export class CircleCiOrchestrator {
     private watchParallelExecutionsSetTriggersProgress(parallelExecutionsSetIndex: number) {
 
       while(this.progressMatrix[parallelExecutionsSetIndex].length != this.execution_plan[parallelExecutionsSetIndex].length) {
+        console.log('[watchParallelExecutionsSetTriggersProgress] - WHILE => this.progressMatrix[parallelExecutionsSetIndex].length is ' + this.progressMatrix[parallelExecutionsSetIndex].length);
+        console.log('[watchParallelExecutionsSetTriggersProgress] - WHILE => this.execution_plan[parallelExecutionsSetIndex].length is ' + this.execution_plan[parallelExecutionsSetIndex].length);
         setTimeout(() => {
-          console.log('[watchParallelExecutionsSetTriggersProgress] => wait 0.25 seconds before checking again');
+          console.log('[watchParallelExecutionsSetTriggersProgress] - WHILE => waited 0.25 seconds before checking again');
         }, 250);
       }
       // when completed triggering Pipelines for Parallel Execution set, just log it
-      console.log("All Circle CI API Pipeline triggers JSON response for parallel execution set no. [" + parallelExecutionsSetIndex + "] have been received without errors.");
-
+      console.log("[watchParallelExecutionsSetTriggersProgress] - All Circle CI API Pipeline triggers JSON response for parallel execution set no. [" + parallelExecutionsSetIndex + "] have been received without errors.");
+      console.info('')
+      console.info( '[{CircleCiOrchestrator}] - [watchParallelExecutionsSetTriggersProgress] [this.progressMatrix] is now :  ');
+      // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "))
+      console.info({progressMatrix: this.progressMatrix});
+      console.info('')
     }
     /**
      * Refonte de la méthode [processExecutionSet] : future RxJS implementation, unsused for now.
