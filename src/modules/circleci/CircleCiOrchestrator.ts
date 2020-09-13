@@ -12,12 +12,12 @@ import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSe
 export class ProgressMatrix extends rxjs.Subject<any[]> {
   private progressMatrix: any[];
   private parallelExecutionSetIndex: number;
-  constructor(ParallelExecutionSetIndex: number){
+  constructor(){
     super();
     this.progressMatrix = []
   }
-  public push(newCciJSONResponse: any, parallelExecutionsSetIndex: number) {
-    this.progressMatrix[parallelExecutionsSetIndex].push(newCciJSONResponse);
+  public push(newCciJSONResponse: any) {
+    this.progressMatrix.push(newCciJSONResponse);
     this.next(newCciJSONResponse);
   }
   public getMatrix(): any[] {
@@ -250,7 +250,7 @@ export class CircleCiOrchestrator {
 
 
 
-    processExecutionSet(parallelExecutionsSet: string[], parallelExecutionsSetIndex) : void {
+    processExecutionSet(parallelExecutionsSet: string[], parallelExecutionsSetIndex: number) : void {
 
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -295,11 +295,11 @@ export class CircleCiOrchestrator {
           }*/
         }).bind(this),
         error: ((error: any) => {
-           console.log(">>>>>>>>>>Subject ERROR for PipelineExecutionProgress Circle CI Pipeline trigger of Gravitee Components : " + error)
+           console.log(">>>>>>>>>>Subject ERROR for Pipeline Triggers : ")
            console.log(error)
         }).bind(this),
         complete: ((cciResponse: any) => {
-           console.log(">>>>>>>>>>Subject COMPLETE for ProgressMatrix  Circle CI Pipeline trigger of Gravitee Components : ");
+           console.log(">>>>>>>>>>Subject COMPLETE for Pipeline Triggers : ");
            console.log(cciResponse)
         }).bind(this)
       })
@@ -402,7 +402,7 @@ export class CircleCiOrchestrator {
       console.info('')
       console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
       // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "))
-      console.info({progressMatrix: this.progressMatrix});
+      console.info({progressMatrix: this.progressMatrix.getMatrix()});
       console.info('')
     }
 
@@ -423,8 +423,8 @@ export class CircleCiOrchestrator {
       this.progressMatrix.push(entry);
 
       console.info('')
-      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
-      console.info(JSON.stringify({progressMatrix: this.progressMatrix}))
+      console.info( '[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
+      console.info(JSON.stringify({progressMatrix: this.progressMatrix.getMatrix()}))
       console.info('')
     }
 
