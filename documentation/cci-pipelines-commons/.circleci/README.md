@@ -62,7 +62,8 @@ _**Reference Documentation**_ :
 
 _Could be used for TLS/SSL Certificates, KUBECONFIG, for example_
 
-*
+
+* On one machine :
 
 ```bash
 # Example with kubeconfig
@@ -71,7 +72,11 @@ export FILE_LOCAL_PATH=${HOME}/.kube/config
 # store the file to secrethub (from pipeline provisining the cluster)
 secrethub write --in-file ${FILE_LOCAL_PATH} gravitee-io/cicd/envs/staging/k8s/kubeconfig
 secrethub write --in-file ${FILE_LOCAL_PATH} gravitee-io/cicd/envs/integration/k8s/kubeconfig
+```
 
+* On the other machine :
+
+```bash
 # retrieve the file (on another machine)
 # Example with kubeconfig
 export KUBECONFIG=${HOME}/.kube/config
