@@ -75,7 +75,7 @@ jobs:
                     echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
                     docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
-  tests_before_deployment:
+  tests_without_deployment:
     machine:
       resource_class: medium
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
@@ -124,7 +124,7 @@ workflows:
       - build:
           context: gravitee-lab
           # filters:
-      - restore_integ_env_initial_state:
+      - integ_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
           # This workflow will :
@@ -141,10 +141,10 @@ workflows:
         # => User Stories End 2 End Tests
       - product_integration_tests: # runs integration tests for Gravitee Product Releases (not support)
           requires:
-            - restore_integ_env_initial_state
+            - integ_env_initial_state
           context: gravitee-lab
           # filters:
-      - restore_staging_env_initial_state:
+      - staging_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
           # This workflow will :
@@ -163,7 +163,7 @@ workflows:
         # => big database End 2 End Tests
       - product_staging_tests:
           requires:
-            - restore_staging_env_initial_state
+            - staging_env_initial_state
           context: gravitee-lab
           # filters:
       - git_release:
@@ -221,6 +221,7 @@ workflows:
   #    load tests, production grade tests in a word. We want to avoid regression on
   #    our Product Production Grade.
   #
+
   dev_pr_review:
     jobs:
       - build:
@@ -257,24 +258,24 @@ workflows:
           # filters:
       # ---
       # A small 3-nodes kubernetes Cluster on AWS, with minimum storage capacity
-      - deploy_integ_env:
+      - integ_env_initial_state:
           # not worth spending money if unit/ source code quality tests did not pass
           requires:
-            - tests_before_deployment
+            - tests_without_deployment
           context: gravitee-lab
           # filters:
         # ---
         # among Integration Tests :
         # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
         # => User Stories End 2 End Tests
-      - sprint_integration_tests:
+      - integ_tests:
           requires:
             - deploy_integ_env
           context: gravitee-lab
           # filters:
       # ---
       # A bigger 9-nodes kubernetes Cluster on AWS, with production-grade storage capacity
-      - deploy_staging_env:
+      - staging_env_initial_state:
           # not worth spending money if integration tests did not pass
           requires:
             - integration_tests
@@ -284,7 +285,7 @@ workflows:
         # among staging tests :
         # => performance tests
         # => big data load, and End 2 End Tests
-      - sprint_staging_tests:
+      - staging_tests:
           requires:
             - deploy_staging_env
           context: gravitee-lab
@@ -303,7 +304,7 @@ workflows:
   #    reduced scope, I.e. integration tests on the components which are modified during the Support Sprint.
   #    In a word, We want to detect and fix asap any integration regression, and any new issue caused by support case or quick bugfix.
   #
-  support_pr_review:
+  supp_pr_review:
     jobs:
       - build:
           context: gravitee-lab
@@ -335,22 +336,22 @@ workflows:
       # ---
       # Will run all tests before deployment, but only on a reduced scope : tests on
       # the components which are modified during the Support Sprint.
-      - support_tests_before_deployment:
+      - supp_tests_without_deployment:
           requires:
             - build
           context: gravitee-lab
           # filters:
           # this deployment should be exetremely quick, like only a docker-compose inside one AWS EC2 instance.
-      - support_deploy_integ_env:
+      - supp_integ_env_initial_state:
           # not worth spending money if unit / source code quality tests did not pass
           requires:
-            - tests_before_deployment
+            - tests_without_deployment
           context: gravitee-lab
           # filters:
         # ---
         # among Integration Tests :
         # => A few User Stories End 2 End Tests
-      - support_integration_tests:
+      - supp_integration_tests:
           requires:
             - deploy_integ_env
           context: gravitee-lab
