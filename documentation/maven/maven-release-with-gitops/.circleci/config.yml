@@ -1,7 +1,33 @@
-staging_only: &staging_only
+product_release_filter: &product_release_filter
   filters:
     branches:
-      only: staging
+      # will run only when pull request is from
+      # Gravitee Dev / Support Team members
+      only:
+
+dev_filter: &dev_filter
+  filters:
+    branches:
+      # will run only when pull request is from
+      # Gravitee Dev / Support Team members
+      only:
+        - /^issues*/
+        # - /^*snyk*/
+        # - /^*dependabot*/
+      # will not run on pull requests from one
+      # release branche, to another, for
+      # STS / LTS support Releases
+      ignore:
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+        - /^*.x/
+        - /^fix*/
+        - /^*support/
+        # - /^*snyk*/
+        # - /^*dependabot*/
 
 # Machine executor, set the machine key to true in .circleci/config.yml:
 version: 2.1
@@ -128,7 +154,7 @@ workflows:
     jobs:
       - build:
           context: gravitee-lab
-          # filters:
+          <<: *product_filter
       - integ_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
@@ -231,28 +257,7 @@ workflows:
     jobs:
       - build:
           context: gravitee-lab
-          filters:
-            branches:
-              # will run only when pull request is from
-              # Gravitee Dev / Support Team members
-              only:
-                - /^issues*/
-                # - /^*snyk*/
-                # - /^*dependabot*/
-              # will not run on pull requests from one
-              # release branche, to another, for
-              # STS / LTS support Releases
-              ignore:
-                - 1.20.x
-                - 1.25.x
-                - 1.30.x
-                - 3.0.x
-                - 3.1.x
-                - /^*.x/
-                - /^fix*/
-                - /^*support/
-                # - /^*snyk*/
-                # - /^*dependabot*/
+          <<: *dev_filter
       # ---
       # Will run all tests which can be run without any deployment, but only on a reduced scope : tests on
       # the components which are modified during the Dev / Support Sprint.
