@@ -90,6 +90,8 @@ support_pr_filter: &support_pr_filter
 version: 2.1
 orbs:
   secrethub: secrethub/cli@1.0.0
+  aws-cli: circleci/aws-cli@1.3.0
+
 jobs:
 
   dummy_job:
@@ -153,19 +155,44 @@ jobs:
       # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
       AWS_PROFILE: gravitee_cicd
+      AWS_REGION: eu-west-1
+      KUBECTL_VERSION: 1.18.8
     steps:
       - checkout
       - secrethub/install
+      - aws-cli/setup:
+          profile-name: ${AWS_PROFILE}
       - run:
           name: "Maven Test the Gravitee Component"
           command: |
                     echo "Helm delete Gravitee in integration environment"
-                    export AWS_ACCESS_KEY_ID=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
-                    export AWS_SECRET_ACCESS_KEY=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
+
+                    mkdir -p ${HOME}/.aws
+                    export AWS_CONFIG=${HOME}/.aws/config
+                    export AWS_CREDENTIALS=${HOME}/.aws/credentials
+
+                    secrethub read --out-file ${AWS_CONFIG} gravitee-io/cicd/envs/integration/aws/config
+                    secrethub read --out-file ${AWS_CREDENTIALS} gravitee-io/cicd/envs/integration/aws/credentials
+
                     # ----
                     # With secrethub, we will use secret file storage to retrieve KUBECONFIG
                     # https://secrethub.io/docs/guides/key-files/#store
                     #
+                    # export KUBECONFIG=${HOME}/.kube/config
+                    mkdir -p ${HOME}/.kube
+                    # secrethub read --out-file ${KUBECONFIG} gravitee-io/cicd/envs/integration/k8s/kubeconfig
+                    # In the case of an AWS EKS Cluster, retrieved with AWS CLI
+                    export AWS_PROFILE=${AWS_PROFILE}
+                    export AWS_REGION=${AWS_REGION}
+                    aws eks list-clusters --region ${AWS_REGION}
+                    export CLUSTER_NAME=$(aws eks list-clusters --region=eu-west-1 | jq '.clusters[0]' | awk -F '"' '{print $2}')
+                    aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION}
+                    # running kubectl insdie a docker container
+
+                    echo "Checking Kubectl version"
+                    docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:${KUBECTL_VERSION} version --client
+                    echo "Checking Kubernetes connection with [kubectl cluster-info]"
+                    docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:${KUBECTL_VERSION} cluster-info
 
                     export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
                     export MAVEN_COMMAND="mvn clean test"
