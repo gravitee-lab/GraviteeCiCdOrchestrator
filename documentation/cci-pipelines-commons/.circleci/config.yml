@@ -56,7 +56,29 @@ dev_pr_filter: &dev_pr_filter
 support_pr_filter: &support_pr_filter
   filters:
     branches:
-      # will run only when pull request is from
+      # ---
+      # Will run only when pull request is from
+      # Gravitee Support Team members
+      # ---
+      # Will also run on pull requests from one
+      # release branch, to another, for
+      # STS / LTS support Releases
+      only:
+        - /^fix*/
+        - /^*support/
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+      # will not run on pull requests from one
+      # release branch, to another, for
+      # STS / LTS support Releases
+      ignore:
+        - /^*.x/
+        - /^issues*/
+        - /^*snyk*/
+        - /^*dependabot*/
 
 # ---------------------------------------------------
 # ---------------------------------------------------
@@ -335,31 +357,7 @@ workflows:
     jobs:
       - build:
           context: gravitee-lab
-          filters:
-            branches:
-              # ---
-              # Will run only when pull request is from
-              # Gravitee Support Team members
-              # ---
-              # Will also run on pull requests from one
-              # release branch, to another, for
-              # STS / LTS support Releases
-              only:
-                - /^fix*/
-                - /^*support/
-                - 1.20.x
-                - 1.25.x
-                - 1.30.x
-                - 3.0.x
-                - 3.1.x
-              # will not run on pull requests from one
-              # release branch, to another, for
-              # STS / LTS support Releases
-              ignore:
-                - /^*.x/
-                - /^issues*/
-                - /^*snyk*/
-                - /^*dependabot*/
+          <<: *support_pr_filter
       # ---
       # Will run all tests before deployment, but only on a reduced scope : tests on
       # the components which are modified during the Support Sprint.
@@ -367,14 +365,14 @@ workflows:
           requires:
             - build
           context: gravitee-lab
-          # filters:
+          <<: *support_pr_filter
           # this deployment should be exetremely quick, like only a docker-compose inside one AWS EC2 instance.
       - supp_integ_env_initial_state:
           # not worth spending money if unit / source code quality tests did not pass
           requires:
             - tests_without_deployment
           context: gravitee-lab
-          # filters:
+          <<: *support_pr_filter
         # ---
         # among Integration Tests :
         # => A few User Stories End 2 End Tests
@@ -382,25 +380,25 @@ workflows:
           requires:
             - deploy_integ_env
           context: gravitee-lab
-          # filters:
+          <<: *support_pr_filter
 #
   LTS_support_release:
     jobs:
       - lts_first_job:
           context: gravitee-lab
-          # filters:
+          <<: *support_release_filter
       - lts_second_job:
           requires:
             - lts_first_job
           context: gravitee-lab
-          # filters:
+          <<: *support_release_filter
   STS_support_release:
     jobs:
       - sts_first_job:
           context: gravitee-lab
-          # filters:
+          <<: *support_release_filter
       - sts_second_job:
           requires:
             - sts_first_job
           context: gravitee-lab
-          # filters:
+          <<: *support_release_filter
