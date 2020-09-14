@@ -114,22 +114,34 @@ workflows:
   #
   git_n_maven_release:
     jobs:
-      - deploy_integration_env:
-          # not worth spending money if unit/ source code quality tests did not pass
-          # requires:
-            # - tests_before_deployment
+      - restore_integration_env_initial_state:
+          # This workflow will not tear down the k8S cluster
+          # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
+          # This workflow will :
+          # => helm delete every Gravitee component in the k8S cluster
+          # => Empty databases in MongoDB service, PostgreSQL service and Elasticsearch service
+          # => Restore initial state of databases in MongoDB, PostgreSQL, and Elasticsearch services
+          # => Deploy a fresh Gravitee Stack
+          # context holds integration env. secrets
           context: gravitee-lab
           # filters:
         # ---
         # among Integration Tests :
         # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
         # => User Stories End 2 End Tests
-      - product_integration_tests:
+      - product_integration_tests: # runs integration tests for Gravitee Product Releases (not support)
           requires:
             - deploy_integration_env
           context: gravitee-lab
           # filters:
-      - deploy_staging_env:
+      - restore_staging_env_initial_state:
+          # This workflow will not tear down the k8S cluster
+          # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
+          # This workflow will :
+          # => helm delete every Gravitee component in the k8S cluster
+          # => Empty databases in MongoDB service, PostgreSQL service and Elasticsearch service
+          # => Restore initial state of databases in MongoDB, PostgreSQL, and Elasticsearch services
+          # => Deploy a fresh Gravitee Stack in the K8S Cluster
           # not worth spending money if integration tests did not pass
           requires:
             - integration_tests
