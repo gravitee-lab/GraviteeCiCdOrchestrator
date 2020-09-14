@@ -121,7 +121,7 @@ workflows:
   #
   product_release:
     jobs:
-      - restore_integration_env_initial_state:
+      - restore_integ_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
           # This workflow will :
@@ -138,7 +138,7 @@ workflows:
         # => User Stories End 2 End Tests
       - product_integration_tests: # runs integration tests for Gravitee Product Releases (not support)
           requires:
-            - deploy_integration_env
+            - deploy_integ_env
           context: gravitee-lab
           # filters:
       - restore_staging_env_initial_state:
@@ -163,6 +163,16 @@ workflows:
             - deploy_staging_env
           context: gravitee-lab
           # filters:
+      - git_release:
+          # ---
+          # When releasing, all unit/source code quality
+          # have successfully passed
+          # we do not release product if it does not pass
+          requires:
+            - staging_tests
+            - integration_tests
+          context: gravitee-lab
+          # filters:
       - mvn_release:
           # ---
           # When releasing, all unit/source code quality
@@ -171,6 +181,7 @@ workflows:
           requires:
             - staging_tests
             - integration_tests
+            - git_release
           context: gravitee-lab
           filters:
             tags:
@@ -243,7 +254,7 @@ workflows:
           # filters:
       # ---
       # A small 3-nodes kubernetes Cluster on AWS, with minimum storage capacity
-      - deploy_integration_env:
+      - deploy_integ_env:
           # not worth spending money if unit/ source code quality tests did not pass
           requires:
             - tests_before_deployment
@@ -255,7 +266,7 @@ workflows:
         # => User Stories End 2 End Tests
       - sprint_integration_tests:
           requires:
-            - deploy_integration_env
+            - deploy_integ_env
           context: gravitee-lab
           # filters:
       # ---
@@ -327,7 +338,7 @@ workflows:
           context: gravitee-lab
           # filters:
           # this deployment should be exetremely quick, like only a docker-compose inside one AWS EC2 instance.
-      - support_deploy_integration_env:
+      - support_deploy_integ_env:
           # not worth spending money if unit / source code quality tests did not pass
           requires:
             - tests_before_deployment
@@ -338,7 +349,7 @@ workflows:
         # => A few User Stories End 2 End Tests
       - support_integration_tests:
           requires:
-            - deploy_integration_env
+            - deploy_integ_env
           context: gravitee-lab
           # filters:
 #
