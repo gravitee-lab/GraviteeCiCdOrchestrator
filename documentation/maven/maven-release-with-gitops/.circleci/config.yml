@@ -1,3 +1,8 @@
+staging_only: &staging_only
+  filters:
+    branches:
+      only: staging
+
 # Machine executor, set the machine key to true in .circleci/config.yml:
 version: 2.1
 orbs:
