@@ -224,7 +224,11 @@ jobs:
                     kubectl get all -l app.kubernetes.io/instance=graviteeio-stack
                     helm unistall ${HELM_RELEASE_NAME}
                     kubectl get all -l app.kubernetes.io/instance=graviteeio-stack
-
+      - run:
+          name: "Drop MongoDB and Elasticsearch Gravitee databases"
+          command: |
+                    echo "Now emptying MongoDB and Elasticsearch Gravitee databases"
+                    echo "To be continued."
   mvn_release:
     machine:
       resource_class: medium
