@@ -127,6 +127,47 @@ jobs:
                     echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
                     docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
+  tests_without_deployment:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_MAVEN_VERSION: 3.6.3
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Maven Test the Gravitee Component"
+          command: |
+                    echo "Run Maven Tests"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean test"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+  integ_env_initial_state:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      AWS_PROFILE: gravitee_cicd
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Maven Test the Gravitee Component"
+          command: |
+                    echo "Helm delete Gravitee in integration environment"
+                    export AWS_ACCESS_KEY_ID=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
+                    export AWS_SECRET_ACCESS_KEY=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
+
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean test"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
   mvn_release:
     machine:
       resource_class: medium
@@ -180,25 +221,6 @@ jobs:
                     echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
                     docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
-
-  tests_without_deployment:
-    machine:
-      resource_class: medium
-      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
-    environment:
-      DESIRED_MAVEN_VERSION: 3.6.3
-    steps:
-      - checkout
-      - secrethub/install
-      - run:
-          name: "Maven Test the Gravitee Component"
-          command: |
-                    echo "Run Maven Tests"
-                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    export MAVEN_COMMAND="mvn clean test"
-                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
-                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
 workflows:
   version: 2.1
