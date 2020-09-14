@@ -29,7 +29,7 @@ product_release_filter: &product_release_filter
         - /^*snyk*/
         - /^*dependabot*/
 support_release_filter: &support_release_filter
-  filters:
+  <<: *product_release_filter
 dev_pr_filter: &dev_pr_filter
   filters:
     branches:
@@ -189,7 +189,7 @@ workflows:
     jobs:
       - build:
           context: gravitee-lab
-          <<: *product_filter
+          <<: *product_release_filter
       - integ_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
