@@ -282,7 +282,7 @@ workflows:
           requires:
             - build
           context: gravitee-lab
-          # filters:
+          <<: *dev_pr_filter
       # ---
       # A small 3-nodes kubernetes Cluster on AWS, with minimum storage capacity
       - integ_env_initial_state:
@@ -290,7 +290,7 @@ workflows:
           requires:
             - tests_without_deployment
           context: gravitee-lab
-          # filters:
+          <<: *dev_pr_filter
         # ---
         # among Integration Tests :
         # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
@@ -299,7 +299,7 @@ workflows:
           requires:
             - deploy_integ_env
           context: gravitee-lab
-          # filters:
+          <<: *dev_pr_filter
       # ---
       # A bigger 9-nodes kubernetes Cluster on AWS, with production-grade storage capacity
       - staging_env_initial_state:
@@ -307,7 +307,7 @@ workflows:
           requires:
             - integration_tests
           context: gravitee-lab
-          # filters:
+          <<: *dev_pr_filter
         # ---
         # among staging tests :
         # => performance tests
@@ -316,7 +316,7 @@ workflows:
           requires:
             - deploy_staging_env
           context: gravitee-lab
-          # filters:
+          <<: *dev_pr_filter
   # ---
   # This workflow runs only
   # to conduct pull request reviews from :
