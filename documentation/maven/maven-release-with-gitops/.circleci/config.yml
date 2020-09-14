@@ -341,3 +341,16 @@ workflows:
             - deploy_integration_env
           context: gravitee-lab
           # filters:
+#
+  LTS_support_release:
+    jobs:
+      - aaaa:
+          requires:
+            - aaaa
+          context: gravitee-lab
+          # filters:
+      - bbbb:
+          requires:
+            - bbbb
+          context: gravitee-lab
+          # filters:
