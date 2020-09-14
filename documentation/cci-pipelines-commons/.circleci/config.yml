@@ -157,6 +157,7 @@ jobs:
       AWS_PROFILE: gravitee_cicd
       AWS_REGION: eu-west-1
       KUBECTL_VERSION: 1.18.8
+      HELM_VERSION: 3.3.0
     steps:
       - checkout
       - secrethub/install
@@ -203,11 +204,26 @@ jobs:
 
 
                     echo "Helm quick install"
-                    
-                    echo "Running Helm delete"
+                    export HELM_VERSION=${HELM_VERSION}
+                    mkdir ./helm.ephemeral.installation
+                    curl -LO https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
+                    tar -zxvf helm-v${HELM_VERSION}-linux-amd64.tar.gz
+                    mv linux-amd64/helm ./helm.ephemeral.installation
+                    export PATH="${PATH}:./helm.ephemeral.installation/helm"
+                    # ---
+                    # no sudo inside Circle CI Pipelines
+                    # sudo mv linux-amd64/helm /usr/local/bin/helm
+
+                    # now checking I am using same Helm version
+                    helm version
+                    # ---
+                    #
+                    echo "Running Helm delete On Gravitee Stack"
                     export HELM_RELEASE_NAME=$(secrethub read gravitee-io/cicd/envs/integration/k8s/helm/gravitee_release_name)
                     export K8S_NAMESPACE=$(secrethub read gravitee-io/cicd/envs/integration/k8s/helm/gravitee_release_ns)
-
+                    kubectl get all -l app.kubernetes.io/instance=graviteeio-stack
+                    helm unistall ${HELM_RELEASE_NAME}
+                    kubectl get all -l app.kubernetes.io/instance=graviteeio-stack
 
   mvn_release:
     machine:
