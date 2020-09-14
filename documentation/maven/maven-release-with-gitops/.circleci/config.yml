@@ -28,7 +28,7 @@ product_release_filter: &product_release_filter
         - /^*support/
         - /^*snyk*/
         - /^*dependabot*/
-dev_filter: &dev_filter
+dev_pr_filter: &dev_pr_filter
   filters:
     branches:
       # will run only when pull request is from
@@ -51,6 +51,16 @@ dev_filter: &dev_filter
         - /^*support/
         # - /^*snyk*/
         # - /^*dependabot*/
+dev_pr_filter: &dev_pr_filter
+  filters:
+    branches:
+      # will run only when pull request is from
+
+# ---------------------------------------------------
+# ---------------------------------------------------
+# ----- Circle CI Pipeline Definition
+# ---------------------------------------------------
+# ---------------------------------------------------
 
 # Machine executor, set the machine key to true in .circleci/config.yml:
 version: 2.1
@@ -280,7 +290,7 @@ workflows:
     jobs:
       - build:
           context: gravitee-lab
-          <<: *dev_filter
+          <<: *dev_pr_filter
       # ---
       # Will run all tests which can be run without any deployment, but only on a reduced scope : tests on
       # the components which are modified during the Dev / Support Sprint.
