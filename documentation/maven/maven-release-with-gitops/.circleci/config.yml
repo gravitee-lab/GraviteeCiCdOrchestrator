@@ -207,7 +207,7 @@ workflows:
   #    load tests, production grade tests in a word. We want to avoid regression on
   #    our Product Production Grade.
   #
-  pull_requests_review:
+  dev_pr_review:
     jobs:
       - build:
           context: gravitee-lab
@@ -289,7 +289,7 @@ workflows:
   #    reduced scope, I.e. integration tests on the components which are modified during the Support Sprint.
   #    In a word, We want to detect and fix asap any integration regression, and any new issue caused by support case or quick bugfix.
   #
-  support_pull_requests_review:
+  support_pr_review:
     jobs:
       - build:
           context: gravitee-lab
@@ -344,13 +344,21 @@ workflows:
 #
   LTS_support_release:
     jobs:
-      - aaaa:
-          requires:
-            - aaaa
+      - lts_first_job:
           context: gravitee-lab
           # filters:
-      - bbbb:
+      - lts_second_job:
           requires:
-            - bbbb
+            - lts_first_job
+          context: gravitee-lab
+          # filters:
+  STS_support_release:
+    jobs:
+      - sts_first_job:
+          context: gravitee-lab
+          # filters:
+      - sts_second_job:
+          requires:
+            - sts_first_job
           context: gravitee-lab
           # filters:
