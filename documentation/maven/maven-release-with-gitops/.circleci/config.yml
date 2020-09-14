@@ -1,10 +1,33 @@
+# ---------------------------------------------------
+# ---------------------------------------------------
+# ----- Factorization of all jobs filters :
+# ----- mainly, all jobs in the same workflow, share
+# ----- the same Circle CI filter
+# ---------------------------------------------------
+# ---------------------------------------------------
+# This kind of factorization is valalid for
+#  any YAML file
+# ---------------------------------------------------
 product_release_filter: &product_release_filter
   filters:
-    branches:
-      # will run only when pull request is from
-      # Gravitee Dev / Support Team members
+    tags:
+      # only: /^v.*/
+      # will run only when on release branches
       only:
-
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+        - /^*.x/
+      # will not run on pull requests from
+      #
+      ignore:
+        - /^fix*/
+        - /^issues*/
+        - /^*support/
+        - /^*snyk*/
+        - /^*dependabot*/
 dev_filter: &dev_filter
   filters:
     branches:
