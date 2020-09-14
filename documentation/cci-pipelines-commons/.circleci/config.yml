@@ -163,17 +163,22 @@ jobs:
       - aws-cli/setup:
           profile-name: ${AWS_PROFILE}
       - run:
-          name: "Maven Test the Gravitee Component"
+          name: "Helm delete Gravitee Stack in Integration K8S Cluster on AWS EKS"
           command: |
                     echo "Helm delete Gravitee in integration environment"
-
+                    echo "This is very big, and obviously should become a Circle CI Orb"
                     mkdir -p ${HOME}/.aws
                     export AWS_CONFIG=${HOME}/.aws/config
                     export AWS_CREDENTIALS=${HOME}/.aws/credentials
 
                     secrethub read --out-file ${AWS_CONFIG} gravitee-io/cicd/envs/integration/aws/config
                     secrethub read --out-file ${AWS_CREDENTIALS} gravitee-io/cicd/envs/integration/aws/credentials
-
+                    # --- Now the Bot executing this pipeline, has an AWS Identity, an IAM User, which
+                    #     must have permission to assumme an AWS IAM Role, with authorizes him to :
+                    #     => retrieve KUBECONFIG from AWS EKS, to kubectl into the AWS EKS Cluster
+                    #     => execute the desired operations on the K8S Cluster on AWS EKS.
+                    #
+                    export ARN_OF_GRAVITEE_BOT_ASSUMED_IAM_ROLE=$(export K8S_NAMESPACE=$(secrethub read gravitee-io/cicd/envs/integration/aws/iam/graviteebot_assumed_role)
                     # ----
                     # With secrethub, we will use secret file storage to retrieve KUBECONFIG
                     # https://secrethub.io/docs/guides/key-files/#store
@@ -186,18 +191,23 @@ jobs:
                     export AWS_REGION=${AWS_REGION}
                     aws eks list-clusters --region ${AWS_REGION}
                     export CLUSTER_NAME=$(aws eks list-clusters --region=eu-west-1 | jq '.clusters[0]' | awk -F '"' '{print $2}')
-                    aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION}
-                    # running kubectl insdie a docker container
 
+                    # Gravitee bot must assume an AWS IAM Role to retrieve KUBECONFIG from AWS EKS
+                    aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION} --role-arn ${ARN_OF_GRAVITEE_BOT_ASSUMED_IAM_ROLE}
+
+                    # running kubectl inside a docker container
                     echo "Checking Kubectl version"
                     docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:${KUBECTL_VERSION} version --client
                     echo "Checking Kubernetes connection with [kubectl cluster-info]"
                     docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:${KUBECTL_VERSION} cluster-info
 
-                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    export MAVEN_COMMAND="mvn clean test"
-                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
-                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+                    echo "Helm quick install"
+                    
+                    echo "Running Helm delete"
+                    export HELM_RELEASE_NAME=$(secrethub read gravitee-io/cicd/envs/integration/k8s/helm/gravitee_release_name)
+                    export K8S_NAMESPACE=$(secrethub read gravitee-io/cicd/envs/integration/k8s/helm/gravitee_release_ns)
+
 
   mvn_release:
     machine:
