@@ -229,6 +229,7 @@ jobs:
           command: |
                     echo "Now emptying MongoDB and Elasticsearch Gravitee databases"
                     echo "To be continued."
+                    
   mvn_release:
     machine:
       resource_class: medium
