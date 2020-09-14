@@ -121,6 +121,9 @@ workflows:
   #
   product_release:
     jobs:
+      - build:
+          context: gravitee-lab
+          # filters:
       - restore_integ_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
@@ -138,7 +141,7 @@ workflows:
         # => User Stories End 2 End Tests
       - product_integration_tests: # runs integration tests for Gravitee Product Releases (not support)
           requires:
-            - deploy_integ_env
+            - restore_integ_env_initial_state
           context: gravitee-lab
           # filters:
       - restore_staging_env_initial_state:
@@ -151,7 +154,7 @@ workflows:
           # => Deploy a fresh Gravitee Stack in the K8S Cluster
           # not worth spending money if integration tests did not pass
           requires:
-            - integration_tests
+            - product_integration_tests
           context: gravitee-lab
           # filters:
         # ---
@@ -160,7 +163,7 @@ workflows:
         # => big database End 2 End Tests
       - product_staging_tests:
           requires:
-            - deploy_staging_env
+            - restore_staging_env_initial_state
           context: gravitee-lab
           # filters:
       - git_release:
@@ -169,8 +172,8 @@ workflows:
           # have successfully passed
           # we do not release product if it does not pass
           requires:
-            - staging_tests
-            - integration_tests
+            - product_integration_tests
+            - product_staging_tests
           context: gravitee-lab
           # filters:
       - mvn_release:
@@ -179,8 +182,8 @@ workflows:
           # have successfully passed
           # we do not release product if it does not pass
           requires:
-            - staging_tests
-            - integration_tests
+            - product_integration_tests
+            - product_staging_tests
             - git_release
           context: gravitee-lab
           filters:
@@ -245,9 +248,9 @@ workflows:
                 # - /^*snyk*/
                 # - /^*dependabot*/
       # ---
-      # Will run all tests before deployment, but only on a reduced scope : tests on
+      # Will run all tests which can be run without any deployment, but only on a reduced scope : tests on
       # the components which are modified during the Dev / Support Sprint.
-      - sprint_tests_before_deployment:
+      - tests_without_deployment:
           requires:
             - build
           context: gravitee-lab
