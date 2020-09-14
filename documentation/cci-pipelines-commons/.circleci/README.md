@@ -3,6 +3,7 @@
 
 ## Secrethub
 
+### Simple String secrets
 
 ```bash
 ~$ secrethub account inspect
@@ -51,11 +52,42 @@ secrethub write username
 ```
 
 
-**Reference Documentation** :
+_**Reference Documentation**_ :
 
-* https://secrethub.io/docs/guides/circleci/ :
+* https://secrethub.io/docs/guides/circleci/
 
-# ANNEXE: Circle CI Workflow level filtering
+
+
+### Secret files
+
+_Could be used for TLS/SSL Certificates, KUBECONFIG, for example_
+
+*
+
+```bash
+# Example with kubeconfig
+export FILE_LOCAL_PATH=${HOME}/.kube/config
+
+# store the file to secrethub (from pipeline provisining the cluster)
+secrethub write --in-file ${FILE_LOCAL_PATH} gravitee-io/cicd/envs/staging/k8s/kubeconfig
+secrethub write --in-file ${FILE_LOCAL_PATH} gravitee-io/cicd/envs/integration/k8s/kubeconfig
+
+# retrieve the file (on another machine)
+# Example with kubeconfig
+export KUBECONFIG=${HOME}/.kube/config
+
+secrethub read --out-file ${KUBECONFIG} gravitee-io/cicd/envs/integration/k8s/kubeconfig
+
+```
+
+_**Reference Documentation**_ :
+
+https://secrethub.io/docs/guides/key-files/#store
+
+
+## Circle CI
+
+### Circle CI Workflow level filtering
 
 https://discuss.circleci.com/t/can-you-filter-on-a-workflow-level/30624/4
 
