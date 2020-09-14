@@ -162,6 +162,10 @@ jobs:
                     echo "Helm delete Gravitee in integration environment"
                     export AWS_ACCESS_KEY_ID=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
                     export AWS_SECRET_ACCESS_KEY=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
+                    # ---- 
+                    # with secrethub, we will use secret file storage to retrieve KUBECONFIG
+                    # https://secrethub.io/docs/guides/key-files/#store
+                    #
 
                     export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
                     export MAVEN_COMMAND="mvn clean test"
