@@ -112,7 +112,14 @@ workflows:
   # => we re-run all staging tests after merge happened : Performance tests, big data
   #    load tests, production grade tests in a word. We release Production Grade Product.
   #
-  git_n_maven_release:
+  # => each component release, consists of :
+  # >>>>> run a git tagging on an existing release branch
+  # >>>>> run a maven release : jar is sent to mùaven central repo, eg. nexus or JFrog
+  # >>>>> ONLY FOR main components (last in 'buildDependencies' in 'release.json') :
+  #        > building all zip bundles of all dependencies, and send them to HTTP downloads server. Here dependencies could also be infered not from release.json, but from 'pom.xml' ...
+  #        > docker build and push docker image
+  #
+  product_release:
     jobs:
       - restore_integration_env_initial_state:
           # This workflow will not tear down the k8S cluster
