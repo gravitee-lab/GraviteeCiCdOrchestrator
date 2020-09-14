@@ -200,7 +200,7 @@ workflows:
           # => Deploy a fresh Gravitee Stack
           # context holds integration env. secrets
           context: gravitee-lab
-          # filters:
+          <<: *product_release_filter
         # ---
         # among Integration Tests :
         # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
@@ -209,7 +209,7 @@ workflows:
           requires:
             - integ_env_initial_state
           context: gravitee-lab
-          # filters:
+          <<: *product_release_filter
       - staging_env_initial_state:
           # This workflow will not tear down the k8S cluster
           # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
@@ -222,7 +222,7 @@ workflows:
           requires:
             - product_integration_tests
           context: gravitee-lab
-          # filters:
+          <<: *product_release_filter
         # ---
         # among staging tests :
         # => performance tests
@@ -231,7 +231,7 @@ workflows:
           requires:
             - staging_env_initial_state
           context: gravitee-lab
-          # filters:
+          <<: *product_release_filter
       - git_release:
           # ---
           # When releasing, all unit/source code quality
@@ -241,7 +241,7 @@ workflows:
             - product_integration_tests
             - product_staging_tests
           context: gravitee-lab
-          # filters:
+          <<: *product_release_filter
       - mvn_release:
           # ---
           # When releasing, all unit/source code quality
@@ -252,25 +252,7 @@ workflows:
             - product_staging_tests
             - git_release
           context: gravitee-lab
-          filters:
-            tags:
-              # only: /^v.*/
-              # will run only when on release branches
-              only:
-                - 1.20.x
-                - 1.25.x
-                - 1.30.x
-                - 3.0.x
-                - 3.1.x
-                - /^*.x/
-              # will not run on pull requests from
-              #
-              ignore:
-                - /^fix*/
-                - /^issues*/
-                - /^*support/
-                - /^*snyk*/
-                - /^*dependabot*/
+          <<: *product_release_filter
   # ---
   # This workflow runs only
   # to conduct pull request reviews from :
