@@ -128,6 +128,9 @@ https://secrethub.io/docs/guides/key-files/#store
 
 ```bash
 # --- #
+# Checking out myown user account
+secrethub account inspect | jq .
+# --- #
 # see all Organizations you created
 secrethub org ls
 # --- #
