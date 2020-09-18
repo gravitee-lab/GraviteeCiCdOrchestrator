@@ -163,18 +163,26 @@ secrethub mkdir "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/direc
 # --- #
 # write secrets into that directory
 # first secret is a simple string
-secrethub write "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecretone"
+echo "This is a very secret string I keep secret thanks to secrethub" | secrethub write "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecretone"
 # second secret is a file
-secrethub write "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo"
+export FILE_LOCAL_PATH=${HOME}/.somewhere/onme/machine/somefile
+mkdir -p ${HOME}/.somewhere/onme/machine
+echo "this is very secret and I keep it in that file" > ${FILE_LOCAL_PATH}
+secrethub write --in-file ${FILE_LOCAL_PATH} "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo_is_a_file"
 # --- #
 # now reading back those two secrets
 secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecretone"
-secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo"
+secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo_is_a_file"
+
+export PATH_ONMY_MACHINE=$(pwd)/where/iwanna/retrieve/that/secret_file/
+mkdir -p ${PATH_ONMY_MACHINE}
+secrethub read --out-file ${PATH_ONMY_MACHINE} "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo_is_a_file"
 
 ```
 
 * some example stdouts just to let you see what you wil get should look like :
- * Inspecting and listing existing organizations
+  * Inspecting and listing existing organizations :
+
 ```bash
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org ls
 NAME          REPOS  USERS  CREATED
@@ -203,6 +211,7 @@ jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org inspect gravite
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
 
 ```
+
 * reading simple string secrets :
 
 ```bash
@@ -214,6 +223,7 @@ jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub read "${NAME_OF_REP
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
 
 ```
+
 
 ### Global initialization Process of all secrets, for all pipelines
 
