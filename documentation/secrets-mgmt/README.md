@@ -322,7 +322,7 @@ That's A "root secret" : a secret which can allow you to retrieve all others.
 
 Another possibilitty : a Hashicorp Vault to harden those root secrets backups (and manage their rotation).
 
-### Bots Management
+### Secrethub Service Accounts, and Bots Management
 
 For example in `Circle CI` Pipelines, do not use any CircleCI User credential,but instead use _**Service Accounts**_ : https://secrethub.io/docs/reference/cli/service/
 
@@ -331,18 +331,19 @@ https://secrethub.io/docs/reference/cli/service/
 So, to initialize the bot running in the `Gravitee CI CD Orchestrator` CircleCI Pipeline I :
 
 * Created a service account for a secrethub repo (which is inside a secrethub organization)
-* And the service account has access to all directories ans secrets inside that secrethub repo.
+* And gave the service account access to all directories ans secrets inside that secrethub repo.
 
 
 ```bash
 # --- #
 # created a service account
 export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-orchestrator"
-secrethub service init "${NAME_OF_REPO_IN_ORG}" | tee ./.the-created.service.token
+secrethub service init "${NAME_OF_REPO_IN_ORG}" --description "Circle CI Service for Gravitee CI CD Orchestrator" --permission read | tee ./.the-created.service.token
+
 secrethub service ls "${NAME_OF_REPO_IN_ORG}"
 echo "Beware : you will see the service token only once, then you will not ever be able to see it again, don'tloose it (or create another)"
 # --- #
-# and the sercice accoutn has access to all directories and secrets in the given repo
+# and give the service accoutn access to all directories and secrets in the given repo, with the option :
 # --- #
 # finally, in Circle CI, I created a 'cicd-orchestrator' context in the [gravitee-lab] organization
 # dedicated to the Gravitee Ci CD Orchestrator application
@@ -351,3 +352,5 @@ echo "Beware : you will see the service token only once, then you will not ever 
 
 
 ```
+
+Also know that there are finer ways to gant service accounts permissions, see https://secrethub.io/docs/reference/cli/service/#permission

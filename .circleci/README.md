@@ -77,11 +77,12 @@ So, to initialize the bot running in the `Gravitee CI CD Orchestrator` CircleCI 
 # --- #
 # created a service account
 export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-orchestrator"
-secrethub service init "${NAME_OF_REPO_IN_ORG}" | tee ./.the-created.service.token
+secrethub service init "${NAME_OF_REPO_IN_ORG}" --description "Circle CI Service for Gravitee CI CD Orchestrator" --permission read | tee ./.the-created.service.token
+
 secrethub service ls "${NAME_OF_REPO_IN_ORG}"
 echo "Beware : you will see the service token only once, then you will not ever be able to see it again, don'tloose it (or create another)"
 # --- #
-# and the sercice accoutn has access to all directories and secrets in the given repo
+# and give the service accoutn access to all directories and secrets in the given repo, with the option :
 # --- #
 # finally, in Circle CI, I created a 'cicd-orchestrator' context in the [gravitee-lab] organization
 # dedicated to the Gravitee Ci CD Orchestrator application
@@ -90,6 +91,7 @@ echo "Beware : you will see the service token only once, then you will not ever 
 
 
 ```
+
 
 ## More on Secrethub
 
