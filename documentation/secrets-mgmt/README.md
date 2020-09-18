@@ -281,8 +281,8 @@ echo "${QUAY_BOT_SECRET}" | secrethub write "${NAME_OF_REPO_IN_ORG}/dev/docker/q
 # --- #
 # And in the Circle CI Pipeline, I will :
 #
-QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username)
-QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token)
+# QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username)
+# QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token)
 
 ```
 
