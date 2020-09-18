@@ -127,12 +127,63 @@ https://secrethub.io/docs/guides/key-files/#store
 * Now cheatsheet :
 
 ```bash
+# --- #
 # see all Organizations you created
 secrethub org ls
+# --- #
+# inspect one Organization
+export NAME_OF_ORG="gravitee-lab"
+secrethub org inspect "${NAME_OF_ORG}"
+# --- #
+# retrieve list of all existing repos in an Organization
+secrethub org inspect "${NAME_OF_ORG}" | jq .Repos
+# --- #
+# inspecting a given secrethub repo;, in a organization
+# (example assumes there are at least 3 repos in the given Organization)
+#
+export export NAME_OF_REPO_IN_ORG=$(secrethub org inspect "${NAME_OF_ORG}" | jq .Repos[2] | awk -F '"' '{print $2}')
+echo "NAME_OF_REPO_IN_ORG=[${NAME_OF_REPO_IN_ORG}]"
+secrethub repo inspect "${NAME_OF_REPO_IN_ORG}" | jq .
+# --- #
+# listing all directories (like on Filesystem) of a given repo
+secrethub ls "${NAME_OF_REPO_IN_ORG}" | jq .
+# --- #
+# [-q] option to strip column headers, and just
+# get the directory path
+secrethub ls -q "${NAME_OF_REPO_IN_ORG}"
 
 ```
 
-* ... 
+* some stdouts just to let you see what you should get :
+
+```bash
+jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org ls
+NAME          REPOS  USERS  CREATED
+gravitee-lab  3      1      6 weeks ago
+jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org inspect gravitee-lab
+{
+    "Name": "gravitee-lab",
+    "Description": "A Secrethub Workspace to test collaboration on SecretHub",
+    "CreatedAt": "2020-08-05T20:43:25+02:00",
+    "MemberCount": 1,
+    "Members": [
+        {
+            "Username": "graviteebot",
+            "Role": "admin",
+            "CreatedAt": "2020-08-05T20:43:25+02:00",
+            "LastChangedAt": "2020-08-05T20:43:25+02:00"
+        }
+    ],
+    "RepoCount": 3,
+    "Repos": [
+        "gravitee-lab/apim-gateway",
+        "gravitee-lab/ohmyrepo",
+        "gravitee-lab/testrepo"
+    ]
+}
+jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
+
+```
 
 ### Global initialization Process of all secrets, for all pipelines
 
