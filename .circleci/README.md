@@ -19,27 +19,27 @@ secrethub repo init "${NAME_OF_REPO_IN_ORG}"
 # --- #
 # for the DEV CI CD WorkFlow of
 # the Gravitee CI CD Orchestrator
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay"
-secrethub mkdir -p "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay"
+secrethub mkdir --parents "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser"
 
 # --- #
 # for the STAGING CI CD WorkFlow of
 # the Gravitee CI CD Orchestrator
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay"
+secrethub mkdir --parents "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser"
 
 
 # --- #
 # for the PRODUCTION CI CD WorkFlow of
 # the Gravitee CI CD Orchestrator
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker"
+# secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay"
+secrethub mkdir --parents "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser"
 
 
 # --- #
