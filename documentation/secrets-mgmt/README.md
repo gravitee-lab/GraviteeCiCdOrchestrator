@@ -179,6 +179,13 @@ mkdir -p ${PATH_ONMY_MACHINE}
 secrethub read --out-file ${PATH_ONMY_MACHINE} "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo_is_a_file"
 
 ```
+* gifty tricks :
+
+```bash
+# --- #
+# silently remove created directory
+secrethub rm -r -f "${NAME_OF_REPO_IN_ORG}/somedirectory"
+```
 
 * some example stdouts just to let you see what you wil get should look like :
   * Inspecting and listing existing organizations :
@@ -239,20 +246,27 @@ secrethub repo init "${NAME_OF_REPO_IN_ORG}"
 # --- #
 # for the DEV CI CD WorkFlow of
 # the Gravitee CI CD Orchestrator
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser/username"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser/token"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser"
 
 # --- #
 # for the STAGING CI CD WorkFlow of
 # the Gravitee CI CD Orchestrator
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser/username"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser/token"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser"
+
 
 # --- #
 # for the PRODUCTION CI CD WorkFlow of
 # the Gravitee CI CD Orchestrator
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser/username"
-secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser/token"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser"
 
 # --- #
 # write quay secrets for the DEV CI CD WorkFlow of
