@@ -11,8 +11,9 @@
 product_release_filter: &product_release_filter
   filters:
     tags:
-      # only: /^v.*/
-      # will run only when on release branches
+      only: /^rc-*.*.*/
+      # will run only when pulling requests with source branch is a release branch, or when on master and tag is a release candidate (test after merge)
+    branches:
       only:
         - 1.20.x
         - 1.25.x
@@ -20,7 +21,7 @@ product_release_filter: &product_release_filter
         - 3.0.x
         - 3.1.x
         - /^*.x/
-      # will not run on pull requests from
+      # will not run on pull requests from issues fix or support bracnhes as source branch
       #
       ignore:
         - /^fix*/
@@ -39,20 +40,16 @@ dev_pr_filter: &dev_pr_filter
         - /^issues*/
         # - /^*snyk*/
         # - /^*dependabot*/
-      # will not run on pull requests from one
-      # release branche, to another, for
-      # STS / LTS support Releases
-      ignore:
         - 1.20.x
         - 1.25.x
         - 1.30.x
         - 3.0.x
         - 3.1.x
         - /^*.x/
-        - /^fix*/
-        - /^*support/
-        # - /^*snyk*/
-        # - /^*dependabot*/
+      # will not run on pull requests from one
+      # release branche, to another, for
+      # STS / LTS support Releases
+
 support_pr_filter: &support_pr_filter
   filters:
     branches:
@@ -229,7 +226,7 @@ jobs:
           command: |
                     echo "Now emptying MongoDB and Elasticsearch Gravitee databases"
                     echo "To be continued."
-                    
+
   mvn_release:
     machine:
       resource_class: medium
