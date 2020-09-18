@@ -56,7 +56,7 @@ workflows:
   docker_build_and_push:
     jobs:
       - docker_build_and_push:
-          context: gravitee-lab
+          context: cicd-orchestrator
           filters:
             tags:
               # only: /^v.*/

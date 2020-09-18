@@ -320,4 +320,34 @@ For the time being I just saved the secrethub credentail file into a private git
 
 That's A "root secret" : a secret which can allow you to retrieve all others.
 
-Anther possibilitty : a Hashicorp Vault to harden those root secrets backups (and manage their rotation).
+Another possibilitty : a Hashicorp Vault to harden those root secrets backups (and manage their rotation).
+
+### Bots Management
+
+For example in `Circle CI` Pipelines, do not use any CircleCI User credential,but instead use _**Service Accounts**_ : https://secrethub.io/docs/reference/cli/service/
+
+https://secrethub.io/docs/reference/cli/service/
+
+So, to initialize the bot running in the `Gravitee CI CD Orchestrator` CircleCI Pipeline I :
+
+* Created a service account for a secrethub repo (which is inside a secrethub organization)
+* And the service account has access to all directories ans secrets inside that secrethub repo.
+
+
+```bash
+# --- #
+# created a service account
+export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-orchestrator"
+secrethub service init "${NAME_OF_REPO_IN_ORG}" | tee ./.the-created.service.token
+secrethub service ls "${NAME_OF_REPO_IN_ORG}"
+echo "Beware : you will see the service token only once, then you will not ever be able to see it again, don'tloose it (or create another)"
+# --- #
+# and the sercice accoutn has access to all directories and secrets in the given repo
+# --- #
+# finally, in Circle CI, I created a 'cicd-orchestrator' context in the [gravitee-lab] organization
+# dedicated to the Gravitee Ci CD Orchestrator application
+# and in that 'cicd-orchestrator' Circle CI context, I set the 'SECRETHUB_CREDENTIAL' env. var. with
+# value the token of the service account I just created
+
+
+```
