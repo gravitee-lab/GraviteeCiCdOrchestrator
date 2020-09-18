@@ -152,6 +152,22 @@ secrethub ls "${NAME_OF_REPO_IN_ORG}" | jq .
 # get the directory path
 secrethub ls -q "${NAME_OF_REPO_IN_ORG}"
 
+# --- #
+# --- #
+# create a directory in a repo, to later write secrets into that directory
+# get the directory path
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory"
+# --- #
+# write secrets into that directory
+# first secret is a simple string
+secrethub write "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecretone"
+# second secret is a file
+secrethub write "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo"
+# --- #
+# now reading back those two secrets
+secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecretone"
+secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/directory/mysecrettwo"
+
 ```
 
 * some stdouts just to let you see what you should get :
