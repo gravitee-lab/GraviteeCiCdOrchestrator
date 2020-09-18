@@ -227,9 +227,75 @@ jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
 
 ### Global initialization Process of all secrets, for all pipelines
 
+* How I initialized the docekr registry secrets for the Gravitee CI CD Orchestrator Circle CI Pipeline :
+
+```bash
+
+export NAME_OF_ORG="gravitee-lab"
+export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-orchestrator"
+secrethub org init "${NAME_OF_ORG}"
+secrethub repo init "${NAME_OF_REPO_IN_ORG}"
+
+# --- #
+# for the DEV CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser/username"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser/token"
+
+# --- #
+# for the STAGING CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser/username"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser/token"
+
+# --- #
+# for the PRODUCTION CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser/username"
+secrethub mkdir "${NAME_OF_REPO_IN_ORG}/prod/docker/quay/botuser/token"
+
+# --- #
+# write quay secrets for the DEV CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+export QUAY_BOT_USERNAME="gravitee-lab+graviteebot"
+export QUAY_BOT_SECRET="inyourdreams;)"
+echo "${QUAY_BOT_USERNAME}" | secrethub write "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser/username"
+
+echo "${QUAY_BOT_SECRET}" | secrethub write "${NAME_OF_REPO_IN_ORG}/dev/docker/quay/botuser/token"
+
+# --- #
+# And in the Circle CI Pipeline, I will :
+#
+QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username)
+QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token)
+
+```
 
 
 ### Collaboration on the devops/cicd team (sharing secrets, user/permissions mannagement in secrethub)
+
+To begin with, see :
+  * secrethub service accounts
+  * and (to share secrets) :
+
+```bash
+secrethub org invite --help
+# --- #
+# usage: secrethub org invite [<flags>] <org-name> <username>
+#
+# Invite a user to join an organization.
+#
+# Flags:
+#       --role="member"  Assign a role to the invited member. This can be either `admin` or `member`. It defaults to `member`.
+#                        ($SECRETHUB_ORG_INVITE_ROLE)
+#   -f, --force          Ignore confirmation and fail instead of prompt for missing arguments. ($SECRETHUB_ORG_INVITE_FORCE)
+#
+# Args:
+#   <org-name>  The organization name
+#   <username>  The username of the user to invite
+# --- #
+
+```
 
 ### Secrets rotation
 
