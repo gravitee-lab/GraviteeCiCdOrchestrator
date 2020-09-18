@@ -44,8 +44,8 @@ jobs:
                     # [gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token]
                     # --> are to be set with secrethub cli, and 2 Circle CI Env. Var. have to
                     # be set for [Secrethub CLI Auth], at project, or context level
-                    QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username)
-                    QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/staging/docker/quay/botoken/token)
+                    QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/dev/docker/quay/botuser/username)
+                    QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/dev/docker/quay/botoken/token)
                     echo "QUAY_BOT_USERNAME=[${QUAY_BOT_USERNAME}]"
                     # echo "QUAY_BOT_SECRET=[${QUAY_BOT_SECRET}]"
                     docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
