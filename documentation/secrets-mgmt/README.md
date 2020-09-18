@@ -174,7 +174,7 @@ secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/direct
 ```
 
 * some example stdouts just to let you see what you wil get should look like :
-
+ * Inspecting and listing existing organizations
 ```bash
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org ls
 NAME          REPOS  USERS  CREATED
@@ -200,6 +200,17 @@ jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org inspect gravite
         "gravitee-lab/testrepo"
     ]
 }
+jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
+
+```
+* reading simple string secrets :
+
+```bash
+export NAME_OF_REPO_IN_ORG="gravitee-lab/apim-gateway"
+jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub read "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botuser/username:63"
+gravitee-lab+graviteebot
+jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub read "${NAME_OF_REPO_IN_ORG}/staging/docker/quay/botoken/token:63"
+6RGGinyourdreamsGGinyourdreamsGGinyourdreamsGGinyourdreamsyeaa5PUC5CJ2
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
 
 ```
