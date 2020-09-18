@@ -113,9 +113,26 @@ https://secrethub.io/docs/guides/key-files/#store
 ### Secrethub everyday CLI
 
 * Installing secrethub CLI :
-  *
+  * on linux debian  and probably all deban based linux distrib such as ubuntu) :
 
-You have a secrethub credential file (you secrethub signed up)
+```bash
+
+# TODO
+```
+
+* signup secret hub uisng the CLI : `secrethub signup` (interactive)
+
+* You now have a secrethub credential file
+
+* Now cheatsheet :
+
+```bash
+# see all Organizations you created
+secrethub org ls
+
+```
+
+* ... 
 
 ### Global initialization Process of all secrets, for all pipelines
 
