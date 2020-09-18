@@ -128,7 +128,7 @@ https://secrethub.io/docs/guides/key-files/#store
 
 ```bash
 # --- #
-# Checking out myown user account
+# Checking out my own user account
 secrethub account inspect | jq .
 # --- #
 # see all Organizations you created
@@ -173,7 +173,7 @@ secrethub read "${NAME_OF_REPO_IN_ORG}/whatever/i/want/as/a/path/for/that/direct
 
 ```
 
-* some stdouts just to let you see what you should get :
+* some example stdouts just to let you see what you wil get should look like :
 
 ```bash
 jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$ secrethub org ls
