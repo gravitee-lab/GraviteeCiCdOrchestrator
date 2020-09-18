@@ -55,7 +55,7 @@ workflows:
   version: 2.1
   docker_build_and_push:
     jobs:
-      - docker_build:
+      - docker_build_and_push:
           context: gravitee-lab
           filters:
             tags:
