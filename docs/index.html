@@ -178,6 +178,27 @@
 					<li>generate source code <a href="https://github.com/TypeStrong/typedoc">typedoc</a> :</li>
 				</ul>
 				<pre><code class="language-bash">npm run doc</code></pre>
+				<a href="#running-locally-with-docker" id="running-locally-with-docker" style="color: inherit; text-decoration: none;">
+					<h1>Running locally with docker</h1>
+				</a>
+				<pre><code class="language-bash"><span class="hljs-comment"># --- #</span>
+<span class="hljs-comment"># edit the Dockerfile, git commit and push : this will trigger</span>
+<span class="hljs-comment"># Circle CI Pipeline, and re-build and push a new &#x27;stable-latest&#x27; tagged</span>
+<span class="hljs-comment"># OCI image to the docker registry</span>
+<span class="hljs-comment"># --- #</span>
+<span class="hljs-comment"># retrieve the realse.json you wanna work on</span>
+<span class="hljs-comment">#</span>
+git <span class="hljs-built_in">clone</span> https://github.com/gravitee-lab/release graviteeio/cicd/pipeline
+<span class="hljs-comment"># --- #</span>
+<span class="hljs-comment"># (re-)spawn it all, re-downloading the &quot;stable-latest image&quot;</span>
+<span class="hljs-comment">#</span>
+docker-compose down --rmi all &amp;&amp; docker-compose up --force-recreate -d
+<span class="hljs-comment"># --- #</span>
+<span class="hljs-comment"># retrieve the realse.json you wanna work on</span>
+<span class="hljs-comment"># </span>
+sudo git <span class="hljs-built_in">clone</span> https://github.com/gravitee-lab/release graviteeio/cicd/pipeline
+<span class="hljs-comment"># enter the beast, to test it :</span>
+docker <span class="hljs-built_in">exec</span> -it gio_cicd_orchestrator sh</code></pre>
 				<a href="#how-to-contribute" id="how-to-contribute" style="color: inherit; text-decoration: none;">
 					<h1>How to contribute</h1>
 				</a>

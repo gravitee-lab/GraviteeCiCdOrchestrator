@@ -87,6 +87,29 @@ npm run test
 npm run doc
 ```
 
+# Running locally with docker
+
+```bash
+# --- #
+# edit the Dockerfile, git commit and push : this will trigger
+# Circle CI Pipeline, and re-build and push a new 'stable-latest' tagged
+# OCI image to the docker registry
+# --- #
+# retrieve the realse.json you wanna work on
+#
+git clone https://github.com/gravitee-lab/release graviteeio/cicd/pipeline
+# --- #
+# (re-)spawn it all, re-downloading the "stable-latest image"
+#
+docker-compose down --rmi all && docker-compose up --force-recreate -d
+# --- #
+# retrieve the realse.json you wanna work on
+# 
+sudo git clone https://github.com/gravitee-lab/release graviteeio/cicd/pipeline
+# enter the beast, to test it :
+docker exec -it gio_cicd_orchestrator sh
+```
+
 # How to contribute
 
 cf. [How to contribute guide](https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/tree/master/documentation/contribute)
