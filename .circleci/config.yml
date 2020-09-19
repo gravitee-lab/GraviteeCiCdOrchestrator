@@ -50,6 +50,8 @@ jobs:
                     # echo "QUAY_BOT_SECRET=[${QUAY_BOT_SECRET}]"
                     docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
+                    docker tag "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
+                    docker push "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
 
 workflows:
   version: 2.1
