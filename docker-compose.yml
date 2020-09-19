@@ -1,0 +1,15 @@
+version: 3.7
+
+services:
+  pr_bot:
+    image: quay.io/gravitee-lab/pull-request-bot:${DOCKER_TAG}
+    environment:
+      - MONGO_INITDB_DATABASE=gravitee
+    # env_file:
+      # - .compose.env # atually no, same env file ... ?
+    env_file:
+      - .compose.env
+    volumes:
+      # [$PWD/gravitee/cicd/pipeline]: is in the .gitignore to allow local tests
+      - $PWD/gravitee/cicd/pipeline:/gravitee/cicd/pipeline
+      - $PWD/.env:/graviteeio/cicd/.env
