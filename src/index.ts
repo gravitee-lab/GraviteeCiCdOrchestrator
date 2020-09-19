@@ -5,7 +5,6 @@ import { ReleaseManifestFilter } from "./modules/manifest/ReleaseManifestFilter"
 import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator";
 import { monitoring }  from './modules/monitor/Monitor';
 import { monitoring_experiments }  from './modules/monitor/ExperimentalMonitor';
-import * as ora from 'ora';
 import * as progress from './modules/progress/PipelineExecutionMonitor';
 
 /// Welcome
@@ -15,6 +14,6 @@ console.log('I am the Gravitee Release Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
-const spinnerDemo: progress.PipelineExecutionMonitorDemo = new progress.PipelineExecutionMonitorDemo();
+const listrDemo: progress.PipelineExecutionListrDemo = new progress.PipelineExecutionListrDemo();
 
-spinnerDemo.start();
+listrDemo.start();
