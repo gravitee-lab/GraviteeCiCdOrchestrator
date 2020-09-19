@@ -16,9 +16,34 @@ console.log('')
 
 /// First Demo of using Ora to display progess status for Pipeline workflows
 
-const spinnersDemoZero: cicd_spinner.OraDemo = new cicd_spinner.OraDemo();
+let cciPipeRef: cicd_spinner.IPipelineRef = {
+  number: 2467,
+  uuid: 'ea73741d-0493-4b00-b7ba-9ebefbb87c25',
+  workflows: [
+  {
+    name: 'tests_without_deployment',
+    spinner: null
+  },
+  {
+    name: 'setup_integ_deployment_target',
+    spinner: null
+  },
+  {
+    name: 'integration_tests',
+    spinner: null
+  },
+  {
+    name: 'docker_build_n_push',
+    spinner: null
+  }
+]};
 
-spinnersDemoZero.start();
+const demoPipelineExecProgress = new cicd_spinner.PipelineExecutionSpinner(cciPipeRef)
+
+
+demoPipelineExecProgress.start();
+
+throw new Error("DEBUG STOP POINT");
 
 
 /// DOTENV Checking .DOTENVuration

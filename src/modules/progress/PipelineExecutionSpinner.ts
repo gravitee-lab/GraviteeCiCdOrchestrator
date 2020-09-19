@@ -65,10 +65,11 @@ export class CciWorkflowExecutionSpinner {
   public start (): void {
     this.workflow.spinner.start();
 
-    if (shelljs.exec('sleep 3s').code !== 0) {
+    if (shelljs.exec('sleep 3s').code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
       shelljs.echo('Error: sleep command failed for [CciWorkflowExecutionSpinner]');
       shelljs.exit(1);
     }
+    /// so Stop and persist Will have to be executed on RXJS 'next'
     this.workflow.spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.workflow.name}) Completed !`});
     console.log('')
     console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -80,18 +81,20 @@ export class CciWorkflowExecutionSpinner {
  *
  *
  **/
-export class PipelineExecutionProgress {
+export class PipelineExecutionSpinner {
   /**
    * Timeout for the execution of this module
    **/
   public readonly workflowSpinners: CciWorkflowExecutionSpinner[];
+  public readonly pipelineRef: IPipelineRef;
 
   constructor (
-    cciWorkflowNames: string[]
+    pipelineRef: IPipelineRef
   ) {
+      this.pipelineRef = pipelineRef;
       this.workflowSpinners = [];
-      for (let j = 0; j < cciWorkflowNames.length ; j++) {
-        this.addCciWorkflow(cciWorkflowNames[j]);
+      for (let j = 0; j < this.pipelineRef.workflows.length ; j++) {
+        this.addCciWorkflow(this.pipelineRef.workflows[j].name);
       }
   }
 
