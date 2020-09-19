@@ -2,6 +2,7 @@ import * as ora from 'ora';
 // import * as chalk from 'chalk';
 
 import * as logSymbols from 'log-symbols';
+import * as shelljs from 'shelljs';
 
 
 export interface IPipelineWorkflowRef {
@@ -44,20 +45,63 @@ export interface IPipelineRef {
  *
  *
  **/
-export class PipelineExecutionSpinner {
+export class CciWorkflowExecutionSpinner {
   /**
    * Timeout for the execution of this module
    **/
-  public readonly pipelineRef: IPipelineRef;
+  public readonly workflow: IPipelineWorkflowRef;
 
   constructor (
-    pipelineRef: IPipelineRef
+    name: string,
   ) {
-      this.pipelineRef = pipelineRef;
+      this.workflow = {
+        name: name,
+        spinner: ora(` Workflow (${this.workflow.name}) Running`)
+      };
+      this.workflow.spinner.color = 'yellow'
+      this.workflow.spinner.indent = 5;
   }
 
   public start (): void {
+    this.workflow.spinner.start();
 
+    if (shelljs.exec('sleep 3s').code !== 0) {
+      shelljs.echo('Error: sleep command failed for [CciWorkflowExecutionSpinner]');
+      shelljs.exit(1);
+    }
+    this.workflow.spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.workflow.name}) Completed !`});
+    console.log('')
+    console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+    console.log('')
+  }
+}
+
+/**
+ *
+ *
+ **/
+export class PipelineExecutionProgress {
+  /**
+   * Timeout for the execution of this module
+   **/
+  public readonly workflowSpinners: CciWorkflowExecutionSpinner[];
+
+  constructor (
+    cciWorkflowNames: string[]
+  ) {
+      this.workflowSpinners = [];
+      for (let j = 0; j < cciWorkflowNames.length ; j++) {
+        this.addCciWorkflow(cciWorkflowNames[j]);
+      }
+  }
+
+  public start (): void {
+    for (let k = 0; k < this.workflowSpinners.length ; k++) {
+      this.workflowSpinners[k].start();
+    }
+  }
+  private addCciWorkflow(cciWorkflowName: string): void {
+    this.workflowSpinners .push(new CciWorkflowExecutionSpinner(cciWorkflowName));
   }
 }
 
