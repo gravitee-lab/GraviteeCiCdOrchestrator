@@ -5,7 +5,8 @@ import { CircleCiOrchestrator } from "./modules/circleci/CircleCiOrchestrator";
 import { monitoring }  from './modules/monitor/Monitor';
 import { monitoring_experiments }  from './modules/monitor/ExperimentalMonitor';
 import * as cicd_spinner from './modules/progress/PipelineExecutionSpinner';
-
+/// import { Observable } from 'rxjs';
+import * as rxjs from 'rxjs';
 /// Welcome
 console.log('')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
@@ -13,6 +14,103 @@ console.log('I am the Gravitee Release Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
+
+/*
+  Create an observable that emits 'Hello' and 'World' on
+  subscription.
+*/
+let pipeRefZero: cicd_spinner.IPipelineRef = {
+  number: 2467,
+  uuid: 'ea78881d-0493-4b00-b7ba-9ebfssdb87c',
+  workflows: [
+  {
+    name: 'workf1',
+    spinner: null
+  },
+  {
+    name: 'workf2',
+    spinner: null
+  },
+  {
+    name: 'workf3',
+    spinner: null
+  },
+  {
+    name: 'workf4',
+    spinner: null
+  }
+]};
+
+
+/// ---
+/// PipelineExecutionSpinner Test
+/// ---
+
+let pipeRef1: cicd_spinner.IPipelineRef = {
+  number: 2467,
+  uuid: 'ea73741d-0493-4b00-b7ba-9ebefbb87c25',
+  workflows: [
+  {
+    name: 'tests_without_deployment',
+    spinner: null
+  },
+  {
+    name: 'setup_integ_deployment_target',
+    spinner: null
+  },
+  {
+    name: 'integration_tests',
+    spinner: null
+  },
+  {
+    name: 'docker_build_n_push',
+    spinner: null
+  }
+]};
+
+
+let pipeRef2: cicd_spinner.IPipelineRef = {
+  number: 2458,
+  uuid: 'fe08c622-a779-45ee-aa0b-672c2d4fedea',
+  workflows: [
+  {
+    name: 'tests_without_deployment',
+    spinner: null
+  },
+  {
+    name: 'docker_build',
+    spinner: null
+  },
+  {
+    name: 'docker_push',
+    spinner: null
+  }
+]};
+
+let pExecSetSpinner = new cicd_spinner.PipelineExecutionSetSpinner([pipeRefZero, pipeRef1, pipeRef2]);
+
+pExecSetSpinner.start();
+
+/*
+
+
+
+*/
+/// ---
+/// PipelineExecutionProgress Test
+/// ---
+
+
+
+/// ---
+/// const spinnersDemo: cicd_spinner.OraDemo = new cicd_spinner.OraDemo();
+/// spinnersDemo.start(); /// works
+/// spinnersDemo.startRecc(); /// works with same result than [spinnersDemo.start();]
+/// ---
+
+/// throw new Error("DEBUG STOP POINT");
+
+/*
 
 /// First Demo of using Ora to display progess status for Pipeline workflows
 
@@ -43,8 +141,9 @@ const demoPipelineExecProgress = new cicd_spinner.PipelineExecutionSpinner(cciPi
 
 demoPipelineExecProgress.start();
 
-throw new Error("DEBUG STOP POINT");
+/// throw new Error("DEBUG STOP POINT");
 
+/*
 
 /// DOTENV Checking .DOTENVuration
 console.info(`{[.DOTENV]} RELEASE_MANIFEST_PATH is set to ${process.env.RELEASE_MANIFEST_PATH}`)
@@ -106,10 +205,7 @@ const subscription = someResponse$.subscribe(fetchedResult => {
 });
 
 
-
-/**
- * Experiment on retryWhen
- **/
+/// Experiment on retryWhen
 export const someOtherMonitor = new monitoring_experiments.ExperimentalMonitor("mymonitorDemo", {
   rest_endpoint: 'https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine',
   timeout: 10000
@@ -130,10 +226,10 @@ const demoSubscription = demoResponse$.subscribe(fetchedResult => {
   console.log('')
   console.log(` subscriber got fetchedResult = [${JSON.stringify(fetchedResult.data)}]`)
 });
-/*   */
 
 
 
-const spinnersDemo: cicd_spinner.OraDemo = new cicd_spinner.OraDemo();
 
-spinnersDemo.start();
+
+
+*/

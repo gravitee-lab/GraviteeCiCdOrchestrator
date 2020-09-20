@@ -59,7 +59,7 @@ export class CciWorkflowExecutionSpinner {
   ) {
       this.workflow = {
         name: name,
-        spinner: ora(` Workflow (${name}) Running`)
+        spinner: ora(`Workflow (${name}) Running`)
       };
       this.workflow.spinner.color = 'yellow'
       this.workflow.spinner.indent = 5;
@@ -69,18 +69,14 @@ export class CciWorkflowExecutionSpinner {
 
     this.workflow.spinner.start();
 
-    ///ce qui est là bête; c'est que le "sleep", détruit l'animation Ora Spinner
+    /// Ce qui est là bête; c'est que le "sleep", détruit l'animation Ora Spinner
 
+    /**
     if (shelljs.exec('sleep 3s').code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
       shelljs.echo('Error: sleep command failed for [CciWorkflowExecutionSpinner]');
       shelljs.exit(1);
     }
-
-    /// this.retryWhen(this.workflow.spinner); /// ne marche absolument pas, évidemment, puis squ'asynchrone
-
-    /// so Stop and persist Will have to be executed on RXJS 'next'
-    this.stopWithSuccess();
-    //// this.workflow.spinner
+    **/
 
   }
   public stopWithSuccess(): void {
@@ -90,48 +86,6 @@ export class CciWorkflowExecutionSpinner {
     this.workflow.spinner.stopAndPersist({symbol: logSymbols.error, text: ` Workflow (${this.workflow.name}) Failed !`});
   }
 
-
-  // perfect test is :
-  // curl -X DELETE https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine
-  // {"message":"No JWT token found","http_status":401}
-  private retryWhen (aSpinner: ora.Ora): rxjs.Observable<AxiosResponse<any>> {
-          const some_rest_endpoint = `https://randomuser.me/api`;
-          const source = rxjs.from(axios.delete(`${some_rest_endpoint}`)).pipe(
-          tap(val => {}))
-          const response$ = source.pipe(
-            map(axiosResponse => {
-              if (!(axiosResponse.status == 200 || axiosResponse.status == 201 || axiosResponse.status == 203)) {
-                //error will be picked up by retryWhen
-                // console.log(` Fetch Response' request is : [${axiosResponse.request}], `);
-                // console.log(` HTTP status is : [${axiosResponse.statusText}], `);
-                // console.log(` AxiosResponse config is [${axiosResponse.config}]`);
-
-                throw new Error(`error querying [${some_rest_endpoint}] : [${JSON.stringify(axiosResponse, null, " ")}]`);
-              }
-              return axiosResponse; /// return value  HTTP Response Code si 200
-            }),
-            retryWhen(errors =>
-              errors.pipe(
-                //log error message
-                tap(axiosResponse => {
-                  // console.log(`What is passed on to tap >>  [${JSON.stringify(axiosResponse,null,2)}],`);
-                  // console.log(`now retrying`);
-                  /// so stops the spinner when Axios response is received
-                  aSpinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.workflow.name}) Completed !`});
-                }),
-                //restart in 5 seconds
-                delay(2000), /// wait 2 seconds before retrying
-                /// delayWhen(val => timer(val * 1000)),
-                /// delayWhen(val => rxjs.timer(7 * 1000)), /// wait 7 seconds before retrying
-                take(5)
-              )
-            )
-          );
-
-          return response$;
-
-    }
-
 }
 
 /**
@@ -139,64 +93,130 @@ export class CciWorkflowExecutionSpinner {
  *
  **/
 export class PipelineExecutionSpinner {
-  /**
-   * Timeout for the execution of this module
-   **/
-  public readonly workflowSpinners: CciWorkflowExecutionSpinner[];
-  public readonly pipelineRef: IPipelineRef;
 
-  constructor (
-    pipelineRef: IPipelineRef
-  ) {
-      this.pipelineRef = pipelineRef;
-      this.workflowSpinners = [];
-      for (let j = 0; j < this.pipelineRef.workflows.length ; j++) {
-        this.addCciWorkflow(this.pipelineRef.workflows[j].name);
-      }
-  }
+    /**
+     * Timeout for the execution of this module
+     **/
+    public readonly pipelineRef: IPipelineRef;
+    private execSetSubject: rxjs.Subject<any>;
+    private indexInParent: number;
 
-  public start (): void {
-    console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-    console.log('')
-    console.log(`Circle CI Pipeline execution :`);
-    console.log(`   - number : [${this.pipelineRef.number}]`);
-    console.log(`   - uuid : [${this.pipelineRef.uuid}]`);
-    console.log('')
-    console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-    console.log('')
-    for (let m: number = 0; m < this.workflowSpinners.length ; m++) {
-      this.workflowSpinners[m].start();
+    constructor (
+      pipelineRef: IPipelineRef,
+      indexInParent: number
+    ) {
+        this.pipelineRef = pipelineRef;
+        this.indexInParent = indexInParent;
+        this.execSetSubject = new rxjs.Subject<number>();
     }
-    console.log('')
-    console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-    console.log('')
-  }
-  public startWorkflowSpinner(ofIndex: number): void { /// nope reccurrent functions will also kill [Ora]
-    this.workflowSpinners[ofIndex].start();
-    setTimeout(() => {
-      this.workflowSpinners[ofIndex].stopWithSuccess();
-       if((ofIndex+1) == this.workflowSpinners.length) {
-         // then this is the lastSpinner
-         return;
-       } else { // else we get reccurrent setTimeOuts
-         this.startWorkflowSpinner(ofIndex+1);
-       }
 
-    }, 3000);
-  }
+    public start (): void {
 
-  private addCciWorkflow(cciWorkflowName: string): void {
-    console.log(` >> debug [private addCciWorkflow(cciWorkflowName: string): void] : cciWorkflowName=[${cciWorkflowName}]`)
-    this.workflowSpinners .push(new CciWorkflowExecutionSpinner(cciWorkflowName));
-  }
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.log('')
+      console.log(`Circle CI Pipeline execution :`);
+      console.log(`   - number : [${this.pipelineRef.number}]`);
+      console.log(`   - uuid : [${this.pipelineRef.uuid}]`);
+      console.log('')
+      console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.log('')
+      this.reccRun(0);
+    }
+    public getRxSubject(): rxjs.Subject<number> {
+      return this.execSetSubject;
+    }
+    /**
+     * * reccRun(wfIndex: number)
+     **/
+    private reccRun(wfIndex: number) : void {
+
+        this.pipelineRef.workflows[wfIndex].spinner = ora(`Workflow (${this.pipelineRef.workflows[wfIndex].name}) Running`);
+        this.pipelineRef.workflows[wfIndex].spinner.color = 'yellow'
+        this.pipelineRef.workflows[wfIndex].spinner.indent = 5;
+        this.pipelineRef.workflows[wfIndex].spinner.start();
+        setTimeout(() => { /// the setTimeout is there just to simulates any non blocking processing, like an HTTP call and its response inspection
+          this.pipelineRef.workflows[wfIndex].spinner.stopAndPersist({
+            symbol: logSymbols.success,
+            text: `Workflow (${this.pipelineRef.workflows[wfIndex].name}) Completed !`
+          });
+          this.execSetSubject.next(this.indexInParent); /// and [this.execSetSubject.error(this.indexInParent);] if there is a failure (to add when replacing this with HTTP call and HTTP Response inspection condition)
+          if ((wfIndex + 1) == this.pipelineRef.workflows.length) { // stop condition
+            console.log('')
+            console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+            console.log('')
+          } else {
+             this.reccRun(wfIndex + 1);
+          }
+        }, 3000);
+
+    }
 }
 
+/**
+ *
+ *
+ *
+ **/
+export class PipelineExecutionSetSpinner {
 
+    private pipelineSpinnners: PipelineExecutionSpinner[];
+    private errorsReport: string[];
+    private rxSubscribers: any[];
+
+    constructor (
+      pipelineRefs: IPipelineRef[]
+    ) {
+        this.pipelineSpinnners = [];
+        this.errorsReport = [];
+        this.rxSubscribers = [];
+        this.pipelineSpinnners = [];
+        for (let k = 0; k < pipelineRefs.length; k++) {
+          let pipeExecSpinner =  new PipelineExecutionSpinner(pipelineRefs[k], k);
+          this.pipelineSpinnners.push(pipeExecSpinner);
+        }
+
+        console.log(`debug au contructeur : ${JSON.stringify({ pipelineRefs: pipelineRefs, pipelineSpinnners: this.pipelineSpinnners }, null, " ")}`);
+    }
+    private subscribe() {
+      let subscription = null;
+      for (let k = 0; k < this.pipelineSpinnners.length; k++) {
+        subscription = this.pipelineSpinnners[k].getRxSubject().subscribe({
+          next: this.rxNext.bind(this),
+          complete: this.rxComplete.bind(this),
+          error: this.rxError.bind(this)
+        });
+        this.rxSubscribers.push(subscription);
+      }
+    }
+    private rxNext(indexInParent: number) {
+      console.log(`debug au rxNext : ${JSON.stringify({ pipeSpinnners: this.pipelineSpinnners }, null, " ")}`);
+      if ((indexInParent + 1) < this.pipelineSpinnners.length ) {
+         this.pipelineSpinnners[(indexInParent + 1)].start();
+      }
+    }
+    private rxComplete() {
+      /// console.log('All pipelines spinners have completed');
+      this.rxSubscribers.forEach( (subscriber) => { subscriber.unsubscribe() } ); // unsubscribing
+    }
+    private rxError(indexInParent: number) {
+      this.errorsReport.push(`Error occured with pipeline no. ${indexInParent} : ${JSON.stringify(this.pipelineSpinnners[indexInParent])}`);
+    }
+    public start() {
+      this.subscribe();
+      if (this.pipelineSpinnners.length == 0) {
+        console.log("The pipeline References passed to the constructor is an empty Array, so no spinners.");
+      } else {
+        this.pipelineSpinnners[0].start();
+      }
+    }
+
+}
 /**
  *
  * A Class there to just Demo how {@link ora} works
  **/
 export class OraDemo {
+
   private pipeline1: IPipelineRef;
   private pipeline2: IPipelineRef;
 
@@ -260,28 +280,53 @@ export class OraDemo {
     this.pipeline1.workflows[0].spinner.indent = 5;
     this.pipeline1.workflows[0].spinner.start();
     setTimeout(() => { /// does absolutely nothing, just to wait
-      /// in case of error:  /// someSpinner.stopAndPersist({symbol: logSymbols.error, text: ` Workflow (${this.pipeline1.workflows[i].name}) Failed !`});
-      /// in case of success:  /// this.pipeline1.workflows[i].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[i].name}) Completed !`});
-      this.pipeline1.workflows[0].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[0].name}) Completed !`});
-      this.pipeline1.workflows[1].spinner = ora(` Workflow (${this.pipeline1.workflows[1].name}) Running`);
-      this.pipeline1.workflows[1].spinner.color = 'yellow'
-      this.pipeline1.workflows[1].spinner.indent = 5;
-      this.pipeline1.workflows[1].spinner.start();
-      setTimeout(() => {
-        this.pipeline1.workflows[1].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[1].name}) Completed !`});
-        this.pipeline1.workflows[2].spinner = ora(` Workflow (${this.pipeline1.workflows[2].name}) Running`);
-        this.pipeline1.workflows[2].spinner.color = 'yellow'
-        this.pipeline1.workflows[2].spinner.indent = 5;
-        this.pipeline1.workflows[2].spinner.start();
+        /// in case of error:  /// someSpinner.stopAndPersist({symbol: logSymbols.error, text: ` Workflow (${this.pipeline1.workflows[i].name}) Failed !`});
+        /// in case of success:  /// this.pipeline1.workflows[i].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[i].name}) Completed !`});
+        this.pipeline1.workflows[0].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[0].name}) Completed !`});
+        this.pipeline1.workflows[1].spinner = ora(` Workflow (${this.pipeline1.workflows[1].name}) Running`);
+        this.pipeline1.workflows[1].spinner.color = 'yellow'
+        this.pipeline1.workflows[1].spinner.indent = 5;
+        this.pipeline1.workflows[1].spinner.start();
         setTimeout(() => {
-          this.pipeline1.workflows[2].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[2].name}) Completed !`});
-          console.log('')
-          console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-          console.log('')
+          this.pipeline1.workflows[1].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[1].name}) Completed !`});
+          this.pipeline1.workflows[2].spinner = ora(`Workflow (${this.pipeline1.workflows[2].name}) Running`);
+          this.pipeline1.workflows[2].spinner.color = 'yellow'
+          this.pipeline1.workflows[2].spinner.indent = 5;
+          this.pipeline1.workflows[2].spinner.start();
+          setTimeout(() => {
+            this.pipeline1.workflows[2].spinner.stopAndPersist({symbol: logSymbols.success, text: ` Workflow (${this.pipeline1.workflows[2].name}) Completed !`});
+            console.log('')
+            console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+            console.log('')
+          }, 3000);
         }, 3000);
       }, 3000);
+  }
+
+
+  public startRecc (): void {
+    this.reccRun(0);
+  }
+  /**
+   * * reccRun(wfIndex: number)
+   **/
+  private reccRun(wfIndex: number) : void {
+    this.pipeline1.workflows[wfIndex].spinner = ora(`Workflow (${this.pipeline1.workflows[wfIndex].name}) Running`);
+    this.pipeline1.workflows[wfIndex].spinner.color = 'yellow'
+    this.pipeline1.workflows[wfIndex].spinner.indent = 5;
+    this.pipeline1.workflows[wfIndex].spinner.start();
+    setTimeout(() => {
+      this.pipeline1.workflows[wfIndex].spinner.stopAndPersist({
+        symbol: logSymbols.success,
+        text: `Workflow (${this.pipeline1.workflows[wfIndex].name}) Completed !`
+      });
+      if ((wfIndex + 1) == this.pipeline1.workflows.length) { // stop condition
+        console.log('')
+        console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+        console.log('')
+      } else {
+         this.reccRun(wfIndex + 1);
+      }
     }, 3000);
-
-
   }
 }
