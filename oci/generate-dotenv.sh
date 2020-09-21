@@ -11,8 +11,8 @@ ls -allh ./.env
 # PRODUCT='Gravitee APIM'
 PRODUCT=${PRODUCT}
 
-# RELEASE_MANIFEST_PATH=tests-data/apim/1.30.x/release.test1.json
-# RELEASE_MANIFEST_PATH=tests-data/apim/1.30.x/release.test4-20-conccurrent.json
+# RELEASE_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test1.json
+# RELEASE_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test4-20-conccurrent.json
 RELEASE_MANIFEST_PATH=${RELEASE_MANIFEST_PATH}
 RETRIES_BEFORE_FAILURE=${RETRIES_BEFORE_FAILURE}
 # SSH_RELEASE_GIT_REPO='git@github.com:gravitee-io/release.git'

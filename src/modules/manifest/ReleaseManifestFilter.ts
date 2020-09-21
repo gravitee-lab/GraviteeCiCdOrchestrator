@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as arrayUtils from 'util';
-// export const manifestPath : string = "tests-data/apim/1.30.x/release.json";
+// export const manifestPath : string = "release-data/apim/1.30.x/tests/release.json";
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
 
 /**

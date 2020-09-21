@@ -54,8 +54,8 @@ FROM base AS release
 ARG PRODUCT='Gravitee APIM'
 ENV PRODUCT=${PRODUCT}
 
-# RELEASE_MANIFEST_PATH=tests-data/apim/1.30.x/release.test1.json
-# RELEASE_MANIFEST_PATH=tests-data/apim/1.30.x/release.test4-20-conccurrent.json
+# RELEASE_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test1.json
+# RELEASE_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test4-20-conccurrent.json
 ARG RELEASE_MANIFEST_PATH=/release/release.json
 ENV RELEASE_MANIFEST_PATH=${RELEASE_MANIFEST_PATH}
 

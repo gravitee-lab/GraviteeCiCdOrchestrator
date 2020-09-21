@@ -98,16 +98,11 @@ export class PipelineExecutionSpinner {
      * Timeout for the execution of this module
      **/
     public readonly pipelineRef: IPipelineRef;
-    private execSetSubject: rxjs.Subject<any>;
-    private indexInParent: number;
 
     constructor (
-      pipelineRef: IPipelineRef,
-      indexInParent: number
+      pipelineRef: IPipelineRef
     ) {
         this.pipelineRef = pipelineRef;
-        this.indexInParent = indexInParent;
-        this.execSetSubject = new rxjs.Subject<number>();
     }
 
     public start (): void {
@@ -121,9 +116,6 @@ export class PipelineExecutionSpinner {
       console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.log('')
       this.reccRun(0);
-    }
-    public getRxSubject(): rxjs.Subject<number> {
-      return this.execSetSubject;
     }
     /**
      * * reccRun(wfIndex: number)
@@ -139,8 +131,7 @@ export class PipelineExecutionSpinner {
             symbol: logSymbols.success,
             text: `Workflow (${this.pipelineRef.workflows[wfIndex].name}) Completed !`
           });
-          this.execSetSubject.next(this.indexInParent); /// and [this.execSetSubject.error(this.indexInParent);] if there is a failure (to add when replacing this with HTTP call and HTTP Response inspection condition)
-          if ((wfIndex + 1) == this.pipelineRef.workflows.length) { // stop condition
+          if ((wfIndex + 1) == this.pipelineRef.workflows.length) { // stop condition or this recurrent function
             console.log('')
             console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
             console.log('')
@@ -152,65 +143,6 @@ export class PipelineExecutionSpinner {
     }
 }
 
-/**
- *
- *
- *
- **/
-export class PipelineExecutionSetSpinner {
-
-    private pipelineSpinnners: PipelineExecutionSpinner[];
-    private errorsReport: string[];
-    private rxSubscribers: any[];
-
-    constructor (
-      pipelineRefs: IPipelineRef[]
-    ) {
-        this.pipelineSpinnners = [];
-        this.errorsReport = [];
-        this.rxSubscribers = [];
-        this.pipelineSpinnners = [];
-        for (let k = 0; k < pipelineRefs.length; k++) {
-          let pipeExecSpinner =  new PipelineExecutionSpinner(pipelineRefs[k], k);
-          this.pipelineSpinnners.push(pipeExecSpinner);
-        }
-
-        console.log(`debug au contructeur : ${JSON.stringify({ pipelineRefs: pipelineRefs, pipelineSpinnners: this.pipelineSpinnners }, null, " ")}`);
-    }
-    private subscribe() {
-      let subscription = null;
-      for (let k = 0; k < this.pipelineSpinnners.length; k++) {
-        subscription = this.pipelineSpinnners[k].getRxSubject().subscribe({
-          next: this.rxNext.bind(this),
-          complete: this.rxComplete.bind(this),
-          error: this.rxError.bind(this)
-        });
-        this.rxSubscribers.push(subscription);
-      }
-    }
-    private rxNext(indexInParent: number) {
-      console.log(`debug au rxNext : ${JSON.stringify({ pipeSpinnners: this.pipelineSpinnners }, null, " ")}`);
-      if ((indexInParent + 1) < this.pipelineSpinnners.length ) {
-         this.pipelineSpinnners[(indexInParent + 1)].start();
-      }
-    }
-    private rxComplete() {
-      /// console.log('All pipelines spinners have completed');
-      this.rxSubscribers.forEach( (subscriber) => { subscriber.unsubscribe() } ); // unsubscribing
-    }
-    private rxError(indexInParent: number) {
-      this.errorsReport.push(`Error occured with pipeline no. ${indexInParent} : ${JSON.stringify(this.pipelineSpinnners[indexInParent])}`);
-    }
-    public start() {
-      this.subscribe();
-      if (this.pipelineSpinnners.length == 0) {
-        console.log("The pipeline References passed to the constructor is an empty Array, so no spinners.");
-      } else {
-        this.pipelineSpinnners[0].start();
-      }
-    }
-
-}
 /**
  *
  * A Class there to just Demo how {@link ora} works

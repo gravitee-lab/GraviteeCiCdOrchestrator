@@ -6,7 +6,7 @@
 ### `1.30.x`
 
 
-* `tests-data/apim/1.30.x/release.test1.json`, expected filtered dependencies :
+* `release-data/apim/1.30.x/tests/release.test1.json`, expected filtered dependencies :
 ```JSon
 {
   "components": [
