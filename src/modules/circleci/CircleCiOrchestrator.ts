@@ -183,14 +183,17 @@ export class CircleCiOrchestrator {
       for (let k: number = 0; k < this.execution_plan.length; k++) {
         this.parallelExecutionSetsNotifiers[k] = new rxjs.Subject<number>();
         this.parallelExecutionSetsNotifiers[k].subscribe({
-          next: ((parallelExecutionSetIndex) => {
+          next: ((parallelExecutionSetIndex: number) => {
             console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
             console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
             console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
             console.info("{[CircleCiOrchestrator]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
 
-            if (parallelExecutionSetIndex < this.execution_plan.length){
+            if (parallelExecutionSetIndex + 1 < this.execution_plan.length){
               console.info("{[CircleCiOrchestrator]} - NOW EXECUTING NEXT PARALLEL EXECUTION SET NO.[" + (parallelExecutionSetIndex + 1) + "]  - ");
+              /// console.info("{[CircleCiOrchestrator]} - Intropsecting the [this] instance  => [" + JSON.stringify(this, null , " ") + "]  - ");
+              /// console.info("{[CircleCiOrchestrator]} - The [typeof this] is  => [" + (typeof this) + "]  - ");
+
               this.processExecutionSetNumber(parallelExecutionSetIndex + 1)
             } else {
               console.info("{[CircleCiOrchestrator]} - NOT EXECUTING NEXT PARALLEL EXECUTION SET, BECAUSE CURRENT IS LAST OF INDEX NO.[" + parallelExecutionSetIndex + "]  - ");
