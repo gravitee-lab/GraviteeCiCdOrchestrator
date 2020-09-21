@@ -92,7 +92,13 @@ echo "Beware : you will see the service token only once, then you will not ever 
 
 ```
 
+## Gravitee CICD Orchestrator Run in `Circle CI` Pipeline
 
-## More on Secrethub
+The `Gravitee CICD Orchestrator` natural execution environment is a CICD Pipeline.
+
+The `.circleci/config-run-product-release.yml` defines a typical Pipeline to run the `Gravitee CICD Orchestrator` in a `Circle CI` Pipeline
+
+
+## ANNEX A. More on Secrethub
 
 For more on secret management, see [this documentation page](../documentation/secrets-mgmt/README.md)
