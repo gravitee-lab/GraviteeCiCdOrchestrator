@@ -104,5 +104,6 @@ RUN echo "Inside [FROM base AS release] npm run compile, Is [node_modules/] in P
 # So docker volume mapping [-v $PWD/graviteeio/cicd/pipeline]
 RUN mkdir -p /graviteeio/cicd/pipeline
 VOLUME [ "/graviteeio/cicd/pipeline" ]
+WORKDIR /graviteeio/cicd
 # Set [start.sh] as entrypoint
 CMD ["/graviteeio/cicd/start.sh"]

@@ -6,6 +6,7 @@ echo 'Content of DOTENV [./.env] file'
 echo ''
 ls -allh ./.env
 cat ./.env
+source ./.env
 echo ''
 echo ''
 echo "Starting Orchestrator on [${PRODUCT}]"
