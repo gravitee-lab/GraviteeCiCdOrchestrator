@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# --- First , generate .env file
-./generate-dotenv.sh
+# ---
 echo ''
-echo 'Generated DOTENV [./.env] file'
+echo 'Content of DOTENV [./.env] file'
 echo ''
+ls -allh ./.env
 cat ./.env
 echo ''
 echo ''
