@@ -106,4 +106,4 @@ RUN mkdir -p /graviteeio/cicd/pipeline
 VOLUME [ "/graviteeio/cicd/pipeline" ]
 WORKDIR /graviteeio/cicd
 # Set [start.sh] as entrypoint
-CMD ["/graviteeio/cicd/start.sh"]
+# CMD ["/graviteeio/cicd/start.sh"]
