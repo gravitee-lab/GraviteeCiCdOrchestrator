@@ -30,7 +30,7 @@ console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'd
 console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'cicd-stage' : ${process.argv["cicd-stage"]}`);
 
 
-throw new Error("STOP DEBUG POINT - work on yargs");
+/// throw new Error("STOP DEBUG POINT - work on yargs");
 
 /// DOTENV Checking .DOTENVuration
 console.info(`{[.DOTENV]} RELEASE_MANIFEST_PATH is set to ${process.env.RELEASE_MANIFEST_PATH}`)

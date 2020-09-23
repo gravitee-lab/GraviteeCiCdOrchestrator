@@ -21,8 +21,6 @@ import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactivePar
  **/
 export class CircleCiOrchestrator {
 
-    private github_org: string;
-    private monitor: monitoring.Monitor;
     /**
     * <p>
     * The Execution plan listing all the components that should be included in the release :
@@ -134,8 +132,6 @@ export class CircleCiOrchestrator {
      * </pre>
      *
      **/
-    private progressMatrix: any[];
-    private progressMatrixSubject = new rxjs.Subject<any>();
     private pipelines_nb: number;
     private parallelExecutionSetsNotifier: rxjs.Subject<number> = new rxjs.Subject<number>(); // this one will be used to find out when each parallelExecutionSet has completed
     private parallelExecutionSetsNotifiers: rxjs.Subject<number>[]; // this one will be used to find out when each parallelExecutionSet has completed
@@ -159,11 +155,7 @@ export class CircleCiOrchestrator {
       this.retries = retries;
       this.loadCircleCISecrets();
       this.circleci_client = new CircleCIClient(this.secrets);
-      /// initialiazing [this.progressMatrix] to an Array of same lentgh as [this.execution_plan], but with empty arrays as entries
-      // this.progressMatrix = new SimpleProgressMatrix();
-      this.progressMatrix = [];
 
-      this.github_org = process.env.GH_ORG;
       this.initializeNotifiers();
 
       this.parallelExecutionSetsNotifier.subscribe({
@@ -260,91 +252,6 @@ export class CircleCiOrchestrator {
       /// this.processExecutionSetNumber(3); // anomaly here : should start at zero
       this.processExecutionSetNumber(0);
 
-/*
-      for (let parallelExecutionsSetIndex: number = 0; parallelExecutionsSetIndex < this.execution_plan.length; parallelExecutionsSetIndex++) {
-        console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
-        if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
-          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty");
-        } else {
-          console.info(this.execution_plan[parallelExecutionsSetIndex]);
-          this.processExecutionSetNumber(parallelExecutionsSetIndex); /// must be synchronous : send all CircleCI Pipeline triggers, and then start monitoring.
-        }
-      }
-*/
-      setTimeout(() => {
-       throw new Error('>>>DEBUG STOP POINT');
-      }, 15000);
-
-/*
-      let arrLength: number = this.execution_plan.length;
-      for (let parallelExecutionsSetIndex: number = 0; parallelExecutionsSetIndex < arrLength; parallelExecutionsSetIndex++) {
-
-
-        console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
-        if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
-          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty");
-        } else {
-          console.info(this.execution_plan[parallelExecutionsSetIndex]);
-          this.processExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex); /// must be synchronous : send all CircleCI Pipeline triggers, and then start monitoring.
-        }
-      }
-      /// everything before this, should log only to debug level, or to file only, using winston
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - STARTING MONITORING EXECUTION PLAN - Execution plan is the value of the 'execution_plan_is' below : ");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info(" ---");
-      console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
-      console.info(" ---");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("");
-
-
-
-      this.progressMatrixSubject.subscribe({
-        next: ((triggerProgress) => {
-          console.log("[-----------------------------------------------]");
-          console.log("[-----------------------------------------------]");
-          console.log(`[ --- progress Matrix Observer, Progress Matrix is now  : `);
-          console.log("[-----------------------------------------------]");
-          console.log("[-----------------------------------------------]");
-          console.log(triggerProgress);
-          console.log("[-----------------------------------------------]");
-          console.log("[-----------------------------------------------]");
-          console.log(`[ --- progress Matrix Observer, this.pipelines_nb : [` + this.pipelines_nb + `]`);
-          console.log(`[ --- progress Matrix Observer, triggerProgress.length : [` + triggerProgress.length + `]`);
-          console.log("[-----------------------------------------------]");
-          console.log("[-----------------------------------------------]");
-          console.log(triggerProgress);
-          if (triggerProgress.length == this.pipelines_nb){
-            console.log("[-----------------------------------------------]");
-            console.log("[-----------------------------------------------]");
-            console.log(`[ --- progress Matrix Observer:   `);
-            console.log(`[ --- All Pipelines have been triggered !   `);
-            console.log("[-----------------------------------------------]");
-            console.log("[-----------------------------------------------]");
-          }
-
-        }).bind(this)
-      });
-
-
-      // this.monitorProgress(this.execution_plan);
-      setTimeout((() => { // will interrupt while loop after 10 seconds
-        console.log("[-----------------------------------------------]");
-        console.log("[-----------------------------------------------]");
-        console.log("[Waited 10 seconds before checking progressMatrix content]");
-        console.log("[-----------------------------------------------]");
-        console.log("[-----------------------------------------------]");
-        console.info('')
-        console.info( '[{FINAL CHECK}] - [this.progressMatrix] is now :  ');
-        // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
-        console.info({progressMatrix: this.progressMatrix});
-        console.info('')
-
-      }).bind(this), 10000);
-*/
-
     }
 
     private processExecutionSetNumber(parallelExecutionsSetIndex: number) : void {
@@ -367,201 +274,5 @@ export class CircleCiOrchestrator {
 
     }
 
-    processExecutionSet(parallelExecutionsSet: string[], parallelExecutionsSetIndex: number) : void {
-
-      console.info("");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info(" ---");
-      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet }, null, " "));
-      console.info(" ---");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("");
-
-      /// First, trigger all pipelines in the parallel execution set
-      parallelExecutionsSet.forEach(((componentName, index) => {
-        /// pipeline execution parameters, same as Jenkins build parameters
-        let pipelineParameters = { parameters: {}};
-        let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
-            next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
-            complete: data => {
-              console.log( '[{[CircleCiOrchestrator]} - triggering Circle CI Build completed! :)]')
-            },
-            error: this.errorHandlerTriggerCCIPipeline.bind(this)
-        });
-      }).bind(this));
-      /// then start watching Progress of Circle CI API invocations to trigger pipelines
-
-
-      /// this.watchParallelExecutionsSetTriggersProgress(parallelExecutionsSetIndex);
-      /// then send all Circle CI API requests to check execution status of each pipeline
-
-      /// finally proceed with next parallel execution set (if any error occured, the whole process stops)
-    }
-    /**
-     *
-     **/
-    private watchParallelExecutionsSetTriggersProgress(parallelExecutionsSetIndex: number) {
-
-      //
-      console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE WHILE LOOP => [parallelExecutionsSetIndex] is ' + parallelExecutionsSetIndex);
-      console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE WHILE LOOP => this.progressMatrix.length is ' + this.progressMatrix.length);
-      console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE WHILE LOOP => this.execution_plan[parallelExecutionsSetIndex].length is ' + this.execution_plan[parallelExecutionsSetIndex].length);
-      console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE WHILE LOOP => this.execution_plan[parallelExecutionsSetIndex] is : ');
-      console.log(this.execution_plan[parallelExecutionsSetIndex]);
-      console.log('[watchParallelExecutionsSetTriggersProgress] - BEFORE WHILE LOOP => this.progressMatrix is : ');
-      console.log(this.progressMatrix);
-      console.info('');
-      console.info( '[watchParallelExecutionsSetTriggersProgress] - BEFORE WHILE LOOP => [this.execution_plan] is :  ');
-      console.info(JSON.stringify({execution_plan: this.execution_plan}, null, " "));
-      console.info('');
-
-
-      while(this.progressMatrix.length != this.execution_plan[parallelExecutionsSetIndex].length){
-        if(this.progressMatrix.length == this.execution_plan[parallelExecutionsSetIndex].length) {
-          console.log('[watchParallelExecutionsSetTriggersProgress] - WHILE LOOP => this.progressMatrix[parallelExecutionsSetIndex].length is ' + this.progressMatrix[parallelExecutionsSetIndex].length);
-          console.log('[watchParallelExecutionsSetTriggersProgress] - WHILE LOOP => this.execution_plan[parallelExecutionsSetIndex].length is ' + this.execution_plan[parallelExecutionsSetIndex].length);
-        }
-      }
-
-      if(this.progressMatrix.length != this.execution_plan[parallelExecutionsSetIndex].length) {
-        throw new Error("[watchParallelExecutionsSetTriggersProgress] - => Did not detect progress Matrix completion ");
-      }
-      // when completed triggering Pipelines for Parallel Execution set, just log it
-      console.log("[watchParallelExecutionsSetTriggersProgress] - All Circle CI API Pipeline triggers JSON response for parallel execution set no. [" + parallelExecutionsSetIndex + "] have been received without errors.");
-      console.info('')
-      console.info( '[{CircleCiOrchestrator}] - [watchParallelExecutionsSetTriggersProgress] [this.progressMatrix] is now :  ');
-      // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "))
-      console.info({progressMatrix: this.progressMatrix});
-      console.info('')
-      throw new Error("DEBUG POINT");
-
-    }
-    /**
-     * Refonte de la méthode [processExecutionSet] : future RxJS implementation, unsused for now.
-     **/
-    processExecutionSet2 (parallelExecutionsSet: ParallelExecutionSet) : void {
-      console.info("");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - Processing Parallel Executions Set : the set under processing is the value of the 'parallelExecutionsSet' below : ");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info(" ---");
-      console.info(JSON.stringify({ parallelExecutionsSet: parallelExecutionsSet }, null, " "));
-      console.info(" ---");
-      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("");
-
-      let parallelExecutionSetProgress: parallel.ParallelExecutionSetProgress = new parallel.ParallelExecutionSetProgress();
-      let parallelExecutionsSetArray: GraviteeComponent[] = parallelExecutionsSet.getComponents();
-      let parallelExecSetLength: number = parallelExecutionsSetArray.length;
-      /// First, trigger all pipelines in the parallel execution set
-      for (let i = 0; i < parallelExecSetLength; i++) {
-        let comp = parallelExecutionsSetArray[i];
-        /// [pipelineParameters] => pipeline execution parameters, same as Jenkins build parameters
-        let pipelineParameters = { parameters: {} };
-        let observableSentRequest = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.github_org, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters)
-        let pipelExecProgress: parallel.PipelineExecutionProgress = {
-          component: comp,
-          pipeline_execution: {
-            cci_trigger: {
-              observableRequest: observableSentRequest,
-              response: {
-                created_at: null,
-                state: null,
-                number: null,
-                id: null
-              },
-              error: null
-            },
-            cci_statuscheck: {
-              observableRequest: null,
-              response: {
-                items: []
-              },
-              error: null
-            }
-          }
-        };
-        parallelExecutionSetProgress.addPipelineExecutionProgress(pipelExecProgress);
-      }
-
-      /// Now, passing on [parallelExecutionSetProgress] to Monitor which
-      /// will subscribe to all Observable Streams,
-      let someMonitor = new monitoring.Monitor(`monitor`, {
-        parallelExecutionSetProgress: parallelExecutionSetProgress,
-        secrets: this.secrets,
-        timeout:10000 // 10 seconds
-      });
-
-
-    }
-
-    /**
-     * This method is there to serve as handler method for the <strong>Circle CI </strong> API call that trigger <strong>Circle CI <strong> Pipeline :
-     * Every time this method is invoked, it adds an entry  in the {@see this.progressMatrix}, from the <pre>data</pre> returned by the <strong>Circle CI</strong> API call
-     * then, the {@see this.progressMatrix}
-     *
-     *
-     * @argument data A JSOn Object returned by the Circle CI API as Response of a Pipeline trigger
-     * -----
-     * <pre>
-     * {
-     *
-     *    "number": "17",
-     *    "id": "c08fe570-a3ea-4232-9ed8-432ed65921a1",
-     *    "state": "pending",
-     *    "created_at": "2020-08-16T18:18:01.891Z"
-     *
-     *  }
-     * </pre>
-     * -----
-     *
-     *
-     **/
-    handleTriggerPipelineCircleCIResponseData (circleCiJsonResponse: any, component: GraviteeComponent) : void {
-      console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse.data )
-      let entry: any = {};
-      entry.pipeline = {
-        pipeline_exec_number: `${circleCiJsonResponse.data.number}`,
-        id : `${circleCiJsonResponse.data.id}`,
-        created_at: `${circleCiJsonResponse.data.created_at}`,
-        exec_state: `${circleCiJsonResponse.data.state}`
-      }
-      this.progressMatrix.push(entry.pipeline);
-      /// this.progressMatrixSubject.next(entry.pipeline);
-      this.progressMatrixSubject.next(this.progressMatrix);
-
-
-      /// console.info('')
-      /// console.info( '[{CircleCiOrchestrator}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
-      // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
-      /// console.info({progressMatrix: this.progressMatrix});
-      /// console.info('')
-    }
-
-    /**
-     * RX JS err handler for triggering circle ci pipelines
-     **/
-    errorHandlerTriggerCCIPipeline (error: any) : void {
-      console.info( '[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
-      let entry: any = {};
-      entry.pipeline = {
-        execution_index: null,
-        id : null,
-        created_at: null,
-        exec_state: null,
-        error : {message: "[{CircleCiOrchestrator}] - Triggering Circle CI pipeline failed ", cause: error}
-      }
-
-      this.progressMatrix.push(entry);
-
-      console.info('')
-      console.info( '[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
-      // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
-      console.info({progressMatrix: this.progressMatrix});
-      console.info('')
-      throw new Error('[{CircleCiOrchestrator}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
-    }
 
 }
