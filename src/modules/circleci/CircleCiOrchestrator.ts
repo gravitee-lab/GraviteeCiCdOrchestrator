@@ -235,10 +235,6 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
       console.info(" ---");
-      console.info(JSON.stringify({ third_is: this.execution_plan[3]}, null, " "));
-      console.info(" ---");
-      console.info(JSON.stringify({ ninth_is: this.execution_plan[9]}, null, " "));
-      console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
 
