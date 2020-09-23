@@ -352,7 +352,7 @@ export class CircleCiOrchestrator {
       console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
       if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
 
-        if (parallelExecutionsSetIndex < this.execution_plan.length) { // reccurrence stop condition
+        if (parallelExecutionsSetIndex + 1 < this.execution_plan.length) { // reccurrence stop condition
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, proceed with next");
           this.processExecutionSetNumber(parallelExecutionsSetIndex + 1)
         } else {
