@@ -7,8 +7,9 @@ import { monitoring_experiments }  from './modules/monitor/ExperimentalMonitor';
 import * as cicd_spinner from './modules/progress/PipelineExecutionSpinner';
 /// import { Observable } from 'rxjs';
 import * as rxjs from 'rxjs';
-import * as cli from './modules/cli/GNUOptions';
-/// import { gnuOptions } from './modules/cli/GNUOptions';
+/// import * as cli from './modules/cli/GNUOptions';
+import { Cli } from './modules/cli/Cli';
+
 
 
 /// Welcome
@@ -18,13 +19,15 @@ console.log('I am the Gravitee Release Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
-/// export const cli.gnuOptions;
+export const cli : Cli = new Cli();
 
-export const gnuOptions: cli.GNUOptions = new cli.GNUOptions();
-/// export const cliGnuOptions = gnuOptions;
+console.log(`{[ index.ts ]} --- valeur yargs de l'option YARGS 'dry-run' : ${cli.gnuOptions.argv["dry-run"]}`);
+console.log(`{[ index.ts ]} --- valeur yargs de l'option YARGS 'cicd-stage' : ${cli.gnuOptions.argv["cicd-stage"]}`);
 
-console.log(`valeur yargs de l'option YARGS 'dry-run' : ${gnuOptions.argv["dry-run"]}`);
-console.log(`valeur yargs de l'option YARGS 'cicd-stage' : ${gnuOptions.argv["cicd-stage"]}`);
+process.argv = cli.gnuOptions.argv;
+
+console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'dry-run' : ${process.argv["dry-run"]}`);
+console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'cicd-stage' : ${process.argv["cicd-stage"]}`);
 
 
 throw new Error("STOP DEBUG POINT - work on yargs");
@@ -66,7 +69,7 @@ orchestrator.start();
 
 
 /// Experiment on retryWhen
-export const someOtherMonitor = new monitoring_experiments.ExperimentalMonitor("mymonitorDemo", {
+const someOtherMonitor = new monitoring_experiments.ExperimentalMonitor("mymonitorDemo", {
   rest_endpoint: 'https://auth-nightly.gravitee.io/management/organizations/DEFAULT/environments/DEFAULT/domains/dine',
   timeout: 10000
 });

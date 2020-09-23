@@ -1,7 +1,7 @@
-# `Ora`, `Chalk`, `Listr` and Pipeline progress spinners
+# `Yargs`, and the Gravitee CICD Orchestrator GNU options
 
 * To install runtime dependencies :
 
 ```bash
-npm i --save @types/chalk @types/ora chalk ora
+npm i --save @types/yargs yargs
 ```
