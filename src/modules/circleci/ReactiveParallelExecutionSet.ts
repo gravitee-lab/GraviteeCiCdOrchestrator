@@ -4,9 +4,22 @@ import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 
 export class ReactiveParallelExecutionSet {
 
-  private progressMatrix: any[]; // will be filled as requests are sent
+  /**
+   * This is the progress matrix for all pipeline executions
+   * in one {Parallel Execution Set}, the <code>this.parallelExecutionSet</code>, not
+   * the whole execution plan, as understood by the {@link CircleCiOrchestrator} class.
+   * --
+   * Will be filled with JSON responses of Circle CI API calls to trigger pipelines.
+   **/
+  private progressMatrix: any[]; //
   private progressMatrixSubject = new rxjs.Subject<any[]>();
   private notifier: rxjs.Subject<number>;
+  /**
+   * this one has to change type to {src/modules/manifest/ParallelExecutionSet.ts}
+   * because for each component, i need both repo name AND version, which contains the info to
+   * determine on which git branch the pipeline has to be
+   * triggered as of https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/25#issuecomment-696640726
+   **/
   private parallelExecutionSet: any[]; // contains all the entires coming from execution_plan
   private parallelExecutionSetIndex: number; // [ParallelExecutionSet] index in execution plan
 
@@ -66,6 +79,7 @@ export class ReactiveParallelExecutionSet {
        console.log(`[ --- [ReactiveParallelExecutionSet], this.parallelExecutionSetIndex : [` + this.parallelExecutionSetIndex + `]`);
        console.log("[-----------------------------------------------]");
        console.log("[-----------------------------------------------]");
+       this.notifier.complete();
      }
    })
    return toReturn;

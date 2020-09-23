@@ -257,7 +257,9 @@ export class CircleCiOrchestrator {
       parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.triggerPipelines();
       */
-      this.processExecutionSetNumber(3);
+      /// this.processExecutionSetNumber(3); // anomaly here : should start at zero
+      this.processExecutionSetNumber(0);
+
 /*
       for (let parallelExecutionsSetIndex: number = 0; parallelExecutionsSetIndex < this.execution_plan.length; parallelExecutionsSetIndex++) {
         console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");

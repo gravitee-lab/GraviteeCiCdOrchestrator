@@ -33,6 +33,7 @@
   "homepage": "https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/README.md",
   "dependencies": {
     "@types/axios": "^0.14.0",
+    "@types/axios-cancel": "^0.2.0",
     "@types/chalk": "^2.2.0",
     "@types/cli-progress": "^3.8.0",
     "@types/listr": "^0.14.2",
@@ -40,6 +41,7 @@
     "@types/ora": "^3.2.0",
     "@types/shelljs": "^0.8.8",
     "axios": "^0.19.2",
+    "axios-cancel": "^0.2.2",
     "chalk": "^4.1.0",
     "cli-progress": "^3.8.2",
     "dotenv": "^8.2.0",
