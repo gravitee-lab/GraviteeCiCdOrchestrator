@@ -69,6 +69,7 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
+      console.log(`[{PullRequestBot} #  execute ()] - this.circleci_client.triggerCciPipeline(${this.secrets.circleci.auth.username}, ${this.gh_org}, ${this.repo_name}, ${this.git_branch}, ${JSON.stringify(pipelineConfig, null, " ")})`);
       this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
 
       ///
