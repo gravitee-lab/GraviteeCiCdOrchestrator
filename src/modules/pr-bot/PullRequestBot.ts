@@ -16,17 +16,17 @@ export enum PR_BOT_MODE {
  *  [--cicd-stage pull_req] GNU Option to activate
  *
  **/
-export class PullRequestBot extends CICDStage {
+export class PullRequestBot /* extends CICDStage */{
 
    private mode: PR_BOT_MODE;
-   /// private circleci_client: CircleCIClient;
-   /// private gh_org: string;
-   /// private repo_name: string;
-   /// private git_branch: string;
-   /// private secrets: CircleCISecrets;
+   private circleci_client: CircleCIClient;
+   private gh_org: string;
+   private repo_name: string;
+   private git_branch: string;
+   private secrets: CircleCISecrets;
 
    contructor() {
-     super.contructor();
+     /*super.contructor();*/
      this.loadCircleCISecrets();
      this.circleci_client = new CircleCIClient(this.secrets);
      this.resolveCciSlug();
