@@ -25,11 +25,12 @@ export class PullRequestBot /* extends CICDStage */{
    private git_branch: string;
    private secrets: CircleCISecrets;
 
-   contructor() {
+   constructor() {
      console.log('');
      console.log(`[{PullRequestBot}] - constructor begins `);
      console.log('');
      /*super.contructor();*/
+     /// this.secrets = {circleci: {auth:{token: '', username : ''}}}
      this.loadCircleCISecrets();
      this.circleci_client = new CircleCIClient(this.secrets);
      this.resolveCciSlug();
@@ -42,10 +43,6 @@ export class PullRequestBot /* extends CICDStage */{
      } else if (this.git_branch.startsWith('dependabot-')) {
        this.mode = PR_BOT_MODE.AUTO_DEP_UPDATES
      }
-
-
-
-
    }
 
    public getMode(): PR_BOT_MODE {
