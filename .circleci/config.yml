@@ -27,6 +27,9 @@ jobs:
       - run:
           name: "Testing DESIRED_DOCKER_TAG"
           command: echo "Docker tag is [${DESIRED_DOCKER_TAG}]"
+      - run:
+          name: "Compile Typescript"
+          command: echo "npm run compile"
       - run: # print the name of the branch we're on
           name: "Docker build"
           command: |
