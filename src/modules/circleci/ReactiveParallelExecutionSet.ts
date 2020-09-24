@@ -107,19 +107,20 @@ export class ReactiveParallelExecutionSet {
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of process.argv["dry-run"] : [${process.argv["dry-run"]}]`);
 
       /// pipeline execution parameters, same as Jenkins build parameters
-      let pipelineConfig = {
+      /*let pipelineConfig = {
       parameters: {
          gio_action: null
        },
        branch: `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
-      }
       if (process.argv["dry-run"] === 'true') {
        pipelineConfig.parameters.gio_action = `product_release_dry_run`;
       } else {
        pipelineConfig.parameters.gio_action = `product_release`;
       }
+      }*/
 
-      pipelineConfig = { parameters: {gio_action: 'dummmy_unsued'},branch : 'dependabot/npm_and_yarn/handlebars-4.5.3'};
+      let pipelineConfig = { parameters: {},branch : 'dependabot/npm_and_yarn/handlebars-4.5.3'};
+
 
       let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineConfig).subscribe({
         next: this.handleTriggerPipelineCircleCIResponseData.bind(this),

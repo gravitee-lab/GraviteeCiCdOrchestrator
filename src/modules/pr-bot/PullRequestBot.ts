@@ -86,7 +86,9 @@ export class PullRequestBot /* extends CICDStage */{
            break;
        }
    }
-
+   public executeDry() {
+     console.log('Pull Request Bot Dry Run')
+   }
    private executeInDevMode(): void {
      /// All I need to do here is to send one CircleCI API v2 query, to trigger the desired Circle CI Pipeline Workflow
      let gio_cicd_action = 'dev_pr_review';
