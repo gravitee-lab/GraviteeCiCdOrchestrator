@@ -18,7 +18,7 @@ import * as pr_robotics from './modules/pr-bot/PullRequestBot'
 /// Welcome
 console.log('')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-console.log('I am the Gravitee Release Orchestrator !')
+console.log('I am the Gravitee CI CD Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
