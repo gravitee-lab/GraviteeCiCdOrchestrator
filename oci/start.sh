@@ -11,4 +11,14 @@ echo ''
 echo ''
 echo "Starting Orchestrator on [${PRODUCT}]"
 echo ''
-npm start
+echo 'Script invocation passed arguments are :'
+for var in "$@"
+do
+    echo "$var"
+done
+echo ''
+echo 'Start command is :'
+echo ''
+echo "[npm start -- $@]"
+echo ''
+npm start -- $@
