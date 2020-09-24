@@ -21,4 +21,4 @@ echo 'Start command is :'
 echo ''
 echo "[npm start $@]"
 echo ''
-npm start -- $@
+npm start $@
