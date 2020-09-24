@@ -18,8 +18,8 @@ export class GNUOptions {
 
     this.argv = yargsLib.options({
       'dry-run': { type: 'boolean', default: true, desc: "\n\n" +"Use this option to run the CICD Process Stage in 'dry run' mode.", alias: 'd' },
-      'cicd-stage': { choices: ['mvn_release', 'docker_release', 'rpm_release', 'doc_release', 'deploy_demos', 'social_announcements', 'pull_req'], demandOption: true, desc: `Use this option to specify the CICD Process to run. ${cicd_stage_option_desc}`, alias: 's' },      /// 'pr-bot': { type: 'boolean', default: false, desc: "\n\n" +"Use this option to run the Pull Request Bot CICD Process in a Gravitee IO Component Pipeline.", alias: 'pr' }/*,
-
+      'cicd-stage': { choices: ['mvn_release', 'docker_release', 'rpm_release', 'doc_release', 'deploy_demos', 'social_announcements', 'pull_req'], demandOption: true, desc: `Use this option to specify the CICD Process to run. ${cicd_stage_option_desc}`, alias: 's' },  /// 'pr-bot': { type: 'boolean', default: false, desc: "\n\n" +"Use this option to run the Pull Request Bot CICD Process in a Gravitee IO Component Pipeline.", alias: 'pr' }
+      /*,
       b: { type: 'string', demandOption: true },
       c: { type: 'number', alias: 'chill' },
       d: { type: 'array' },

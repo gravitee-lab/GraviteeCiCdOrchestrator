@@ -1,7 +1,8 @@
 import * as shelljs from 'shelljs';
 import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import { CircleCIClient } from '../../modules/circleci/CircleCIClient'
-
+import * as fs from 'fs';
+import { CICDStage } from '../../modules/circleci/CICDStage'
 
 export enum PR_BOT_MODE {
   DEV,
@@ -15,16 +16,17 @@ export enum PR_BOT_MODE {
  *  [--cicd-stage pull_req] GNU Option to activate
  *
  **/
-export class PullRequesBot {
+export class PullRequesBot extends CICDStage {
 
    private mode: PR_BOT_MODE;
-   private circleci_client: CircleCIClient;
-   private gh_org: string;
-   private repo_name: string;
-   private git_branch: string;
-   private secrets: CircleCISecrets;
+   /// private circleci_client: CircleCIClient;
+   /// private gh_org: string;
+   /// private repo_name: string;
+   /// private git_branch: string;
+   /// private secrets: CircleCISecrets;
 
    contructor() {
+     super.contructor();
      this.loadCircleCISecrets();
      this.circleci_client = new CircleCIClient(this.secrets);
      this.resolveCciSlug();
@@ -117,7 +119,7 @@ export class PullRequesBot {
     * current pipeline Git Context, from Zero Configuration.
     *
     **/
-   private resolveCciSlug() {
+   resolveCciSlug() {
 
      let GIT_REPO_SSH_OR_HTTP_URI: string = null;
      let gitRemoteCommandResult = shelljs.exec("git remote -v |grep '(fetch)' | awk '{print $2}'");
