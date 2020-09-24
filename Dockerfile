@@ -1,8 +1,10 @@
 #
 # ---- Base Node ----
 FROM node:14.9.0-alpine3.10 AS base
-# -- add a few utils
-RUN apk update && apk add tree
+# -- add a few utils:
+# the [PullRequestBot], among other
+# CICD Stages, need the git
+RUN apk update && apk add tree git
 # --- Install TypeScript
 RUN npm install -g typescript @types/node
 # --- create and set working directory
