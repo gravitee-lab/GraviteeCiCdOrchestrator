@@ -73,14 +73,18 @@ export class ReleaseManifestFilter {
      **/
     filter() : void {
       console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
-
+      if (!this.releaseManifest.hasOwnProperty('version')) {
+        throw new Error("The [release.json] file doesnot have a 'version' JSON property. It should, cannot proceed with CI CD Release Process.");
+      }
       this.releaseManifest.components.forEach(component => {
-
+        if (!component.hasOwnProperty('version')) {
+          component.version = this.releaseManifest.version; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
+        }
         if (component.version.includes('-SNAPSHOT')) {
           console.info('');
           /// console.debug("[{CircleCiOrchestrator}] - processing filter selected component : ");
           /// console.debug(`${JSON.stringify(component, null, "  ")}`);
-          //selectedComponents.push(component);
+          /// selectedComponents.push(component);
           this.selectedComponents.components.push(component);
           console.info('');
         }

@@ -126,7 +126,513 @@
 				<p><a href="https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/">https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/</a></p>
 				<p>A Component in <code>Gravitee</code>&#39;s CICD, that orchestrates Gravitee CICD, bringing distributed builds in.</p>
 				<a href="#how-it-works" id="how-it-works" style="color: inherit; text-decoration: none;">
-					<h2>How it works</h2>
+					<h1>How it works</h1>
+				</a>
+				<a href="#where-and-how-the-gravitee-ci-cd-orchestrator-runs" id="where-and-how-the-gravitee-ci-cd-orchestrator-runs" style="color: inherit; text-decoration: none;">
+					<h2>Where and how the Gravitee CI CD Orchestrator runs</h2>
+				</a>
+				<p>To manage CI CD Processes, the Gravitee CI CD Orchestrator will execute:</p>
+				<ul>
+					<li>always in a docker container</li>
+					<li>a different CI CD Stage based on the <code>--cicd-stage</code> (alias <code>-s</code>) GNU Option value (required option with no default value)   : SO Gravitee CI CDI Orchestrator hasmultiple personalities syndrom, and we don&#39;t want to cure him from that.</li>
+					<li>in many git repos :<ul>
+							<li>in the release git repo, asthe Release Orchestrator  , using GNU Option <code>-s mvn_release</code></li>
+							<li>in each gravitee component repos, as the Pull Request Bot , using GNU Option <code>-s pull_req</code></li>
+							<li>in a git repo versioning all Product <code>Dockerfile</code>s, using GNU Option <code>-s oci_release</code></li>
+							<li>etc...for all CI CD statges, cf. GNU help menu <code>npm start --help</code></li>
+						</ul>
+					</li>
+				</ul>
+				<p>In that Sense, The Gravitee CI CD Orchestrator is a distributed software : it&#39;s execution definition is distributed (and versioned) among all git repos of an organzation.</p>
+				<p>What better way to run a distributed application, than git ?</p>
+				<pre><code class="language-bash">~$ npm start ---<span class="hljs-built_in">help</span>
+
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+I am the Gravitee CI CD Orchestrator !
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
+
+Options:
+      --<span class="hljs-built_in">help</span>        Show <span class="hljs-built_in">help</span>                                          [boolean]
+      --version     Show version number                                [boolean]
+  -d, --dry-run
+
+                      Use this option to run the CICD Process Stage <span class="hljs-keyword">in</span> <span class="hljs-string">&#x27;dry run&#x27;</span>
+                      mode.                            [boolean] [default: <span class="hljs-literal">true</span>]
+  -s, --cicd-stage  Use this option to specify the CICD Process to run.
+
+                    [<span class="hljs-string">&#x27;mvn_release&#x27;</span>] designed to run <span class="hljs-keyword">in</span> the
+                    [https://github.com/gravitee-lab/release] gravitee-lab git
+                    repo, will run the maven release process, handling all
+                    dependency tree parallelization, with reactive behavior
+                    (using RxJS), based on the <span class="hljs-string">&#x27;release.json&#x27;</span> versioned <span class="hljs-keyword">in</span> the
+                    https://github.com/gravitee-lab/release git repository
+
+                    [<span class="hljs-string">&#x27;pull_req&#x27;</span>] designed to run <span class="hljs-keyword">in</span> every the gravitee-lab
+                    product component git repo (dev git repos, aka repos <span class="hljs-built_in">where</span>
+                    product <span class="hljs-built_in">source</span> code is versioned), to manage pull requests
+                    with different Circle CI Pipeline Workflows, <span class="hljs-keyword">for</span> support
+                    sprints, dev sprints, or even secops sprints, and based on
+                    git branch names (prefix).
+
+                    [<span class="hljs-string">&#x27;release_bundle&#x27;</span>] designed to run <span class="hljs-keyword">in</span> the [https://github.
+                    com/gravitee-lab/docker-library] gravitee-lab git repo, to
+                    make bundles (something like tar arhcives, zip files of
+                    jars...) used to install many dependencies <span class="hljs-keyword">in</span> Container
+                    images.
+
+                    [<span class="hljs-string">&#x27;oci_release&#x27;</span>] designed to run <span class="hljs-keyword">in</span> the [https://github.com
+                    /gravitee-lab/docker-library] gravitee-lab git repo, will
+                    run the docker release process : docker builds and push
+                    all docker images <span class="hljs-keyword">for</span> the product, LTS and STS Releases
+
+                    [<span class="hljs-string">&#x27;rpm_release&#x27;</span>] designed to run <span class="hljs-keyword">in</span> the [https://github.com
+                    /gravitee-lab/docker-library] gravitee-lab git repo,
+                    [https://github.com/gravitee-lab/rpm-library] gravitee-lab
+                    git repo, will run the RPM release process : builds RPM
+                    packagesand publishes them to https://packagecloud.io/
+
+                    [<span class="hljs-string">&#x27;doc_release&#x27;</span>] builds and publish the Gravitee
+                    Documentation to https://docs.gravitee.io
+
+                    [<span class="hljs-string">&#x27;social_release&#x27;</span>] builds and publish the Social networks
+                    , and communication channels announcements (twitter,
+                    medium.com, hackernews, facebook, linkedIn, Jumbo posts on
+                    website)
+
+                    [<span class="hljs-string">&#x27;demos_release&#x27;</span>] bluegreen deploys all public gravitee
+                    demos
+
+         [required] [choices: <span class="hljs-string">&quot;mvn_release&quot;</span>, <span class="hljs-string">&quot;release_bundle&quot;</span>, <span class="hljs-string">&quot;docker_release&quot;</span>,
+          <span class="hljs-string">&quot;rpm_release&quot;</span>, <span class="hljs-string">&quot;doc_release&quot;</span>, <span class="hljs-string">&quot;demos_release&quot;</span>, <span class="hljs-string">&quot;social_announcements&quot;</span>,
+                                                                     <span class="hljs-string">&quot;pull_req&quot;</span>]</code></pre>
+				<a href="#circle-ci-pipeline-definition-in-release-repo-and-gravitee-components-repo-dev-repos" id="circle-ci-pipeline-definition-in-release-repo-and-gravitee-components-repo-dev-repos" style="color: inherit; text-decoration: none;">
+					<h2>Circle CI Pipeline definition in Release repo and Gravitee components repo (dev repos)</h2>
+				</a>
+				<a href="#release-repo" id="release-repo" style="color: inherit; text-decoration: none;">
+					<h3>Release Repo</h3>
+				</a>
+				<ul>
+					<li>The <code>gravitee-cicd-orchestrator</code>, in the <a href="https://github.com/gravitee-lab/release">https://github.com/gravitee-lab/release</a>  Circle CI Pipeline, will run as a docker container, with the following  <code>.circleci/config.yml</code> :</li>
+				</ul>
+				<pre><code class="language-Yaml"><span class="hljs-comment"># Machine executor, set the machine key to true in .circleci/config.yml:</span>
+<span class="hljs-attr">version:</span> <span class="hljs-number">2.1</span>
+
+<span class="hljs-attr">parameters:</span>
+  <span class="hljs-attr">gio_action:</span>
+    <span class="hljs-attr">type:</span> <span class="hljs-string">enum</span>
+    <span class="hljs-attr">enum:</span> [<span class="hljs-string">wet_release</span>, <span class="hljs-string">empty</span>]
+    <span class="hljs-comment"># the [default:] clause is required : without it, a Circle CI error will occur</span>
+    <span class="hljs-comment"># default: none</span>
+    <span class="hljs-comment"># the [default:] clause must have a valid value : without a valid value, a Circle CI error will occur</span>
+    <span class="hljs-attr">default:</span> <span class="hljs-string">empty</span>
+<span class="hljs-attr">orbs:</span>
+  <span class="hljs-attr">secrethub:</span> <span class="hljs-string">secrethub/cli@1.0.0</span>
+<span class="hljs-attr">jobs:</span>
+  <span class="hljs-attr">empty_job:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-string">stable-latest</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;This is a dummy empty job (isn&#x27;t it ?)&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">echo</span> <span class="hljs-string">&quot;Yes it is.&quot;</span>
+
+  <span class="hljs-attr">dry_run_orchestrator:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-string">stable-latest</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Testing local docker installation&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">docker</span> <span class="hljs-string">version</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span> <span class="hljs-comment"># print the name of the branch we&#x27;re on</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;What branch am I on ?&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">echo</span> <span class="hljs-string">${CIRCLE_BRANCH}</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Docker pull&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+</span>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span> <span class="hljs-comment"># print the name of the branch we&#x27;re on</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Running the Gio CICD Orchestrator as docker container&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    echo &quot;Checking local SGF : &quot;
+                    ls -allh
+</span>
+                    <span class="hljs-comment"># checking docker image pulled in previous step is there</span>
+                    <span class="hljs-string">docker</span> <span class="hljs-string">images</span>
+                    <span class="hljs-comment"># --&gt; .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI</span>
+                    <span class="hljs-string">CCI_SECRET_FILE=$PWD/.secrets.json</span>
+                    <span class="hljs-string">secrethub</span> <span class="hljs-string">read</span> <span class="hljs-string">--out-file</span> <span class="hljs-string">${CCI_SECRET_FILE}</span> <span class="hljs-string">gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json</span>
+                    <span class="hljs-string">ls</span> <span class="hljs-string">-allh</span> <span class="hljs-string">${CCI_SECRET_FILE}</span>
+                    <span class="hljs-comment"># Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container</span>
+                    <span class="hljs-comment"># export DOCKER_VOLUMES=&quot;-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json&quot;</span>
+                    <span class="hljs-string">export</span> <span class="hljs-string">DOCKER_VOLUMES=&quot;-v</span> <span class="hljs-string">$PWD:/graviteeio/cicd/pipeline</span> <span class="hljs-string">-v</span> <span class="hljs-string">$PWD/.secrets.json:/graviteeio/cicd/.secrets.json&quot;</span>
+                    <span class="hljs-string">docker</span> <span class="hljs-string">run</span> <span class="hljs-string">--name</span> <span class="hljs-string">orchestrator</span> <span class="hljs-string">${DOCKER_VOLUMES}</span> <span class="hljs-string">--restart</span> <span class="hljs-literal">no</span> <span class="hljs-string">-itd</span> <span class="hljs-string">quay.io/gravitee-lab/cicd-orchestrator:stable-latest</span> <span class="hljs-string">-s</span> <span class="hljs-string">mvn_release</span> <span class="hljs-string">--dry-run</span>
+                    <span class="hljs-string">docker</span> <span class="hljs-string">logs</span> <span class="hljs-string">-f</span> <span class="hljs-string">orchestrator</span>
+  <span class="hljs-attr">run_orchestrator:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-string">stable-latest</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Testing local docker installation&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">docker</span> <span class="hljs-string">version</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span> <span class="hljs-comment"># print the name of the branch we&#x27;re on</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;What branch am I on ?&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">echo</span> <span class="hljs-string">${CIRCLE_BRANCH}</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Docker pull&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+</span>      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span> <span class="hljs-comment"># print the name of the branch we&#x27;re on</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Running the Gio CICD Orchestrator as docker container&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    echo &quot;Checking local SGF : &quot;
+                    ls -allh
+</span>
+                    <span class="hljs-comment"># checking docker image pulled in previous step is there</span>
+                    <span class="hljs-string">docker</span> <span class="hljs-string">images</span>
+                    <span class="hljs-comment"># --&gt; .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI</span>
+                    <span class="hljs-string">CCI_SECRET_FILE=$PWD/.secrets.json</span>
+                    <span class="hljs-string">secrethub</span> <span class="hljs-string">read</span> <span class="hljs-string">--out-file</span> <span class="hljs-string">${CCI_SECRET_FILE}</span> <span class="hljs-string">gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json</span>
+                    <span class="hljs-string">ls</span> <span class="hljs-string">-allh</span> <span class="hljs-string">${CCI_SECRET_FILE}</span>
+                    <span class="hljs-comment"># Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container</span>
+                    <span class="hljs-comment"># export DOCKER_VOLUMES=&quot;-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json&quot;</span>
+                    <span class="hljs-string">export</span> <span class="hljs-string">DOCKER_VOLUMES=&quot;-v</span> <span class="hljs-string">$PWD:/graviteeio/cicd/pipeline</span> <span class="hljs-string">-v</span> <span class="hljs-string">$PWD/.secrets.json:/graviteeio/cicd/.secrets.json&quot;</span>
+                    <span class="hljs-string">docker</span> <span class="hljs-string">run</span> <span class="hljs-string">--name</span> <span class="hljs-string">orchestrator</span> <span class="hljs-string">${DOCKER_VOLUMES}</span> <span class="hljs-string">--restart</span> <span class="hljs-literal">no</span> <span class="hljs-string">-itd</span> <span class="hljs-string">quay.io/gravitee-lab/cicd-orchestrator:stable-latest</span> <span class="hljs-string">-s</span> <span class="hljs-string">mvn_release</span> <span class="hljs-string">--dry-run</span> <span class="hljs-literal">false</span>
+                    <span class="hljs-string">docker</span> <span class="hljs-string">logs</span> <span class="hljs-string">-f</span> <span class="hljs-string">orchestrator</span>
+<span class="hljs-attr">workflows:</span>
+  <span class="hljs-attr">version:</span> <span class="hljs-number">2.1</span>
+  <span class="hljs-comment"># Release Process DRY RUN</span>
+  <span class="hljs-attr">dry_release_process:</span>
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">dry_run_orchestrator:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">cicd-orchestrator</span>
+          <span class="hljs-attr">filters:</span>
+            <span class="hljs-attr">branches:</span>
+              <span class="hljs-comment"># ---</span>
+              <span class="hljs-comment"># Will run only when git commits are pushed to a release branch</span>
+              <span class="hljs-comment"># Therefore, will be triggered when a pull request, with target branch being</span>
+              <span class="hljs-comment"># a release branch, is accepted</span>
+              <span class="hljs-attr">only:</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.20</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.25</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.29</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.30</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.0</span><span class="hljs-number">.0</span><span class="hljs-string">-beta</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.0</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.1</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-string">master</span> <span class="hljs-comment"># ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process DRY RUN</span>
+  <span class="hljs-attr">release_process:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">wet_release</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run_orchestrator:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">cicd-orchestrator</span>
+          <span class="hljs-comment"># one cannot filters branches when conditonal workflows ?</span>
+          <span class="hljs-attr">filters:</span>
+            <span class="hljs-attr">branches:</span>
+              <span class="hljs-comment"># ---</span>
+              <span class="hljs-comment"># Will run only when git commits are pushed to master branch</span>
+              <span class="hljs-comment"># Therefore, will be triggered when a pull request is accepted, with target branch being</span>
+              <span class="hljs-comment"># the master branch.</span>
+              <span class="hljs-attr">only:</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.20</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.25</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.29</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.30</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.0</span><span class="hljs-number">.0</span><span class="hljs-string">-beta</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.0</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.1</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-string">master</span> <span class="hljs-comment"># ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process RUN</span>
+  <span class="hljs-attr">empty_process:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">empty</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">empty_job:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">cicd-orchestrator</span>
+          <span class="hljs-comment"># one cannot filters branches when conditonal workflows</span>
+          <span class="hljs-attr">filters:</span>
+            <span class="hljs-attr">branches:</span>
+              <span class="hljs-comment"># ---</span>
+              <span class="hljs-comment"># Will run only when git commits are pushed to a release branch</span>
+              <span class="hljs-comment"># Therefore, will be triggered when a pull request, with target branch being</span>
+              <span class="hljs-comment"># a release branch, is accepted</span>
+              <span class="hljs-attr">ignore:</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.20</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.25</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.29</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">1.30</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.0</span><span class="hljs-number">.0</span><span class="hljs-string">-beta</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.0</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-number">3.1</span><span class="hljs-string">.x</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-string">master</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-string">/^*/</span></code></pre>
+				<a href="#gravitee-components-repos-dev-repos" id="gravitee-components-repos-dev-repos" style="color: inherit; text-decoration: none;">
+					<h3>Gravitee Components Repos (Dev Repos)</h3>
+				</a>
+				<ul>
+					<li>The <code>gravitee-cicd-orchestrator</code>, in the <a href="https://github.com/gravitee-lab/release">https://github.com/gravitee-lab/release</a>  Circle CI Pipeline, will run as a docker container, with the following  <code>.circleci/config.yml</code> :</li>
+				</ul>
+				<ul>
+					<li>fork all git repos of components involved in the test release.json <code>release-data/apim/1.30.x/tests/release.test4-20-conccurrent.json</code></li>
+					<li>for all those git repos, add the <code>.circleci/config.yml</code>  on all release branches, just pushing a new git commit (no pull request)</li>
+					<li>add a <code>.circleci/config.yml</code>, in the <code>release.json</code> : defined like all gravitee components, except that it will run with git branch filter, filtering all release branches :</li>
+				</ul>
+				<pre><code class="language-Yaml"><span class="hljs-comment"># Machine executor, set the machine key to true in .circleci/config.yml:</span>
+<span class="hljs-attr">version:</span> <span class="hljs-number">2.1</span>
+<span class="hljs-attr">parameters:</span>
+  <span class="hljs-attr">gio_action:</span>
+    <span class="hljs-attr">type:</span> <span class="hljs-string">enum</span>
+    <span class="hljs-attr">enum:</span> [<span class="hljs-string">product_release</span>, <span class="hljs-string">product_release_dry_run</span>, <span class="hljs-string">lts_support_release</span>, <span class="hljs-string">sts_support_release</span>, <span class="hljs-string">dev_pr_review</span>, <span class="hljs-string">support_pr_review</span>, <span class="hljs-string">build</span>, <span class="hljs-string">pull_requests_bot</span>]
+    <span class="hljs-comment"># the [default:] clause is required : without it, a Circle CI error will occur</span>
+    <span class="hljs-comment"># default: none</span>
+    <span class="hljs-comment"># the [default:] clause must have a valid value : without a valid value, a Circle CI error will occur</span>
+    <span class="hljs-attr">default:</span> <span class="hljs-string">pull_requests_bot</span>
+  <span class="hljs-attr">pull_req_bot_image_tag:</span>
+    <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+    <span class="hljs-attr">default:</span> <span class="hljs-string">&#x27;stable-latest&#x27;</span> <span class="hljs-comment"># stable -latest is not understood by docker, as &quot;latest&quot; of all tags. So we will use this docker tag to automatically updae / upgrade the Pull Request Bot</span>
+    <span class="hljs-comment"># default: &#x27;3.0.76&#x27; # we dpo not use explicit version number for docker tag, for us not to be doomed to update a lot of [.circleci/config.yml]</span>
+    <span class="hljs-comment"># default : &#x27;latest&#x27; # we never ever use &#x27;latest&#x27;, but stable-latest</span>
+  <span class="hljs-attr">is_triggered_from_pr:</span>
+    <span class="hljs-attr">type:</span> <span class="hljs-string">boolean</span>
+    <span class="hljs-attr">default:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">orbs:</span>
+  <span class="hljs-attr">secrethub:</span> <span class="hljs-string">secrethub/cli@1.0.0</span>
+<span class="hljs-attr">jobs:</span>
+  <span class="hljs-attr">pull_requests_bot_exec:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-string">stable-latest</span>
+      <span class="hljs-attr">PIPELINE_PARAM_GIO_ACTION:</span> <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span>
+      <span class="hljs-attr">PIPELINE_PARAM_PR_BOT_IMAGE_TAG:</span> <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.pull_req_bot_image_tag</span> <span class="hljs-string">&gt;&gt;</span>
+      <span class="hljs-attr">PIPELINE_PARAM_IS_TRIGGERED_FROM_PR:</span> <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.is_triggered_from_pr</span> <span class="hljs-string">&gt;&gt;</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Running Pull Request Bot&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    echo &quot;This job will run the pull request bot, in its docker image &quot;
+                    echo &quot; ---&quot;
+                    echo &quot;Here are the values of the Circle CI Pipeline Parameters : &quot;
+                    echo &quot; ---&quot;
+                    echo &quot;PIPELINE_PARAM_GIO_ACTION=[${PIPELINE_PARAM_GIO_ACTION}] &quot;
+                    echo &quot;PIPELINE_PARAM_PR_BOT_IMAGE_TAG=[${PIPELINE_PARAM_PR_BOT_IMAGE_TAG}] &quot;
+                    echo &quot;PIPELINE_PARAM_IS_TRIGGERED_FROM_PR=[${PIPELINE_PARAM_IS_TRIGGERED_FROM_PR}]&quot;
+                    echo &quot; ---&quot;
+                    echo &quot;Here are the values of the Circle CI pull requests related native env. var. : &quot;
+                    echo &quot; ---&quot;
+                    echo &quot;CIRCLE_PULL_REQUEST=[${CIRCLE_PULL_REQUEST}] &quot;
+                    echo &quot;CIRCLE_PULL_REQUESTS=[${CIRCLE_PULL_REQUESTS}] &quot;
+                    echo &quot;CIRCLE_PR_NUMBER=[${CIRCLE_PR_NUMBER}] &quot;
+                    echo &quot;CIRCLE_PR_REPONAME=[${CIRCLE_PR_REPONAME}] &quot;
+                    echo &quot;CIRCLE_PR_USERNAME=[${CIRCLE_PR_USERNAME}] &quot;
+                    echo &quot; ---&quot;
+                    echo &quot;Here are the values infered from Circle CI env. var., releated to the checked out git branch, and the last commit that branch : &quot;
+                    echo &quot; ---&quot;
+                    echo &quot;CHECKED OUT GIT BRANCH IS : [${CIRCLE_BRANCH}] &quot;
+                    echo &quot;LAST COMMIT ON THIS BRANCH IS : [$(git rev-parse ${CIRCLE_BRANCH})] &quot;
+                    echo &quot;Circle CI [CIRCLE_SHA1] value is [${CIRCLE_SHA1}]&quot;
+                    echo &quot; ---&quot;
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+                    # checking docker image pulled in previous step is there
+                    docker images
+                    # --&gt; .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
+                    CCI_SECRET_FILE=$PWD/.secrets.json
+                    secrethub read --out-file ${CCI_SECRET_FILE} gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json
+                    ls -allh ${CCI_SECRET_FILE}
+                    # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
+                    # export DOCKER_VOLUMES=&quot;-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json&quot;
+                    export DOCKER_VOLUMES=&quot;-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json&quot;
+                    docker run --name orchestrator ${DOCKER_VOLUMES} --restart no -itd quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s pull_req --dry-run false
+                    docker logs -f orchestrator
+</span>
+  <span class="hljs-attr">mvn_verify:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_MAVEN_VERSION:</span> <span class="hljs-number">3.6</span><span class="hljs-number">.3</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;Simple Maven Build for the component&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    echo &quot;This job will execute the maven build for the Gravitee IO Component&quot;
+                    echo &quot;This job will be triggered for any PR on the github git repo of the Gravitee Component.&quot;
+                    echo &quot;Never the less, there might be just any&quot;
+                    echo &quot;Run Maven Package&quot;
+                    export MVN_DOCKER=&quot;maven:${DESIRED_MAVEN_VERSION}-openjdk-16 &quot;
+                    export MAVEN_COMMAND=&quot;mvn clean verify&quot;
+                    echo &quot;Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]&quot;
+                    docker run -it --rm -v &quot;$PWD&quot;:/usr/src/mymaven -v &quot;$HOME/.m2&quot;:/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+</span>
+  <span class="hljs-attr">product_release_job1:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-number">5.27</span><span class="hljs-number">.1</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;First WORKFLOW for Product Release&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+               echo &quot;First WORKFLOW for Product Release&quot;
+</span>  <span class="hljs-attr">product_release_dry_job1:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-number">5.27</span><span class="hljs-number">.1</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;[DRY RUN] First WORKFLOW for Product Release Dry Run&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+                    echo &quot;[DRY RUN] First WORKFLOW for Product Release Dry Run&quot;
+                    echo &quot;Here what will be done is just echoing all Product Release Shell commands, to check their paramters /optionsvalues, the git branch etc...&quot;
+</span>
+
+  <span class="hljs-attr">dev_pr_job1:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-number">5.27</span><span class="hljs-number">.1</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;A FIRST TEST JOB for Dev Pull Request Review&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+               echo &quot;A FIRST TEST JOB for Dev Pull Request Review&quot;
+</span>  <span class="hljs-attr">support_pr_job1:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-number">5.27</span><span class="hljs-number">.1</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;A FIRST TEST JOB for Support Pull Request Review&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+               echo &quot;A FIRST TEST JOB for Support Pull Request Review&quot;
+</span>  <span class="hljs-attr">support_release_job1:</span>
+    <span class="hljs-attr">machine:</span>
+      <span class="hljs-attr">image:</span> <span class="hljs-string">&#x27;ubuntu-1604:201903-01&#x27;</span>    <span class="hljs-comment"># recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1</span>
+      <span class="hljs-comment"># resource_class: medium</span>
+      <span class="hljs-comment"># docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">DESIRED_DOCKER_TAG:</span> <span class="hljs-number">5.27</span><span class="hljs-number">.1</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">checkout</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">secrethub/install</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">run:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">&quot;A FIRST TEST JOB for Support Release&quot;</span>
+          <span class="hljs-attr">command:</span> <span class="hljs-string">|
+               echo &quot;A FIRST TEST JOB for Support Release&quot;
+</span>
+<span class="hljs-attr">workflows:</span>
+  <span class="hljs-attr">version:</span> <span class="hljs-number">2.1</span>
+  <span class="hljs-attr">pull_requests_bot:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">pull_requests_bot</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">pull_requests_bot_exec:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">cicd-orchestrator</span>
+  <span class="hljs-attr">product_release_dry_run:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">product_release_dry_run</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">product_release_dry_job1:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">gravitee-lab</span>
+  <span class="hljs-attr">product_release:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">product_release</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">product_release_job1:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">gravitee-lab</span>
+  <span class="hljs-attr">lts_support_release:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">lts_support_release</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">support_release_job1:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">gravitee-lab</span>
+  <span class="hljs-attr">sts_support_release:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">sts_support_release</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">support_release_job1:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">gravitee-lab</span>
+
+  <span class="hljs-attr">support_pr_review:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">support_pr_review</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">support_pr_job1:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">gravitee-lab</span>
+  <span class="hljs-attr">dev_pr_review:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">dev_pr_review</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">dev_pr_job1:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">gravitee-lab</span>
+  <span class="hljs-attr">build:</span>
+    <span class="hljs-attr">when:</span>
+      <span class="hljs-attr">equal:</span> [ <span class="hljs-string">build</span>, <span class="hljs-string">&lt;&lt;</span> <span class="hljs-string">pipeline.parameters.gio_action</span> <span class="hljs-string">&gt;&gt;</span> ]
+    <span class="hljs-attr">jobs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">mvn_verify:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">cicd-orchestrator</span></code></pre>
+				<ul>
+					<li>running the <code>gravitee-cicd-orchestrator</code>, in the <a href="https://github.com/gravitee-lab/release">https://github.com/gravitee-lab/release</a>  Circle CI Pipeline, as a docker container, will basically look like :</li>
+				</ul>
+				<pre><code class="language-bash"><span class="hljs-built_in">export</span> CICD_STAGE_NAME=mvn_release
+<span class="hljs-built_in">export</span> CICD_STAGE_NAME=pull_req
+<span class="hljs-built_in">export</span> CICD_STAGE_NAME=oci_release
+<span class="hljs-built_in">export</span> CICD_STAGE_NAME=release_bundle
+<span class="hljs-built_in">export</span> CICD_STAGE_NAME=doc_release
+<span class="hljs-built_in">export</span> CICD_STAGE_NAME=social_release
+
+<span class="hljs-comment"># any stage can run in dry-run mode</span>
+<span class="hljs-comment"># and you will build a CI CD Proces, by combining,Orchestrating a set of CICD Stages.</span>
+
+
+docker run --name orchestrator -v <span class="hljs-variable">$PWD</span>/pipeline:/graviteeio/cicd/pipeline -v <span class="hljs-variable">$PWD</span>/.env:/graviteeio/cicd/.env --restart no -itd quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s <span class="hljs-variable">${CICD_STAGE_NAME}</span> --dry-run <span class="hljs-literal">true</span>
+
+<span class="hljs-comment"># and then display logs</span>
+docker logs -f orchestrator</code></pre>
+				<a href="#drafts" id="drafts" style="color: inherit; text-decoration: none;">
+					<h1>Drafts</h1>
 				</a>
 				<p>The following branches are present on <a href="https://github.com/gravitee-lab/release">https://github.com/gravitee-lab/release</a> :</p>
 				<ul>
@@ -209,7 +715,7 @@ git <span class="hljs-built_in">clone</span> https://github.com/gravitee-lab/rel
 docker-compose down --rmi all &amp;&amp; docker-compose up --force-recreate -d
 <span class="hljs-comment"># --- #</span>
 <span class="hljs-comment"># retrieve the realse.json you wanna work on</span>
-<span class="hljs-comment"># </span>
+<span class="hljs-comment">#</span>
 sudo git <span class="hljs-built_in">clone</span> https://github.com/gravitee-lab/release graviteeio/cicd/pipeline
 <span class="hljs-comment"># enter the beast, to test it :</span>
 docker <span class="hljs-built_in">exec</span> -it gio_cicd_orchestrator sh</code></pre>
