@@ -10,7 +10,7 @@ RUN mkdir -p /graviteeio/cicd
 WORKDIR /graviteeio/cicd
 # --- add entrypoint
 COPY oci/start.sh /graviteeio/cicd
-COPY oci/generate-dotenv.sh /graviteeio/cicd
+# COPY oci/generate-dotenv.sh /graviteeio/cicd
 RUN chmod +x /graviteeio/cicd/*.sh
 
 # Set [start.sh] as entrypoint

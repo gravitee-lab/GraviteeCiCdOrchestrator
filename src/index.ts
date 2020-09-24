@@ -35,10 +35,12 @@ console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'c
 
 
 if (process.argv["cicd-stage"] === 'pull_req') {
+  console.log(`{[ index.ts ]} --- Now instantiating [PullRequestBot]`);
   let pr_bot: pr_robotics.PullRequestBot = new pr_robotics.PullRequestBot();
   if (process.argv["dry-run"] === 'true') {
     pr_bot.executeDry();
   } else {
+    console.log(`{[ index.ts ]} --- Now executing [PullRequestBot] in nondry-run mode`);
     pr_bot.execute();
   }
 } else if (process.argv["cicd-stage"] === 'mvn_release') {
