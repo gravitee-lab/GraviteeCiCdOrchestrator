@@ -13,6 +13,10 @@ import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactiveParallelExecutionSet'
 
 /**
+ *
+ *  CICD Stage : Represents the Pull Request Bot managing the Pull Request CICD Stage
+ *  [--cicd-stage mvn_release] GNU Option to activate
+ * 
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
  * [gravitee_release_branch] must match one of the existing branch on https://github.com/gravtiee-io/release.git, see [.DOTNEV] [RELEASE_BRANCHES] env. var.

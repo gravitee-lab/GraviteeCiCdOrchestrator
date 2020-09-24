@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;modules/circleci/CircleCiOrchestrator&quot; | GraviteeReleaseOrchestrator</title>
+	<title>&quot;modules/pr-bot/PullRequestBot&quot; | GraviteeReleaseOrchestrator</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/CircleCiOrchestrator&quot;</a>
+					<a href="_modules_pr_bot_pullrequestbot_.html">&quot;modules/pr-bot/PullRequestBot&quot;</a>
 				</li>
 			</ul>
 		</div>
@@ -69,8 +69,11 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul>
 					<ul class="before-current">
+						<li class=" tsd-kind-enum tsd-parent-kind-module">
+							<a href="../enums/_modules_pr_bot_pullrequestbot_.pr_bot_mode.html" class="tsd-kind-icon">PR_<wbr>BOT_<wbr>MODE</a>
+						</li>
 						<li class=" tsd-kind-class tsd-parent-kind-module">
-							<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html" class="tsd-kind-icon">Circle<wbr>CiOrchestrator</a>
+							<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html" class="tsd-kind-icon">Pull<wbr>Reques<wbr>Bot</a>
 						</li>
 					</ul>
 				</ul>
@@ -89,7 +92,7 @@
 						<a href="_modules_circleci_circleciclient_.html">&quot;modules/circleci/<wbr>CircleCIClient&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="_modules_circleci_circlecisecrets_.html">&quot;modules/circleci/<wbr>CircleCISecrets&quot;</a>
-						</li>                        <li class="current tsd-kind-module">
+						</li>                        <li class=" tsd-kind-module">
 						<a href="_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/<wbr>Circle<wbr>CiOrchestrator&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="_modules_circleci_experiment_.html">&quot;modules/circleci/<wbr>Experiment&quot;</a>
@@ -115,7 +118,7 @@
 						<a href="_modules_monitor_monitor_.html">&quot;modules/monitor/<wbr>Monitor&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="_modules_monitor_parallelexecutionsetprogress_.html">&quot;modules/monitor/<wbr>Parallel<wbr>Execution<wbr>Set<wbr>Progress&quot;</a>
-						</li>                        <li class=" tsd-kind-module">
+						</li>                        <li class="current tsd-kind-module">
 						<a href="_modules_pr_bot_pullrequestbot_.html">&quot;modules/pr-<wbr>bot/<wbr>Pull<wbr>Request<wbr>Bot&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="_modules_progress_pipelineexecutionlistrdemo_.html">&quot;modules/progress/<wbr>Pipeline<wbr>Execution<wbr>Listr<wbr>Demo&quot;</a>
@@ -131,50 +134,62 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Enumerations</h3>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-enum tsd-parent-kind-module">
+										<a href="../enums/_modules_pr_bot_pullrequestbot_.pr_bot_mode.html" class="tsd-kind-icon">PR_<wbr>BOT_<wbr>MODE</a>
+										<ul>
+											<li class="tsd-kind-enum-member tsd-parent-kind-enum">
+												<a href="../enums/_modules_pr_bot_pullrequestbot_.pr_bot_mode.html#dev" class="tsd-kind-icon">DEV</a>
+											</li>
+											<li class="tsd-kind-enum-member tsd-parent-kind-enum">
+												<a href="../enums/_modules_pr_bot_pullrequestbot_.pr_bot_mode.html#support" class="tsd-kind-icon">SUPPORT</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<div class="tsd-navigation secondary">
 								<ul>
 									<li class="tsd-kind-class tsd-parent-kind-module">
-										<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html" class="tsd-kind-icon">Circle<wbr>CiOrchestrator</a>
+										<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html" class="tsd-kind-icon">Pull<wbr>Reques<wbr>Bot</a>
 										<ul>
-											<li class="tsd-kind-constructor tsd-parent-kind-class">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#constructor" class="tsd-kind-icon">constructor</a>
+											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
 											</li>
 											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#gh_org" class="tsd-kind-icon">gh_<wbr>org</a>
 											</li>
 											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#execution_plan" class="tsd-kind-icon">execution_<wbr>plan</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#git_branch" class="tsd-kind-icon">git_<wbr>branch</a>
 											</li>
 											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#parallelexecutionsetsnotifier" class="tsd-kind-icon">parallel<wbr>Execution<wbr>Sets<wbr>Notifier</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#mode" class="tsd-kind-icon">mode</a>
 											</li>
 											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#parallelexecutionsetsnotifiers" class="tsd-kind-icon">parallel<wbr>Execution<wbr>Sets<wbr>Notifiers</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#repo_name" class="tsd-kind-icon">repo_<wbr>name</a>
 											</li>
-											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#pipelines_nb" class="tsd-kind-icon">pipelines_<wbr>nb</a>
+											<li class="tsd-kind-method tsd-parent-kind-class">
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#contructor" class="tsd-kind-icon">contructor</a>
 											</li>
-											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#retries" class="tsd-kind-icon">retries</a>
-											</li>
-											<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#secrets" class="tsd-kind-icon">secrets</a>
+											<li class="tsd-kind-method tsd-parent-kind-class">
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#execute" class="tsd-kind-icon">execute</a>
 											</li>
 											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#initializenotifiers" class="tsd-kind-icon">initialize<wbr>Notifiers</a>
-											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#loadcirclecisecrets" class="tsd-kind-icon">load<wbr>CircleCISecrets</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#executeindevmode" class="tsd-kind-icon">execute<wbr>InDev<wbr>Mode</a>
 											</li>
 											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#processexecutionsetnumber" class="tsd-kind-icon">process<wbr>Execution<wbr>Set<wbr>Number</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#executeinsupportmode" class="tsd-kind-icon">execute<wbr>InSupport<wbr>Mode</a>
 											</li>
 											<li class="tsd-kind-method tsd-parent-kind-class">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#start" class="tsd-kind-icon">start</a>
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#getmode" class="tsd-kind-icon">get<wbr>Mode</a>
 											</li>
-											<li class="tsd-kind-method tsd-parent-kind-class">
-												<a href="../classes/_modules_circleci_circleciorchestrator_.circleciorchestrator.html#whoami" class="tsd-kind-icon">whoami</a>
+											<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+												<a href="../classes/_modules_pr_bot_pullrequestbot_.pullrequesbot.html#resolveccislug" class="tsd-kind-icon">resolve<wbr>Cci<wbr>Slug</a>
 											</li>
 										</ul>
 									</li>

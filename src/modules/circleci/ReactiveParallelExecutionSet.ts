@@ -98,9 +98,17 @@ export class ReactiveParallelExecutionSet {
     console.info("");
 
     /// First, trigger all pipelines in the parallel execution set
-    this.parallelExecutionSet.forEach(((componentName, index) => {
+    this.parallelExecutionSet.forEach(((component, index) => {
       /// pipeline execution parameters, same as Jenkins build parameters
-      let pipelineParameters = { parameters: {}};
+
+      let pipelineParameters = { parameters: {}}; /// use the
+
+      console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of component.name : [${component.name}]`);
+      console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of component.version : [${component.version}]`);
+      let theSplitVersionArr = component.version.split('.');
+      console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - so component git branch to trigger pipeline on is : [${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x]`);
+
+      console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of process.argv["dry-run"] : [${process.argv["dry-run"]}]`);
       let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
           next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
           complete: data => {

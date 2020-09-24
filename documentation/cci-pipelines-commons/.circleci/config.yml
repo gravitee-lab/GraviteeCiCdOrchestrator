@@ -84,17 +84,84 @@ support_pr_filter: &support_pr_filter
 # ---------------------------------------------------
 
 # Machine executor, set the machine key to true in .circleci/config.yml:
+# Machine executor, set the machine key to true in .circleci/config.yml:
 version: 2.1
+
+parameters:
+  gio_action:
+    type: enum
+    enum: [product_release, product_release_dry_run, lts_support_release, sts_support_release, dev_pr_review, support_pr_review, build, pull_requests_bot]
+    # the [default:] clause is required : without it, a Circle CI error will occur
+    # default: none
+    # the [default:] clause must have a valid value : without a valid value, a Circle CI error will occur
+    default: pull_requests_bot
+  pull_req_bot_image_tag:
+    type: string
+    default: 'stable-latest' # stable -latest is not understood by docker, as "latest" of all tags. So we will use this docker tag to automatically updae / upgrade the Pull Request Bot
+    # default: '3.0.76' # we dpo not use explicit version number for docker tag, for us not to be doomed to update a lot of [.circleci/config.yml]
+    # default : 'latest' # we never ever use 'latest', but stable-latest
+  is_triggered_from_pr:
+    type: boolean
+    default: true
 orbs:
   secrethub: secrethub/cli@1.0.0
-  aws-cli: circleci/aws-cli@1.3.0
-
 jobs:
 
-  dummy_job:
+  pull_requests_bot_exec:
     machine:
-      resource_class: medium
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: stable-latest
+      PIPELINE_PARAM_GIO_ACTION: << pipeline.parameters.gio_action >>
+      PIPELINE_PARAM_PR_BOT_IMAGE_TAG: << pipeline.parameters.pull_req_bot_image_tag >>
+      PIPELINE_PARAM_IS_TRIGGERED_FROM_PR: << pipeline.parameters.is_triggered_from_pr >>
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Running Pull Request Bot"
+          command: |
+                    echo "This job will run the pull request bot, in its docker image "
+                    echo " ---"
+                    echo "Here are the values of the Circle CI Pipeline Parameters : "
+                    echo " ---"
+                    echo "PIPELINE_PARAM_GIO_ACTION=[${PIPELINE_PARAM_GIO_ACTION}] "
+                    echo "PIPELINE_PARAM_PR_BOT_IMAGE_TAG=[${PIPELINE_PARAM_PR_BOT_IMAGE_TAG}] "
+                    echo "PIPELINE_PARAM_IS_TRIGGERED_FROM_PR=[${PIPELINE_PARAM_IS_TRIGGERED_FROM_PR}]"
+                    echo " ---"
+                    echo "Here are the values of the Circle CI pull requests related native env. var. : "
+                    echo " ---"
+                    echo "CIRCLE_PULL_REQUEST=[${CIRCLE_PULL_REQUEST}] "
+                    echo "CIRCLE_PULL_REQUESTS=[${CIRCLE_PULL_REQUESTS}] "
+                    echo "CIRCLE_PR_NUMBER=[${CIRCLE_PR_NUMBER}] "
+                    echo "CIRCLE_PR_REPONAME=[${CIRCLE_PR_REPONAME}] "
+                    echo "CIRCLE_PR_USERNAME=[${CIRCLE_PR_USERNAME}] "
+                    echo " ---"
+                    echo "Here are the values infered from Circle CI env. var., releated to the checked out git branch, and the last commit that branch : "
+                    echo " ---"
+                    echo "CHECKED OUT GIT BRANCH IS : [${CIRCLE_BRANCH}] "
+                    echo "LAST COMMIT ON THIS BRANCH IS : [$(git rev-parse ${CIRCLE_BRANCH})] "
+                    echo "Circle CI [CIRCLE_SHA1] value is [${CIRCLE_SHA1}]"
+                    echo " ---"
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+                    # checking docker image pulled in previous step is there
+                    docker images
+                    # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
+                    CCI_SECRET_FILE=$PWD/.secrets.json
+                    secrethub read --out-file ${CCI_SECRET_FILE} gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json
+                    ls -allh ${CCI_SECRET_FILE}
+                    # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
+                    # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
+                    export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
+                    docker run --name orchestrator ${DOCKER_VOLUMES} --restart no -itd quay.io/gravitee-lab/cicd-orchestrator:stable-latest -- --pr-bot true --pr-bot-mode support
+                    docker logs -f orchestrator
+
+  mvn_build:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
       # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
       DESIRED_MAVEN_VERSION: 3.6.3
@@ -102,402 +169,140 @@ jobs:
       - checkout
       - secrethub/install
       - run:
-          name: "dummy step in a dummy job"
+          name: "Simple Maven Build for the component"
           command: |
-                    echo "Helllo im a dummy step in a"
-                    echo "dummy job"
-
-  build:
-    machine:
-      resource_class: medium
-      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
-    environment:
-      DESIRED_MAVEN_VERSION: 3.6.3
-    steps:
-      - checkout
-      - secrethub/install
-      - run:
-          name: "Maven Package n Install the Gravitee Component"
-          command: |
-                    echo "Run Maven Package"
-                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    export MAVEN_COMMAND="mvn clean package install"
-                    echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
-                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
-
-  tests_without_deployment:
-    machine:
-      resource_class: medium
-      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
-    environment:
-      DESIRED_MAVEN_VERSION: 3.6.3
-    steps:
-      - checkout
-      - secrethub/install
-      - run:
-          name: "Maven Test the Gravitee Component"
-          command: |
-                    echo "Run Maven Tests"
-                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    export MAVEN_COMMAND="mvn clean test"
-                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
-                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
-
-  integ_env_initial_state:
-    machine:
-      resource_class: medium
-      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
-    environment:
-      AWS_PROFILE: gravitee_cicd
-      AWS_REGION: eu-west-1
-      KUBECTL_VERSION: 1.18.8
-      HELM_VERSION: 3.3.0
-    steps:
-      - checkout
-      - secrethub/install
-      - aws-cli/setup:
-          profile-name: ${AWS_PROFILE}
-      - run:
-          name: "Helm delete Gravitee Stack in Integration K8S Cluster on AWS EKS"
-          command: |
-                    echo "Helm delete Gravitee in integration environment"
-                    echo "This is very big, and obviously should become a Circle CI Orb"
-                    mkdir -p ${HOME}/.aws
-                    export AWS_CONFIG=${HOME}/.aws/config
-                    export AWS_CREDENTIALS=${HOME}/.aws/credentials
-
-                    secrethub read --out-file ${AWS_CONFIG} gravitee-io/cicd/envs/integration/aws/config
-                    secrethub read --out-file ${AWS_CREDENTIALS} gravitee-io/cicd/envs/integration/aws/credentials
-                    # --- Now the Bot executing this pipeline, has an AWS Identity, an IAM User, which
-                    #     must have permission to assumme an AWS IAM Role, with authorizes him to :
-                    #     => retrieve KUBECONFIG from AWS EKS, to kubectl into the AWS EKS Cluster
-                    #     => execute the desired operations on the K8S Cluster on AWS EKS.
-                    #
-                    export ARN_OF_GRAVITEE_BOT_ASSUMED_IAM_ROLE=$(export K8S_NAMESPACE=$(secrethub read gravitee-io/cicd/envs/integration/aws/iam/graviteebot_assumed_role)
-                    # ----
-                    # With secrethub, we will use secret file storage to retrieve KUBECONFIG
-                    # https://secrethub.io/docs/guides/key-files/#store
-                    #
-                    # export KUBECONFIG=${HOME}/.kube/config
-                    mkdir -p ${HOME}/.kube
-                    # secrethub read --out-file ${KUBECONFIG} gravitee-io/cicd/envs/integration/k8s/kubeconfig
-                    # In the case of an AWS EKS Cluster, retrieved with AWS CLI
-                    export AWS_PROFILE=${AWS_PROFILE}
-                    export AWS_REGION=${AWS_REGION}
-                    aws eks list-clusters --region ${AWS_REGION}
-                    export CLUSTER_NAME=$(aws eks list-clusters --region=eu-west-1 | jq '.clusters[0]' | awk -F '"' '{print $2}')
-
-                    # Gravitee bot must assume an AWS IAM Role to retrieve KUBECONFIG from AWS EKS
-                    aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION} --role-arn ${ARN_OF_GRAVITEE_BOT_ASSUMED_IAM_ROLE}
-
-                    # running kubectl inside a docker container
-                    echo "Checking Kubectl version"
-                    docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:${KUBECTL_VERSION} version --client
-                    echo "Checking Kubernetes connection with [kubectl cluster-info]"
-                    docker run --rm --name kubectl -v /path/to/your/kube/config:/.kube/config bitnami/kubectl:${KUBECTL_VERSION} cluster-info
-
-
-                    echo "Helm quick install"
-                    export HELM_VERSION=${HELM_VERSION}
-                    mkdir ./helm.ephemeral.installation
-                    curl -LO https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
-                    tar -zxvf helm-v${HELM_VERSION}-linux-amd64.tar.gz
-                    mv linux-amd64/helm ./helm.ephemeral.installation
-                    export PATH="${PATH}:./helm.ephemeral.installation/helm"
-                    # ---
-                    # no sudo inside Circle CI Pipelines
-                    # sudo mv linux-amd64/helm /usr/local/bin/helm
-
-                    # now checking I am using same Helm version
-                    helm version
-                    # ---
-                    #
-                    echo "Running Helm delete On Gravitee Stack"
-                    export HELM_RELEASE_NAME=$(secrethub read gravitee-io/cicd/envs/integration/k8s/helm/gravitee_release_name)
-                    export K8S_NAMESPACE=$(secrethub read gravitee-io/cicd/envs/integration/k8s/helm/gravitee_release_ns)
-                    kubectl get all -l app.kubernetes.io/instance=graviteeio-stack
-                    helm unistall ${HELM_RELEASE_NAME}
-                    kubectl get all -l app.kubernetes.io/instance=graviteeio-stack
-      - run:
-          name: "Drop MongoDB and Elasticsearch Gravitee databases"
-          command: |
-                    echo "Now emptying MongoDB and Elasticsearch Gravitee databases"
-                    echo "To be continued."
-
-  mvn_release:
-    machine:
-      resource_class: medium
-      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
-      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
-    environment:
-      DESIRED_RELEASE_TAG: 5.27.1
-      JFROG_BUILD_NUMBER: 1524548
-      DESIRED_MAVEN_VERSION: 3.6.3
-    steps:
-      - checkout
-      - secrethub/install
-      - run:
-          name: "Git Tagging the Release, on Release Branch"
-          command: |
-                    echo " Release branch is [${CIRCLE_BRANCH}], and must match major/minor verions of DESIRED_RELEASE_TAG=[${DESIRED_RELEASE_TAG}]"
-                    git tag ${DESIRED_RELEASE_TAG} -m "Gravitee Bot tagging release from Circle CI Pipeline"
-                    git push -u origin --tags ${CIRCLE_BRANCH}
-      - run:
-          name: "Maven Test the Gravitee Component"
-          command: |
-                    echo "Run Maven Tests"
-                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    export MAVEN_COMMAND="mvn clean test"
-                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
-                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
-
-      - run:
-          name: "Maven Package the Gravitee Component"
-          command: |
+                    echo "This job will execute the maven build for the Gravitee IO Component"
+                    echo "This job will be triggered for any PR on the github git repo of the Gravitee Component."
+                    echo "Never the less, there might be just any"
                     echo "Run Maven Package"
                     export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
                     export MAVEN_COMMAND="mvn clean package"
                     echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
                     docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
-      - run: # print the name of the branch we're on
-          name: "Maven Deploy the Gravitee Component to Central Maven Repo : JFrog"
+  product_release_job1:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: 5.27.1
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "First WORKFLOW for Product Release"
           command: |
-                    echo "Run Maven Deploy using JFrog Maven Plugin"
-                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    #
-                    # see https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
-                    export JFROG_USERNAME=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
-                    export JFROG_SECRET=$(secrethub read gravitee-io/cicd/staging/jfrog/password)
-                    echo "JFROG_USERNAME=[${JFROG_USERNAME}]"
-                    # echo "JFROG_SECRET=[${JFROG_SECRET}]"
-                    export JFROG_USERNAME=test
-                    export JFROG_SECRET=test
-                    export MAVEN_COMMAND="mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}"
-                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
-                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+               echo "First WORKFLOW for Product Release"
+  product_release_dry_job1:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: 5.27.1
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "[DRY RUN] First WORKFLOW for Product Release Dry Run"
+          command: |
+                    echo "[DRY RUN] First WORKFLOW for Product Release Dry Run"
+                    echo "Here what will be done is just echoing all Product Release Shell commands, to check their paramters /optionsvalues, the git branch etc..."
 
+
+  dev_pr_job1:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: 5.27.1
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "A FIRST TEST JOB for Dev Pull Request Review"
+          command: |
+               echo "A FIRST TEST JOB for Dev Pull Request Review"
+  support_pr_job1:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: 5.27.1
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "A FIRST TEST JOB for Support Pull Request Review"
+          command: |
+               echo "A FIRST TEST JOB for Support Pull Request Review"
+  support_release_job1:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: 5.27.1
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "A FIRST TEST JOB for Support Release"
+          command: |
+               echo "A FIRST TEST JOB for Support Release"
 
 workflows:
   version: 2.1
-  # ---
-  # Runs only when Pipeline invoked
-  # using Circle CI API v2 to
-  # Releases the Product
-  # ---
-  # When releasing Product :
-  # => we assume unit/source code quality tests have successfully passed
-  #
-  # => we re-run all integration tests AFTER merge happened  :
-  #    Cause Integration tests may pass on branch, and not pass after merge, whole
-  #    point of Integration, is to Integrate, not only different developers work on a branch,
-  #    but to integrate, the work done by a Team on a bracnh, to the
-  #    work already done before, on its base branch.
-  # => we re-run all staging tests after merge happened : Performance tests, big data
-  #    load tests, production grade tests in a word. We release Production Grade Product.
-  #
-  # => each component release, consists of :
-  # >>>>> run a git tagging on an existing release branch
-  # >>>>> run a maven release : jar is sent to mùaven central repo, eg. nexus or JFrog
-  # >>>>> ONLY FOR main components (last in 'buildDependencies' in 'release.json') :
-  #        > building all zip bundles of all dependencies, and send them to HTTP downloads server. Here dependencies could also be infered not from release.json, but from 'pom.xml' ...
-  #        > docker build and push docker image
-  #
+  pull_requests_bot:
+    when:
+      equal: [ pull_requests_bot, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - pull_requests_bot_exec:
+          context: cicd-orchestrator
+  product_release_dry_run:
+    when:
+      equal: [ product_release_dry_run, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - product_release_dry_job1:
+          context: gravitee-lab
   product_release:
+    when:
+      equal: [ product_release, << pipeline.parameters.gio_action >> ]
     jobs:
-      - build:
+      - product_release_job1:
           context: gravitee-lab
-          <<: *product_release_filter
-      - integ_env_initial_state:
-          # This workflow will not tear down the k8S cluster
-          # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
-          # This workflow will :
-          # => helm delete every Gravitee component in the k8S cluster
-          # => Empty databases in MongoDB service, PostgreSQL service and Elasticsearch service
-          # => Restore initial state of databases in MongoDB, PostgreSQL, and Elasticsearch services
-          # => Deploy a fresh Gravitee Stack
-          # context holds integration env. secrets
+  lts_support_release:
+    when:
+      equal: [ lts_support_release, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - support_release_job1:
           context: gravitee-lab
-          <<: *product_release_filter
-        # ---
-        # among Integration Tests :
-        # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
-        # => User Stories End 2 End Tests
-      - product_integration_tests: # runs integration tests for Gravitee Product Releases (not support)
-          requires:
-            - integ_env_initial_state
+  sts_support_release:
+    when:
+      equal: [ sts_support_release, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - support_release_job1:
           context: gravitee-lab
-          <<: *product_release_filter
-      - staging_env_initial_state:
-          # This workflow will not tear down the k8S cluster
-          # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
-          # This workflow will :
-          # => helm delete every Gravitee component in the k8S cluster
-          # => Empty databases in MongoDB service, PostgreSQL service and Elasticsearch service
-          # => Restore initial state of databases in MongoDB, PostgreSQL, and Elasticsearch services
-          # => Deploy a fresh Gravitee Stack in the K8S Cluster
-          # not worth spending money if integration tests did not pass
-          requires:
-            - product_integration_tests
-          context: gravitee-lab
-          <<: *product_release_filter
-        # ---
-        # among staging tests :
-        # => performance tests
-        # => big database End 2 End Tests
-      - product_staging_tests:
-          requires:
-            - staging_env_initial_state
-          context: gravitee-lab
-          <<: *product_release_filter
-      - git_release:
-          # ---
-          # When releasing, all unit/source code quality
-          # have successfully passed
-          # we do not release product if it does not pass
-          requires:
-            - product_integration_tests
-            - product_staging_tests
-          context: gravitee-lab
-          <<: *product_release_filter
-      - mvn_release:
-          # ---
-          # When releasing, all unit/source code quality
-          # have successfully passed
-          # we do not release product if it does not pass
-          requires:
-            - product_integration_tests
-            - product_staging_tests
-            - git_release
-          context: gravitee-lab
-          <<: *product_release_filter
-  # ---
-  # This workflow runs only
-  # to conduct pull request reviews from :
-  # => Dev Team During Development
-  # ---
-  # When reviewing Dev Team deliveries :
-  # => we run unit / source code quality tests, but only on a reduced scope : tests on
-  #    the components which are modified during the Dev Sprint.
-  # => we run all integration tests BEFORE merge happens  :
-  #    Whole point of Integration, during Dev  Team Sprints, is to
-  #    Integrate different developers work on a branch.
-  #    In a word, We want to detect and fix asap any regression, and any new issue.
-  # => we run all staging tests BEFORE merge happens : Performance tests, big data
-  #    load tests, production grade tests in a word. We want to avoid regression on
-  #    our Product Production Grade.
-  #
 
+  support_pr_review:
+    when:
+      equal: [ support_pr_review, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - support_pr_job1:
+          context: gravitee-lab
   dev_pr_review:
+    when:
+      equal: [ dev_pr_review, << pipeline.parameters.gio_action >> ]
     jobs:
-      - build:
+      - dev_pr_job1:
           context: gravitee-lab
-          <<: *dev_pr_filter
-      # ---
-      # Will run all tests which can be run without any deployment, but only on a reduced scope : tests on
-      # the components which are modified during the Dev / Support Sprint.
-      - tests_without_deployment:
-          requires:
-            - build
-          context: gravitee-lab
-          <<: *dev_pr_filter
-      # ---
-      # A small 3-nodes kubernetes Cluster on AWS, with minimum storage capacity
-      - integ_env_initial_state:
-          # not worth spending money if unit/ source code quality tests did not pass
-          requires:
-            - tests_without_deployment
-          context: gravitee-lab
-          <<: *dev_pr_filter
-        # ---
-        # among Integration Tests :
-        # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
-        # => User Stories End 2 End Tests
-      - integ_tests:
-          requires:
-            - deploy_integ_env
-          context: gravitee-lab
-          <<: *dev_pr_filter
-      # ---
-      # A bigger 9-nodes kubernetes Cluster on AWS, with production-grade storage capacity
-      - staging_env_initial_state:
-          # not worth spending money if integration tests did not pass
-          requires:
-            - integration_tests
-          context: gravitee-lab
-          <<: *dev_pr_filter
-        # ---
-        # among staging tests :
-        # => performance tests
-        # => big data load, and End 2 End Tests
-      - staging_tests:
-          requires:
-            - deploy_staging_env
-          context: gravitee-lab
-          <<: *dev_pr_filter
-  # ---
-  # This workflow runs only
-  # to conduct pull request reviews from :
-  # => Support Team During Support Cases Sprints
-  # ---
-  # When reviewing Dev or Support Team deliveries :
-  # => we run unit / source code quality tests, but only on a reduced scope : tests on
-  #    the components which are modified during the Support Sprint.
-  # => we run a few integration tests BEFORE merge happens :
-  #    Whole point of Integration, during  Support Team Sprints, is to
-  #    Integrate different support engineers work on a branch, quiclkly, therefore, on a
-  #    reduced scope, I.e. integration tests on the components which are modified during the Support Sprint.
-  #    In a word, We want to detect and fix asap any integration regression, and any new issue caused by support case or quick bugfix.
-  #
-  supp_pr_review:
+          # filters:
+ build:
+    when:
+      equal: [ build, << pipeline.parameters.gio_action >> ]
     jobs:
-      - build:
-          context: gravitee-lab
-          <<: *support_pr_filter
-      # ---
-      # Will run all tests before deployment, but only on a reduced scope : tests on
-      # the components which are modified during the Support Sprint.
-      - supp_tests_without_deployment:
-          requires:
-            - build
-          context: gravitee-lab
-          <<: *support_pr_filter
-          # this deployment should be exetremely quick, like only a docker-compose inside one AWS EC2 instance.
-      - supp_integ_env_initial_state:
-          # not worth spending money if unit / source code quality tests did not pass
-          requires:
-            - tests_without_deployment
-          context: gravitee-lab
-          <<: *support_pr_filter
-        # ---
-        # among Integration Tests :
-        # => A few User Stories End 2 End Tests
-      - supp_integration_tests:
-          requires:
-            - deploy_integ_env
-          context: gravitee-lab
-          <<: *support_pr_filter
-#
-  LTS_support_release:
-    jobs:
-      - lts_first_job:
-          context: gravitee-lab
-          <<: *support_release_filter
-      - lts_second_job:
-          requires:
-            - lts_first_job
-          context: gravitee-lab
-          <<: *support_release_filter
-  STS_support_release:
-    jobs:
-      - sts_first_job:
-          context: gravitee-lab
-          <<: *support_release_filter
-      - sts_second_job:
-          requires:
-            - sts_first_job
-          context: gravitee-lab
-          <<: *support_release_filter
+      - mvn_build:
+          context: cicd-orchestrator

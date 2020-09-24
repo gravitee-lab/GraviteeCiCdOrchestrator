@@ -9,6 +9,9 @@ import * as cicd_spinner from './modules/progress/PipelineExecutionSpinner';
 import * as rxjs from 'rxjs';
 /// import * as cli from './modules/cli/GNUOptions';
 import { Cli } from './modules/cli/Cli';
+import * as pr_robotics from './modules/pr-bot/PullRequestBot'
+
+
 
 
 
@@ -28,6 +31,15 @@ process.argv = cli.gnuOptions.argv;
 
 console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'dry-run' : ${process.argv["dry-run"]}`);
 console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'cicd-stage' : ${process.argv["cicd-stage"]}`);
+
+
+
+
+let robotic_mode: pr_robotics.PR_BOT_MODE = pr_robotics.PR_BOT_MODE.SUPPORT;
+robotic_mode: pr_robotics.PR_BOT_MODE = pr_robotics.PR_BOT_MODE.DEV;
+
+
+
 
 
 /// throw new Error("STOP DEBUG POINT - work on yargs");
@@ -61,7 +73,8 @@ let executionPlan : string [][] = manifestParser.buildExecutionPlan();
 
 /// throw new Error("DEBUG POINT");
 
-/// then, using the execution plan, we are going to process parallel executions one after the other
+/// then, using the execution plan, we are going to
+/// process parallel executions one after the other
 let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
 orchestrator.start();
 
