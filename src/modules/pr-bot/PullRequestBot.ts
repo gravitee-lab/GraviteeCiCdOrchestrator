@@ -24,6 +24,7 @@ export class PullRequestBot /* extends CICDStage */{
    private repo_name: string;
    private git_branch: string;
    private secrets: CircleCISecrets;
+   private git_repo_root: string;
 
    constructor() {
      console.log('');
@@ -122,7 +123,12 @@ export class PullRequestBot /* extends CICDStage */{
     *
     **/
    resolveCciSlug() {
-
+     let splitStrArr: string[] = process.env.RELEASE_MANIFEST_PATH.split('/');
+     this.git_repo_root = "/";
+     for (let k = 0 ; k < (splitStrArr.length - 1); k++) {
+       this.git_repo_root += "/" + splitStrArr[k];
+     }
+     console.log(`this.git_repo_root=${this.git_repo_root}`);
      let GIT_REPO_SSH_OR_HTTP_URI: string = null;
      let gitRemoteCommandResult = shelljs.exec("git remote -v |grep '(fetch)' | awk '{print $2}'");
      if (gitRemoteCommandResult.code !== 0) {
