@@ -24,7 +24,7 @@ export class PullRequestBot /* extends CICDStage */{
    private repo_name: string;
    private git_branch: string;
    private secrets: CircleCISecrets;
-   private git_repo_root: string;
+   private git_repo_root_folder: string;
 
    constructor() {
      console.log('');
@@ -124,13 +124,13 @@ export class PullRequestBot /* extends CICDStage */{
     **/
    resolveCciSlug() {
      let splitStrArr: string[] = process.env.RELEASE_MANIFEST_PATH.split('/');
-     this.git_repo_root = "/";
+     this.git_repo_root_folder = "/";
      for (let k = 0 ; k < (splitStrArr.length - 1); k++) {
-       this.git_repo_root += "/" + splitStrArr[k];
+       this.git_repo_root_folder += "/" + splitStrArr[k];
      }
-     console.log(`this.git_repo_root=${this.git_repo_root}`);
+     console.log(`this.git_repo_root_folder=${this.git_repo_root_folder}`);
      let GIT_REPO_SSH_OR_HTTP_URI: string = null;
-     let gitRemoteCommandResult = shelljs.exec("git remote -v |grep '(fetch)' | awk '{print $2}'");
+     let gitRemoteCommandResult = shelljs.exec(`cd ${this.git_repo_root_folder} && git remote -v |grep '(fetch)' | awk '{print $2}'`);
      if (gitRemoteCommandResult.code !== 0) {
        throw new Error("An Error occurred executing the [git remote -v |grep '(fetch)' | awk '{print $2}'] shell command. Shell error was [" + gitRemoteCommandResult.stderr + "] ")
      } else {
@@ -148,7 +148,7 @@ export class PullRequestBot /* extends CICDStage */{
        this.repo_name = GIT_REPO_SSH_OR_HTTP_URI.split('/')[4].split('.git')[0];
      }
 
-     let gitBranchCommandResult = shelljs.exec("git branch -a |grep '*' | awk '{print $2}'");
+     let gitBranchCommandResult = shelljs.exec(`cd ${this.git_repo_root_folder} && git branch -a |grep '*' | awk '{print $2}'`);
      if (gitBranchCommandResult.code !== 0) {
        throw new Error("An Error occurred executing the [git branch -a |grep '*' | awk '{print $2}'] Shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
      } else {
