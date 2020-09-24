@@ -130,23 +130,26 @@ export class PullRequestBot /* extends CICDStage */{
      }
      console.log(`this.git_repo_root_folder=${this.git_repo_root_folder}`);
      let GIT_REPO_SSH_OR_HTTP_URI: string = null;
-     let gitRemoteCommandResult = shelljs.exec(`cd ${this.git_repo_root_folder} && git remote -v |grep '(fetch)' | awk '{print $2}'`);
+     let gitRemoteCommandResult = shelljs.exec("cd " + this.git_repo_root_folder + " && git remote -v | grep '(fetch)' | awk '{print $2}'");
+
      if (gitRemoteCommandResult.code !== 0) {
        throw new Error("An Error occurred executing the [git remote -v |grep '(fetch)' | awk '{print $2}'] shell command. Shell error was [" + gitRemoteCommandResult.stderr + "] ")
      } else {
        GIT_REPO_SSH_OR_HTTP_URI = gitRemoteCommandResult.stdout;
      }
+
+     console.log(`[{PullRequestBot}] - GIT_REPO_SSH_OR_HTTP_URI=[${GIT_REPO_SSH_OR_HTTP_URI}]`);
+
      if (GIT_REPO_SSH_OR_HTTP_URI.startsWith('git@')) {
        GIT_REPO_SSH_OR_HTTP_URI.split(':')[1]
        this.gh_org = GIT_REPO_SSH_OR_HTTP_URI.split(':')[1].split('/')[0];
        this.repo_name = GIT_REPO_SSH_OR_HTTP_URI.split(':')[1].split('/')[1].split('.git')[0];
      } else { /// Then the GIT URI is an HTTPS URI
        this.gh_org = GIT_REPO_SSH_OR_HTTP_URI.split('/')[3]
-       console.log(`value of GIT_REPO_SSH_OR_HTTP_URI=[${GIT_REPO_SSH_OR_HTTP_URI}]`)
-       console.log(`value of GIT_REPO_SSH_OR_HTTP_URI.split('/')=[${JSON.stringify({splitUriArray: GIT_REPO_SSH_OR_HTTP_URI.split('/')})}]`)
-
        this.repo_name = GIT_REPO_SSH_OR_HTTP_URI.split('/')[4].split('.git')[0];
      }
+
+
 
      let gitBranchCommandResult = shelljs.exec(`cd ${this.git_repo_root_folder} && git branch -a |grep '*' | awk '{print $2}'`);
      if (gitBranchCommandResult.code !== 0) {
@@ -154,6 +157,9 @@ export class PullRequestBot /* extends CICDStage */{
      } else {
        this.git_branch = gitBranchCommandResult.stdout;
      }
+     console.log(`[{PullRequestBot}] - this.gh_org=[${this.gh_org}]`);
+     console.log(`[{PullRequestBot}] - this.repo_name=[${this.repo_name}]`);
+     console.log(`[{PullRequestBot}] - this.git_branch=[${this.git_branch}]`);
 
    }
 
