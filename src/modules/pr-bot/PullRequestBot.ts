@@ -68,7 +68,7 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline('Jean-Baptiste-Lasselle', this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
 
       ///
       /// +++ then trigger a different Circle CI Pipeline workflow for dev orsupport sprints.
@@ -98,7 +98,7 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline('Jean-Baptiste-Lasselle', this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
 
 
    }
@@ -110,7 +110,7 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline('Jean-Baptiste-Lasselle', this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
 
    }
 
@@ -136,6 +136,9 @@ export class PullRequestBot /* extends CICDStage */{
        this.repo_name = GIT_REPO_SSH_OR_HTTP_URI.split(':')[1].split('/')[1].split('.git')[0];
      } else { /// Then the GIT URI is an HTTPS URI
        this.gh_org = GIT_REPO_SSH_OR_HTTP_URI.split('/')[3]
+       console.log(`value of GIT_REPO_SSH_OR_HTTP_URI=[${GIT_REPO_SSH_OR_HTTP_URI}]`)
+       console.log(`value of GIT_REPO_SSH_OR_HTTP_URI.split('/')=[${JSON.stringify({splitUriArray: GIT_REPO_SSH_OR_HTTP_URI.split('/')})}]`)
+
        this.repo_name = GIT_REPO_SSH_OR_HTTP_URI.split('/')[4].split('.git')[0];
      }
 
