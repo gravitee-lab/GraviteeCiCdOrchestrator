@@ -262,3 +262,87 @@ export class OraDemo {
     }, 3000);
   }
 }
+
+
+
+/// ---
+/// PipelineExecutionSpinner Test
+/// ---
+/*
+
+let pipeRefZero: cicd_spinner.IPipelineRef = {
+  number: 2467,
+  uuid: 'ea78881d-0493-4b00-b7ba-9ebfssdb87c',
+  workflows: [
+  {
+    name: 'workf1',
+    spinner: null
+  },
+  {
+    name: 'workf2',
+    spinner: null
+  },
+  {
+    name: 'workf3',
+    spinner: null
+  },
+  {
+    name: 'workf4',
+    spinner: null
+  }
+]};
+
+
+
+let pipeRef1: cicd_spinner.IPipelineRef = {
+  number: 2467,
+  uuid: 'ea73741d-0493-4b00-b7ba-9ebefbb87c25',
+  workflows: [
+  {
+    name: 'tests_without_deployment',
+    spinner: null
+  },
+  {
+    name: 'setup_integ_deployment_target',
+    spinner: null
+  },
+  {
+    name: 'integration_tests',
+    spinner: null
+  },
+  {
+    name: 'docker_build_n_push',
+    spinner: null
+  }
+]};
+
+
+let pipeRef2: cicd_spinner.IPipelineRef = {
+  number: 2458,
+  uuid: 'fe08c622-a779-45ee-aa0b-672c2d4fedea',
+  workflows: [
+  {
+    name: 'tests_without_deployment',
+    spinner: null
+  },
+  {
+    name: 'docker_build',
+    spinner: null
+  },
+  {
+    name: 'docker_push',
+    spinner: null
+  }
+]};
+
+
+/// ---
+/// PipelineExecutionProgress Test
+/// ---
+
+let pExecSpinner = new cicd_spinner.PipelineExecutionSpinner(pipeRef1);
+
+pExecSpinner.start();
+
+
+*/

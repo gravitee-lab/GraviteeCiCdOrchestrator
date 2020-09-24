@@ -16,7 +16,7 @@ export enum PR_BOT_MODE {
  *  [--cicd-stage pull_req] GNU Option to activate
  *
  **/
-export class PullRequesBot extends CICDStage {
+export class PullRequestBot extends CICDStage {
 
    private mode: PR_BOT_MODE;
    /// private circleci_client: CircleCIClient;
