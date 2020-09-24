@@ -27,7 +27,7 @@ export class PullRequestBot /* extends CICDStage */{
 
    contructor() {
      console.log('');
-     console.log(`[{PullRequestBot}] - constructor `);
+     console.log(`[{PullRequestBot}] - constructor begins `);
      console.log('');
      /*super.contructor();*/
      this.loadCircleCISecrets();
