@@ -39,7 +39,7 @@ if (process.argv["cicd-stage"] === 'pull_req') {
   if (process.argv["dry-run"] === 'true') {
     pr_bot.executeDry();
   } else {
-    pr_bot.executeDry();
+    pr_bot.execute();
   }
 } else if (process.argv["cicd-stage"] === 'mvn_release') {
   /// ---

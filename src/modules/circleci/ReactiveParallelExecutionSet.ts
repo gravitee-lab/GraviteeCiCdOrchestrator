@@ -101,15 +101,28 @@ export class ReactiveParallelExecutionSet {
     this.parallelExecutionSet.forEach(((component, index) => {
       /// pipeline execution parameters, same as Jenkins build parameters
 
-      let pipelineParameters = { parameters: {}}; /// use the
+
 
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of component.name : [${component.name}]`);
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of component.version : [${component.version}]`);
       let theSplitVersionArr = component.version.split('.');
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - so component git branch to trigger pipeline on is : [${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x]`);
-
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of process.argv["dry-run"] : [${process.argv["dry-run"]}]`);
-      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineParameters).subscribe({
+
+
+      let pipelineConfig = {
+        parameters: {
+           gio_action: null
+         },
+         branch: `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
+       }
+       if (process.argv["dry-run"] === 'true') {
+         pipelineConfig.parameters.gio_action = `product_release_dry_run`;
+       } else {
+         pipelineConfig.parameters.gio_action = `product_release`;
+       }
+
+      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineConfig).subscribe({
           next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
           complete: data => {
             console.log( '[{[ReactiveParallelExecutionSet]} - triggering Circle CI Build completed! :)]')
