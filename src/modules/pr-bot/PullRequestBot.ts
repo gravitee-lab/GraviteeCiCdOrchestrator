@@ -26,6 +26,9 @@ export class PullRequestBot /* extends CICDStage */{
    private secrets: CircleCISecrets;
 
    contructor() {
+     console.debug('');
+     console.debug(`[{PullRequestBot}] - constructor `);
+     console.debug('');
      /*super.contructor();*/
      this.loadCircleCISecrets();
      this.circleci_client = new CircleCIClient(this.secrets);
@@ -148,13 +151,15 @@ export class PullRequestBot /* extends CICDStage */{
 
    }
 
-   loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
+   private loadCircleCISecrets() : void { ///     private secrets: CircleCISecrets;
      /// first load the secretfile
-
+     console.debug('');
+     console.debug(`[{PullRequestBot}] - loading secrets file  :[${process.env.SECRETS_FILE_PATH}] `);
+     console.debug('');
      let secretFileAsString: string = fs.readFileSync(process.env.SECRETS_FILE_PATH,'utf8');
      this.secrets = JSON.parse(secretFileAsString);
      console.debug('');
-     console.debug("[{CircleCiOrchestrator}] - secrets file content :");
+     console.debug("[{PullRequestBot}] - secrets file content :");
      console.debug('');
      console.debug(this.secrets)
      console.debug('');
