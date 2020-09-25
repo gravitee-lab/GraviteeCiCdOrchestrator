@@ -187,7 +187,7 @@ export class PullRequestBot /* extends CICDStage */{
      if (gitBranchCommandResult.code !== 0) {
        throw new Error("An Error occurred executing the [git branch -a |grep '*' | awk '{print $2}'] Shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
      } else {
-       this.git_branch = gitBranchCommandResult.stdout;
+       this.git_branch = gitBranchCommandResult.stdout.replace(/(\r\n|\n|\r)/gm, "");
      }
      console.log(`[{PullRequestBot}] - this.gh_org=[${this.gh_org}]`);
      console.log(`[{PullRequestBot}] - this.repo_name=[${this.repo_name}]`);
