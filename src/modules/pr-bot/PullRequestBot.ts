@@ -70,7 +70,18 @@ export class PullRequestBot /* extends CICDStage */{
         branch: `${this.git_branch}`
       }
       console.log(`[{PullRequestBot} #  execute ()] - this.circleci_client.triggerCciPipeline(${this.secrets.circleci.auth.username}, ${this.gh_org}, ${this.repo_name}, ${this.git_branch}, ${JSON.stringify(pipelineConfig, null, " ")})`);
-      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      /// this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
+        next: (data) => {
+          console.log(`[{PullRequestBot} #  answer From Circle CI API : ] - ${JSON.stringify(data, null, " ")} `);
+        },
+        complete: () => {
+           console.log(`{[PullRequestBot]} - Completed triggering Circle CI Pipeline for [GITHUB_ORG=${this.gh_org}, REPO_NAME=${this.repo_name}, BRANCH=${this.git_branch}, PIPELINE_PARAMS=${JSON.stringify(pipelineConfig, null, " ")})]`)
+        },
+        error: (error) => {
+          console.log(`{[PullRequestBot]} - Error triggering Circle CI Pipeline : ${JSON.stringify(error, null, " ")} `);
+        }
+      });
 
       ///
       /// +++ then trigger a different Circle CI Pipeline workflow for dev orsupport sprints.
@@ -100,7 +111,17 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
+        next: (data) => {
+          console.log(`[{PullRequestBot} #  answer From Circle CI API : ] - ${JSON.stringify(data, null, " ")} `);
+        },
+        complete: () => {
+           console.log(`{[PullRequestBot]} - Completed triggering Circle CI Pipeline for [GITHUB_ORG=${this.gh_org}, REPO_NAME=${this.repo_name}, BRANCH=${this.git_branch}, PIPELINE_PARAMS=${JSON.stringify(pipelineConfig, null, " ")})]`)
+        },
+        error: (error) => {
+          console.log(`{[PullRequestBot]} - Error triggering Circle CI Pipeline : ${JSON.stringify(error, null, " ")} `);
+        }
+      });
 
 
    }
@@ -112,7 +133,17 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
+      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
+        next: (data) => {
+          console.log(`[{PullRequestBot} #  answer From Circle CI API : ] - ${JSON.stringify(data, null, " ")} `);
+        },
+        complete: () => {
+           console.log(`{[PullRequestBot]} - Completed triggering Circle CI Pipeline for [GITHUB_ORG=${this.gh_org}, REPO_NAME=${this.repo_name}, BRANCH=${this.git_branch}, PIPELINE_PARAMS=${JSON.stringify(pipelineConfig, null, " ")})]`)
+        },
+        error: (error) => {
+          console.log(`{[PullRequestBot]} - Error triggering Circle CI Pipeline : ${JSON.stringify(error, null, " ")} `);
+        }
+      });
 
    }
 
