@@ -32,8 +32,6 @@ process.argv = cli.gnuOptions.argv;
 console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'dry-run' : ${process.argv["dry-run"]}`);
 console.log(`{[ index.ts / process.argv ]} --- valeur yargs de l'option YARGS 'cicd-stage' : ${process.argv["cicd-stage"]}`);
 
-
-
 if (process.argv["cicd-stage"] === 'pull_req') {
   console.log(`{[ index.ts ]} --- Now instantiating [PullRequestBot]`);
   const pr_bot: pr_robotics.PullRequestBot = new pr_robotics.PullRequestBot();
