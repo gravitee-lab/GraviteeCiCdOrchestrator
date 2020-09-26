@@ -12,6 +12,12 @@ export class ReactiveParallelExecutionSet {
    * Will be filled with JSON responses of Circle CI API calls to trigger pipelines.
    **/
   private progressMatrix: any[]; //
+
+  /**
+   * This RX JS Subject is used to inspect <code>this.progressMatrix</code> everytime a
+   * JSON Response is received fromthe Circle CI API :
+   * why? To check if all pipelines triggers Circle CI API request have receivedheir HTTP Response, with its JSON Response. 
+   **/
   private progressMatrixSubject = new rxjs.Subject<any[]>();
   private notifier: rxjs.Subject<number>;
   /**
