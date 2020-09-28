@@ -348,7 +348,78 @@ docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/
 
 ```
 
-* Exemple pour déployer https://github.com/gravitee-io/gravitee-gateway vers `JFrog` :
+* Exemple, pour "packager", en résolvant les dépendances à partir du maven centrail repor existant, puis déployer les jars de https://github.com/gravitee-io/gravitee-gateway vers `JFrog` :
+
+  * Initialisation des secrets `JFrog` :
+
+```bash
+export NAME_OF_ORG="gravitee-lab"
+export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-infra"
+secrethub org init "${NAME_OF_ORG}"
+secrethub repo init "${NAME_OF_REPO_IN_ORG}"
+
+
+# --- #
+# for the DEV CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+secrethub mkdir --parents "${NAME_OF_REPO_IN_ORG}/dev/jfrog"
+
+# --- #
+# for the STAGING CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+secrethub mkdir --parents "${NAME_OF_REPO_IN_ORG}/staging/jfrog"
+
+
+# --- #
+# for the PRODUCTION CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+secrethub mkdir --parents "${NAME_OF_REPO_IN_ORG}/prod/jfrog"
+
+# --- #
+# write quay secrets for the DEV CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+export JFROG_CICD_BOT_USERNAME="cicd_bot"
+export JFROG_CICD_BOT_SECRET="inyourdreams;)"
+
+echo "${JFROG_CICD_BOT_USERNAME}" | secrethub write "${NAME_OF_REPO_IN_ORG}/dev/jfrog/username"
+echo "${JFROG_CICD_BOT_SECRET}" | secrethub write "${NAME_OF_REPO_IN_ORG}/dev/jfrog/password"
+
+echo "${JFROG_CICD_BOT_USERNAME}" | secrethub write "${NAME_OF_REPO_IN_ORG}/staging/jfrog/username"
+echo "${JFROG_CICD_BOT_SECRET}" | secrethub write "${NAME_OF_REPO_IN_ORG}/staging/jfrog/password"
+
+echo "${JFROG_CICD_BOT_USERNAME}" | secrethub write "${NAME_OF_REPO_IN_ORG}/prod/jfrog/username"
+echo "${JFROG_CICD_BOT_SECRET}" | secrethub write "${NAME_OF_REPO_IN_ORG}/prod/jfrog/password"
+
+
+export JFROG_USERNAME_DEV=$(secrethub read gravitee-lab/cicd-infra/dev/jfrog/username)
+export JFROG_SECRET_DEV=$(secrethub read gravitee-lab/cicd-infra/dev/jfrog/password)
+
+export JFROG_USERNAME_STAGING=$(secrethub read gravitee-lab/cicd-infra/staging/jfrog/username)
+export JFROG_SECRET_STAGING=$(secrethub read gravitee-lab/cicd-infra/staging/jfrog/password)
+
+export JFROG_USERNAME_PROD=$(secrethub read gravitee-lab/cicd-infra/prod/jfrog/username)
+export JFROG_SECRET_PROD=$(secrethub read gravitee-lab/cicd-infra/prod/jfrog/password)
+
+echo "JFROG_USERNAME_DEV=[${JFROG_USERNAME_DEV}]"
+echo "JFROG_SECRET_DEV=[${JFROG_SECRET_DEV}]"
+
+echo "JFROG_USERNAME_STAGING=[${JFROG_USERNAME_STAGING}]"
+echo "JFROG_SECRET_STAGING=[${JFROG_SECRET_STAGING}]"
+
+echo "JFROG_USERNAME_STAGING=[${JFROG_USERNAME_STAGING}]"
+echo "JFROG_SECRET_STAGING=[${JFROG_SECRET_STAGING}]"
+
+
+```
+  * creating secrethub service account with permissions to access secrets in `gravitee-lab/cicd-infra` repo :
+
+  ```bash
+  export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-infra"
+  secrethub service init "${NAME_OF_REPO_IN_ORG}" --description "Circle CI Service for Gravitee CI CD Orchestrator" --permission read | tee ./.the-created.service.token
+  ```
+  * Then created a Circle CI Org context `cicd-infra`, and in that context, the SECRETHUB env. var. with value, the token in output of the `service init` command
+  * packaging et déploiement exemple, de `gravitee-gateway` :
+
 ```bash
 
 # commandes maven
@@ -357,16 +428,41 @@ export MVN_LAB=~/mvn-lab
 git clone https://github.com/gravitee-lab/gravitee-gateway ${MVN_LAB}
 cd ${MVN_LAB}
 
-# maaping [ -v "$PWD/target:/usr/src/mymaven/target" ] requires to create a docker image to manage UID GID of linux user inside and outside container
+# mapping [ -v "$PWD/target:/usr/src/mymaven/target" ] requires to create a docker image to manage UID GID of linux user inside and outside container
 # docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -v "$PWD/target:/usr/src/mymaven/target" -w /usr/src/mymaven maven mvn clean package
 
 # To run mvn clean package:
 # [-v "$PWD":/usr/src/mymaven] :  maps the source code inside container
 # [-v "$HOME/.m2":/root/.m2] : maps the maven [.m2] on my workstation to the one inside the container. I will ust this one to use settings.xml
-docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven maven mvn clean package
+# docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven maven mvn clean package
 # To run mvn clean package release :
 # all gravtiee java pom projects are [https://github.com/gravitee-io/gravitee-parent/]
+
+#
+# see https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
+export JFROG_USERNAME_DEV=$(secrethub read gravitee-lab/cicd-infra/dev/jfrog/username)
+export JFROG_SECRET_DEV=$(secrethub read gravitee-lab/cicd-infra/dev/jfrog/password)
+echo "JFROG_USERNAME_DEV=[${JFROG_USERNAME_DEV}]"
+# echo "JFROG_SECRET_DEV=[${JFROG_SECRET_DEV}]"
+
+export JFROG_USERNAME=test
+export JFROG_SECRET=test
+
+export DESIRED_MAVEN_VERSION=3.6.3
+export MVN_DOCKER_IMAGE="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+
+echo "Run Maven Clean install to package gravitee gateway from existing maven central repo (Nexus Sonatype, Maven Central)"
+export MAVEN_COMMAND="mvn clean install"
+echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER_IMAGE} ${MAVEN_COMMAND}
+
+echo "Run Maven Deploy using JFrog Maven Plugin"
+export MAVEN_COMMAND="mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}"
+echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER_IMAGE} ${MAVEN_COMMAND}
 
 
 
 ```
+
+see https://github.com/gravitee-lab/jfrog-activation-guardian/releases/tag/stable-latest for full example on 

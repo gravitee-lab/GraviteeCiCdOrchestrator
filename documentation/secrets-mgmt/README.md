@@ -159,6 +159,7 @@ secrethub org inspect "${NAME_OF_ORG}" | jq .Repos
 export export NAME_OF_REPO_IN_ORG=$(secrethub org inspect "${NAME_OF_ORG}" | jq .Repos[2] | awk -F '"' '{print $2}')
 echo "NAME_OF_REPO_IN_ORG=[${NAME_OF_REPO_IN_ORG}]"
 secrethub repo inspect "${NAME_OF_REPO_IN_ORG}" | jq .
+
 # --- #
 # listing all directories (like on Filesystem) of a given repo
 secrethub ls "${NAME_OF_REPO_IN_ORG}" | jq .
@@ -246,7 +247,7 @@ jbl@poste-devops-jbl-16gbram:~/gravitee-orchestra$
 
 ### Global initialization Process of all secrets, for all pipelines
 
-* How I initialized the docekr registry secrets for the Gravitee CI CD Orchestrator Circle CI Pipeline :
+* How I initialized the docker registry secrets for the Gravitee CI CD Orchestrator Circle CI Pipeline :
 
 ```bash
 
