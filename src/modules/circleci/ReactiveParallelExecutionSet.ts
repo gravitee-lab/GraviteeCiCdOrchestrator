@@ -119,7 +119,8 @@ export class ReactiveParallelExecutionSet {
         },
         branch: `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
       }
-      if (process.argv["dry-run"] === 'true') {
+      /// if (process.argv["dry-run"] === 'true') {
+      if (process.argv["dry-run"]) {
        console.log( '[{[ReactiveParallelExecutionSet]} - (process.argv["dry-run"] === \'true\') condition is true');
        pipelineConfig.parameters.gio_action = `product_release_dry_run`;
       } else {
