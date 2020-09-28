@@ -120,8 +120,10 @@ export class ReactiveParallelExecutionSet {
         branch: `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
       }
       if (process.argv["dry-run"] === 'true') {
+       console.log( '[{[ReactiveParallelExecutionSet]} - (process.argv["dry-run"] === \'true\') condition is true');
        pipelineConfig.parameters.gio_action = `product_release_dry_run`;
       } else {
+       console.log( '[{[ReactiveParallelExecutionSet]} - (process.argv["dry-run"] === \'true\') condition is false');
        pipelineConfig.parameters.gio_action = `product_release`;
       }
       /// let pipelineConfig = { parameters: {},branch : 'dependabot/npm_and_yarn/handlebars-4.5.3'};
