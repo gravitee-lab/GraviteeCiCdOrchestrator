@@ -95,7 +95,7 @@ echo "SECURITY CHECK NO GRAVITEE-IO in \${WSPACE}/\${BARE_FILENAME}.ssh=[${WSPAC
 echo "---"
 cat ${WSPACE}/${BARE_FILENAME}.ssh
 
-exit 1
+
 echo "---"
 echo "  REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
 echo "---"
