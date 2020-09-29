@@ -82,7 +82,7 @@ while read FILEPATH; do
     echo "---"
     # testing error handling
     # ${OPS_HOME}/setup-test-repos.sh
-    # ${OPS_HOME}/setup-test-repos.sh ${FILEPATH}
+    ${OPS_HOME}/setup-test-repos.sh ${FILEPATH}
     echo "---"
   else
     echo "there has been a problem backing up one of the reposlisted in  [${FILEPATH}] "

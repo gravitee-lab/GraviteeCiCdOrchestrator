@@ -103,7 +103,6 @@ echo "---"
 echo " IN CASE ANY PROBLEM, A BACK-UP WAS PREPARED ON THIS MACHINE [$(hostname)] in the [${WSPACE}/gitops.backup/] Folder "
 echo "---"
 
-exit 1
 echo "---"
 echo "  REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
 echo "---"
