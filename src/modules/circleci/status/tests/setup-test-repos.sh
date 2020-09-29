@@ -29,7 +29,8 @@ echo "---"
 
 setupCircleCIConfig () {
   export THIS_REPO_URL=$1
-  echo"[setupCircleCIConfig => ] processing [${THIS_REPO_URL}]"
+  echo "[setupCircleCIConfig => ] processing THIS_REPO_URL=[${THIS_REPO_URL}]"
+
 }
 # ------
 # -- OPS
