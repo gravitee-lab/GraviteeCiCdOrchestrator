@@ -53,7 +53,9 @@ rm -f ${OPS_HOME}/*.sh
 rm -fr ${OPS_HOME}/.circleci
 rm -fr ${OPS_HOME}/gitops
 
+cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/backup-repos.sh ${OPS_HOME}
 cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-test-repos.sh ${OPS_HOME}
+
 cp -fR ${IDE_WORKSPACE}/src/modules/circleci/status/tests/.circleci ${OPS_HOME}
 
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.20.x.list" >> ${OPS_HOME}/release-data-files.list
