@@ -75,6 +75,9 @@
 						<li class=" tsd-kind-enum tsd-parent-kind-module">
 							<a href="../enums/_modules_circleci_status_pipelineexecsetreport_.vcs_type.html" class="tsd-kind-icon">VCS_<wbr>TYPE</a>
 						</li>
+						<li class=" tsd-kind-class tsd-parent-kind-module">
+							<a href="../classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportbuilder.html" class="tsd-kind-icon">Pipeline<wbr>Exec<wbr>Set<wbr>Report<wbr>Builder</a>
+						</li>
 						<li class=" tsd-kind-interface tsd-parent-kind-module">
 							<a href="_modules_circleci_status_pipelineexecsetreport_.ccijobstate.html" class="tsd-kind-icon">Cci<wbr>Job<wbr>State</a>
 						</li>
@@ -90,13 +93,7 @@
 									<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#cci_api_infos" class="tsd-kind-icon">cci_<wbr>api_<wbr>infos</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-interface">
-									<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#gh_org" class="tsd-kind-icon">gh_<wbr>org</a>
-								</li>
-								<li class=" tsd-kind-property tsd-parent-kind-interface">
-									<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#repo_name" class="tsd-kind-icon">repo_<wbr>name</a>
-								</li>
-								<li class=" tsd-kind-property tsd-parent-kind-interface">
-									<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#vcs_type" class="tsd-kind-icon">vcs_<wbr>type</a>
+									<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#jobs_states" class="tsd-kind-icon">jobs_<wbr>states</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-interface">
 									<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#workflow_guid" class="tsd-kind-icon">workflow_<wbr>guid</a>
@@ -194,21 +191,7 @@
 							<div class="tsd-navigation secondary">
 								<ul>
 									<li class="tsd-kind-property tsd-parent-kind-interface">
-										<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#gh_org" class="tsd-kind-icon">gh_<wbr>org</a>
-									</li>
-								</ul>
-							</div>
-							<div class="tsd-navigation secondary">
-								<ul>
-									<li class="tsd-kind-property tsd-parent-kind-interface">
-										<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#repo_name" class="tsd-kind-icon">repo_<wbr>name</a>
-									</li>
-								</ul>
-							</div>
-							<div class="tsd-navigation secondary">
-								<ul>
-									<li class="tsd-kind-property tsd-parent-kind-interface">
-										<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#vcs_type" class="tsd-kind-icon">vcs_<wbr>type</a>
+										<a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html#jobs_states" class="tsd-kind-icon">jobs_<wbr>states</a>
 									</li>
 								</ul>
 							</div>
@@ -239,37 +222,17 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/2877219/src/modules/circleci/status/PipelineExecSetReport.ts#L34">src/modules/circleci/status/PipelineExecSetReport.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/eaa56dc/src/modules/circleci/status/PipelineExecSetReport.ts#L36">src/modules/circleci/status/PipelineExecSetReport.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-descriptions">
-					<a name="gh_org" class="tsd-anchor"></a>
-					<h3>gh_<wbr>org</h3>
-					<div class="tsd-signature tsd-kind-icon">gh_org<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="jobs_states" class="tsd-anchor"></a>
+					<h3>jobs_<wbr>states</h3>
+					<div class="tsd-signature tsd-kind-icon">jobs_states<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html" class="tsd-signature-type">CciWorkflowState</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/2877219/src/modules/circleci/status/PipelineExecSetReport.ts#L25">src/modules/circleci/status/PipelineExecSetReport.ts:25</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-descriptions">
-					<a name="repo_name" class="tsd-anchor"></a>
-					<h3>repo_<wbr>name</h3>
-					<div class="tsd-signature tsd-kind-icon">repo_name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/2877219/src/modules/circleci/status/PipelineExecSetReport.ts#L26">src/modules/circleci/status/PipelineExecSetReport.ts:26</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-descriptions">
-					<a name="vcs_type" class="tsd-anchor"></a>
-					<h3>vcs_<wbr>type</h3>
-					<div class="tsd-signature tsd-kind-icon">vcs_type<span class="tsd-signature-symbol">:</span> <a href="../enums/_modules_circleci_status_pipelineexecsetreport_.vcs_type.html" class="tsd-signature-type">VCS_TYPE</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/2877219/src/modules/circleci/status/PipelineExecSetReport.ts#L27">src/modules/circleci/status/PipelineExecSetReport.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/eaa56dc/src/modules/circleci/status/PipelineExecSetReport.ts#L37">src/modules/circleci/status/PipelineExecSetReport.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -286,7 +249,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/2877219/src/modules/circleci/status/PipelineExecSetReport.ts#L24">src/modules/circleci/status/PipelineExecSetReport.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/eaa56dc/src/modules/circleci/status/PipelineExecSetReport.ts#L29">src/modules/circleci/status/PipelineExecSetReport.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
