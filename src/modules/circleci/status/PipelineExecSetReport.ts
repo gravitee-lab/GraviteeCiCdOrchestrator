@@ -1,13 +1,17 @@
 
 
+
+export enum VCS_TYPE {
+  GITHUB,
+  GITLAB,
+  BITBUCKET
+}
+
 export interface CciPipelineState {
  /**
   * The Pipeline GUID
   **/
  pipeline_guid: string,
- gh_org: string,
- repo_name: string,
- vcs_type: VCS_TYPE,
  /**
   * The JSON Object returned from the Circle CI API Endpoint :
   *
@@ -15,6 +19,7 @@ export interface CciPipelineState {
   *
   **/
  cci_api_infos: any
+ workflows_states: CciWorkflowState[];
 }
 
 export interface CciWorkflowState {
@@ -22,9 +27,6 @@ export interface CciWorkflowState {
   * The Workflow GUID
   **/
  workflow_guid: string,
- gh_org: string,
- repo_name: string,
- vcs_type: VCS_TYPE,
  /**
   * The JSON Object returned from the Circle CI API Endpoint :
   *
@@ -32,13 +34,11 @@ export interface CciWorkflowState {
   *
   **/
  cci_api_infos: any
+ jobs_states: CciWorkflowState[];
 }
 
 export interface CciJobState {
  job_guid: string,
- gh_org: string,
- repo_name: string,
- vcs_type: VCS_TYPE,
  /**
   * The JSON Object returned from the Circle CI API Endpoint :
   *
@@ -59,8 +59,6 @@ export interface PipelineExecSetReport {
   pipelines_states: CciPipelineState[]
 }
 
-export enum VCS_TYPE {
-  GITHUB,
-  GITLAB,
-  BITBUCKET
+export class PipelineExecSetReportBuilder {
+  private report: PipelineExecSetReport;
 }

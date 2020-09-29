@@ -1,4 +1,29 @@
-Tocomplete this task, I will need to :
+# Gravitee CI CD Orchestrator Design details
+
+Circle CI Pieplines executions are :
+* made of 1..N **Workflows**
+* and each **Workflow** execution is made of a sequential execution of 1..N **Jobs**
+
+The Gravitee CI CD Orchestrator will :
+* use execution status at the **Workflow** level, to determine when a Pipeline execution has completed, regardless of potential errors
+* then it will inspect the  execution status at the **Workflow** level, to determine , to determine whether or not there has been an error.
+* in case of any error, when the first error is detected, the Gravitee CI CD Orchestrator will :
+  * immediately stop fetching Circle CI API v2 to inpect any Pipeline executions status
+  * For all the Pipeline executions in a Parallel Execution Set,
+  * generate a report containing all the details, up to the job level (as shown by the example curl above) about all the pipelines in the currently processed Parallel Execution Set, including execution statuses at Pipeline, workflow and job level. Note that when building this report, some pipelines might still be in a pending or running state
+  * in that report, will  be included a Map Collection, actually, an  array of `{pipeline_guid: "<guidValue>", http_link: "<webURLvalue>"}` JSON objects , giving for each pipeline in the Parallel Execution Set, the Http Urls of its execution dashboard in the Circle CI Web UI at https://app.circleci.com/<something> . _**Important** : this will be useful for post-mortem analysis, for example to find out final execution status of all pipelines, anytime after the report build time. Indeed, some pipeline will finish their executions way after Gravitee CI CD Orchestrator stopped its own execution_.
+  * log that report in winston logs, for Global ELK Filebeat stack
+  * stop the entire current CI CD Release Process, letting all pipeline execution live the end of their lives in Circle CI
+
+* In case no error was detected :
+  * the exact same report will be generated after full Completion of the Parallel Execution Set
+  * This report will be useful for post-mortem analysis, especially for accountability (who did what ?) and performance analysis (can we make our pipelines more performant? How much do Pipeline execution cost? Does Pipeline perfomance improves or get worse overt time, for a given gravitee component?). Elastic Serach perfect for taht kind of analytics.
+
+
+## Technical details
+
+To complete implementation, I will need to :
+
 * [ ] have one answer on one technical question to Circle CI Tech team. I have today sent the question
 * [ ] modify `Gravitee CI CD Orchestrator` source code, using the answer to the technical question :
   * the orchestrator needs to find out, using Circle CI API, when it is not worth waiting anymore, for a Pipeline execution status change
