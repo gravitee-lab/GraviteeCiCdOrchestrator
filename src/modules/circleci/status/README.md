@@ -71,10 +71,20 @@ ${OPS_HOME}/setup-test-repos.sh
 
 while read FILEPATH; do
   echo "---"
-  echo "processing repos listed in [${FILEPATH}]"
+  echo "backing-up repos listed in [${FILEPATH}]"
   echo "---"
-  ${OPS_HOME}/setup-test-repos.sh ${FILEPATH}
-  echo "---"
+  ${OPS_HOME}/backup-repos.sh
+  if [ "$?" == "0" ]; then
+    echo "---"
+    echo "processing repos listed in [${FILEPATH}]"
+    echo "---"
+    ${OPS_HOME}/setup-test-repos.sh ${FILEPATH}
+    echo "---"
+  else
+    echo "there has been a problem backing up one of the reposlisted in  [${FILEPATH}] "
+    echo "So operations were cancelled on repos listed in [${FILEPATH}]"
+    exit 1
+  fi;
 done <${OPS_HOME}/release-data-files.list
 
 
