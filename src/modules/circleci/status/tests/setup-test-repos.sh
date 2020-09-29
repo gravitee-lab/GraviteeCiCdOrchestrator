@@ -2,6 +2,8 @@
 
 Usage () {
   echo "---"
+  echo " The [$0] script will commit and push the [.circleci/config.yml] on every [*.*.x] git branch of every git repo    "  
+  echo "---"
   echo "Usage :"
   echo "---"
   echo "  $0 <REPOS_URL_LIST_FILE>"

@@ -32,6 +32,7 @@ I need to write a shell script to setup approriate `.circleci/config.yml` in all
   * `release-data/repos-scope.3.0.x.list`
   * `release-data/repos-scope.3.1.x.list`
 * for every repo listed, I can infer all branches where to add the `.circleci/config.yml` using :
+
 ```bash
 export FILENAME=release-data/repos-scope.3.1.x.list
 cat ${FILENAME}  | grep -E '*.*.x'
@@ -49,8 +50,10 @@ export OPS_HOME=$(pwd)
 
 rm -f ${OPS_HOME}/release-data-files.list
 rm -f ${OPS_HOME}/*.sh
+rm -fr ${OPS_HOME}/.circleci
 
 cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-test-repos.sh ${OPS_HOME}
+cp -fR ${IDE_WORKSPACE}/src/modules/circleci/status/tests/.circleci ${OPS_HOME}
 
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.20.x.list" >> ${OPS_HOME}/release-data-files.list
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.25.x.list" >> ${OPS_HOME}/release-data-files.list
@@ -58,6 +61,12 @@ echo "${IDE_WORKSPACE}/release-data/repos-scope.1.29.x.list" >> ${OPS_HOME}/rele
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.30.x.list" >> ${OPS_HOME}/release-data-files.list
 echo "${IDE_WORKSPACE}/release-data/repos-scope.3.0.x.list" >> ${OPS_HOME}/release-data-files.list
 echo "${IDE_WORKSPACE}/release-data/repos-scope.3.1.x.list" >> ${OPS_HOME}/release-data-files.list
+
+tree
+cat release-data-files.list
+
+# testing error handling
+${OPS_HOME}/setup-test-repos.sh
 
 while read FILEPATH; do
   echo "---"
@@ -67,9 +76,8 @@ while read FILEPATH; do
   echo "---"
 done <${OPS_HOME}/release-data-files.list
 
-cat release-data-files.list
-# testing error handling
-${OPS_HOME}/setup-test-repos.sh
+
+
 
 ```
 
