@@ -88,6 +88,7 @@ fi;
 
 export BARE_FILENAME=$(echo "${REPOS_URL_LIST_FILE}" | awk -F '/' '{print $NF}')
 cp ${REPOS_URL_LIST_FILE} ${WSPACE}/${BARE_FILENAME}.ssh
+
 sed -i "s#https://github.com/gravitee-io#git@github.com:gravitee-lab#g" ${WSPACE}/${BARE_FILENAME}.ssh
 echo "---"
 echo "SECURITY CHECK NO GRAVITEE-IO in \${WSPACE}/\${BARE_FILENAME}.ssh=[${WSPACE}/${BARE_FILENAME}.ssh] : "
@@ -109,8 +110,10 @@ echo "---"
 # -- OPS
 # ------
 
+# ------
+# -- First, setup Github User Git SSH config
+# ------
 
-# first, setup Github User Git SSH config
 setupSSHGithubUser
 
 rm -fr ${WSPACE}/gitops.backup/
