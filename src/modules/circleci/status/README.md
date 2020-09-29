@@ -51,6 +51,7 @@ export OPS_HOME=$(pwd)
 rm -f ${OPS_HOME}/release-data-files.list
 rm -f ${OPS_HOME}/*.sh
 rm -fr ${OPS_HOME}/.circleci
+rm -fr ${OPS_HOME}/gitops
 
 cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-test-repos.sh ${OPS_HOME}
 cp -fR ${IDE_WORKSPACE}/src/modules/circleci/status/tests/.circleci ${OPS_HOME}
