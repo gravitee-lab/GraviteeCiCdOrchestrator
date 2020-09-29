@@ -46,9 +46,12 @@ export IDE_WORKSPACE="${HOME}/gravitee-orchestra"
 
 export OPS_HOME=$(pwd)
 
-cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-test-repos.sh ${OPS_HOME}
 
 rm -f ${OPS_HOME}/release-data-files.list
+rm -f ${OPS_HOME}/*.sh
+
+cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-test-repos.sh ${OPS_HOME}
+
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.20.x.list" >> ${OPS_HOME}/release-data-files.list
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.25.x.list" >> ${OPS_HOME}/release-data-files.list
 echo "${IDE_WORKSPACE}/release-data/repos-scope.1.29.x.list" >> ${OPS_HOME}/release-data-files.list

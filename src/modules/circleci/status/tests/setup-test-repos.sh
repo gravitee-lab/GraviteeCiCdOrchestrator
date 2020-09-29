@@ -8,13 +8,14 @@ Usage () {
   echo "---"
 }
 
+export REPOS_URL_LIST_FILE=$1
+
 if [ "x${REPOS_URL_LIST_FILE}" == "x" ]; then
   echo
   Usage
   exit 2
 fi;
 
-export REPOS_URL_LIST_FILE=$1
 
 
 echo "---"
