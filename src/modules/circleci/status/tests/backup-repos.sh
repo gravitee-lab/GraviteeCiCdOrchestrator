@@ -60,7 +60,7 @@ backUpRepo () {
   if [ "$?" == "0" ]; then
     # then the git clone succeeded (the git repo does exists)
     cd ${WSPACE}/gitops.backup/${THIS_REPO_NAME}
-    git branch -a | grep -E '^*.*.x' | awk -F '/' '{print $NF}' > ${WSPACE}/gitops.backup/${THIS_REPO_NAME}.branches.list
+    git branch -a | grep -E '*.*.x$' | awk -F '/' '{print $NF}' > ${WSPACE}/gitops.backup/${THIS_REPO_NAME}.branches.list
     while read THIS_GIT_BRANCH; do
       git checkout ${THIS_GIT_BRANCH}
       git fetch && git pull
