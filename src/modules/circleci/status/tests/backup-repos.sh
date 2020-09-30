@@ -81,7 +81,7 @@ export WSPACE=$(pwd)
 export REPOS_URL_LIST_FILE=$1
 
 if [ "x${REPOS_URL_LIST_FILE}" == "x" ]; then
-  echo "REPOS_URL_LIST_FILE is an empty string"
+  echo "You did not provide a first argument to [$0] as the <REPOS_URL_LIST_FILE>"
   Usage
   exit 2
 fi;

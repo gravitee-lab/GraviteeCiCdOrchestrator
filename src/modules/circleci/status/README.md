@@ -21,7 +21,7 @@ The Gravitee CI CD Orchestrator will :
   * the exact same report will be generated after full Completion of the Parallel Execution Set
   * This report will be useful for post-mortem analysis, especially for accountability (who did what ?) and performance analysis (can we make our pipelines more performant? How much do Pipeline execution cost? Does Pipeline perfomance improves or get worse overt time, for a given gravitee component?). Elastic Serach perfect for taht kind of analytics.
 
-## Test bed setup
+## Test bed setup: adding/updating the Piepline configuration for all repos
 
 I need to write a shell script to setup approriate `.circleci/config.yml` in all repos needed to run tests :
 * all repos URL are already infered from `release.json` inthe following files :
@@ -92,8 +92,41 @@ while read FILEPATH; do
   fi;
 done <${OPS_HOME}/release-data-files.list
 
+```
+
+## Test bed setup: setup all repos to start building
 
 
+
+```bash
+export IDE_WORKSPACE="${HOME}/gravitee-orchestra"
+
+export OPS_HOME=$(pwd)
+
+
+rm -f ${OPS_HOME}/cci-projects-files.list
+rm -f ${OPS_HOME}/*.sh
+rm -fr ${OPS_HOME}/cci_ops
+
+cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-repos-to-start-building.sh ${OPS_HOME}/
+
+echo "${IDE_WORKSPACE}/release-data/repos-scope.1.20.x.list" >> ${OPS_HOME}/cci-projects-files.list
+echo "${IDE_WORKSPACE}/release-data/repos-scope.1.25.x.list" >> ${OPS_HOME}/cci-projects-files.list
+echo "${IDE_WORKSPACE}/release-data/repos-scope.1.29.x.list" >> ${OPS_HOME}/cci-projects-files.list
+echo "${IDE_WORKSPACE}/release-data/repos-scope.1.30.x.list" >> ${OPS_HOME}/cci-projects-files.list
+echo "${IDE_WORKSPACE}/release-data/repos-scope.3.0.x.list" >> ${OPS_HOME}/cci-projects-files.list
+echo "${IDE_WORKSPACE}/release-data/repos-scope.3.1.x.list" >> ${OPS_HOME}/cci-projects-files.list
+
+tree
+
+cat cci-projects-files.list
+
+while read FILEPATH; do
+  echo "---"
+  echo "setup to start building repos listed in [${FILEPATH}]"
+  echo "---"
+  ${OPS_HOME}/setup-repos-to-start-building.sh ${FILEPATH}
+done <${OPS_HOME}/cci-projects-files.list
 
 ```
 
