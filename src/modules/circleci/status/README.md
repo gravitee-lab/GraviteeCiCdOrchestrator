@@ -21,9 +21,10 @@ The Gravitee CI CD Orchestrator will :
   * the exact same report will be generated after full Completion of the Parallel Execution Set
   * This report will be useful for post-mortem analysis, especially for accountability (who did what ?) and performance analysis (can we make our pipelines more performant? How much do Pipeline execution cost? Does Pipeline perfomance improves or get worse overt time, for a given gravitee component?). Elastic Serach perfect for taht kind of analytics.
 
-## Test bed setup: adding/updating the Piepline configuration for all repos
+## Test bed setup: adding/updating the Pipeline configuration for all repos
 
 I need to write a shell script to setup approriate `.circleci/config.yml` in all repos needed to run tests :
+
 * all repos URL are already infered from `release.json` inthe following files :
   * `release-data/repos-scope.1.20.x.list`
   * `release-data/repos-scope.1.25.x.list`
