@@ -98,6 +98,8 @@ done <${OPS_HOME}/release-data-files.list
 
 ## Test bed setup: setup all repos to start building
 
+First, the Circle CI API v2 and v1 bring no feature, Enpoints, to automate this task.
+
 #### How to stop building a Circle CI Project
 
 * I found the way to do that, by reverse engineering the Circle CI Web UI web app :
