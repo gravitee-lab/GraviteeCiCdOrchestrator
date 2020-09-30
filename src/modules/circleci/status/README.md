@@ -66,6 +66,7 @@ echo "${IDE_WORKSPACE}/release-data/repos-scope.3.0.x.list" >> ${OPS_HOME}/relea
 echo "${IDE_WORKSPACE}/release-data/repos-scope.3.1.x.list" >> ${OPS_HOME}/release-data-files.list
 
 tree
+
 cat release-data-files.list
 
 
@@ -96,39 +97,52 @@ done <${OPS_HOME}/release-data-files.list
 
 ## Test bed setup: setup all repos to start building
 
+#### How to stop building a Circle CI Project
 
+* I found the way to do that, by reverse engineering the Circle CI Web UI web app :
 
 ```bash
-export IDE_WORKSPACE="${HOME}/gravitee-orchestra"
+# To stop building a project, you need a CSRF token, that you can get from Circle IC API v2
 
-export OPS_HOME=$(pwd)
+# Circle CI aPI v2doesnot support starting or stopping building circle CI Projects, only [v1.1] does.
 
+# HTTP METHOD : DELETE
+# API Endpoint : /api/v1.1/project/github/gravitee-lab/graviteeio-node/enable
 
-rm -f ${OPS_HOME}/cci-projects-files.list
-rm -f ${OPS_HOME}/*.sh
-rm -fr ${OPS_HOME}/cci_ops
+# DELETE":{"scheme":"https","host":"circleci.com","filename":"/api/v1.1/project/github/gravitee-lab/graviteeio-node/enable","query":{"CSRFToken":"GUwbCoh6CQRtmkKANgn1r-0-L_Xhci6p5gNrEMbolH_c5wnBJFc1V82HeuHb7_sDcQfbhPY6f3wZOit6"},"remote":{"Address":"18.208.34.245:443"}}}
 
-cp ${IDE_WORKSPACE}/src/modules/circleci/status/tests/setup-repos-to-start-building.sh ${OPS_HOME}/
+export GIT_SERVICE_PROVIDER_ORG="gravitee-lab"
+export GIT_REPO_NAME="graviteeio-node"
+export CCI_API_V1_PROJECT_SLUG="github/${GIT_SERVICE_PROVIDER_ORG}/${GIT_REPO_NAME}"
+export CCI_API_V2_PROJECT_SLUG="gh/${GIT_SERVICE_PROVIDER_ORG}/${GIT_REPO_NAME}"
+export CRSF_TOKEN="GUwbCoh6CQRtmkKANgn1r-0-L_Xhci6p5gNrEMbolH_c5wnBJFc1V82HeuHb7_sDcQfbhPY6f3wZOit6"
+export CCI_API_TOKEN="<obfuscatedsecretvalue>"
 
-echo "${IDE_WORKSPACE}/release-data/repos-scope.1.20.x.list" >> ${OPS_HOME}/cci-projects-files.list
-echo "${IDE_WORKSPACE}/release-data/repos-scope.1.25.x.list" >> ${OPS_HOME}/cci-projects-files.list
-echo "${IDE_WORKSPACE}/release-data/repos-scope.1.29.x.list" >> ${OPS_HOME}/cci-projects-files.list
-echo "${IDE_WORKSPACE}/release-data/repos-scope.1.30.x.list" >> ${OPS_HOME}/cci-projects-files.list
-echo "${IDE_WORKSPACE}/release-data/repos-scope.3.0.x.list" >> ${OPS_HOME}/cci-projects-files.list
-echo "${IDE_WORKSPACE}/release-data/repos-scope.3.1.x.list" >> ${OPS_HOME}/cci-projects-files.list
+# --- those two below return 401 Unauthorized
+# curl -X GET "https://circleci.com/api/v2/csrf" -H "Accept: application/json" -H "Circle-Token: ${CCI_API_TOKEN}"
+# curl -X GET "https://circleci.com/api/v2/csrf" -u "${CCI_API_TOKEN}:" -H "Accept: application/json"
+# --- But stil inspecting the browser reuqests data,I could determine that the 'Cookie' HTTP Header is what we need to authenticate
+# Also note that in the cookie, both 'drftt_aid' and 'ring-session' are required
+# And That I do not careleaving realvalues here,because Cookies expire
+export RING_SESSION="CmrL0uZpcoxO%2BE1XTI75KKGyP82fEVZwqpOyOPBMBqeDplARzxruxHD45lFRgsTUI6ByXe%2FrqI7u%2BJ66Km6%2BG6shEQX7CyHZvvWvCPLK%2FTzJRUWhAyayT5LQxFWXZ6tgjYbvIuLig%2F%2FfRtSrY0GrsLPFQXo%2BNchHbbyYZCRL4wOhJ%2BXLfG6WLLHrMrgSF40HOK3GxzVN2fM3ClZjv1yFY5K20CBhUDJpAXFlrNh3pxeTrQbhLghUf5o%2B3UOief4fzI81LfujzO0heN514hHb2AWZNbToyFA1gQ8zbUf%2FYL%2B6i5qaBT4cODdZVWZZA4aZ--oBFs5OcU4vF1u%2BsLPknL7RL3HR%2BQzamGARR2VLst0EU%3D"
+export DRFTT_AID="063b3ba8-5643-4a2b-8c9d-68f0a0379078"
+curl -X GET "https://circleci.com/api/v2/csrf" -H "Accept: */*" -H "Cookie: drftt_aid=${RING_SESSION}; ring-session=${RING_SESSION};" | jq .
 
-tree
+# Never the less, there is no simple way to automate retrieving [RING_SESSION] and [DRFTT_AID], and this is Why setting up CircleCI projects to start building cannot easily be automated.
 
-cat cci-projects-files.list
+export CRSF_TOKEN=$(curl -X GET "https://circleci.com/api/v2/csrf" -H "Accept: */*" -H "Cookie: drftt_aid=${RING_SESSION}; ring-session=${RING_SESSION};" | jq .csrf_token | awk -F '"' '{print $2}')
 
-while read FILEPATH; do
-  echo "---"
-  echo "setup to start building repos listed in [${FILEPATH}]"
-  echo "---"
-  ${OPS_HOME}/setup-repos-to-start-building.sh ${FILEPATH}
-done <${OPS_HOME}/cci-projects-files.list
+export CCI_API_ENDPOINT="/api/v1.1/project/${CCI_API_V1_PROJECT_SLUG}/enable"
+
+# Will 'stop building' a CircleCI project
+curl -X DELETE "https://circleci.com${CCI_API_ENDPOINT}?CSRFToken=${CRSF_TOKEN}"
+
+# And 'setup to start building' a CircleCI project, will more complex than just :
+# curl -X POST "https://circleci.com${CCI_API_ENDPOINT}?CSRFToken=${CRSF_TOKEN}"
 
 ```
+
+So, automating _"setting up to start building"_ for a set of Circle CI project is not naturally possible, because it would require to use some kind of an HTTP SESSION ID.
 
 
 ## Technical details
@@ -165,7 +179,7 @@ Here below is the question I forwarded to Circle CI Solution Engineering Team (a
 | `canceled`                                         |  someone canceled the execution                                                                 |
 | `unauthorized`                                     |  an unauthorized Circle CI user requested the execution, using `Circle CI` API, and it was therefore denied |
 
-* My question is : Are all _Descriptions of what happened_ definitely right? On which of them am I wrong ? Where I am wrong, what does the value means (What happened) ?
+* My question is : Are all _Descriptions of what happened_ definitely right ? On which of them am I wrong ? Where I am wrong, what does the value means (What happened) ?
 
 * Assuming I am right about all those "_descriptions of what happened_", here is how i can classify thoses statuses :
 
