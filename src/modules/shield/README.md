@@ -4,7 +4,7 @@ This set of modules was designed after analyzing an issue proved to be caused by
 
 The Shield provides a solution protecting `Gravitee` CI CD Service from this Circle CI anomaly, but reifies a much larger new concept, in `Gravitee CI CD Orchestrator`.
 
-The issue on github ,with the full live analysis: https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/28
+The issue on github.com, with the full live analysis: https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/28
 
 The opened issue on circleci.com : https://ideas.circleci.com/api-feature-requests/p/behavior-triggering-pipeline-of-circleci-project-not-set-up-to-start-building
 
