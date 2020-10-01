@@ -33,7 +33,7 @@ export class ReactiveParallelExecutionSet {
    * => or the timeout has been reached
    *
    * Then the CI CD Stage stops its execution (after logging a {@link PipelineExecSetReport})
-   * 
+   *
    **/
   private orchestratorNotifier: rxjs.Subject<number>;
   /**
@@ -88,8 +88,23 @@ export class ReactiveParallelExecutionSet {
          console.log(`[ --- All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
          const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
+         pipeExecStatusWatcher.finalStateNotifier.subscribe({
+           next: this.notifyExecCompleted,
+           error: (error) => {
+             console.log('An error occured while watching pipeline execution status on the following triggered pipelines set : ' + triggerProgress);
+           },
+           complete: () => {
+             console.log('Just Completed Pipeline  ')
+           }
+         })
+         pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
          /// let statusWatcherSubscription = pipeExecStatusWatcher.letReactiveExecSetSubscribe();
+         /// When subscribing
+         /**
+         pipeExecStatusWatcher.getFinalStateNotifier().subscribe({
 
+         })
+         */
          /// will be replaced by this.notifyExecCompleted()
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
@@ -117,7 +132,9 @@ export class ReactiveParallelExecutionSet {
   /**
    * Notifies that all pipelines in this ReactiveParallelExecutionSet have reached a final execution state
    **/
-  public notifyExecCompleted() {
+  public notifyExecCompleted(data) {
+    console.log("[-----------------------------------------------]");
+    console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
     console.log("[-----------------------------------------------]");
     console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
     this.orchestratorNotifier.next(this.parallelExecutionSetIndex);
