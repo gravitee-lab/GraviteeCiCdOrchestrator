@@ -1,5 +1,5 @@
-
-
+import * as rxjs from 'rxjs';
+import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
 
 export enum VCS_TYPE {
   GITHUB,
@@ -61,4 +61,41 @@ export interface PipelineExecSetReport {
 
 export class PipelineExecSetReportBuilder {
   private report: PipelineExecSetReport;
+  /**
+   * An array, in which for each entry has  a JSOn Property named 'id',which is the GUID of a Circle CI Pipeline execution
+   *
+   *
+   **/
+  private progressMatrix: any[];
+
+  /**
+   * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all pipeline executions state
+   **/
+  pipelineInspectionNotifier: rxjs.Subject<any>;
+  /**
+   * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all workflows state
+   **/
+  workflowInspectionNotifier: rxjs.Subject<any>;
+  /**
+   * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for pipeline jobs state
+   **/
+  jobsInspectionNotifier: rxjs.Subject<any>;
+
+
+  constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
+    this.progressMatrix = progressMatrix;
+    this.report = {
+      pipelines_states: []
+    }
+  }
+
+  public build(): PipelineExecSetReport {
+
+    return this.report;
+  }
+
+  private
+
+  ///
+
 }

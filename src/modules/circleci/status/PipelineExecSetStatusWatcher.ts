@@ -78,7 +78,7 @@ export class PipelineExecSetStatusWatcher {
    **/
   public readonly max_nb_of_wflows: number;
 
-  constructor(progressMatrix: any[], circleci_client) {
+  constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
     this.startDate = null;
@@ -142,6 +142,7 @@ export class PipelineExecSetStatusWatcher {
 
   }
   public start () {
+
     if (this.startDate === null) {
       this.startDate = new Date();
       this.timeoutDate = new Date(this.startDate.getTime() + (1000 * parseInt(process.env.PIPELINE_COMPLETE_TIMEOUT)));
@@ -176,8 +177,10 @@ export class PipelineExecSetStatusWatcher {
     /// the [updateProgressMatrixWorkflowsExecStatus()] method, so we can check if
     /// all workflows_exec_state in [progressMatrix] display an execution state equal to 'success'
     let totalSuccess: boolean = this.haveAllPipelinesSuccessfullyCompleted();
+
     if (totalSuccess) {
       // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
+        new reporting.PipelineExecSetReportBuilder(this.progressMatrix);
     } else { // if not totalSuccess Yet, then
       // Checking if we reached timeout, before starting a new watch round
       let currentDatetime = new Date();
@@ -194,8 +197,61 @@ export class PipelineExecSetStatusWatcher {
 
   }
   private haveAllPipelinesSuccessfullyCompleted(): boolean {
-    throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
+    let allPipeSuccess: boolean = true;
+    for (let k: number = 0; k < this.progressMatrix.length; k++) {
+      let wfArray = this.progressMatrix[k].workflows_exec_state.items
+      for(let j: number = 0; j < wfArray.length; j++) {
+        allPipeSuccess = allPipeSuccess && (wfArray.status === 'success')
+      }
+    }
+    return allPipeSuccess;
+    /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
+  /**
+   *
+   * Note that the HTTP JSON Response will be ofthe following form :
+   *
+   *
+   *
+   *
+   *
+   *    {
+   *      pipeline_exec_number: '2',
+   *      id: 'ef4264c2-f6f4-4cc4-a928-e7f89f3aff90',
+   *      created_at: '2020-09-30T10:59:27.610Z',
+   *      exec_state: 'pending',
+   *      watch_round: 9,
+   *      workflows_exec_state: {
+   *        "next_page_token": null,
+   *        "items": [
+   *          {
+   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+   *            "name": "docker_build_and_push",
+   *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+   *            "status": "failed",
+   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *            "pipeline_number": 126,
+   *            "created_at": "2020-09-12T17:47:21Z",
+   *            "stopped_at": "2020-09-12T17:48:26Z"
+   *          },
+   *          {
+   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
+   *            "name": "yet_another_test_workflow",
+   *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+   *            "status": "success",
+   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *            "pipeline_number": 126,
+   *            "created_at": "2020-09-12T17:47:21Z",
+   *            "stopped_at": "2020-09-12T17:48:11Z"
+   *          }
+   *        ]
+   *      }
+   *    }
+   *
+   * ---
+   **/
   /**
    *
    * Note that the HTTP JSON Response will be ofthe following form :
@@ -251,7 +307,7 @@ export class PipelineExecSetStatusWatcher {
    **/
   private handleInspectPipelineExecStateResponseData (circleCiJsonResponse: any) : void {
     console.info( '[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
-    /// if the pipeline has zero workflows,then wehave a problem here : so we stop all operations
+    /// if the pipeline has zero workflows,then we have a problem here : so we stop all operations
     if (circleCiJsonResponse.items.length == 0) {
       throw new Error("The last processed Pipeline has no workflows, which is an anomaly, so stopping all operations.")
     }
@@ -259,7 +315,7 @@ export class PipelineExecSetStatusWatcher {
     if (!((circleCiJsonResponse.items.length + 1) < this.max_nb_of_wflows)) {
       throw new Error(`The Pipeline execution of GUID [${pipeline_guid}] has more than the maximum number of workflows authorized for any Gravitee CIrcleCI Pipeline, which is [${this.max_nb_of_wflows}], which is an anomaly, so the [${process.argv["cicd-stage"]}] CI CD Stage is aborted (stopping all operations).`)
     }
-    let next_page_token = circleCiJsonResponse.next_page_token;
+    /// let next_page_token = circleCiJsonResponse.next_page_token;
     let pipelineIndexInProgressMatrix= this.getIndexInProgressMatrixOfPipeline(pipeline_guid);
     this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state = circleCiJsonResponse;
     console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
