@@ -67,8 +67,8 @@ export class PipelineExecSetStatusWatcher {
 
   /**
    * ---
-   * This method queries the CircleCI API and updates each entry of
-   * the <code>this.progressMatrix</code> array's [exec_state] JSon property
+   * This method queries the CircleCI API and adds or updates each entry of
+   * the <code>this.progressMatrix</code> array's [workflows_exec_state] JSon property
    * ---
    * Now, when :
    *
@@ -81,7 +81,7 @@ export class PipelineExecSetStatusWatcher {
    * ---
    *
    **/
-  updateProgressMatrixWithExecStatus() {
+  updateProgressMatrixWorkflowsExecStatus() {
     console.info("");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
     console.info("{[PipelineExecSetStatusWatcher]} - Updating Progress Matrix Execution state ofeach Pipeline : ");
@@ -93,9 +93,9 @@ export class PipelineExecSetStatusWatcher {
     console.info("");
 
     /// First, trigger all pipelines in the parallel execution set
-    this.progressMatrix.forEach(((pipelineRef, index) => {
+    this.progressMatrix.forEach(((pipelineRef: any, index: number) => {
 
-      console.log( `[{[PipelineExecSetStatusWatcher # triggerPipelines()]} - value of Pipeline GUID : [${pipelineRef.id}]`);
+      console.log( `[{[PipelineExecSetStatusWatcher # updateProgressMatrixWorkflowsExecStatus()]} - value of Pipeline GUID : [${pipelineRef.id}]`);
       let pipeline_guid = pipelineRef.id;
 
       /// if (process.argv["dry-run"] === 'true') {
@@ -108,7 +108,7 @@ export class PipelineExecSetStatusWatcher {
       let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${pipeline_guid}`).subscribe({
         next: this.handleInspectPipelineExecStateResponseData.bind(this),
         complete: data => {
-           console.log( '[{[PipelineExecSetStatusWatcher]} - inspecting ccc Circle CI Build completed! :)]')
+           console.log( `[{[PipelineExecSetStatusWatcher]} - Inspecting Pipeline of GUID [${pipeline_guid}] Execution state completed! :)]`)
         },
         error: this.errorHandlerInspectPipelineExecState.bind(this)
       });
@@ -147,68 +147,76 @@ export class PipelineExecSetStatusWatcher {
    *        ]
    *      }
    *
+   * ---
+   *
+   * Will update the progressMatrix Entry matching the [pipeline_id] in the [circleCiJsonResponse], like this :
+   *
+   *    from the following form :
+   *    {
+   *      pipeline_exec_number: 'unchanged_value',
+   *      id : 'unchanged_value',
+   *      created_at: 'unchanged_value',
+   *      exec_state: 'unchanged_value'
+   *    }
+   *    to the following form :
+   *    {
+   *      pipeline_exec_number: 'unchanged_value',
+   *      id : 'unchanged_value',
+   *      created_at: 'unchanged_value',
+   *      exec_state: 'unchanged_value',
+   *      workflows_exec_state: `${circleCiJsonResponse}`
+   *    }
    *
    **/
   private handleInspectPipelineExecStateResponseData (circleCiJsonResponse: any) : void {
     console.info( '[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
-    /// if the pipeline has zeroworkflows,then wehave a problem here : so we stop all operations
+    /// if the pipeline has zero workflows,then wehave a problem here : so we stop all operations
     if (circleCiJsonResponse.items.length == 0) {
       throw new Error("The last processed Pipeline has no workflows, which is an anomaly, so stopping all operations.")
     }
+
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
     let next_page_token = circleCiJsonResponse.next_page_token;
-
-    let entry: any = {};
-    entry.pipeline = {
-      /*
-      // when retryWhen is used
-      pipeline_exec_number: `${circleCiJsonResponse.data.number}`,
-      id : `${circleCiJsonResponse.data.id}`,
-      created_at: `${circleCiJsonResponse.data.created_at}`,
-      exec_state: `${circleCiJsonResponse.data.state}`
-      */
-      pipeline_exec_number: `${circleCiJsonResponse.number}`,
-      id : `${circleCiJsonResponse.id}`,
-      created_at: `${circleCiJsonResponse.created_at}`,
-      exec_state: `${circleCiJsonResponse.state}`
-    }
-
-    this.progressMatrix.push(entry.pipeline);
-    /// this.progressMatrixSubject.next(this.progressMatrix);
-
+    let pipelineIndexInProgressMatrix= this.getIndexInProgressMatrixOfPipeline(pipeline_guid);
+    this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state = circleCiJsonResponse;
   }
 
   /**
    *
    **/
   private errorHandlerInspectPipelineExecState (error: any) : void {
-    console.info( '[{PipelineExecSetStatusWatcher}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
+    console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
     let entry: any = {};
     entry.pipeline = {
       execution_index: null,
       id : null,
       created_at: null,
       exec_state: null,
-      error : {message: "[{PipelineExecSetStatusWatcher}] - Triggering Circle CI pipeline failed ", cause: error}
+      error : {message: "[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] - Triggering Circle CI pipeline failed ", cause: error}
     }
 
-    this.progressMatrix.push(entry);
-
     console.info('');
-    console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
+    console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] [this.progressMatrix] is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info({progressMatrix: this.progressMatrix});
     console.info('')
-    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
 
-
-  /**
-   *
-   **/
-  public getFinalStateNotifier(): rxjs.Subject<PipeExecSetStatusNotification> {
-    return this.finalStateNotifier;
+  private getIndexInProgressMatrixOfPipeline(ofGuid: string): number {
+    let indexToReturn: number = -1;
+     for (let k = 0; k < this.progressMatrix.length; k++) {
+       if (this.progressMatrix[k].id === ofGuid) {
+         console.log(`[{PipelineExecSetStatusWatcher}] - [getIndexInProgresMatrixOfPipeline] - Pipeline of GUID [${ofGuid}] was found in progressMatrix, its index is : [${k}]`);
+         indexToReturn = k;
+       }
+     }
+    if (indexToReturn == -1) {
+      throw new Error(`[{PipelineExecSetStatusWatcher}] - [getIndexInProgresMatrixOfPipeline] - Pipeline of GUID [${ofGuid}] was not found in progressMatrix : [${this.progressMatrix}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
+    }
+    return indexToReturn;
   }
+
 }
 
 

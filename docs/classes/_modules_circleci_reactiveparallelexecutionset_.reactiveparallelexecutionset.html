@@ -84,7 +84,7 @@
 									<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-									<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#notifier" class="tsd-kind-icon">notifier</a>
+									<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#orchestratornotifier" class="tsd-kind-icon">orchestrator<wbr>Notifier</a>
 								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 									<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#parallelexecutionset" class="tsd-kind-icon">parallel<wbr>Execution<wbr>Set</a>
@@ -113,7 +113,7 @@
 								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 									<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#handletriggerpipelinecircleciresponsedata" class="tsd-kind-icon">handle<wbr>Trigger<wbr>Pipeline<wbr>CircleCIResponse<wbr>Data</a>
 								</li>
-								<li class=" tsd-kind-method tsd-parent-kind-class">
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 									<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#notifyexeccompleted" class="tsd-kind-icon">notify<wbr>Exec<wbr>Completed</a>
 								</li>
 								<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -219,7 +219,7 @@
 							<div class="tsd-navigation secondary">
 								<ul>
 									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-										<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#notifier" class="tsd-kind-icon">notifier</a>
+										<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#orchestratornotifier" class="tsd-kind-icon">orchestrator<wbr>Notifier</a>
 									</li>
 								</ul>
 							</div>
@@ -291,7 +291,7 @@
 							</div>
 							<div class="tsd-navigation secondary">
 								<ul>
-									<li class="tsd-kind-method tsd-parent-kind-class">
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
 										<a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html#notifyexeccompleted" class="tsd-kind-icon">notify<wbr>Exec<wbr>Completed</a>
 									</li>
 								</ul>
@@ -313,7 +313,7 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Reactive<wbr>Parallel<wbr>Execution<wbr>Set<span class="tsd-signature-symbol">(</span>parallelExecutionSet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>, parallelExecutionSetIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, circleci_client<span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a>, notifier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html" class="tsd-signature-type">ReactiveParallelExecutionSet</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Reactive<wbr>Parallel<wbr>Execution<wbr>Set<span class="tsd-signature-symbol">(</span>parallelExecutionSet<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>, parallelExecutionSetIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, circleci_client<span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a>, orchestratorNotifier<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html" class="tsd-signature-type">ReactiveParallelExecutionSet</a></li>
 					</ul>
 					<div class="tsd-comment">
 						<div class="lead">
@@ -332,7 +332,7 @@
 							<span class="name">circleci_client</span>: <a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a>
 						</li>
 						<li>
-							<span class="name">notifier</span>: <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span>
+							<span class="name">orchestratorNotifier</span>: <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span>
 						</li>
 					</ul>
 					<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html" class="tsd-signature-type">ReactiveParallelExecutionSet</a></h4>
@@ -341,7 +341,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L35">src/modules/circleci/ReactiveParallelExecutionSet.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L50">src/modules/circleci/ReactiveParallelExecutionSet.ts:50</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -354,17 +354,32 @@
 					<div class="tsd-signature tsd-kind-icon">circleci_client<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L34">src/modules/circleci/ReactiveParallelExecutionSet.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L49">src/modules/circleci/ReactiveParallelExecutionSet.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
-					<a name="notifier" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> notifier</h3>
-					<div class="tsd-signature tsd-kind-icon">notifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="orchestratornotifier" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> orchestrator<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">orchestratorNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<hr>
+							<p>This RX JS Subject is provided by the <a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html">CircleCiOrchestrator</a> and is
+								used by this <a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html">ReactiveParallelExecutionSet</a> to notify the <a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html">CircleCiOrchestrator</a> when
+								all the Pipelines have successfully completed their execution.
+							If either :</p>
+							<hr>
+							<p>=&gt; at least one Pipeline has completed its executions unsuccessfully
+							=&gt; or the timeout has been reached</p>
+						</div>
+						<p>Then the CI CD Stage stops its execution (after logging a <a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreport.html">PipelineExecSetReport</a>)</p>
+					</div>
+					<div class="tsd-comment">
+					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L24">src/modules/circleci/ReactiveParallelExecutionSet.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L39">src/modules/circleci/ReactiveParallelExecutionSet.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -384,7 +399,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L31">src/modules/circleci/ReactiveParallelExecutionSet.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L46">src/modules/circleci/ReactiveParallelExecutionSet.ts:46</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -394,7 +409,7 @@
 					<div class="tsd-signature tsd-kind-icon">parallelExecutionSetIndex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L32">src/modules/circleci/ReactiveParallelExecutionSet.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L47">src/modules/circleci/ReactiveParallelExecutionSet.ts:47</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -404,7 +419,7 @@
 					<div class="tsd-signature tsd-kind-icon">pipelines_nb<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L35">src/modules/circleci/ReactiveParallelExecutionSet.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L50">src/modules/circleci/ReactiveParallelExecutionSet.ts:50</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -425,7 +440,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L16">src/modules/circleci/ReactiveParallelExecutionSet.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L17">src/modules/circleci/ReactiveParallelExecutionSet.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -436,7 +451,7 @@
 					<div class="tsd-comment">
 						<div class="lead">
 							<p>This RX JS Subject is used to inspect <code>this.progressMatrix</code> everytime a
-								JSON Response is received fromthe Circle CI API :
+								JSON Response is received from the Circle CI API :
 							why? To check if all pipelines triggers Circle CI API request have receivedheir HTTP Response, with its JSON Response.</p>
 						</div>
 					</div>
@@ -444,7 +459,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L23">src/modules/circleci/ReactiveParallelExecutionSet.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L24">src/modules/circleci/ReactiveParallelExecutionSet.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -461,7 +476,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L53">src/modules/circleci/ReactiveParallelExecutionSet.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L68">src/modules/circleci/ReactiveParallelExecutionSet.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -481,7 +496,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L194">src/modules/circleci/ReactiveParallelExecutionSet.ts:194</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L241">src/modules/circleci/ReactiveParallelExecutionSet.ts:241</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -500,7 +515,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L220">src/modules/circleci/ReactiveParallelExecutionSet.ts:220</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L267">src/modules/circleci/ReactiveParallelExecutionSet.ts:267</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -520,26 +535,33 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L168">src/modules/circleci/ReactiveParallelExecutionSet.ts:168</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L215">src/modules/circleci/ReactiveParallelExecutionSet.ts:215</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-descriptions">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
 					<a name="notifyexeccompleted" class="tsd-anchor"></a>
-					<h3>notify<wbr>Exec<wbr>Completed</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">notify<wbr>Exec<wbr>Completed<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> notify<wbr>Exec<wbr>Completed</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">notify<wbr>Exec<wbr>Completed<span class="tsd-signature-symbol">(</span>execStatusNotification<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_circleci_status_pipelineexecsetstatuswatcher_.pipeexecsetstatusnotification.html" class="tsd-signature-type">PipeExecSetStatusNotification</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<div class="tsd-comment">
 						<div class="lead">
-							<p>Notifies that all pipelines in this ReactiveParallelExecutionSet have reached a final execution state</p>
+							<p>Notifies the <a href="_modules_circleci_circleciorchestrator_.circleciorchestrator.html">CircleCiOrchestrator</a> that all pipelines in
+							this <a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html">ReactiveParallelExecutionSet</a> have reached a final execution state</p>
 						</div>
 					</div>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">execStatusNotification</span>: <a href="../interfaces/_modules_circleci_status_pipelineexecsetstatuswatcher_.pipeexecsetstatusnotification.html" class="tsd-signature-type">PipeExecSetStatusNotification</a>
+						</li>
+					</ul>
 					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L104">src/modules/circleci/ReactiveParallelExecutionSet.ts:104</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L137">src/modules/circleci/ReactiveParallelExecutionSet.ts:137</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -553,7 +575,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/110c602/src/modules/circleci/ReactiveParallelExecutionSet.ts#L111">src/modules/circleci/ReactiveParallelExecutionSet.ts:111</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/d0bf20d/src/modules/circleci/ReactiveParallelExecutionSet.ts#L158">src/modules/circleci/ReactiveParallelExecutionSet.ts:158</a></li>
 						</ul>
 					</aside>
 				</section>

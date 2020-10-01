@@ -96,20 +96,14 @@ export class ReactiveParallelExecutionSet {
              console.log('An error occured while watching pipeline execution status for the following ParallelExecutionSet : ');
              console.log(this.parallelExecutionSet);
              console.log("[-----------------------------------------------]");
-             throw new Error(`So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
+             throw new Error(`An error occured while watching pipeline execution status for the following ParallelExecutionSet : [${this.parallelExecutionSet}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
            },
            complete: () => {
              console.log('Just Completed Pipeline  ')
            }
          })
-         pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
-         /// let statusWatcherSubscription = pipeExecStatusWatcher.letReactiveExecSetSubscribe();
-         /// When subscribing
-         /**
-         pipeExecStatusWatcher.getFinalStateNotifier().subscribe({
-
-         })
-         */
+         // pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
+         
          /// will be replaced by this.notifyExecCompleted()
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
