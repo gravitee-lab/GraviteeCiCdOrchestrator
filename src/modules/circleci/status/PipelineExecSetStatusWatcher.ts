@@ -58,11 +58,28 @@ export class PipelineExecSetStatusWatcher {
    **/
   private progressMatrix: any[];
   private circleci_client: CircleCIClient;
-
+  private startDate: Date;
+  /// the timeout in seconds
+  public readonly timeout: number;
+  /**
+   * The watch interval in seconds :
+   * this {@link PipelineExecSetStatusWatcher} will update progressMatrix every <code>this.watch_interval</code> seconds
+   **/
+  public readonly watch_interval: number;
+  /**
+   * The maximum number of workflows allowedforany Pipeline execution
+   * If that number is exceeded by any Circle Pipeline execution, then the
+   * current CI CD Stage is aborted (stops its execution)
+   **/
+  public readonly max_nb_of_wflows: number;
 
   constructor(progressMatrix: any[], circleci_client) {
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
+    this.startDate = null;
+    this.timeout = parseInt(process.env.PIPELINE_COMPLETE_TIMEOUT);
+    this.watch_interval = 7; // watcher will update progressMatrix every 7 seconds
+    this.max_nb_of_wflows = parseInt(process.env.MAX_NB_OF_WFLOWS_PER_PIPELINE);
   }
 
   /**
@@ -92,27 +109,35 @@ export class PipelineExecSetStatusWatcher {
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
     console.info("");
 
-    /// First, trigger all pipelines in the parallel execution set
-    this.progressMatrix.forEach(((pipelineRef: any, index: number) => {
+    /**
+     * First, launch all HTTP Requests to update all entries in the [progressMatrix] 's [workflows_exec_state] JSON Property
+     **/
+    for (let k = 0; k < this.progressMatrix.length; k++) {
 
-      console.log( `[{[PipelineExecSetStatusWatcher # updateProgressMatrixWorkflowsExecStatus()]} - value of Pipeline GUID : [${pipelineRef.id}]`);
-      let pipeline_guid = pipelineRef.id;
+        console.log( `[{PipelineExecSetStatusWatcher}] - [updateProgressMatrixWorkflowsExecStatus()] - value of Pipeline GUID : [${this.progressMatrix[k].id}]`);
+        /// if (process.argv["dry-run"] === 'true') {
+        if (process.argv["dry-run"]) {
+         console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is true');
+        } else {
+         console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is false');
+        }
 
-      /// if (process.argv["dry-run"] === 'true') {
-      if (process.argv["dry-run"]) {
-       console.log( '[{[PipelineExecSetStatusWatcher]} - (process.argv["dry-run"] === \'true\') condition is true');
-      } else {
-       console.log( '[{[PipelineExecSetStatusWatcher]} - (process.argv["dry-run"] === \'true\') condition is false');
-      }
+        let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${this.progressMatrix[k].id}`).subscribe({
+          next: this.handleInspectPipelineExecStateResponseData.bind(this),
+          complete: data => {
+             console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${this.progressMatrix[k].id}] Execution state completed! :) ]`)
+          },
+          error: this.errorHandlerInspectPipelineExecState.bind(this)
+        });
+    }
 
-      let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${pipeline_guid}`).subscribe({
-        next: this.handleInspectPipelineExecStateResponseData.bind(this),
-        complete: data => {
-           console.log( `[{[PipelineExecSetStatusWatcher]} - Inspecting Pipeline of GUID [${pipeline_guid}] Execution state completed! :)]`)
-        },
-        error: this.errorHandlerInspectPipelineExecState.bind(this)
-      });
-    }).bind(this));
+  }
+  public start () {
+    if (this.startDate === null) {
+      this.startDate = new Date();
+    } else {
+      console.log("No, someVar is not null");
+    }
   }
 
   /**
@@ -174,8 +199,10 @@ export class PipelineExecSetStatusWatcher {
     if (circleCiJsonResponse.items.length == 0) {
       throw new Error("The last processed Pipeline has no workflows, which is an anomaly, so stopping all operations.")
     }
-
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
+    if (!((circleCiJsonResponse.items.length + 1) < this.max_nb_of_wflows)) {
+      throw new Error(`The Pipeline execution of GUID [${pipeline_guid}] has more than the maximum number of workflows authorized for any Gravitee CIrcleCI Pipeline, which is [${this.max_nb_of_wflows}], which is an anomaly, so the [${process.argv["cicd-stage"]}] CI CD Stage is aborted (stopping all operations).`)
+    }
     let next_page_token = circleCiJsonResponse.next_page_token;
     let pipelineIndexInProgressMatrix= this.getIndexInProgressMatrixOfPipeline(pipeline_guid);
     this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state = circleCiJsonResponse;
@@ -200,7 +227,7 @@ export class PipelineExecSetStatusWatcher {
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info({progressMatrix: this.progressMatrix});
     console.info('')
-    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
 
   private getIndexInProgressMatrixOfPipeline(ofGuid: string): number {

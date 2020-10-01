@@ -22,7 +22,13 @@ console.log('I am the Gravitee CI CD Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
+var date1 = new Date('December 25, 2017 01:30:00');
+var date2 = new Date('June 18, 2016 02:30:00');
 
+//best to use .getTime() to compare dates
+if(date1.getTime() > date2.getTime()){
+    //date 1 is newer
+}
 throw new Error("DEBUG STOP POINT")
 
 export const cli : Cli = new Cli();
