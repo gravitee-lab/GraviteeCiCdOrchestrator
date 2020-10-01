@@ -162,7 +162,7 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      *
-     * Note that the HTTP JSON Response willbe ofthe following form :
+     * Note that the HTTP JSON Response will be of the following form :
      *
      *      {
      *        "next_page_token": null,
