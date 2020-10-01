@@ -414,3 +414,50 @@ curl -X DELETE "https://circleci.com${CCI_API_ENDPOINT}?CSRFToken=${CRSF_TOKEN}"
 ```
 
 So, automating _"setting up to start building"_ for a set of Circle CI project is not naturally possible, because it would require to use some kind of an HTTP SESSION ID.
+
+
+#### other try using api v1
+
+https://circleci.com/docs/api/#follow-a-new-project-on-circleci
+
+```bash
+
+export CCI_TOKEN="<your cci token>"
+export VCS_TYPE='github'
+export CCI_USERNAME='Jean-Baptiste-Lasselle'
+export CCI_PROJECT_NAME='graviteeio-node'
+
+curl -X POST https://circleci.com/api/v1.1/project/${VCS_TYPE}/${CCI_USERNAME}/${CCI_PROJECT_NAME}/follow -H "Circle-Token: ${CCI_TOKEN}"
+
+export VCS_TYPE='gh'
+
+curl -X POST https://circleci.com/api/v1.1/project/${VCS_TYPE}/${CCI_USERNAME}/${CCI_PROJECT_NAME}/follow -H "Circle-Token: ${CCI_TOKEN}"
+
+
+```
+
+* Result of the test confirms this REST Endpoint is useless to set up a project to start building :
+
+```bash
+~/gravitee-experiment$
+~/gravitee-experiment$
+~/gravitee-experiment$ export CCI_TOKEN="<your cci token>"
+~/gravitee-experiment$ export VCS_TYPE='github'
+~/gravitee-experiment$ export CCI_USERNAME='Jean-Baptiste-Lasselle'
+~/gravitee-experiment$ export CCI_PROJECT_NAME='graviteeio-node'
+~/gravitee-experiment$ curl -X POST https://circleci.com/api/v1.1/project/${VCS_TYPE}/${CCI_USERNAME}/${CCI_PROJECT_NAME}/follow -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   135  100   135    0     0    266      0 --:--:-- --:--:-- --:--:--   266
+{
+  "message": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/reference/repos#get-a-repository\"}"
+}
+~/gravitee-experiment$ export VCS_TYPE='gh'
+~/gravitee-experiment$ curl -X POST https://circleci.com/api/v1.1/project/${VCS_TYPE}/${CCI_USERNAME}/${CCI_PROJECT_NAME}/follow -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   135  100   135    0     0    271      0 --:--:-- --:--:-- --:--:--   271
+{
+  "message": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/reference/repos#get-a-repository\"}"
+}
+```
