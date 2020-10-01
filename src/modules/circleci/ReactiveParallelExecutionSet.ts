@@ -1,7 +1,8 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../modules/circleci/CircleCIClient';
 import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets';
-import { PipelineExecSetStatusWatcher } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
+import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
+
 
 
 export class ReactiveParallelExecutionSet {
@@ -91,7 +92,11 @@ export class ReactiveParallelExecutionSet {
          pipeExecStatusWatcher.finalStateNotifier.subscribe({
            next: this.notifyExecCompleted,
            error: (error) => {
-             console.log('An error occured while watching pipeline execution status on the following triggered pipelines set : ' + triggerProgress);
+             console.log("[-----------------------------------------------]");
+             console.log('An error occured while watching pipeline execution status for the following ParallelExecutionSet : ');
+             console.log(this.parallelExecutionSet);
+             console.log("[-----------------------------------------------]");
+             throw new Error(`So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
            },
            complete: () => {
              console.log('Just Completed Pipeline  ')
@@ -130,17 +135,32 @@ export class ReactiveParallelExecutionSet {
    return toReturn;
   }
   /**
-   * Notifies that all pipelines in this ReactiveParallelExecutionSet have reached a final execution state
+   *
+   * Notifies the {@link CircleCiOrchestrator} that all pipelines in
+   * this {@link ReactiveParallelExecutionSet} have reached a final execution state
+   *
    **/
-  public notifyExecCompleted(data) {
-    console.log("[-----------------------------------------------]");
-    console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
-    console.log("[-----------------------------------------------]");
-    console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
-    this.orchestratorNotifier.next(this.parallelExecutionSetIndex);
-    console.log("[-----------------------------------------------]");
-    console.log("[-----------------------------------------------]");
+  private notifyExecCompleted(execStatusNotification: PipeExecSetStatusNotification) {
+    if (execStatusNotification.is_errored) {
+      console.log("[-----------------------------------------------]");
+      console.log(`A Pipeline has reached an execution status with errors, or Pipeline Execution timeout has been reached, So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
+      console.log("The ParallelExecutionSet Execution Status Report is : ")
+      console.log(execStatusNotification.exec_status_report)
+      console.log("[-----------------------------------------------]");
+      throw new Error(`A Pipeline has reached an execution status with errors, or Pipeline Execution timeout has been reached, So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process. The ParallelExecutionSet Execution Status Report is : ${execStatusNotification.exec_status_report}`);
+    } else {
+      console.log("[-----------------------------------------------]");
+      console.log(`[ --- All pipelines in the ParallelExecutionSet of index [${this.parallelExecutionSetIndex}] have succesfully completed their execution`);
+      console.log(`[ --- The ParallelExecutionSet is :`);
+      console.log(this.parallelExecutionSet);
+      console.log("[-----------------------------------------------]");
+      console.log(`[ --- Now notifying the [CircleCiOrchestrator] to proceed with next Parallel Execution Set`);
+      this.orchestratorNotifier.next(this.parallelExecutionSetIndex);
+      console.log("[-----------------------------------------------]");
+    }
+
   }
+
   triggerPipelines(): void {
 
 
