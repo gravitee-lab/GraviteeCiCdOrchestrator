@@ -23,7 +23,6 @@ export class PullRequestBot /* extends CICDStage */{
    private gh_org: string;
    private repo_name: string;
    private git_branch: string;
-   private secrets: CircleCISecrets;
    private git_repo_root_folder: string;
 
    constructor() {
@@ -31,9 +30,7 @@ export class PullRequestBot /* extends CICDStage */{
      console.log(`[{PullRequestBot}] - constructor begins `);
      console.log('');
      /*super.contructor();*/
-     /// this.secrets = {circleci: {auth:{token: '', username : ''}}}
-     this.loadCircleCISecrets();
-     this.circleci_client = new CircleCIClient(this.secrets);
+     this.circleci_client = new CircleCIClient();
      this.resolveCciSlug();
      if (this.git_branch.startsWith('support-') || this.git_branch.startsWith('lts-') || this.git_branch.startsWith('sts-')) {
        this.mode = PR_BOT_MODE.SUPPORT;
@@ -69,9 +66,9 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      console.log(`[{PullRequestBot} #  execute ()] - this.circleci_client.triggerCciPipeline(${this.secrets.circleci.auth.username}, ${this.gh_org}, ${this.repo_name}, ${this.git_branch}, ${JSON.stringify(pipelineConfig, null, " ")})`);
-      /// this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig);
-      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
+      console.log(`[{PullRequestBot} #  execute ()] - this.circleci_client.triggerCciPipeline(${this.gh_org}, ${this.repo_name}, ${this.git_branch}, ${JSON.stringify(pipelineConfig, null, " ")})`);
+
+      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
         next: (data) => {
           console.log(`[{PullRequestBot} #  answer From Circle CI API : ] - ${JSON.stringify(data, null, " ")} `);
         },
@@ -111,7 +108,7 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
+      this.circleci_client.triggerCciPipeline(this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
         next: (data) => {
           console.log(`[{PullRequestBot} #  answer From Circle CI API : ] - ${JSON.stringify(data, null, " ")} `);
         },
@@ -133,7 +130,7 @@ export class PullRequestBot /* extends CICDStage */{
         },
         branch: `${this.git_branch}`
       }
-      this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
+      this.circleci_client.triggerCciPipeline(this.gh_org, this.repo_name, this.git_branch, pipelineConfig).subscribe({
         next: (data) => {
           console.log(`[{PullRequestBot} #  answer From Circle CI API : ] - ${JSON.stringify(data, null, " ")} `);
         },
@@ -195,20 +192,7 @@ export class PullRequestBot /* extends CICDStage */{
 
    }
 
-   private loadCircleCISecrets() : void { ///     private secrets: CircleCISecrets;
-     /// first load the secretfile
-     console.log('');
-     console.log(`[{PullRequestBot}] - loading secrets file  :[${process.env.SECRETS_FILE_PATH}] `);
-     console.log('');
-     let secretFileAsString: string = fs.readFileSync(process.env.SECRETS_FILE_PATH,'utf8');
-     this.secrets = JSON.parse(secretFileAsString);
-     console.log('');
-     console.log("[{PullRequestBot}] - secrets file content :");
-     console.log('');
-     console.log(this.secrets)
-     console.log('');
 
-   }
 }
 /**
  * About string Git URI String parsing :

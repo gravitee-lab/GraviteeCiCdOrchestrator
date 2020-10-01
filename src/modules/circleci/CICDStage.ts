@@ -17,7 +17,7 @@ export class CICDStage {
 
      contructor() {
        this.loadCircleCISecrets();
-       this.circleci_client = new CircleCIClient(this.secrets);
+       this.circleci_client = new CircleCIClient();
        this.resolveCciSlug();
      }
 

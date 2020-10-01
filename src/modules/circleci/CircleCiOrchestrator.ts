@@ -16,7 +16,7 @@ import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactivePar
  *
  *  CICD Stage : Represents the Pull Request Bot managing the Pull Request CICD Stage
  *  [--cicd-stage mvn_release] GNU Option to activate
- * 
+ *
  * Executes the parallelized execution plan which launches all Circle CI Pipelines as distributed build across repos.
  *
  * [gravitee_release_branch] must match one of the existing branch on https://github.com/gravtiee-io/release.git, see [.DOTNEV] [RELEASE_BRANCHES] env. var.
@@ -145,7 +145,6 @@ export class CircleCiOrchestrator {
     /// private currentParallelExecutionsSetIndex: number;
     private retries: number;
     private circleci_client: CircleCIClient;
-    private secrets: CircleCISecrets;
 
 
     constructor(execution_plan: string [][], retries: number) {
@@ -157,8 +156,7 @@ export class CircleCiOrchestrator {
 
 
       this.retries = retries;
-      this.loadCircleCISecrets();
-      this.circleci_client = new CircleCIClient(this.secrets);
+      this.circleci_client = new CircleCIClient();
 
       this.initializeNotifiers();
 
@@ -203,18 +201,7 @@ export class CircleCiOrchestrator {
       }
 
     }
-    loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
-      /// first load the secretfile
 
-      let secretFileAsString: string = fs.readFileSync(process.env.SECRETS_FILE_PATH,'utf8');
-      this.secrets = JSON.parse(secretFileAsString);
-      console.debug('');
-      console.debug("[{CircleCiOrchestrator}] - secrets file content :");
-      console.debug('');
-      console.debug(this.secrets)
-      console.debug('');
-
-    }
     /**
      * Queries Circle CI API ti check identity of the
      * authenticated Circle CI user
@@ -244,7 +231,7 @@ export class CircleCiOrchestrator {
 
 
       /* WORKING TEST
-      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
       // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.triggerPipelines();
@@ -266,7 +253,7 @@ export class CircleCiOrchestrator {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, do not proceed with next, cause this was last.");
         }
       } else {
-        let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.secrets, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+        let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
         // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
         parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
         parallelExecSet1.triggerPipelines();

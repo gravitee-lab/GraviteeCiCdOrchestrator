@@ -1,24 +1,34 @@
 import * as rxjs from 'rxjs';
 import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
-
-
+import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
+import * as fs from 'fs';
 /**
  *
  * Mimics the official Circle CI cLient, only much simpler, and with [RxJS]
  * Circle CI API v2 based
  **/
 export class CircleCIClient {
-
-  constructor(private secrets: any) {
-    this.secrets = secrets;
+  private secrets: CircleCISecrets;
+  constructor() {
+    this.loadCircleCISecrets();
   }
+  loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
+    /// first load the secretfile
 
+    let secretFileAsString: string = fs.readFileSync(process.env.SECRETS_FILE_PATH,'utf8');
+    this.secrets = JSON.parse(secretFileAsString);
+    console.debug('');
+    console.debug("[{CircleCIClient}] - loaded secrets file content :");
+    console.debug('');
+    console.debug(this.secrets)
+    console.debug('');
+
+  }
 
     /**
      * Triggers a Circle CI Pipeline, for a repo on Github
      *
-     * @argument username {@type string} the Circle CI username. matches your Github username, because you authenticated using Github, to register to Circle Ci . eg "jpstevens",
      * @argument org_name  {@type string} the github organization name if the git repo in on github.com
      * @argument repo_name {@type string} the Circle CI project name, matching the github repo name, e.g."circleci",
      * @argument branch {@type string} the git branch "master" on which to trigger the pipeline
@@ -76,7 +86,7 @@ export class CircleCIClient {
      *
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      **/
-    triggerCciPipeline(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+    triggerCciPipeline(org_name: string, repo_name: string, branch: string, pipelineParameters: any): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
 
       let observableRequest: any = rxjs.Observable.create( ( observer ) => {
           let config = {

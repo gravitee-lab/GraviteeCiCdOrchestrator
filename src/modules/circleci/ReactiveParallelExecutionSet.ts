@@ -30,14 +30,12 @@ export class ReactiveParallelExecutionSet {
   private parallelExecutionSetIndex: number; // [ParallelExecutionSet] index in execution plan
 
   private circleci_client: CircleCIClient;
-  private secrets: CircleCISecrets;
   private pipelines_nb: number;
 
-  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, secrets: CircleCISecrets, notifier: rxjs.Subject<number>) {
+  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, notifier: rxjs.Subject<number>) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
     this.parallelExecutionSet = parallelExecutionSet;
     this.circleci_client = circleci_client;
-    this.secrets = secrets;
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
     this.notifier = notifier;
@@ -129,9 +127,7 @@ export class ReactiveParallelExecutionSet {
       }
       /// let pipelineConfig = { parameters: {},branch : 'dependabot/npm_and_yarn/handlebars-4.5.3'};
 
-
-      /// let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, "testrepo1", 'dependabot/npm_and_yarn/handlebars-4.5.3', pipelineConfig).subscribe({
-      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(this.secrets.circleci.auth.username, process.env.GH_ORG, `${component.name}`, `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`, pipelineConfig).subscribe({
+      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(process.env.GH_ORG, `${component.name}`, `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`, pipelineConfig).subscribe({
         next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
         complete: data => {
            console.log( '[{[ReactiveParallelExecutionSet]} - triggering Circle CI Build completed! :)]')

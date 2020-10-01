@@ -1,4 +1,6 @@
 import * as rxjs from 'rxjs';
+import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
+
 /**
  * Keeps fetching the Circle CI API, to determine when :
  *
@@ -20,7 +22,72 @@ export class PipelineExecSetStatusWatcher {
    *
    **/
   public readonly finalStateNotifier: rxjs.Subject<number>;
+  /**
+   * This is the progress matrix for all pipeline executions
+   * in one {ParallelExecutionSet}, built by a <code>src/modules/circleci/PipelineExecSetStatusWatcher.ts</code>, not
+   * the whole execution plan, as understood by the {@link CircleCiOrchestrator} class.
+   * --
+   * It is filled with all the HTTP JSON responses of Circle CI API HTTP request to trigger pipelines.
+   * --
+   * Each entry inthis array is of the following form :
+   *
+   *
+   * {
+   *   pipeline_exec_number: '2',
+   *   id: 'ef4264c2-f6f4-4cc4-a928-e7f89f3aff90',
+   *   created_at: '2020-09-30T10:59:27.610Z',
+   *   exec_state: 'pending'
+   * }
+   *
+   *
+   * --
+   **/
+  private progressMatrix: any[]; //
+  private circleci_client: CircleCIClient;
 
+
+  constrcutor(progressMatrix: any[], circleci_client) {
+    this.progressMatrix = progressMatrix;
+  }
+
+  /**
+   * This method queries the CircleCI API and updates each entry of
+   * the <code>this.progressMatrix</code> array's [exec_state] JSon property
+   **/
+  updateProgressMatrixWithExecStatus() {
+    console.info("");
+    console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+    console.info("{[PipelineExecSetStatusWatcher]} - Updating Progress Matrix Execution state ofeach Pipeline : ");
+    console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+    console.info(" ---");
+    console.info(JSON.stringify({ progressMatrix: this.progressMatrix }, null, " "));
+    console.info(" ---");
+    console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+    console.info("");
+
+    /// First, trigger all pipelines in the parallel execution set
+    this.progressMatrix.forEach(((pipelineRef, index) => {
+
+      console.log( `[{[PipelineExecSetStatusWatcher # triggerPipelines()]} - value of Pipeline GUID : [${pipelineRef.id}]`);
+      let pipeline_guid = pipelineRef.id;
+
+      /// if (process.argv["dry-run"] === 'true') {
+      if (process.argv["dry-run"]) {
+       console.log( '[{[PipelineExecSetStatusWatcher]} - (process.argv["dry-run"] === \'true\') condition is true');
+      } else {
+       console.log( '[{[PipelineExecSetStatusWatcher]} - (process.argv["dry-run"] === \'true\') condition is false');
+      }
+
+      
+      let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(process.env.GH_ORG, `${pipeline_guid}`).subscribe({
+        next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+        complete: data => {
+           console.log( '[{[PipelineExecSetStatusWatcher]} - triggering Circle CI Build completed! :)]')
+        },
+        error: this.errorHandlerTriggerCCIPipeline.bind(this)
+      });
+    }).bind(this));
+  }
 }
 
 

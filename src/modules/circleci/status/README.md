@@ -36,7 +36,7 @@ I need to write a shell script to setup approriate `.circleci/config.yml` in all
 
 ```bash
 export FILENAME=release-data/repos-scope.3.1.x.list
-cat ${FILENAME}  | grep -E '*.*.x'
+cat ${FILENAME}  | grep -E '*.*.x$'
 ```
 
 So the script will take one argument, the file name of the file listing all repos URLS, and the whole procedure will look like :
