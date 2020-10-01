@@ -1,6 +1,6 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
-import { ReactiveParallelExecutionSet } from '../../../modules/circleci/ReactiveParallelExecutionSet'
+import { PipelineExecSetStatusWatcher } from '../../../modules/circleci/PipelineExecSetStatusWatcher'
 import * as reporting from '../../../modules/circleci/status/PipelineExecSetReport';
 
 
@@ -27,7 +27,7 @@ export class PipelineExecSetStatusWatcher {
    * A./ Subcribers subscribe to the Subject
    * B./ Subject emits value with the next(value) method
    * C./
-   * The {@link ReactiveParallelExecutionSet} subscribes to this RxSubject, so that it
+   * The {@link PipelineExecSetStatusWatcher} subscribes to this RxSubject, so that it
    * is notified when all Pipelines have reached a final execution state.
    **/
   public readonly finalStateNotifier: rxjs.Subject<PipeExecSetStatusNotification>;
@@ -71,8 +71,8 @@ export class PipelineExecSetStatusWatcher {
    * => or any Pipeline has reach a final execution state with errors,
    *
    * Then this method will :
-   * => build the execution report using ccc
-   * => and call the next() method of the <code>this.finalStateNotifier</code> RxJS Subject, to notify its {@link ReactiveParallelExecutionSet} friend
+   * => build the execution report using {@link reporting.PipelineExecSetReport}
+   * => and call the next() method of the <code>this.finalStateNotifier</code> RxJS Subject, to notify its {@link PipelineExecSetStatusWatcher} friend
    * ---
    *
    **/
@@ -100,17 +100,74 @@ export class PipelineExecSetStatusWatcher {
        console.log( '[{[PipelineExecSetStatusWatcher]} - (process.argv["dry-run"] === \'true\') condition is false');
       }
 
-
       let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${pipeline_guid}`).subscribe({
-        next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
+        next: this.handleInspectPipelineExecStateResponseData.bind(this),
         complete: data => {
            console.log( '[{[PipelineExecSetStatusWatcher]} - triggering Circle CI Build completed! :)]')
         },
-        error: this.errorHandlerTriggerCCIPipeline.bind(this)
+        error: this.errorHandlerInspectPipelineExecState.bind(this)
       });
     }).bind(this));
   }
 
+  /**
+   *
+   **/
+  private handleInspectPipelineExecStateResponseData (circleCiJsonResponse: any) : void {
+    console.info( '[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+    let entry: any = {};
+    entry.pipeline = {
+      /*
+      // when retryWhen is used
+      pipeline_exec_number: `${circleCiJsonResponse.data.number}`,
+      id : `${circleCiJsonResponse.data.id}`,
+      created_at: `${circleCiJsonResponse.data.created_at}`,
+      exec_state: `${circleCiJsonResponse.data.state}`
+      */
+      pipeline_exec_number: `${circleCiJsonResponse.number}`,
+      id : `${circleCiJsonResponse.id}`,
+      created_at: `${circleCiJsonResponse.created_at}`,
+      exec_state: `${circleCiJsonResponse.state}`
+    }
+    this.progressMatrix.push(entry.pipeline);
+    /// this.progressMatrixSubject.next(entry.pipeline);
+    this.progressMatrixSubject.next(this.progressMatrix);
+
+    /// console.info('')
+    /// console.info( '[{PipelineExecSetStatusWatcher}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
+    // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
+    /// console.info({progressMatrix: this.progressMatrix});
+    /// console.info('')
+  }
+
+  /**
+   *
+   **/
+  private errorHandlerInspectPipelineExecState (error: any) : void {
+    console.info( '[{PipelineExecSetStatusWatcher}] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
+    let entry: any = {};
+    entry.pipeline = {
+      execution_index: null,
+      id : null,
+      created_at: null,
+      exec_state: null,
+      error : {message: "[{PipelineExecSetStatusWatcher}] - Triggering Circle CI pipeline failed ", cause: error}
+    }
+
+    this.progressMatrix.push(entry);
+
+    console.info('')
+    console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
+    // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
+    console.info({progressMatrix: this.progressMatrix});
+    console.info('')
+    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+  }
+
+
+  /**
+   *
+   **/
   public getFinalStateNotifier(): rxjs.Subject<PipeExecSetStatusNotification> {
     return this.finalStateNotifier;
   }
