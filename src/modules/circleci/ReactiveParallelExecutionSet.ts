@@ -17,11 +17,25 @@ export class ReactiveParallelExecutionSet {
   /// private pipeExecStatusWatcher: PipelineExecSetStatusWatcher; /// no circular dependencies
   /**
    * This RX JS Subject is used to inspect <code>this.progressMatrix</code> everytime a
-   * JSON Response is received fromthe Circle CI API :
+   * JSON Response is received from the Circle CI API :
    * why? To check if all pipelines triggers Circle CI API request have receivedheir HTTP Response, with its JSON Response.
    **/
   private progressMatrixSubject = new rxjs.Subject<any[]>();
-  private notifier: rxjs.Subject<number>;
+
+  /**
+   * ---
+   * This RX JS Subject is provided by the {@link CircleCiOrchestrator} and is
+   * used by this {@link ReactiveParallelExecutionSet} to notify the {@link CircleCiOrchestrator} when
+   * all the Pipelines have successfully completed their execution.
+   * If either :
+   * ---
+   * => at least one Pipeline has completed its executions unsuccessfully
+   * => or the timeout has been reached
+   *
+   * Then the CI CD Stage stops its execution (after logging a {@link PipelineExecSetReport})
+   * 
+   **/
+  private orchestratorNotifier: rxjs.Subject<number>;
   /**
    * this one has to change type to {src/modules/manifest/ParallelExecutionSet.ts}
    * because for each component, i need both repo name AND version, which contains the info to
@@ -38,19 +52,20 @@ export class ReactiveParallelExecutionSet {
    * Instantiate a new {@link ReactiveParallelExecutionSet}
    *
    **/
-  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, notifier: rxjs.Subject<number>) {
+  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, orchestratorNotifier: rxjs.Subject<number>) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
     this.parallelExecutionSet = parallelExecutionSet;
     this.circleci_client = circleci_client;
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
-    this.notifier = notifier;
+    this.orchestratorNotifier = orchestratorNotifier;
   }
 
   /**
    *
    **/
   public doSubscribe() : rxjs.Subscription {
+
     let toReturn : rxjs.Subscription = this.progressMatrixSubject.subscribe({
      next: ((triggerProgress) => {
        console.log("[-----------------------------------------------]");
@@ -78,7 +93,7 @@ export class ReactiveParallelExecutionSet {
          /// will be replaced by this.notifyExecCompleted()
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
-         this.notifier.next(this.parallelExecutionSetIndex);
+         this.orchestratorNotifier.next(this.parallelExecutionSetIndex);
          console.log("[-----------------------------------------------]");
          console.log("[-----------------------------------------------]");
        }
@@ -93,9 +108,10 @@ export class ReactiveParallelExecutionSet {
        console.log(`[ --- [ReactiveParallelExecutionSet], this.parallelExecutionSetIndex : [` + this.parallelExecutionSetIndex + `]`);
        console.log("[-----------------------------------------------]");
        console.log("[-----------------------------------------------]");
-       this.notifier.complete();
+       this.orchestratorNotifier.complete();
      }
    })
+
    return toReturn;
   }
   /**
@@ -104,7 +120,7 @@ export class ReactiveParallelExecutionSet {
   public notifyExecCompleted() {
     console.log("[-----------------------------------------------]");
     console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
-    this.notifier.next(this.parallelExecutionSetIndex);
+    this.orchestratorNotifier.next(this.parallelExecutionSetIndex);
     console.log("[-----------------------------------------------]");
     console.log("[-----------------------------------------------]");
   }
