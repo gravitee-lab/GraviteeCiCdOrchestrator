@@ -14,7 +14,7 @@ export class ReactiveParallelExecutionSet {
    * Will be filled with JSON responses of Circle CI API calls to trigger pipelines.
    **/
   private progressMatrix: any[]; //
-  private pipeExecStatusWatcher: PipelineExecSetStatusWatcher;
+  /// private pipeExecStatusWatcher: PipelineExecSetStatusWatcher; /// no circular dependencies
   /**
    * This RX JS Subject is used to inspect <code>this.progressMatrix</code> everytime a
    * JSON Response is received fromthe Circle CI API :
@@ -37,7 +37,6 @@ export class ReactiveParallelExecutionSet {
   /**
    * Instantiate a new {@link ReactiveParallelExecutionSet}
    *
-   * VERY IMPORTANT :the status watcher has tobe instantiated ONLY WHEN all pipelines havebeen triggered (to operate on a completed <code>progressMatrix</code>)
    **/
   constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, notifier: rxjs.Subject<number>) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
@@ -46,7 +45,6 @@ export class ReactiveParallelExecutionSet {
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
     this.notifier = notifier;
-    this.pipeExecStatusWatcher = null;
   }
   /**
    *
@@ -76,7 +74,10 @@ export class ReactiveParallelExecutionSet {
          console.log(`[ --- progress Matrix Observer: NEXT  `);
          console.log(`[ --- All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
-         this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this, this.circleci_client);
+         const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this, this.circleci_client);
+         /// let statusWatcherSubscription = pipeExecStatusWatcher.letReactiveExecSetSubscribe();
+
+         /// will bereplaced by this.notifyExecCompleted()
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
          this.notifier.next(this.parallelExecutionSetIndex);
@@ -98,6 +99,16 @@ export class ReactiveParallelExecutionSet {
      }
    })
    return toReturn;
+  }
+  /**
+   * Notifies that all pipelines in this ReactiveParallelExecutionSet have reached a final execution state
+   **/
+  public notifyExecCompleted() {
+    console.log("[-----------------------------------------------]");
+    console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
+    this.notifier.next(this.parallelExecutionSetIndex);
+    console.log("[-----------------------------------------------]");
+    console.log("[-----------------------------------------------]");
   }
   triggerPipelines(): void {
 
