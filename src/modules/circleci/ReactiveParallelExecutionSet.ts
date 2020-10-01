@@ -1,6 +1,8 @@
 import * as rxjs from 'rxjs';
-import { CircleCIClient } from '../../modules/circleci/CircleCIClient'
-import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
+import { CircleCIClient } from '../../modules/circleci/CircleCIClient';
+import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets';
+import { PipelineExecSetStatusWatcher } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
+
 
 export class ReactiveParallelExecutionSet {
 
@@ -12,7 +14,7 @@ export class ReactiveParallelExecutionSet {
    * Will be filled with JSON responses of Circle CI API calls to trigger pipelines.
    **/
   private progressMatrix: any[]; //
-
+  private pipeExecStatusWatcher: PipelineExecSetStatusWatcher;
   /**
    * This RX JS Subject is used to inspect <code>this.progressMatrix</code> everytime a
    * JSON Response is received fromthe Circle CI API :
@@ -32,6 +34,11 @@ export class ReactiveParallelExecutionSet {
   private circleci_client: CircleCIClient;
   private pipelines_nb: number;
 
+  /**
+   * Instantiate a new {@link ReactiveParallelExecutionSet}
+   *
+   * VERY IMPORTANT :the status watcher has tobe instantiated ONLY WHEN all pipelines havebeen triggered (to operate on a completed <code>progressMatrix</code>)
+   **/
   constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, notifier: rxjs.Subject<number>) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
     this.parallelExecutionSet = parallelExecutionSet;
@@ -39,6 +46,7 @@ export class ReactiveParallelExecutionSet {
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
     this.notifier = notifier;
+    this.pipeExecStatusWatcher = null;
   }
   /**
    *
@@ -67,7 +75,10 @@ export class ReactiveParallelExecutionSet {
          console.log("[-----------------------------------------------]");
          console.log(`[ --- progress Matrix Observer: NEXT  `);
          console.log(`[ --- All Pipelines have been triggered !   `);
-         console.log(`[ --- notifier call :  `);
+         console.log("[-----------------------------------------------]");
+         this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this, this.circleci_client);
+         console.log("[-----------------------------------------------]");
+         console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
          this.notifier.next(this.parallelExecutionSetIndex);
          console.log("[-----------------------------------------------]");
          console.log("[-----------------------------------------------]");
@@ -185,4 +196,12 @@ export class ReactiveParallelExecutionSet {
     throw new Error('[{ReactiveParallelExecutionSet}] - [errorHandlerTriggerCCIPipeline] CICD PROCESS INTERRUPTED BECAUSE TRIGGERING PIPELINE FAILED with error : [' + error + '] '+ ' and, when failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
 
+  /**
+   *
+   * Returns the <code>progressMatrix</code> of this {@link ParallelExecutionSet}
+   *
+   **/
+  public getProgressMatrix(): any[] {
+    return this.progressMatrix;
+  }
 }
