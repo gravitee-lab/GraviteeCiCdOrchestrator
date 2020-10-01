@@ -1,7 +1,7 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
 import * as reporting from '../../../modules/circleci/status/PipelineExecSetReport';
-
+import * as shelljs from 'shelljs';
 
 export interface PipeExecSetStatusNotification {
   is_errored: boolean,
@@ -59,13 +59,18 @@ export class PipelineExecSetStatusWatcher {
   private progressMatrix: any[];
   private circleci_client: CircleCIClient;
   private startDate: Date;
-  /// the timeout in seconds
-  public readonly timeout: number;
+  /// the date when watcher will timeout
+  private timeoutDate: Date;
   /**
    * The watch interval in seconds :
    * this {@link PipelineExecSetStatusWatcher} will update progressMatrix every <code>this.watch_interval</code> seconds
    **/
   public readonly watch_interval: number;
+
+  /**
+   * Will be updated for every {progressMatrix} entries, until allmatch <code>this.watch_round</code>
+   **/
+  private watch_round: number;
   /**
    * The maximum number of workflows allowedforany Pipeline execution
    * If that number is exceeded by any Circle Pipeline execution, then the
@@ -77,8 +82,12 @@ export class PipelineExecSetStatusWatcher {
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
     this.startDate = null;
-    this.timeout = parseInt(process.env.PIPELINE_COMPLETE_TIMEOUT);
+    this.timeoutDate = null;
     this.watch_interval = 7; // watcher will update progressMatrix every 7 seconds
+    this.watch_round = 1; // initializing watch index for first round
+    for (let y: number; y < this.progressMatrix.length; y++) {
+      this.progressMatrix[y].watch_round = 0;
+    }
     this.max_nb_of_wflows = parseInt(process.env.MAX_NB_OF_WFLOWS_PER_PIPELINE);
   }
 
@@ -135,11 +144,58 @@ export class PipelineExecSetStatusWatcher {
   public start () {
     if (this.startDate === null) {
       this.startDate = new Date();
+      this.timeoutDate = new Date(this.startDate.getTime() + (1000 * parseInt(process.env.PIPELINE_COMPLETE_TIMEOUT)));
     } else {
       console.log("No, someVar is not null");
     }
+
+    this.launchExecStatusInspectionRound();
   }
 
+
+  private launchExecStatusInspectionRound (): void {
+    /// First increment watch_round, to start next round
+    this.watch_round++;
+    // then sending all HTTP Request to Circle CI and update progressMatrix entries
+    this.updateProgressMatrixWorkflowsExecStatus();
+    /// Then looping until all entries in progressMatrix have incremented their [watch_round]
+    let loopCondition: boolean = true; /// will remain true until all entries in [progressMatrix] have incremented their [watch_round]
+    while (loopCondition) {
+      // checking if all [progressMatrix] entries have a watch_round which
+      // equals the current watch_round : if so, then [loopCondition] becomes
+      /// false, and we know all progressMatrix entries have been updated by
+      /// the [updateProgressMatrixWorkflowsExecStatus()] method
+      ///
+
+      for (let k = 0; k < this.progressMatrix.length; k++) {
+        loopCondition =  loopCondition && (this.progressMatrix[k].watch_round != this.watch_round);
+      }
+      shelljs.exec(`sleep ${this.watch_interval}s`); // just to wait [this.watch_interval] seconds
+    }
+    /// Now we know all [progressMatrix] entries have been updated by
+    /// the [updateProgressMatrixWorkflowsExecStatus()] method, so we can check if
+    /// all workflows_exec_state in [progressMatrix] display an execution state equal to 'success'
+    let totalSuccess: boolean = this.haveAllPipelinesSuccessfullyCompleted();
+    if (totalSuccess) {
+      // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
+    } else { // if not totalSuccess Yet, then
+      // Checking if we reached timeout, before starting a new watch round
+      let currentDatetime = new Date();
+      // best to use .getTime() to compare dates
+      if(currentDatetime < this.timeoutDate){
+        // then timeout has not happened, so we can launch a first execution status inspection round
+        this.launchExecStatusInspectionRound()
+      } else {
+        // currentDatetime is newer than timeout, so watch stops
+        return;
+      }
+    }
+
+
+  }
+  private haveAllPipelinesSuccessfullyCompleted(): boolean {
+    throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
+  }
   /**
    *
    * Note that the HTTP JSON Response will be ofthe following form :
@@ -206,6 +262,9 @@ export class PipelineExecSetStatusWatcher {
     let next_page_token = circleCiJsonResponse.next_page_token;
     let pipelineIndexInProgressMatrix= this.getIndexInProgressMatrixOfPipeline(pipeline_guid);
     this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state = circleCiJsonResponse;
+    console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
+    this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
+    console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] after incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
   }
 
   /**
