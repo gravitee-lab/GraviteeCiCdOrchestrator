@@ -61,10 +61,11 @@ setupCircleCIConfig () {
     # then the git clone succeeded (the git repo does exists)
     cd ${WSPACE}/gitops/${THIS_REPO_NAME}
     git branch -a | grep -E '*.*.x$' | awk -F '/' '{print $NF}' > ${WSPACE}/gitops/${THIS_REPO_NAME}.branches.list
+    echo "master" >> ${WSPACE}/gitops/${THIS_REPO_NAME}.branches.list
     while read THIS_GIT_BRANCH; do
       git checkout ${THIS_GIT_BRANCH}
       mkdir ${WSPACE}/gitops/${THIS_REPO_NAME}/.circleci/
-      cp ${WSPACE}/.circleci/config.yml ${WSPACE}/gitops/${THIS_REPO_NAME}/.circleci/
+      cp -f ${WSPACE}/.circleci/config.yml ${WSPACE}/gitops/${THIS_REPO_NAME}/.circleci/
       export THIS_COMMIT_MESSAGE="[$0] automatic CICD test setup : adding circleci git config"
       git add --all && git commit -m "${THIS_COMMIT_MESSAGE}" && git push -u origin HEAD
     done <${WSPACE}/gitops/${THIS_REPO_NAME}.branches.list

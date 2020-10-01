@@ -23,7 +23,7 @@ What better way to run a distributed application, than git ?
 
 
 ```bash
-~$ npm start ---help
+~$ npm start --help
 
 +x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
 I am the Gravitee CI CD Orchestrator !
