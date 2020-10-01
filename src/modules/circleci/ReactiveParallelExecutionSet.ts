@@ -46,14 +46,12 @@ export class ReactiveParallelExecutionSet {
     this.progressMatrix = [];
     this.notifier = notifier;
   }
+  
   /**
    *
    **/
-  public getRxSubject(): rxjs.Subject<any[]> {
-    return this.progressMatrixSubject;
-  }
   public doSubscribe() : rxjs.Subscription {
-    let toReturn : rxjs.Subscription = this.getRxSubject().subscribe({
+    let toReturn : rxjs.Subscription = this.progressMatrixSubject.subscribe({
      next: ((triggerProgress) => {
        console.log("[-----------------------------------------------]");
        console.log("[-----------------------------------------------]");
