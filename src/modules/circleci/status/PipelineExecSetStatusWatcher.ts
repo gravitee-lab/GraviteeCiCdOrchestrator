@@ -101,7 +101,7 @@ export class PipelineExecSetStatusWatcher {
       }
 
 
-      let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(process.env.GH_ORG, `${pipeline_guid}`).subscribe({
+      let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${pipeline_guid}`).subscribe({
         next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
         complete: data => {
            console.log( '[{[PipelineExecSetStatusWatcher]} - triggering Circle CI Build completed! :)]')

@@ -157,92 +157,75 @@ export class CircleCIClient {
 
       return response$;*/
     }
-
-    getLatestGhBuilds(username: string, org_name: string, repo_name: string, branch: string, pipelineParameters: any): any {
-      throw new Error("Not impemented yet");
-      /// return observableRequest;
-    }
     /**
-     * Retrieves the Github Repo URI from the PipelineID
-     **/
-    getPipelineGhRepo(circleCiPipelineID: string): any {
-      let observableRequest = rxjs.Observable.create( ( observer ) => {
-          let config = {
-            headers: {
-              "Circle-Token": this.secrets.circleci.auth.token,
-              "Accept": "application/json"
-            }
-          };
-          axios.get( 'https://circleci.com/api/v2/pipeline/' + `${circleCiPipelineID}`, config )
-          .then( ( response ) => {
-              observer.next( response.data );
-              observer.complete();
-          } )
-          .catch( ( error ) => {
-              observer.error( error );
-          } );
-      } );
-
-      return observableRequest;
-      // throw new Error("Not impemented yet");
-      /// return observableRequest;
-    }
-
-    /**
-     * Retrieves the pipeline Execution Infos based on the Circle CI API v2 <strong>pipeline id<strong> (Which actually is a Pipeline Execution ID, not a Pipeline ID),  using the <pre>[GET /api/v2/pipeline/${circleci_pipeline_id}]</pre> Endpoint
+     * This method inspects the execution status of a pipeline, by inspecting its workflows' status
      *
+     * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      *
-     * ---
-     * <strong>Circle CI API v2<strong> JSON Response will be of the form :
-     * ---
+     * Note that the HTTP JSON Response willbe ofthe following form :
+     *
      *      {
-     *        "id": "f71bb92d-534f-485d-9dae-af32df1b340d",
-     *        "errors": [],
-     *        "project_slug": "gh/gravitee-lab/testrepo1",
-     *        "updated_at": "2020-08-16T21:33:43.830Z",
-     *        "number": 14,
-     *        "state": "created",
-     *        "created_at": "2020-08-16T21:33:43.830Z",
-     *        "trigger": {
-     *          "received_at": "2020-08-16T21:33:43.799Z",
-     *          "type": "api",
-     *          "actor": {
-     *            "login": "Jean-Baptiste-Lasselle",
-     *            "avatar_url": "https://avatars2.githubusercontent.com/u/35227860?v=4"
+     *        "next_page_token": null,
+     *        "items": [
+     *          {
+     *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+     *            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+     *            "name": "docker_build_and_push",
+     *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+     *            "status": "failed",
+     *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+     *            "pipeline_number": 126,
+     *            "created_at": "2020-09-12T17:47:21Z",
+     *            "stopped_at": "2020-09-12T17:48:26Z"
+     *          },
+     *          {
+     *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+     *            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
+     *            "name": "yet_another_test_workflow",
+     *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+     *            "status": "success",
+     *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+     *            "pipeline_number": 126,
+     *            "created_at": "2020-09-12T17:47:21Z",
+     *            "stopped_at": "2020-09-12T17:48:11Z"
      *          }
-     *        },
-     *        "vcs": {
-     *          "origin_repository_url": "https://github.com/gravitee-lab/testrepo1",
-     *          "target_repository_url": "https://github.com/gravitee-lab/testrepo1",
-     *          "revision": "b9940405385ab81ad7bb44880ed71f0c23e55c17",
-     *          "provider_name": "GitHub",
-     *          "branch": "dependabot/npm_and_yarn/handlebars-4.5.3"
-     *        }
+     *        ]
      *      }
      *
+     *
      **/
-    getPipelineInfo(circleCiPipelineID: string): any {
-      let observableRequest = rxjs.Observable.create( ( observer ) => {
-          let config = {
-            headers: {
-              "Circle-Token": this.secrets.circleci.auth.token,
-              "Accept": "application/json"
-            }
-          };
-          axios.get( 'https://circleci.com/api/v2/pipeline/' + `${circleCiPipelineID}`, config )
-          .then( ( response ) => {
-              observer.next( response.data );
-              observer.complete();
-          } )
-          .catch( ( error ) => {
-              observer.error( error );
-          } );
-      } );
+   inspectPipelineExecState(pipeline_guid): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
 
-      return observableRequest;
-      // throw new Error("Not impemented yet");
-      /// return observableRequest;
-    }
+     let observableRequest: any = rxjs.Observable.create( ( observer ) => {
+         let config = {
+           headers: {
+             "Circle-Token": this.secrets.circleci.auth.token,
+             "Accept": "application/json",
+             "Content-Type": "application/json"
+           }
+         };
+         // curl -X GET https://circleci.com/api/v2/pipeline/${PIPELINE_ID}/workflow -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
+
+
+         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow");
+
+         /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
+         axios.get("https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow", config )
+         .then( ( response ) => {
+             observer.next( response.data );
+             observer.complete();
+         } )
+         .catch( ( error ) => {
+             console.log("[CircleCIClient] - {inspectPipelineExecState(pipeline_guid: string)} - Circle CI HTTP Error JSON Response is : ");
+             /// console.log(JSON.stringify(error.response));
+             console.log(error.response);
+             observer.error(error );
+         } );
+
+     } );
+     return observableRequest;
+
+   }
     /**
      * Hits the Circle CI API and return an {@see ObservableStream<any>} emitting the Circle CI JSON answer for the https://circleci.com/api/v2/me Endpoint
      **/
