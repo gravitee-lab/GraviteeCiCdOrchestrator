@@ -46,7 +46,7 @@ export class ReactiveParallelExecutionSet {
     this.progressMatrix = [];
     this.notifier = notifier;
   }
-  
+
   /**
    *
    **/
@@ -72,10 +72,10 @@ export class ReactiveParallelExecutionSet {
          console.log(`[ --- progress Matrix Observer: NEXT  `);
          console.log(`[ --- All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
-         const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this, this.circleci_client);
+         const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
          /// let statusWatcherSubscription = pipeExecStatusWatcher.letReactiveExecSetSubscribe();
 
-         /// will bereplaced by this.notifyExecCompleted()
+         /// will be replaced by this.notifyExecCompleted()
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
          this.notifier.next(this.parallelExecutionSetIndex);
