@@ -89,12 +89,26 @@ export class PipelineExecSetReportBuilder {
     }
   }
 
+  /**
+   *
+   * We inspect Workflows state, then, with [pipeline_number], Pipelines state, and finally Jobs state
+   *
+   **/
   public build(): PipelineExecSetReport {
 
     return this.report;
   }
 
-  private
+
+  private wageWorkflowInspection():void {
+
+  }
+  private wagePipelineInspection():void {
+
+  }
+  private wageJobsInspection():void {
+
+  }
 
   ///
 
