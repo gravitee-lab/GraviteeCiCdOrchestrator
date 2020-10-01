@@ -1,6 +1,5 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
-import { PipelineExecSetStatusWatcher } from '../../../modules/circleci/PipelineExecSetStatusWatcher'
 import * as reporting from '../../../modules/circleci/status/PipelineExecSetReport';
 
 
@@ -10,9 +9,14 @@ export interface PipeExecSetStatusNotification {
 }
 
 /**
- * Keeps fetching the Circle CI API, to determine when :
+ * ---
+ * Keeps fetching the Circle CI API, to determine when either :
+ * => all Pipelines referenced in <code>this.progressMatrix</code>
+ * have successfully completed their execution,
+ * => or one Pipeline has reached a final execution state, but did not successfully completed
+ * => or timeout has been reached
+ * ---
  *
- * has a timeout
  **/
 export class PipelineExecSetStatusWatcher {
 
@@ -103,7 +107,7 @@ export class PipelineExecSetStatusWatcher {
       let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${pipeline_guid}`).subscribe({
         next: this.handleInspectPipelineExecStateResponseData.bind(this),
         complete: data => {
-           console.log( '[{[PipelineExecSetStatusWatcher]} - triggering Circle CI Build completed! :)]')
+           console.log( '[{[PipelineExecSetStatusWatcher]} - inspecting ccc Circle CI Build completed! :)]')
         },
         error: this.errorHandlerInspectPipelineExecState.bind(this)
       });
@@ -112,9 +116,47 @@ export class PipelineExecSetStatusWatcher {
 
   /**
    *
+   * Note that the HTTP JSON Response will be ofthe following form :
+   *
+   *      {
+   *        "next_page_token": null,
+   *        "items": [
+   *          {
+   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+   *            "name": "docker_build_and_push",
+   *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+   *            "status": "failed",
+   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *            "pipeline_number": 126,
+   *            "created_at": "2020-09-12T17:47:21Z",
+   *            "stopped_at": "2020-09-12T17:48:26Z"
+   *          },
+   *          {
+   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
+   *            "name": "yet_another_test_workflow",
+   *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+   *            "status": "success",
+   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *            "pipeline_number": 126,
+   *            "created_at": "2020-09-12T17:47:21Z",
+   *            "stopped_at": "2020-09-12T17:48:11Z"
+   *          }
+   *        ]
+   *      }
+   *
+   *
    **/
   private handleInspectPipelineExecStateResponseData (circleCiJsonResponse: any) : void {
-    console.info( '[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] => ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+    console.info( '[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+    /// if the pipeline has zeroworkflows,then wehave a problem here : so we stop all operations
+    if (circleCiJsonResponse.items.length == 0) {
+      throw new Error("The last processed Pipeline has no workflows, which is an anomaly, so stopping all operations.")
+    }
+    let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
+    let next_page_token = circleCiJsonResponse.next_page_token;
+
     let entry: any = {};
     entry.pipeline = {
       /*
@@ -129,15 +171,10 @@ export class PipelineExecSetStatusWatcher {
       created_at: `${circleCiJsonResponse.created_at}`,
       exec_state: `${circleCiJsonResponse.state}`
     }
-    this.progressMatrix.push(entry.pipeline);
-    /// this.progressMatrixSubject.next(entry.pipeline);
-    this.progressMatrixSubject.next(this.progressMatrix);
 
-    /// console.info('')
-    /// console.info( '[{PipelineExecSetStatusWatcher}] - [handleTriggerPipelineCircleCIResponseData] [this.progressMatrix] is now :  ');
-    // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
-    /// console.info({progressMatrix: this.progressMatrix});
-    /// console.info('')
+    this.progressMatrix.push(entry.pipeline);
+    /// this.progressMatrixSubject.next(this.progressMatrix);
+
   }
 
   /**
@@ -156,7 +193,7 @@ export class PipelineExecSetStatusWatcher {
 
     this.progressMatrix.push(entry);
 
-    console.info('')
+    console.info('');
     console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerTriggerCCIPipeline] [this.progressMatrix] is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info({progressMatrix: this.progressMatrix});

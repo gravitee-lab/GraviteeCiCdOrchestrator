@@ -162,35 +162,6 @@ export class ReactiveParallelExecutionSet {
   /**
    *
    *
-   * Note that the HTTP JSON Response will be ofthe following form :
-   *
-   *      {
-   *        "next_page_token": null,
-   *        "items": [
-   *          {
-   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
-   *            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
-   *            "name": "docker_build_and_push",
-   *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
-   *            "status": "failed",
-   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
-   *            "pipeline_number": 126,
-   *            "created_at": "2020-09-12T17:47:21Z",
-   *            "stopped_at": "2020-09-12T17:48:26Z"
-   *          },
-   *          {
-   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
-   *            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
-   *            "name": "yet_another_test_workflow",
-   *            "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
-   *            "status": "success",
-   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
-   *            "pipeline_number": 126,
-   *            "created_at": "2020-09-12T17:47:21Z",
-   *            "stopped_at": "2020-09-12T17:48:11Z"
-   *          }
-   *        ]
-   *      }
    *
    *
    **/

@@ -22,6 +22,9 @@ console.log('I am the Gravitee CI CD Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
+
+throw new Error("DEBUG STOP POINT")
+
 export const cli : Cli = new Cli();
 
 console.log(`{[ index.ts ]} --- valeur yargs de l'option YARGS 'dry-run' : ${cli.gnuOptions.argv["dry-run"]}`);
