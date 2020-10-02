@@ -131,7 +131,7 @@ export class PipelineExecSetStatusWatcher {
          console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is false');
         }
 
-        let inspectPipelineExecStateSubscription = this.circleci_client.inspectPipelineExecState(`${this.progressMatrix[k].id}`).subscribe({
+        let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${this.progressMatrix[k].id}`).subscribe({
           next: this.handleInspectPipelineExecStateResponseData.bind(this),
           complete: data => {
              console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${this.progressMatrix[k].id}] Execution state completed! :) ]`)
@@ -180,7 +180,7 @@ export class PipelineExecSetStatusWatcher {
 
     if (totalSuccess) {
       // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
-        new reporting.PipelineExecSetReportBuilder(this.progressMatrix);
+        new reporting.PipelineExecSetReportBuilder(this.progressMatrix, this.circleci_client);
     } else { // if not totalSuccess Yet, then
       // Checking if we reached timeout, before starting a new watch round
       let currentDatetime = new Date();
@@ -327,14 +327,14 @@ export class PipelineExecSetStatusWatcher {
    *
    **/
   private errorHandlerInspectPipelineExecState (error: any) : void {
-    console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] - Triggering Circle CI pipeline failed Circle CI API Response [data] => ', error )
+    console.info( '[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] - Inspecting Circle CI pipeline failed Circle CI API Response [data] => ', error )
     let entry: any = {};
     entry.pipeline = {
       execution_index: null,
       id : null,
       created_at: null,
       exec_state: null,
-      error : {message: "[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] - Triggering Circle CI pipeline failed ", cause: error}
+      error : {message: "[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] - Inspecting Circle CI pipeline failed ", cause: error}
     }
 
     console.info('');

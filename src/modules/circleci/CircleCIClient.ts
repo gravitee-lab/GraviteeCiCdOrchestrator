@@ -194,7 +194,7 @@ export class CircleCIClient {
      *
      *
      **/
-   inspectPipelineExecState(pipeline_guid): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+   inspectPipelineWorkflowsExecState(pipeline_guid): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
 
      let observableRequest: any = rxjs.Observable.create( ( observer ) => {
          let config = {
@@ -216,7 +216,7 @@ export class CircleCIClient {
              observer.complete();
          } )
          .catch( ( error ) => {
-             console.log("[CircleCIClient] - {inspectPipelineExecState(pipeline_guid: string)} - Circle CI HTTP Error JSON Response is : ");
+             console.log("[CircleCIClient] - {inspectPipelineWorkflowsExecState(pipeline_guid: string)} - Circle CI HTTP Error JSON Response is : ");
              /// console.log(JSON.stringify(error.response));
              console.log(error.response);
              observer.error(error );
