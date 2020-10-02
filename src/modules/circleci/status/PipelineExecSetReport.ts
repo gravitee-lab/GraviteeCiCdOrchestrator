@@ -1,6 +1,6 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
-import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
+/// import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../../modules/circleci/status/PipelineExecSetStatusWatcher';
 
 export enum VCS_TYPE {
   GITHUB,
@@ -107,7 +107,9 @@ export class PipelineExecSetReportLogger {
    *  have been reported (So then the report is ready to be logged )
    *
    **/
-  jobsReportingNotifier: rxjs.Subject<PipelineExecSetReport>;
+   /// jobsReportingNotifier: rxjs.Subject<PipelineExecSetReport>;
+   reportingCompletionNotifier: rxjs.Subject<PipelineExecSetReport>;
+
 
   /**
    * This RxJS is used to paginate the Circle CI API v2 for Workflows
@@ -122,6 +124,7 @@ export class PipelineExecSetReportLogger {
     this.progressMatrix = progressMatrix;
     this.initReport();
     this.initNotifersSubscriptions();
+    this.buildReport();
   }
   private initReport(): void {
     this.report = {
@@ -155,7 +158,7 @@ export class PipelineExecSetReportLogger {
         // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
       }*/
     })
-    let jobReportingNotifierSubsciption = this.jobsReportingNotifier.subscribe({
+    let jobReportingNotifierSubsciption = this.reportingCompletionNotifier.subscribe({
       next: (report) => {
         throw new Error('Implementation Not finished : will log the report if and only if All Pipeline, Workflows, and Jobs execution states have been added to the report. If not,thjen will emit the GUID of the next pipeline')
         console.log(report)
@@ -168,7 +171,7 @@ export class PipelineExecSetReportLogger {
     this.rxSubscriptions.push(pipelineReportingNotifierSubsciption);
     this.rxSubscriptions.push(wfReportingNotifierSubsciption);
     this.rxSubscriptions.push(jobReportingNotifierSubsciption);
-    this.rxSubscriptions.push(ccc);
+    this.rxSubscriptions.push(wfPaginationSubscription);
 
 
   }
@@ -180,6 +183,7 @@ export class PipelineExecSetReportLogger {
   private buildReport(): void {
     /// reporting a workflow state triggers reporting the pipeline state
     /// reporting a pipeline state triggers reporting the pipeline jobs state
+    /// reporting a pipeline job state trigger checking for report completion ( using RxJS Subject)
     for (let k = 0; k < this.report.pipelines_states.length; k++) {
       this.reportWorkflowsState(this.report.pipelines_states[k].pipeline_guid, null)
     }
