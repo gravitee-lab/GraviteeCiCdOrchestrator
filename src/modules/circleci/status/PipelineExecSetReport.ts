@@ -290,15 +290,15 @@ export class PipelineExecSetReportLogger {
   }
 
   private reportWorflowStateCCIErrorHandler(error: any) : void {
-    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
-
+    console.info('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
     console.info('');
-    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] Report is now :  ');
+    console.info('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] Report is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info(this.report);
     console.info('')
     throw new Error('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
+  
   private getIndexOfPipelineStateInReport(ofGuid: string): number {
     let indexToReturn: number = -1;
      for (let k = 0; k < this.report.pipelines_states.length; k++) {
