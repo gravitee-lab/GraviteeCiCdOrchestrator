@@ -151,7 +151,9 @@ export class PipelineExecSetReportLogger {
    * We inspect Workflows state, then, with [pipeline_number], Pipelines state, and finally Jobs state
    *
    **/
-  private logReport(): void {
+  private buildReport(): void {
+    /// reporting a workflow state triggers reporting the pipeline state
+    /// reporting a pipeline state triggers reporting the pipeline jobs state
     for (let k = 0; k < this.report.pipelines_states.length; k++) {
       this.reportWorkflowsState(this.report.pipelines_states[k].pipeline_guid)
     }
