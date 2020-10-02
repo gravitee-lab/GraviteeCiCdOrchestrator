@@ -263,6 +263,8 @@ export class PipelineExecSetReportLogger {
     console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
 
     if (circleCiJsonResponse.items.length == 0) {
+      // if response does not include any workkflow, we have a problem in the pipeline.
+      // Should not ever happen, because Circle CI guarantees there always is at least one Workflow, the default one, but just in case...
       throw new Error(`[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] the Circle Ci API response does not mentionany workflow. Circie cle Response is [${circleCiJsonResponse}]`)
     }
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
