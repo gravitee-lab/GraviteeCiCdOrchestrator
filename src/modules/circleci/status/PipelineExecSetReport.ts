@@ -20,7 +20,10 @@ export interface CciPipelineState {
   *
   **/
  cci_api_infos: any
- workflows_states: CciWorkflowState[];
+ workflows_states: {
+   completed: boolean
+   states:CciWorkflowState[]
+ };
 }
 
 export interface CciWorkflowState {
@@ -134,7 +137,10 @@ export class PipelineExecSetReportLogger {
       this.report.pipelines_states.push({
         pipeline_guid: this.progressMatrix[k].id,
         cci_api_infos: {},
-        workflows_states: []
+        workflows_states: {
+          completed:false,
+          states: []
+        }
       })
     }
   }
@@ -262,11 +268,12 @@ export class PipelineExecSetReportLogger {
     let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(pipeline_guid);
     /// we push each entires,to be able topaginate when necessary because [next_page_token] is null
     circleCiJsonResponse.items.forEach((wflowstate) => {
-      this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.push(wflowstate);
+      this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.states.push(wflowstate);
     });
 
     /// let next_page_token = circleCiJsonResponse.next_page_token;
     if (circleCiJsonResponse.next_page_token === null) {
+      this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.completed = true;
       this.workflowReportingNotifier.next({
         cci_project_slug: `${circleCiJsonResponse.items[0].project_slug}`,
         pipeline_number: parseInt(`${circleCiJsonResponse.items[0].pipeline_number}`)
