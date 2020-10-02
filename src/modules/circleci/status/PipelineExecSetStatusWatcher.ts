@@ -131,7 +131,7 @@ export class PipelineExecSetStatusWatcher {
          console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is false');
         }
 
-        let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${this.progressMatrix[k].id}`).subscribe({
+        let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${this.progressMatrix[k].id}`, null).subscribe({
           next: this.handleInspectPipelineExecStateResponseData.bind(this),
           complete: data => {
              console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${this.progressMatrix[k].id}] Execution state completed! :) ]`)

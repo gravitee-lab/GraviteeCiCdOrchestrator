@@ -69,6 +69,11 @@ export interface CciPipelineRef {
   pipeline_number: number
 }
 
+export interface wfPaginationRef {
+  next_page_token: string,
+  pipeline_guid: string
+}
+
 export class PipelineExecSetReportLogger {
   private circleci_client: CircleCIClient;
   private report: PipelineExecSetReport;
@@ -104,6 +109,14 @@ export class PipelineExecSetReportLogger {
    **/
   jobsReportingNotifier: rxjs.Subject<PipelineExecSetReport>;
 
+  /**
+   * This RxJS is used to paginate the Circle CI API v2 for Workflows
+   *
+   **/
+  private workflowPaginationNotifier: rxjs.Subject<wfPaginationRef>;
+
+  private rxSubscriptions: rxjs.Subscription[];
+
   constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
     this.circleci_client = circleci_client;
     this.progressMatrix = progressMatrix;
@@ -123,6 +136,13 @@ export class PipelineExecSetReportLogger {
     }
   }
   private initNotifersSubscriptions () {
+    this.rxSubscriptions = [];
+    let wfPaginationSubscription = this.workflowPaginationNotifier.subscribe({
+        next: (paginator) => {
+          this.reportWorkflowsState(paginator.pipeline_guid, paginator.next_page_token);
+        }
+    });
+
     let pipelineReportingNotifierSubsciption = this.pipelineReportingNotifier.subscribe({
       next: this.reportJobsState/*(report: string) => {
         // So workflows states have been reported for pipeline of GUID [pipeline_guid]
@@ -145,6 +165,12 @@ export class PipelineExecSetReportLogger {
       }*/
     })
 
+    this.rxSubscriptions.push(pipelineReportingNotifierSubsciption);
+    this.rxSubscriptions.push(wfReportingNotifierSubsciption);
+    this.rxSubscriptions.push(jobReportingNotifierSubsciption);
+    this.rxSubscriptions.push(ccc);
+
+
   }
   /**
    *
@@ -155,7 +181,7 @@ export class PipelineExecSetReportLogger {
     /// reporting a workflow state triggers reporting the pipeline state
     /// reporting a pipeline state triggers reporting the pipeline jobs state
     for (let k = 0; k < this.report.pipelines_states.length; k++) {
-      this.reportWorkflowsState(this.report.pipelines_states[k].pipeline_guid)
+      this.reportWorkflowsState(this.report.pipelines_states[k].pipeline_guid, null)
     }
     throw new Error(`Not implemented`);
   }
@@ -164,16 +190,20 @@ export class PipelineExecSetReportLogger {
   /// ---   Circle CI Workflows
   /// ----------------------------------------------------------------------
 
-  private reportWorkflowsState(pipeline_guid: string): void {
+
+  /**
+   *
+   **/
+  private reportWorkflowsState(pipeline_guid: string, next_page_token: string): void {
     console.log( `[{PipelineExecSetReportLogger}] - [reportWorkflowsState()] - value of Pipeline GUID : [${pipeline_guid}]`);
-    /// if (process.argv["dry-run"] === 'true') {
+    /*
     if (process.argv["dry-run"]) {
      console.log( '[{PipelineExecSetReportLogger}] - [reportWorkflowsState()] (process.argv["dry-run"] === \'true\') condition is true');
     } else {
      console.log( '[{PipelineExecSetReportLogger}] - [reportWorkflowsState()] (process.argv["dry-run"] === \'true\') condition is false');
-    }
+   }*/
 
-    let reportWorklowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${pipeline_guid}`).subscribe({
+    let reportWorklowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(pipeline_guid, next_page_token).subscribe({
       next: this.reportWorflowStateResponseDataHandler.bind(this),
       complete: data => {
          console.log( `[{PipelineExecSetReportLogger}] - Inspecting Pipeline of GUID [${pipeline_guid}] Execution state completed! :) ]`)
@@ -222,13 +252,23 @@ export class PipelineExecSetReportLogger {
 
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
 
-    /// let next_page_token = circleCiJsonResponse.next_page_token;
+
     let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(pipeline_guid);
-    this.report.pipelines_states[pipelineStateIndexInReport].workflows_states = circleCiJsonResponse.items;
-    this.workflowReportingNotifier.next({
-      cci_project_slug: `${circleCiJsonResponse.items[0].project_slug}`,
-      pipeline_number: parseInt(`${circleCiJsonResponse.items[0].pipeline_number}`)
+    /// we push each entires,to be able topaginate when necessary because [next_page_token] is null
+    circleCiJsonResponse.items.forEach((wflowstate) => {
+      this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.push(wflowstate);
     });
+
+    /// let next_page_token = circleCiJsonResponse.next_page_token;
+    if (circleCiJsonResponse.next_page_token === null) {
+      this.workflowReportingNotifier.next({
+        cci_project_slug: `${circleCiJsonResponse.items[0].project_slug}`,
+        pipeline_number: parseInt(`${circleCiJsonResponse.items[0].pipeline_number}`)
+      });
+    } else {
+      this.workflowPaginationNotifier.next(circleCiJsonResponse.next_page_token)
+    }
+
   }
 
   private reportWorflowStateErrorHandler(error: any) : void {

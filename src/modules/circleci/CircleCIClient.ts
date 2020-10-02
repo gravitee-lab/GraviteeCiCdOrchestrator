@@ -159,7 +159,8 @@ export class CircleCIClient {
     }
     /**
      * This method inspects the execution status of a pipeline, by inspecting its workflows' status
-     *
+     * @parameters pipeline_guid The GUID of the Circle CI pipeline execution
+     * @parameters next_page_token set <code>next_page_token</code> to null if no pagination desired
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
      *
      * Note that the HTTP JSON Response will be of the following form :
@@ -194,7 +195,7 @@ export class CircleCIClient {
      *
      *
      **/
-   inspectPipelineWorkflowsExecState(pipeline_guid): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+   inspectPipelineWorkflowsExecState(pipeline_guid: string, next_page_token: string): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
 
      let observableRequest: any = rxjs.Observable.create( ( observer ) => {
          let config = {
@@ -210,7 +211,14 @@ export class CircleCIClient {
          console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow");
 
          /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
-         axios.get("https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow", config )
+         let httpRequest = null;
+         if (next_page_token === null) {
+           httpRequest = "https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow";
+         } else {
+           httpRequest = "https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + `/workflow?next_page_token=${next_page_token}`;
+         }
+
+         axios.get(httpRequest, config )
          .then( ( response ) => {
              observer.next( response.data );
              observer.complete();
