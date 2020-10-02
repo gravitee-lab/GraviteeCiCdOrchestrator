@@ -1,5 +1,6 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../../modules/circleci/CircleCIClient';
+import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
 
 export enum VCS_TYPE {
   GITHUB,
@@ -59,7 +60,16 @@ export interface PipelineExecSetReport {
   pipelines_states: CciPipelineState[]
 }
 
-export class PipelineExecSetReportBuilder {
+
+/**
+ * A Pipeline reference holding all required informations to fetch the Circle CI API v2 for Pipeline State
+ **/
+export interface CciPipelineRef {
+  cci_project_slug: string,
+  pipeline_number: number
+}
+
+export class PipelineExecSetReportLogger {
   private circleci_client: CircleCIClient;
   private report: PipelineExecSetReport;
   /**
@@ -69,28 +79,36 @@ export class PipelineExecSetReportBuilder {
    *
    **/
   private progressMatrix: any[];
-
   /**
    * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all pipeline executions state
+   *
+   * The emited string is the Circle CI pipeline GUID which will be used to report WorkflowsState of he Circle CI Pipeline
    **/
-  pipelineReportingNotifier: rxjs.Subject<PipelineExecSetReport>;
+  pipelineReportingNotifier: rxjs.Subject<string>;
   /**
    * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all workflows state
    *
-   * The emited string is a Circle CI Pipeline GUID
+   * The emited number is a Circle CI Pipeline Execution number, 'pipeline_number' in CircleCI HTTP JSon Response, and is used to report the pipeline state
    *
    **/
-  workflowReportingNotifier: rxjs.Subject<string>;
+  workflowReportingNotifier: rxjs.Subject<CciPipelineRef>;
   /**
    * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for pipeline jobs state
+   *
+   * The report under construction is emited everytime a Circle CI job execution state is reported, to check if
+   *  all Pipeline Execution states,
+   *  all Workflow States,
+   *  and all Job execution states,
+   *  have been reported (So then the report is ready to be logged )
+   *
    **/
   jobsReportingNotifier: rxjs.Subject<PipelineExecSetReport>;
-
 
   constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
     this.circleci_client = circleci_client;
     this.progressMatrix = progressMatrix;
     this.initReport();
+    this.initNotifersSubscriptions();
   }
   private initReport(): void {
     this.report = {
@@ -105,47 +123,61 @@ export class PipelineExecSetReportBuilder {
     }
   }
   private initNotifersSubscriptions () {
-    let wfNotifierSubsciption = this.workflowReportingNotifier.subscribe({
-      next: this.reportPipelinesState/*(pipeline_guid: string) => {
+    let pipelineReportingNotifierSubsciption = this.pipelineReportingNotifier.subscribe({
+      next: this.reportJobsState/*(report: string) => {
         // So workflows states have been reported for pipeline of GUID [pipeline_guid]
-        // Now we need to both report Pipeline state itself, using the 'pipeline_number'
-        // and Jobs states
+        // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
       }*/
     })
+    let wfReportingNotifierSubsciption = this.workflowReportingNotifier.subscribe({
+      next: this.reportPipelinesState/*(pipeline_guid: string) => {
+        // So workflows states have been reported for pipeline of GUID [pipeline_guid]
+        // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
+      }*/
+    })
+    let jobReportingNotifierSubsciption = this.jobsReportingNotifier.subscribe({
+      next: (report) => {
+        throw new Error('Implementation Not finished : will log the report if and only if All Pipeline, Workflows, and Jobs execution states have been added to the report. If not,thjen will emit the GUID of the next pipeline')
+        console.log(report)
+      }/*(pipeline_guid: string) => {
+        // So workflows states have been reported for pipeline of GUID [pipeline_guid]
+        // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
+      }*/
+    })
+
   }
   /**
    *
    * We inspect Workflows state, then, with [pipeline_number], Pipelines state, and finally Jobs state
    *
    **/
-  public build(): PipelineExecSetReport {
+  private logReport(): void {
+    for (let k = 0; k < this.report.pipelines_states.length; k++) {
+      this.reportWorkflowsState(this.report.pipelines_states[k].pipeline_guid)
+    }
     throw new Error(`Not implemented`);
-    return this.report;
   }
 
   /// ----------------------------------------------------------------------
   /// ---   Circle CI Workflows
   /// ----------------------------------------------------------------------
 
-  private reportWorkflowsState(): void {
-    for (let k = 0; k < this.report.pipelines_states.length; k++) {
-
-        console.log( `[{PipelineExecSetReportBuilder}] - [reportWorkflowsState()] - value of Pipeline GUID : [${this.report.pipelines_states[k].pipeline_guid}]`);
-        /// if (process.argv["dry-run"] === 'true') {
-        if (process.argv["dry-run"]) {
-         console.log( '[{PipelineExecSetReportBuilder}] - [reportWorkflowsState()] (process.argv["dry-run"] === \'true\') condition is true');
-        } else {
-         console.log( '[{PipelineExecSetReportBuilder}] - [reportWorkflowsState()] (process.argv["dry-run"] === \'true\') condition is false');
-        }
-
-        let reportWorklowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${this.report.pipelines_states[k].pipeline_guid}`).subscribe({
-          next: this.reportWorflowStateResponseDataHandler.bind(this),
-          complete: data => {
-             console.log( `[{PipelineExecSetReportBuilder}] - Inspecting Pipeline of GUID [${this.progressMatrix[k].id}] Execution state completed! :) ]`)
-          },
-          error: this.reportWorflowStateErrorHandler.bind(this)
-        });
+  private reportWorkflowsState(pipeline_guid: string): void {
+    console.log( `[{PipelineExecSetReportLogger}] - [reportWorkflowsState()] - value of Pipeline GUID : [${pipeline_guid}]`);
+    /// if (process.argv["dry-run"] === 'true') {
+    if (process.argv["dry-run"]) {
+     console.log( '[{PipelineExecSetReportLogger}] - [reportWorkflowsState()] (process.argv["dry-run"] === \'true\') condition is true');
+    } else {
+     console.log( '[{PipelineExecSetReportLogger}] - [reportWorkflowsState()] (process.argv["dry-run"] === \'true\') condition is false');
     }
+
+    let reportWorklowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${pipeline_guid}`).subscribe({
+      next: this.reportWorflowStateResponseDataHandler.bind(this),
+      complete: data => {
+         console.log( `[{PipelineExecSetReportLogger}] - Inspecting Pipeline of GUID [${pipeline_guid}] Execution state completed! :) ]`)
+      },
+      error: this.reportWorflowStateErrorHandler.bind(this)
+    });
   }
 
   /**
@@ -184,37 +216,40 @@ export class PipelineExecSetReportBuilder {
    *
    **/
   private reportWorflowStateResponseDataHandler (circleCiJsonResponse: any) : void {
-    console.info( '[{PipelineExecSetReportBuilder}] - [reportWorflowStateResponseDataHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateResponseDataHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
 
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
 
     /// let next_page_token = circleCiJsonResponse.next_page_token;
     let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(pipeline_guid);
     this.report.pipelines_states[pipelineStateIndexInReport].workflows_states = circleCiJsonResponse.items;
-    this.workflowReportingNotifier.next(pipeline_guid);
+    this.workflowReportingNotifier.next({
+      cci_project_slug: `${circleCiJsonResponse.items[0].project_slug}`,
+      pipeline_number: parseInt(`${circleCiJsonResponse.items[0].pipeline_number}`)
+    });
   }
 
   private reportWorflowStateErrorHandler(error: any) : void {
-    console.info( '[{PipelineExecSetReportBuilder}] - [reportWorflowStateErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
 
     console.info('');
-    console.info( '[{PipelineExecSetReportBuilder}] - [reportWorflowStateErrorHandler] Report is now :  ');
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateErrorHandler] Report is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info(this.report);
     console.info('')
-    throw new Error('[{PipelineExecSetReportBuilder}] - [reportWorflowStateErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+    throw new Error('[{PipelineExecSetReportLogger}] - [reportWorflowStateErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
   private getIndexOfPipelineStateInReport(ofGuid: string): number {
     let indexToReturn: number = -1;
      for (let k = 0; k < this.report.pipelines_states.length; k++) {
        if (this.report.pipelines_states[k].pipeline_guid === ofGuid) {
-         console.log(`[{PipelineExecSetReportBuilder}] - [getIndexOfPipelineStateInReport] - Pipeline of GUID [${ofGuid}] was found in progressMatrix, its index is : [${k}]`);
+         console.log(`[{PipelineExecSetReportLogger}] - [getIndexOfPipelineStateInReport] - Pipeline of GUID [${ofGuid}] was found in progressMatrix, its index is : [${k}]`);
          indexToReturn = k;
          break;
        }
      }
     if (indexToReturn == -1) {
-      throw new Error(`[{PipelineExecSetReportBuilder}] - [getIndexOfPipelineStateInReport] - Pipeline of GUID [${ofGuid}] was not found in report : [${this.report}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
+      throw new Error(`[{PipelineExecSetReportLogger}] - [getIndexOfPipelineStateInReport] - Pipeline of GUID [${ofGuid}] was not found in report : [${this.report}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
     }
     return indexToReturn;
   }
@@ -223,7 +258,8 @@ export class PipelineExecSetReportBuilder {
   /// ---   Circle CI Pipelines
   /// ----------------------------------------------------------------------
 
-  private reportPipelinesState(ofGuid: string): void {
+  /// [CircleCIClient]:
+  private reportPipelinesState(pipeline_ref: CciPipelineRef): void {
 
   }
 
@@ -231,7 +267,9 @@ export class PipelineExecSetReportBuilder {
   /// ---   Circle CI Jobs
   /// ----------------------------------------------------------------------
 
-  private reportJobsState(): void {
+
+  /// [CircleCIClient]: curl -X GET https://circleci.com/api/v2/workflow/${WF_GUID}/job
+  private reportJobsState(wf_guid: string): void {
 
   }
 

@@ -1,6 +1,5 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient } from '../../modules/circleci/CircleCIClient';
-import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets';
 import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
 
 
@@ -103,7 +102,7 @@ export class ReactiveParallelExecutionSet {
            }
          })
          // pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
-         
+
          /// will be replaced by this.notifyExecCompleted()
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
