@@ -262,6 +262,9 @@ export class PipelineExecSetReportLogger {
   private reportWorflowStateCCIResponseHandler (circleCiJsonResponse: any) : void {
     console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
 
+    if (circleCiJsonResponse.items.length == 0) {
+      throw new Error(`[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] the Circle Ci API response does not mentionany workflow. Circie cle Response is [${circleCiJsonResponse}]`)
+    }
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
 
 
