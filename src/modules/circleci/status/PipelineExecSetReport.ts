@@ -139,7 +139,9 @@ export class PipelineExecSetReportLogger {
     }
   }
   private initNotifersSubscriptions () {
+
     this.rxSubscriptions = [];
+
     let wfPaginationSubscription = this.workflowPaginationNotifier.subscribe({
         next: (paginator) => {
           this.reportWorkflowsState(paginator.pipeline_guid, paginator.next_page_token);
@@ -208,11 +210,11 @@ export class PipelineExecSetReportLogger {
    }*/
 
     let reportWorklowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(pipeline_guid, next_page_token).subscribe({
-      next: this.reportWorflowStateResponseDataHandler.bind(this),
+      next: this.reportWorflowStateCCIResponseHandler.bind(this),
       complete: data => {
          console.log( `[{PipelineExecSetReportLogger}] - Inspecting Pipeline of GUID [${pipeline_guid}] Execution state completed! :) ]`)
       },
-      error: this.reportWorflowStateErrorHandler.bind(this)
+      error: this.reportWorflowStateCCIErrorHandler.bind(this)
     });
   }
 
@@ -251,8 +253,8 @@ export class PipelineExecSetReportLogger {
    * ---
    *
    **/
-  private reportWorflowStateResponseDataHandler (circleCiJsonResponse: any) : void {
-    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateResponseDataHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+  private reportWorflowStateCCIResponseHandler (circleCiJsonResponse: any) : void {
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
 
     let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
 
@@ -275,15 +277,15 @@ export class PipelineExecSetReportLogger {
 
   }
 
-  private reportWorflowStateErrorHandler(error: any) : void {
-    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
+  private reportWorflowStateCCIErrorHandler(error: any) : void {
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
 
     console.info('');
-    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateErrorHandler] Report is now :  ');
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] Report is now :  ');
     // console.info(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.info(this.report);
     console.info('')
-    throw new Error('[{PipelineExecSetReportLogger}] - [reportWorflowStateErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+    throw new Error('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
   private getIndexOfPipelineStateInReport(ofGuid: string): number {
     let indexToReturn: number = -1;
