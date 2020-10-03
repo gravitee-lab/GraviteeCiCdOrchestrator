@@ -180,7 +180,7 @@ export class PipelineExecSetStatusWatcher {
 
     if (totalSuccess) {
       // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
-        let reactiveReporter = new reporting.PipelineExecSetReportLogger(this, this.circleci_client);
+        let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
 
         throw new Error("DEBUG POINT- where I am working now")
     } else { // if not totalSuccess Yet, then
