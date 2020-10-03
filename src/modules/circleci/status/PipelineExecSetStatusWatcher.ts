@@ -84,8 +84,12 @@ export class PipelineExecSetStatusWatcher {
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
     this.workflowPaginationNotifier = new rxjs.Subject<reporting.WfPaginationRef>();
 
+
+    /// --- TIMEOUT MECHANISM
     this.startDate = null;
     this.timeoutDate = null;
+
+    /// --- INIT WATCH ROUND
     this.watch_interval = 7; // watcher will update progressMatrix every 7 seconds
     this.watch_round = 1; // initializing watch index for first round
     for (let y: number; y < this.progressMatrix.length; y++) {
@@ -93,7 +97,7 @@ export class PipelineExecSetStatusWatcher {
     }
 
   }
-  private initNotifersSubscriptions () {
+  private initPaginationNotifersSubscriptions () {
 
     this.rxSubscriptions = [];
 
@@ -115,8 +119,8 @@ export class PipelineExecSetStatusWatcher {
    * => or any Pipeline has reach a final execution state with errors,
    *
    * Then this method will :
-   * => build the execution report using {@link reporting.PipelineExecSetReport}
-   * => and call the next() method of the <code>this.finalStateNotifier</code> RxJS Subject, to notify its {@link PipelineExecSetStatusWatcher} friend
+   * => build and log the execution report using {@link reporting.PipelineExecSetReport}
+   * => and call the next() method of the <code>this.finalStateNotifier</code> RxJS Subject, to notify its {@link ReactiveParallelExecutionSet} friend the Parallel Execution Set has reached an Execution Final State
    * ---
    *
    **/
@@ -132,11 +136,10 @@ export class PipelineExecSetStatusWatcher {
     console.info("");
 
     /**
-     * First, launch all HTTP Requests to update all entries in the [progressMatrix] 's [workflows_exec_state] JSON Property
+     * launch all HTTP Requests to update all entries in the [progressMatrix] 's [workflows_exec_state] JSON Property
      **/
     for (let k = 0; k < this.progressMatrix.length; k++) {
       this.updateProgressMatrixWorkflowsExecStatus(this.progressMatrix[k].id, null)
-
     }
 
   }
@@ -150,7 +153,7 @@ export class PipelineExecSetStatusWatcher {
      console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is false');
    }*/
 
-    let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(`${parent_pipeline_guid}`, next_page_token).subscribe({
+    let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(parent_pipeline_guid, next_page_token).subscribe({
       next: this.handleInspectPipelineExecStateResponseData.bind(this),
       complete: data => {
          console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${parent_pipeline_guid}] Execution state completed! :) ]`)
@@ -158,6 +161,7 @@ export class PipelineExecSetStatusWatcher {
       error: this.errorHandlerInspectPipelineExecState.bind(this)
     });
   }
+
   public start () {
 
     if (this.startDate === null) {
@@ -175,11 +179,14 @@ export class PipelineExecSetStatusWatcher {
     /// First increment watch_round, to start next round
     this.watch_round++;
     // then sending all HTTP Request to Circle CI and update progressMatrix entries
-    this.updateProgressMatrixWorkflowsExecStatus();
+    this.updateProgressMatrixWithAllWorkflowsExecStatus();
+
     /// Then looping until all entries in progressMatrix have incremented their [watch_round]
+
     let loopCondition: boolean = true; /// will remain true until all entries in [progressMatrix] have incremented their [watch_round]
     while (loopCondition) {
-      // checking if all [progressMatrix] entries have a watch_round which
+
+      // checking if all [progressMatrix] entries have a [watch_round] which
       // equals the current watch_round : if so, then [loopCondition] becomes
       /// false, and we know all progressMatrix entries have been updated by
       /// the [updateProgressMatrixWorkflowsExecStatus()] method
@@ -215,6 +222,9 @@ export class PipelineExecSetStatusWatcher {
 
 
   }
+  /**
+   *
+   **/
   private haveAllPipelinesSuccessfullyCompleted(): boolean {
     let allPipeSuccess: boolean = true;
     for (let k: number = 0; k < this.progressMatrix.length; k++) {

@@ -133,8 +133,19 @@ export class PipelineExecSetReportLogger {
    *  have been reported (So then the report is ready to be logged )
    *
    **/
-   jobsReportingNotifier: rxjs.Subject<CCiJobRequestRef>;
-   reportingCompletionNotifier: rxjs.Subject<PipelineExecSetReport>;
+   private jobsReportingNotifier: rxjs.Subject<CCiJobRequestRef>;
+
+   /**
+    * There will always be more Jobs than Workflows
+    * There will always be more Workflows than Pipelines
+    *
+    * So this notifier will emit stream events everytime a new Circle CI Job is reported, to check for report Completion.
+    * This design might be a bit dangerous,and needs future serious testing : just imagine that a Circle CI API, somtetime, happens to have
+    * a Workflow Endpoint that is very slow, while Job Endpoint is very fast, then, what will happen ? I'd say we aregood, because to
+    * complete the last job execution state reporting,we need to complete the last Workflow ExecutionState Reporting : In a word, because
+    * Workflow reporting triggers jobs reporting.
+    **/
+   private reportingCompletionNotifier: rxjs.Subject<PipelineExecSetReport>;
 
 
   /**
@@ -162,10 +173,10 @@ export class PipelineExecSetReportLogger {
         pipeline_guid: this.progressMatrix[k].id,
         pipeline_number: this.progressMatrix[k].pipeline_exec_number,
         exec_state: this.progressMatrix[k].exec_state,
-        cci_api_infos: {},
+        cci_api_infos: null,
         workflows_states: {
           completed:false,
-          states: []
+          states: [],
         }
       })
     }
@@ -198,10 +209,19 @@ export class PipelineExecSetReportLogger {
       }*/
     })
     let jobReportingNotifierSubsciption = this.reportingCompletionNotifier.subscribe({
-      next: (report) => {
+      next: ((report) => {
+        ///
+        console.log(`Now checking if all workflows, jobs and pipeline execution states have been reported`);
+        if (this.isReportCompleted()) {
+          console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed!`);
+          console.log(report);
+          // and unsubscribe
+        } else {
+          /// else we just let the reporting job complete
+          console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting not completed yet, more [reportingCompletionNotifier] notifications will occur while reporting more Circle CI Jobs Execution States`);
+        }
         throw new Error('Implementation Not finished : will log the report if and only if All Pipeline, Workflows, and Jobs execution states have been added to the report. If not,thjen will emit the GUID of the next pipeline')
-        console.log(report)
-      }/*(pipeline_guid: string) => {
+      }).bind(this)/*(pipeline_guid: string) => {
         // So workflows states have been reported for pipeline of GUID [pipeline_guid]
         // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
       }*/
@@ -215,6 +235,45 @@ export class PipelineExecSetReportLogger {
 
 
 
+  }
+  private isReportCompleted(): boolean {
+
+    let allPipelineStatesReported: boolean = true;
+    let allWorkflowStatesReported: boolean = true;
+    let allJobStatesReported: boolean = true;
+
+    /// checking pipeline exec states presence in report
+
+    for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
+      if ((!allPipelineStatesReported) || this.report.pipelines_states[m].cci_api_infos === null) { //as soon as one of them is null, no need to keep on looping, reporting Pipeline Execution States has not completed.
+        allPipelineStatesReported = false;
+        break;
+      }
+      allPipelineStatesReported = allPipelineStatesReported && (!(this.report.pipelines_states[m].cci_api_infos === null)); /// if [cci_api_infos] entr is not null anymore (as initialized), then we know for sure pipeline exec state has been reported
+    }
+    /// checking workflow exec states completed updates (with pagination) in report
+    for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
+      if ((!allWorkflowStatesReported)) { //as soon as one is not completed, no need to keep on looping, reporting Workflow Execution States has not completed.
+        break;
+      }
+      allWorkflowStatesReported = allWorkflowStatesReported && this.report.pipelines_states[m].workflows_states.completed;
+    }
+
+    /// checking jobs exec states completed updates (with pagination) in report
+    if (allWorkflowStatesReported) { // then we knowwe won'thave undefined JSON properties trying to fetch each [workflows_states] for a [jobs_states] JSON Property
+      for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
+        if ((!allJobStatesReported)) { //as soon as one is not completed, no need to keep on looping, reporting Workflow Execution States has not completed.
+          break;
+        }
+        for(let k: number = 0; k < this.report.pipelines_states[m].workflows_states.states.length; k++) {
+          allJobStatesReported = allJobStatesReported && this.report.pipelines_states[m].workflows_states.states[k].jobs_states.completed
+        }
+      }
+    } else { /// reporting jobs execution state is not considered completed before workflows' are.
+       allJobStatesReported = false;
+    }
+
+    return allPipelineStatesReported && allWorkflowStatesReported && allJobStatesReported;
   }
   /**
    *
