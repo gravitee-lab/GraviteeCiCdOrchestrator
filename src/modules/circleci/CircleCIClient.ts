@@ -105,7 +105,9 @@ export class CircleCIClient {
           /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
           axios.post( "https://circleci.com/api/v2/project/gh/" + `${org_name}` + "/" + `${repo_name}` + "/pipeline", jsonPayload, config )
           .then( ( response ) => {
-              observer.next( response.data );
+              let emitted = response.data;
+              emitted.project_slug = `gh/${org_name}/${repo_name}`; // won't hurt, will it ?
+              observer.next( emitted );
               observer.complete();
           } )
           .catch( ( error ) => {
