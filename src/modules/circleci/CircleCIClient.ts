@@ -158,7 +158,11 @@ export class CircleCIClient {
       return response$;*/
     }
     /**
+     *
      * This method inspects the execution status of a pipeline, by inspecting its workflows' status
+     *
+     * curl -X GET https://circleci.com/api/v2/pipeline/${PIPELINE_ID}/workflow -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
+     *
      * @parameters pipeline_guid The GUID of the Circle CI pipeline execution
      * @parameters next_page_token set <code>next_page_token</code> to null if no pagination desired
      * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
@@ -205,7 +209,7 @@ export class CircleCIClient {
              "Content-Type": "application/json"
            }
          };
-         // curl -X GET https://circleci.com/api/v2/pipeline/${PIPELINE_ID}/workflow -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
+         //
 
 
          console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow");
@@ -234,6 +238,125 @@ export class CircleCIClient {
      return observableRequest;
 
    }
+
+   inspectPipelineExecState(project_slug: string, pipeline_number: number): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+
+     let observableRequest: any = rxjs.Observable.create( ( observer ) => {
+         let config = {
+           headers: {
+             "Circle-Token": this.secrets.circleci.auth.token,
+             "Accept": "application/json",
+             "Content-Type": "application/json"
+           }
+         };
+                   /// curl -X GET https://circleci.com/api/v2/project/${project_slug}/pipeline/${pipeline_number}
+         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/project/" + `${project_slug}` + "/pipeline/" + `${pipeline_number}`);
+
+         let httpRequest = "https://circleci.com/api/v2/project/" + `${project_slug}` + "/pipeline/" + `${pipeline_number}`;
+
+         axios.get(httpRequest, config )
+         .then(( response ) => {
+             console.log("[CircleCIClient] - {inspectPipelineExecState(project_slug: string, pipeline_number: number)} - Circle CI HTTP JSON Response is : ");
+             console.log(response.data);
+             observer.next(response.data);
+             observer.complete();
+         })
+         .catch( ( error ) => {
+             console.log("[CircleCIClient] - {inspectPipelineExecState(project_slug: string, pipeline_number: number)} - Circle CI HTTP Error JSON Response is : ");
+             /// console.log(JSON.stringify(error.response));
+             console.log(error.response);
+             observer.error(error );
+         } );
+
+     } );
+     return observableRequest;
+
+   }
+
+
+
+
+  ///
+
+  /**
+   *
+   * This method inspects the execution status of all Jobs in a given Workflow
+   *
+   *
+   * @parameters workflow_guid The GUID of the Circle CI workflow execution
+   * @parameters next_page_token set <code>next_page_token</code> to null if no pagination desired
+   * @returns any But it actually is an Observable Stream of the HTTP response you can subscribe to.
+   *
+   * curl -X GET https://circleci.com/api/v2/workflow/${WF_GUID}/job -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
+   *
+   * Note that the HTTP JSON Response will be of the following form :
+   *
+   * {
+   *  "next_page_token": null,
+   *  "items": [
+   *    {
+   *      "dependencies": [],
+   *      "job_number": 127,
+   *      "id": "fc2332c9-ce54-405b-8b4f-d5af38210627",
+   *      "started_at": "2020-09-12T17:47:25Z",
+   *      "name": "build",
+   *      "project_slug": "gh/gravitee-lab/GraviteeCiCdOrchestrator",
+   *      "status": "failed",
+   *      "type": "build",
+   *      "stopped_at": "2020-09-12T17:48:26Z"
+   *    }
+   *  ]
+   * }
+   *
+   *
+   **/
+   inspectWorkflowJobsExecState(workflow_guid: string, next_page_token: string): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+
+     let observableRequest: any = rxjs.Observable.create( ( observer ) => {
+         let config = {
+           headers: {
+             "Circle-Token": this.secrets.circleci.auth.token,
+             "Accept": "application/json",
+             "Content-Type": "application/json"
+           }
+         };
+         //
+
+
+         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/workflow/" + `${workflow_guid}` + "/job");
+
+         /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
+         let httpRequest = null;
+         if (next_page_token === null) {
+           httpRequest = "https://circleci.com/api/v2/workflow/" + `${workflow_guid}` + "/job";
+         } else {
+           httpRequest = "https://circleci.com/api/v2/workflow/" + `${workflow_guid}` + `/job?next_page_token=${next_page_token}`;
+         }
+
+         axios.get(httpRequest, config )
+         .then( ( response ) => {
+             let emitted: WorkflowJobsData = {
+               cci_json_response: response.data,
+               workflow_guid : workflow_guid
+             }
+             observer.next( emitted );
+             observer.complete();
+         } )
+         .catch( ( error ) => {
+             console.log("[CircleCIClient] - {inspectWorkflowJobsExecState(workflow_guid: string, next_page_token: string)} - Circle CI HTTP Error JSON Response is : ");
+             /// console.log(JSON.stringify(error.response));
+             console.log(error.response);
+             observer.error(error );
+         } );
+
+     } );
+     return observableRequest;
+
+   }
+
+
+
+
     /**
      * Hits the Circle CI API and return an {@see ObservableStream<any>} emitting the Circle CI JSON answer for the https://circleci.com/api/v2/me Endpoint
      **/
@@ -247,6 +370,7 @@ export class CircleCIClient {
           };
           axios.get( 'https://circleci.com/api/v2/me', config )
           .then( ( response ) => {
+
               observer.next( response.data );
               observer.complete();
           })
@@ -256,4 +380,14 @@ export class CircleCIClient {
       } );
       return observableRequest;
     }
+}
+
+/**
+ * we need this type, because the CircleCI API JSON Response about Jobs Execution State does
+ * not include enough information to retrieve the workflow execution,toxhich a JobExecution belongs to.
+ * Now the Observable Stream emiting CircleCI API JSON Response about Jobs Execution, willalso mention workflow_guid
+ **/
+export interface WorkflowJobsData {
+  cci_json_response: any,
+  workflow_guid: string
 }
