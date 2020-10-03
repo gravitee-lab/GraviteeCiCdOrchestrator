@@ -1,11 +1,10 @@
 import * as rxjs from 'rxjs';
-import { CircleCIClient, WorkflowsData, WorkflowJobsData } from '../../../modules/circleci/CircleCIClient';
+import { CircleCIClient, WorkflowsData, WorkflowJobsData, WfPaginationRef, JobPaginationRef } from '../../../modules/circleci/CircleCIClient';
 import * as reporting from '../../../modules/circleci/status/PipelineExecSetReport';
 import * as shelljs from 'shelljs';
 
 export interface PipeExecSetStatusNotification {
-  is_errored: boolean,
-  exec_status_report: reporting.PipelineExecSetReport
+  is_errored: boolean
 }
 
 /**
@@ -37,11 +36,6 @@ export class PipelineExecSetStatusWatcher {
    **/
   public readonly finalStateNotifier: rxjs.Subject<PipeExecSetStatusNotification>;
 
-  private workflowPaginationNotifier: rxjs.Subject<reporting.WfPaginationRef>;
-  /**
-   * Just to keep a reference over Subscriptions (to be able to unsubscribe when desired)
-   **/
-  private rxSubscriptions: rxjs.Subscription[];
   /**
    * This is the progress matrix for all pipeline executions
    * in one {ParallelExecutionSet}, built by a <code>src/modules/circleci/PipelineExecSetStatusWatcher.ts</code>, not
@@ -67,37 +61,61 @@ export class PipelineExecSetStatusWatcher {
   private startDate: Date;
   /// the date when watcher will timeout
   private timeoutDate: Date;
-  /**
-   * The watch interval in seconds :
-   * this {@link PipelineExecSetStatusWatcher} will update progressMatrix every <code>this.watch_interval</code> seconds
-   **/
-  public readonly watch_interval: number;
+
 
   /**
    * Will be updated for every {progressMatrix} entries, until allmatch <code>this.watch_round</code>
    **/
   private watch_round: number;
-
+  /**
+   * This RxJS Subject is there to detect when the [progressMatrix] has been updated
+   **/
+  private progressMatrixUpdatesNotifier: rxjs.Subject<any[]>;
+  /**
+   * This RxJS Subject will be used to paginate The Circle CI API
+   * [GET /api/v2/pipeline/${PARENT_PIPELINE_GUID}/workflow] Endpoint
+   * toget all workflows of a given Circle CI Pipeline Execution
+   **/
+  private workflowPaginationNotifier: rxjs.Subject<WfPaginationRef>;
+  /**
+   * Just to keep a reference over all RxJS Subscriptions, except the subsciption to
+   * the [finalStateNotifier] : to be able to unsubscribe when desired
+   **/
+  private rxSubscriptions: rxjs.Subscription[];
 
   constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
-    this.workflowPaginationNotifier = new rxjs.Subject<reporting.WfPaginationRef>();
-
+    this.workflowPaginationNotifier = new rxjs.Subject<WfPaginationRef>();
+    this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
 
     /// --- TIMEOUT MECHANISM
     this.startDate = null;
     this.timeoutDate = null;
 
     /// --- INIT WATCH ROUND
-    this.watch_interval = 7; // watcher will update progressMatrix every 7 seconds
-    this.watch_round = 1; // initializing watch index for first round
+
+    /// ---
+    /// For each [progressMatrix] entry, 2 new JSON properties :
+    ///
+    /// + [workflows_exec_state] : an Array which will contain all the Circle CI API paginated entries of
+    ///                          the [items] array returned by the [GET /api/v2/pipeline/${PARENT_PIPELINE_GUID}/workflow] Circle CI API Enpoint
+    ///                          those entries contain the Execution State of every workflow of a given Pipeline Execution (one Piepline Execution <=> one [progressMatrix] entry)
+    ///
+    /// + [watch_round] : a number, which will say how many times the [workflows_exec_state] JSON
+    ///                   property hasbeen updated, by querying the Circle CI API
+    ///                   [GET /api/v2/pipeline/${PARENT_PIPELINE_GUID}/workflow] Endpoint
     for (let y: number; y < this.progressMatrix.length; y++) {
       this.progressMatrix[y].watch_round = 0;
+      this.progressMatrix[y].workflows_exec_state = []
     }
-
+    /// this.watch_round will be incremented everytime all [progressMatrix] entries have
+    /// been updated with a new execution state in the [workflows_exec_state] JSON Property
+    ///
+    this.watch_round = 0; // initializing watch_round before the first round
+    ///
   }
-  private initPaginationNotifersSubscriptions () {
+  private initPrivateNotifersSubscriptions () { // all but [this.finalStateNotifier]
 
     this.rxSubscriptions = [];
 
@@ -106,6 +124,13 @@ export class PipelineExecSetStatusWatcher {
           this.updateProgressMatrixWorkflowsExecStatus(paginator.pipeline_guid, paginator.next_page_token);
         }
     });
+    let progressMatrixUpdatesSubscription = this.progressMatrixUpdatesNotifier.subscribe({
+        next: (progressMatrix) => {
+          // here we have to check if, for all entries of the [progressMatrix], the [watch_round] JSON Property are equal to [this.watch_round]
+
+        }
+    });
+
     this.rxSubscriptions.push(wfPaginationSubscription);
   }
   /**
@@ -181,45 +206,13 @@ export class PipelineExecSetStatusWatcher {
     // then sending all HTTP Request to Circle CI and update progressMatrix entries
     this.updateProgressMatrixWithAllWorkflowsExecStatus();
 
-    /// Then looping until all entries in progressMatrix have incremented their [watch_round]
-
-    let loopCondition: boolean = true; /// will remain true until all entries in [progressMatrix] have incremented their [watch_round]
-    while (loopCondition) {
-
-      // checking if all [progressMatrix] entries have a [watch_round] which
-      // equals the current watch_round : if so, then [loopCondition] becomes
-      /// false, and we know all progressMatrix entries have been updated by
-      /// the [updateProgressMatrixWorkflowsExecStatus()] method
-      ///
-
-      for (let k = 0; k < this.progressMatrix.length; k++) {
-        loopCondition =  loopCondition && (this.progressMatrix[k].watch_round != this.watch_round);
-      }
-      shelljs.exec(`sleep ${this.watch_interval}s`); // just to wait [this.watch_interval] seconds
-    }
     /// Now we know all [progressMatrix] entries have been updated by
     /// the [updateProgressMatrixWorkflowsExecStatus()] method, so we can check if
     /// all workflows_exec_state in [progressMatrix] display an execution state equal to 'success'
     let totalSuccess: boolean = this.haveAllPipelinesSuccessfullyCompleted();
 
-    if (totalSuccess) {
-      // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
-        let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
-
-        throw new Error("DEBUG POINT- where I am working now")
-    } else { // if not totalSuccess Yet, then
-      // Checking if we reached timeout, before starting a new watch round
-      let currentDatetime = new Date();
-      // best to use .getTime() to compare dates
-      if(currentDatetime < this.timeoutDate){
-        // then timeout has not happened, so we can launch a first execution status inspection round
-        this.launchExecStatusInspectionRound()
-      } else {
-        // currentDatetime is newer than timeout, so watch stops
-        return;
-      }
-    }
-
+    // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
+    let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
 
   }
   /**
@@ -286,6 +279,7 @@ export class PipelineExecSetStatusWatcher {
    *      created_at: 'unchanged_value',
    *      exec_state: 'unchanged_value',
    *      workflows_exec_state: `${observedResponse.cci_json_response.items}` // of type any[] (so an array)
+   *      watch_round: N // where N is the number of times
    *    }
    *
    **/
@@ -305,7 +299,7 @@ export class PipelineExecSetStatusWatcher {
     this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
     console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] after incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
 
-    this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state = []
+
     observedResponse.cci_json_response.items.forEach((wflowstate) => { //looping through array,to be able to paginate, and cumulatively add workflow states returned bythe Circle CI API
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
     });
@@ -314,7 +308,7 @@ export class PipelineExecSetStatusWatcher {
     if (observedResponse.cci_json_response.next_page_token === null) {
       console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] finished workflow pagination to update [progressMatrix]`)
     } else {
-      let paginator: reporting.WfPaginationRef = {
+      let paginator: WfPaginationRef = {
          next_page_token: observedResponse.cci_json_response.next_page_token,
          pipeline_guid: observedResponse.parent_pipeline_guid
       }

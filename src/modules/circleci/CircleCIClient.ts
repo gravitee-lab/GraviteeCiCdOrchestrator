@@ -3,6 +3,25 @@ import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
 import axios from 'axios';
 import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import * as fs from 'fs';
+
+/**
+ * Will be used to paginate The Circle CI API
+ * [GET /api/v2/pipeline/${PARENT_PIPELINE_GUID}/workflow] Endpoint
+ * toget all workflows of a given Circle CI Pipeline Execution
+ **/
+export interface WfPaginationRef {
+  next_page_token: string,
+  pipeline_guid: string
+}
+/**
+ * Will be used to paginate The Circle CI API
+ * [GET /api/v2/workflow/${WF_GUID}/job] Endpoint
+ * to get all Jobs Executions States of a given Circle CI Workflow Execution
+ **/
+export interface JobPaginationRef {
+  next_page_token: string,
+  workflow_guid: string
+}
 /**
  *
  * Mimics the official Circle CI cLient, only much simpler, and with [RxJS]

@@ -1,5 +1,5 @@
 import * as rxjs from 'rxjs';
-import { CircleCIClient, WorkflowsData, WorkflowJobsData } from '../../../modules/circleci/CircleCIClient';
+import { CircleCIClient, WorkflowsData, WorkflowJobsData, WfPaginationRef, JobPaginationRef } from '../../../modules/circleci/CircleCIClient';
 
 export enum VCS_TYPE {
   GITHUB,
@@ -79,14 +79,7 @@ export interface CCiJobRequestRef {
   wf_guid: string,
   next_page_token: string
 }
-export interface WfPaginationRef {
-  next_page_token: string,
-  pipeline_guid: string
-}
-export interface JobPaginationRef {
-  next_page_token: string,
-  workflow_guid: string
-}
+
 
 /**
  * A {@link PipelineExecSetReport} is made of one array of {@link CciPipelineState}
