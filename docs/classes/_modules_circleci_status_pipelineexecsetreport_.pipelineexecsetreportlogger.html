@@ -1,0 +1,995 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>PipelineExecSetReportLogger | GraviteeReleaseOrchestrator</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">GraviteeReleaseOrchestrator</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_modules_circleci_status_pipelineexecsetreport_.html">&quot;modules/circleci/status/PipelineExecSetReport&quot;</a>
+				</li>
+				<li>
+					<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html">PipelineExecSetReportLogger</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</header>
+<div class="container">
+	<div class="row container container-main">
+		<div class="col-3 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul>
+					<ul class="before-current">
+						<li class=" tsd-kind-enum tsd-parent-kind-module">
+							<a href="../enums/_modules_circleci_status_pipelineexecsetreport_.vcs_type.html" class="tsd-kind-icon">VCS_<wbr>TYPE</a>
+						</li>
+					</ul>
+					<ul class="current">
+						<li class="current tsd-kind-class tsd-parent-kind-module">
+							<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html" class="tsd-kind-icon">Pipeline<wbr>Exec<wbr>Set<wbr>Report<wbr>Logger</a>
+							<ul>
+								<li class=" tsd-kind-constructor tsd-parent-kind-class">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#constructor" class="tsd-kind-icon">constructor</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#jobpaginationnotifier" class="tsd-kind-icon">job<wbr>Pagination<wbr>Notifier</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#jobsreportingnotifier" class="tsd-kind-icon">jobs<wbr>Reporting<wbr>Notifier</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#pipelinereportingnotifier" class="tsd-kind-icon">pipeline<wbr>Reporting<wbr>Notifier</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#report" class="tsd-kind-icon">report</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportingcompletionnotifier" class="tsd-kind-icon">reporting<wbr>Completion<wbr>Notifier</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#rxsubscriptions" class="tsd-kind-icon">rx<wbr>Subscriptions</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#workflowpaginationnotifier" class="tsd-kind-icon">workflow<wbr>Pagination<wbr>Notifier</a>
+								</li>
+								<li class=" tsd-kind-property tsd-parent-kind-class">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#workflowreportingnotifier" class="tsd-kind-icon">workflow<wbr>Reporting<wbr>Notifier</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#buildreport" class="tsd-kind-icon">build<wbr>Report</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#get2dimindexofworkflowinreport" class="tsd-kind-icon">get2<wbr>Dim<wbr>Index<wbr>OfWorkflow<wbr>InReport</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#getindexofpipelinestateinreport" class="tsd-kind-icon">get<wbr>Index<wbr>OfPipeline<wbr>State<wbr>InReport</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#initnotiferssubscriptions" class="tsd-kind-icon">init<wbr>Notifers<wbr>Subscriptions</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#initreport" class="tsd-kind-icon">init<wbr>Report</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsexecstateccierrorhandler" class="tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIError<wbr>Handler</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsexecstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsstate" class="tsd-kind-icon">report<wbr>Jobs<wbr>State</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelineexecstateccierrorhandler" class="tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIError<wbr>Handler</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelineexecstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelinesstate" class="tsd-kind-icon">report<wbr>Pipelines<wbr>State</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworflowstateccierrorhandler" class="tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIError<wbr>Handler</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworflowstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIResponse<wbr>Handler</a>
+								</li>
+								<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+									<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworkflowsstate" class="tsd-kind-icon">report<wbr>Workflows<wbr>State</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="after-current">
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html" class="tsd-kind-icon">CCi<wbr>Job<wbr>Request<wbr>Ref</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobstate.html" class="tsd-kind-icon">Cci<wbr>Job<wbr>State</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html" class="tsd-kind-icon">Cci<wbr>Pipeline<wbr>Ref</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html" class="tsd-kind-icon">Cci<wbr>Pipeline<wbr>State</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.cciworkflowstate.html" class="tsd-kind-icon">Cci<wbr>Workflow<wbr>State</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.jobpaginationref.html" class="tsd-kind-icon">Job<wbr>Pagination<wbr>Ref</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreport.html" class="tsd-kind-icon">Pipeline<wbr>Exec<wbr>Set<wbr>Report</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.wfpaginationref.html" class="tsd-kind-icon">Wf<wbr>Pagination<wbr>Ref</a>
+						</li>
+						<li class=" tsd-kind-interface tsd-parent-kind-module">
+							<a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html" class="tsd-kind-icon">Workflow2<wbr>Dim<wbr>Index</a>
+						</li>
+					</ul>
+				</ul>
+				<ul>
+					<li>📑 Index</li>
+					<li><br></li>
+					<li class=" ">
+						<a href="../globals.html">Globals</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_index_.html">&quot;index&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_lib_env_.html">&quot;lib/env&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_lib_errors_.html">&quot;lib/errors&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_cicdstage_.html">&quot;modules/circleci/CICDStage&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_circleciclient_.html">&quot;modules/circleci/<wbr>CircleCIClient&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_circlecisecrets_.html">&quot;modules/circleci/<wbr>CircleCISecrets&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_circleciorchestrator_.html">&quot;modules/circleci/<wbr>Circle<wbr>CiOrchestrator&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_experiment_.html">&quot;modules/circleci/<wbr>Experiment&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_reactiveparallelexecutionset_.html">&quot;modules/circleci/<wbr>Reactive<wbr>Parallel<wbr>Execution<wbr>Set&quot;</a>
+						</li>                        <li class="current tsd-kind-module">
+						<a href="../modules/_modules_circleci_status_pipelineexecsetreport_.html">&quot;modules/circleci/status/<wbr>Pipeline<wbr>Exec<wbr>Set<wbr>Report&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_status_pipelineexecsetstatuswatcher_.html">&quot;modules/circleci/status/<wbr>Pipeline<wbr>Exec<wbr>Set<wbr>Status<wbr>Watcher&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_circleci_status_pipelineexecstatuswatcher_.html">&quot;modules/circleci/status/<wbr>Pipeline<wbr>Exec<wbr>Status<wbr>Watcher&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_cli_cli_.html">&quot;modules/cli/<wbr>Cli&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_cli_gnuoptions_.html">&quot;modules/cli/GNUOptions&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_manifest_executionplan_.html">&quot;modules/manifest/<wbr>Execution<wbr>Plan&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_manifest_graviteecomponent_.html">&quot;modules/manifest/<wbr>Gravitee<wbr>Component&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_manifest_parallelexecutionset_.html">&quot;modules/manifest/<wbr>Parallel<wbr>Execution<wbr>Set&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_manifest_releasemanifestfilter_.html">&quot;modules/manifest/<wbr>Release<wbr>Manifest<wbr>Filter&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_monitor_execplanprogress_.html">&quot;modules/monitor/<wbr>Exec<wbr>Plan<wbr>Progress&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_monitor_experimentalmonitor_.html">&quot;modules/monitor/<wbr>Experimental<wbr>Monitor&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_monitor_monitor_.html">&quot;modules/monitor/<wbr>Monitor&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_monitor_parallelexecutionsetprogress_.html">&quot;modules/monitor/<wbr>Parallel<wbr>Execution<wbr>Set<wbr>Progress&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_pr_bot_pullrequestbot_.html">&quot;modules/pr-<wbr>bot/<wbr>Pull<wbr>Request<wbr>Bot&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_progress_pipelineexecutionlistrdemo_.html">&quot;modules/progress/<wbr>Pipeline<wbr>Execution<wbr>Listr<wbr>Demo&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_progress_pipelineexecutionspinner_.html">&quot;modules/progress/<wbr>Pipeline<wbr>Execution<wbr>Spinner&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="../modules/_modules_template_mypootype_.html">&quot;modules/template/<wbr>MyPOOType&quot;</a>
+				</li>                </ul>
+			</nav>
+		</div>
+		<div class="col-9 col-content">
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">PipelineExecSetReportLogger</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-constructor tsd-parent-kind-class">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#constructor" class="tsd-kind-icon">constructor</a>
+									</li>
+								</ul>
+							</div>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#jobpaginationnotifier" class="tsd-kind-icon">job<wbr>Pagination<wbr>Notifier</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#jobsreportingnotifier" class="tsd-kind-icon">jobs<wbr>Reporting<wbr>Notifier</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#pipelinereportingnotifier" class="tsd-kind-icon">pipeline<wbr>Reporting<wbr>Notifier</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#report" class="tsd-kind-icon">report</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportingcompletionnotifier" class="tsd-kind-icon">reporting<wbr>Completion<wbr>Notifier</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#rxsubscriptions" class="tsd-kind-icon">rx<wbr>Subscriptions</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#workflowpaginationnotifier" class="tsd-kind-icon">workflow<wbr>Pagination<wbr>Notifier</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-property tsd-parent-kind-class">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#workflowreportingnotifier" class="tsd-kind-icon">workflow<wbr>Reporting<wbr>Notifier</a>
+									</li>
+								</ul>
+							</div>
+						</section>
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+							<h3>Methods</h3>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#buildreport" class="tsd-kind-icon">build<wbr>Report</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#get2dimindexofworkflowinreport" class="tsd-kind-icon">get2<wbr>Dim<wbr>Index<wbr>OfWorkflow<wbr>InReport</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#getindexofpipelinestateinreport" class="tsd-kind-icon">get<wbr>Index<wbr>OfPipeline<wbr>State<wbr>InReport</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#initnotiferssubscriptions" class="tsd-kind-icon">init<wbr>Notifers<wbr>Subscriptions</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#initreport" class="tsd-kind-icon">init<wbr>Report</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsexecstateccierrorhandler" class="tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIError<wbr>Handler</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsexecstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsstate" class="tsd-kind-icon">report<wbr>Jobs<wbr>State</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelineexecstateccierrorhandler" class="tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIError<wbr>Handler</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelineexecstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelinesstate" class="tsd-kind-icon">report<wbr>Pipelines<wbr>State</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworflowstateccierrorhandler" class="tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIError<wbr>Handler</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworflowstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIResponse<wbr>Handler</a>
+									</li>
+								</ul>
+							</div>
+							<div class="tsd-navigation secondary">
+								<ul>
+									<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+										<a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworkflowsstate" class="tsd-kind-icon">report<wbr>Workflows<wbr>State</a>
+									</li>
+								</ul>
+							</div>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-descriptions">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Pipeline<wbr>Exec<wbr>Set<wbr>Report<wbr>Logger<span class="tsd-signature-symbol">(</span>progressMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>, circleci_client<span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html" class="tsd-signature-type">PipelineExecSetReportLogger</a></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">progressMatrix</span>: <span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>
+						</li>
+						<li>
+							<span class="name">circleci_client</span>: <a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html" class="tsd-signature-type">PipelineExecSetReportLogger</a></h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L147">src/modules/circleci/status/PipelineExecSetReport.ts:147</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="circleci_client" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> circleci_<wbr>client</h3>
+					<div class="tsd-signature tsd-kind-icon">circleci_client<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L104">src/modules/circleci/status/PipelineExecSetReport.ts:104</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="jobpaginationnotifier" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> job<wbr>Pagination<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">jobPaginationNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.jobpaginationref.html" class="tsd-signature-type">JobPaginationRef</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L145">src/modules/circleci/status/PipelineExecSetReport.ts:145</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="jobsreportingnotifier" class="tsd-anchor"></a>
+					<h3>jobs<wbr>Reporting<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">jobsReportingNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html" class="tsd-signature-type">CCiJobRequestRef</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for pipeline jobs state</p>
+						</div>
+						<p>The report under construction is emited everytime a Circle CI job execution state is reported, to check if
+							all Pipeline Execution states,
+							all Workflow States,
+							and all Job execution states,
+						have been reported (So then the report is ready to be logged )</p>
+					</div>
+					<div class="tsd-comment">
+					</div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L136">src/modules/circleci/status/PipelineExecSetReport.ts:136</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="pipelinereportingnotifier" class="tsd-anchor"></a>
+					<h3>pipeline<wbr>Reporting<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">pipelineReportingNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html" class="tsd-signature-type">CciPipelineRef</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all pipeline executions state</p>
+						</div>
+						<p>The emited string is the Circle CI pipeline GUID which will be used to report WorkflowsState of he Circle CI Pipeline</p>
+					</div>
+					<div class="tsd-comment">
+					</div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L118">src/modules/circleci/status/PipelineExecSetReport.ts:118</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="progressmatrix" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> progress<wbr>Matrix</h3>
+					<div class="tsd-signature tsd-kind-icon">progressMatrix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>An array, in which for each entry has  a JSon Property named &#39;id&#39;, which is the GUID of a Circle CI Pipeline execution</p>
+						</div>
+						<p>Provided by a <a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html">ReactiveParallelExecutionSet</a>, when is has finished triggering all Circle CI Pipelines for its Parallel Execution Set</p>
+					</div>
+					<div class="tsd-comment">
+					</div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L112">src/modules/circleci/status/PipelineExecSetReport.ts:112</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="report" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report</h3>
+					<div class="tsd-signature tsd-kind-icon">report<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreport.html" class="tsd-signature-type">PipelineExecSetReport</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L105">src/modules/circleci/status/PipelineExecSetReport.ts:105</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="reportingcompletionnotifier" class="tsd-anchor"></a>
+					<h3>reporting<wbr>Completion<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">reportingCompletionNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreport.html" class="tsd-signature-type">PipelineExecSetReport</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L137">src/modules/circleci/status/PipelineExecSetReport.ts:137</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="rxsubscriptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> rx<wbr>Subscriptions</h3>
+					<div class="tsd-signature tsd-kind-icon">rxSubscriptions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subscription</span>    <span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L147">src/modules/circleci/status/PipelineExecSetReport.ts:147</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="workflowpaginationnotifier" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> workflow<wbr>Pagination<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">workflowPaginationNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.wfpaginationref.html" class="tsd-signature-type">WfPaginationRef</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>This RxJS is used to paginate the Circle CI API v2 for Workflows</p>
+						</div>
+					</div>
+					<div class="tsd-comment">
+					</div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L144">src/modules/circleci/status/PipelineExecSetReport.ts:144</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
+					<a name="workflowreportingnotifier" class="tsd-anchor"></a>
+					<h3>workflow<wbr>Reporting<wbr>Notifier</h3>
+					<div class="tsd-signature tsd-kind-icon">workflowReportingNotifier<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html" class="tsd-signature-type">CciPipelineRef</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all workflows state</p>
+						</div>
+						<p>The emited number is a Circle CI Pipeline Execution number, &#39;pipeline_number&#39; in CircleCI HTTP JSon Response, and is used to report the pipeline state</p>
+					</div>
+					<div class="tsd-comment">
+					</div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L125">src/modules/circleci/status/PipelineExecSetReport.ts:125</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="buildreport" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> build<wbr>Report</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">build<wbr>Report<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>We inspect Workflows state, then, with [pipeline_number], Pipelines state, and finally Jobs state</p>
+						</div>
+					</div>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L224">src/modules/circleci/status/PipelineExecSetReport.ts:224</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="get2dimindexofworkflowinreport" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get2<wbr>Dim<wbr>Index<wbr>OfWorkflow<wbr>InReport</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">get2<wbr>Dim<wbr>Index<wbr>OfWorkflow<wbr>InReport<span class="tsd-signature-symbol">(</span>wf_guid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html" class="tsd-signature-type">Workflow2DimIndex</a></li>
+					</ul>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>returns a <a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html">Workflow2DimIndex</a> which basically is a 2 -dimensional index, made of the pipeline index, and the workflow index</p>
+						</div>
+					</div>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">wf_guid</span>: <span class="tsd-signature-type">string</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html" class="tsd-signature-type">Workflow2DimIndex</a></h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L501">src/modules/circleci/status/PipelineExecSetReport.ts:501</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="getindexofpipelinestateinreport" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>Index<wbr>OfPipeline<wbr>State<wbr>InReport</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Index<wbr>OfPipeline<wbr>State<wbr>InReport<span class="tsd-signature-symbol">(</span>ofGuid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">ofGuid</span>: <span class="tsd-signature-type">string</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L342">src/modules/circleci/status/PipelineExecSetReport.ts:342</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="initnotiferssubscriptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> init<wbr>Notifers<wbr>Subscriptions</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Notifers<wbr>Subscriptions<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L173">src/modules/circleci/status/PipelineExecSetReport.ts:173</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="initreport" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> init<wbr>Report</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Report<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L156">src/modules/circleci/status/PipelineExecSetReport.ts:156</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportjobsexecstateccierrorhandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Jobs<wbr>Exec<wbr>StateCCIError<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIError<wbr>Handler<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">error</span>: <span class="tsd-signature-type">any</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L488">src/modules/circleci/status/PipelineExecSetReport.ts:488</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportjobsexecstatecciresponsehandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Jobs<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIResponse<wbr>Handler<span class="tsd-signature-symbol">(</span>observedResponse<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_circleci_circleciclient_.workflowjobsdata.html" class="tsd-signature-type">WorkflowJobsData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>This method inspects the execution status of all Jobs in a given Workflow</p>
+						</div>
+					</div>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">observedResponse</span>: <a href="../interfaces/_modules_circleci_circleciclient_.workflowjobsdata.html" class="tsd-signature-type">WorkflowJobsData</a>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					<p>any But it actually is an Observable Stream of the HTTP response you can subscribe to.</p>
+					<p>curl -X GET <a href="https://circleci.com/api/v2/workflow/$%7BWF_GUID%7D/job">https://circleci.com/api/v2/workflow/${WF_GUID}/job</a> -H &#39;Accept: application/json&#39; -H &quot;Circle-Token: ${CCI_API_KEY}&quot;</p>
+					<p>Note that the HTTP JSON Response will be of the following form :</p>
+					<p>{
+						&quot;next_page_token&quot;: null,
+						&quot;items&quot;: [
+						{
+						&quot;dependencies&quot;: [],
+						&quot;job_number&quot;: 127,
+						&quot;id&quot;: &quot;fc2332c9-ce54-405b-8b4f-d5af38210627&quot;,
+						&quot;started_at&quot;: &quot;2020-09-12T17:47:25Z&quot;,
+						&quot;name&quot;: &quot;build&quot;,
+						&quot;project_slug&quot;: &quot;gh/gravitee-lab/GraviteeCiCdOrchestrator&quot;,
+						&quot;status&quot;: &quot;failed&quot;,
+						&quot;type&quot;: &quot;build&quot;,
+						&quot;stopped_at&quot;: &quot;2020-09-12T17:48:26Z&quot;
+						}
+						]
+					}</p>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L459">src/modules/circleci/status/PipelineExecSetReport.ts:459</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportjobsstate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Jobs<wbr>State</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Jobs<wbr>State<span class="tsd-signature-symbol">(</span>wf_ref<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html" class="tsd-signature-type">CCiJobRequestRef</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">wf_ref</span>: <a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html" class="tsd-signature-type">CCiJobRequestRef</a>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L409">src/modules/circleci/status/PipelineExecSetReport.ts:409</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportpipelineexecstateccierrorhandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Pipeline<wbr>Exec<wbr>StateCCIError<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIError<wbr>Handler<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">error</span>: <span class="tsd-signature-type">any</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L389">src/modules/circleci/status/PipelineExecSetReport.ts:389</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportpipelineexecstatecciresponsehandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Pipeline<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIResponse<wbr>Handler<span class="tsd-signature-symbol">(</span>circleCiJsonResponse<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">circleCiJsonResponse</span>: <span class="tsd-signature-type">any</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L384">src/modules/circleci/status/PipelineExecSetReport.ts:384</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportpipelinesstate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Pipelines<wbr>State</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Pipelines<wbr>State<span class="tsd-signature-symbol">(</span>pipeline_ref<span class="tsd-signature-symbol">: </span><a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html" class="tsd-signature-type">CciPipelineRef</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">pipeline_ref</span>: <a href="../interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html" class="tsd-signature-type">CciPipelineRef</a>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L366">src/modules/circleci/status/PipelineExecSetReport.ts:366</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportworflowstateccierrorhandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Worflow<wbr>StateCCIError<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIError<wbr>Handler<span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">error</span>: <span class="tsd-signature-type">any</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L332">src/modules/circleci/status/PipelineExecSetReport.ts:332</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportworflowstatecciresponsehandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Worflow<wbr>StateCCIResponse<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIResponse<wbr>Handler<span class="tsd-signature-symbol">(</span>circleCiJsonResponse<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<div class="tsd-comment">
+						<div class="lead">
+							<p>Note that the HTTP JSON Response will be ofthe following form :</p>
+						</div>
+						<pre><code> {
+   <span class="hljs-attr">&quot;next_page_token&quot;</span>: <span class="hljs-literal">null</span>,
+   <span class="hljs-attr">&quot;items&quot;</span>: [
+     {
+       <span class="hljs-attr">&quot;pipeline_id&quot;</span>: <span class="hljs-string">&quot;b4f4eabc-d572-4fdf-916a-d5f05d178221&quot;</span>,
+       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;75e83261-5b3c-4bc0-ad11-514bb01f634c&quot;</span>,
+       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;docker_build_and_push&quot;</span>,
+       <span class="hljs-attr">&quot;project_slug&quot;</span>: <span class="hljs-string">&quot;gh/gravitee-lab/GraviteeCiCdOrchestrator&quot;</span>,
+       <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;failed&quot;</span>,
+       <span class="hljs-attr">&quot;started_by&quot;</span>: <span class="hljs-string">&quot;a159e94e-3763-474d-8c51-d1ea6ed602d4&quot;</span>,
+       <span class="hljs-attr">&quot;pipeline_number&quot;</span>: <span class="hljs-number">126</span>,
+       <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;2020-09-12T17:47:21Z&quot;</span>,
+       <span class="hljs-attr">&quot;stopped_at&quot;</span>: <span class="hljs-string">&quot;2020-09-12T17:48:26Z&quot;</span>
+     },
+     {
+       <span class="hljs-attr">&quot;pipeline_id&quot;</span>: <span class="hljs-string">&quot;b4f4eabc-d572-4fdf-916a-d5f05d178221&quot;</span>,
+       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;cd7b408f-48d4-4ba7-8a0a-644d82267434&quot;</span>,
+       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;yet_another_test_workflow&quot;</span>,
+       <span class="hljs-attr">&quot;project_slug&quot;</span>: <span class="hljs-string">&quot;gh/gravitee-lab/GraviteeCiCdOrchestrator&quot;</span>,
+       <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;success&quot;</span>,
+       <span class="hljs-attr">&quot;started_by&quot;</span>: <span class="hljs-string">&quot;a159e94e-3763-474d-8c51-d1ea6ed602d4&quot;</span>,
+       <span class="hljs-attr">&quot;pipeline_number&quot;</span>: <span class="hljs-number">126</span>,
+       <span class="hljs-attr">&quot;created_at&quot;</span>: <span class="hljs-string">&quot;2020-09-12T17:47:21Z&quot;</span>,
+       <span class="hljs-attr">&quot;stopped_at&quot;</span>: <span class="hljs-string">&quot;2020-09-12T17:48:11Z&quot;</span>
+     }
+   ]
+ }</code></pre>
+						<hr>
+					</div>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">circleCiJsonResponse</span>: <span class="tsd-signature-type">any</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L295">src/modules/circleci/status/PipelineExecSetReport.ts:295</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-descriptions">
+					<a name="reportworkflowsstate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> report<wbr>Workflows<wbr>State</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">report<wbr>Workflows<wbr>State<span class="tsd-signature-symbol">(</span>pipeline_guid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, next_page_token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<h4 class="tsd-parameters-title">Parameters</h4>
+					<ul class="tsd-parameters">
+						<li>
+							<span class="name">pipeline_guid</span>: <span class="tsd-signature-type">string</span>
+						</li>
+						<li>
+							<span class="name">next_page_token</span>: <span class="tsd-signature-type">string</span>
+						</li>
+					</ul>
+					<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span>    </h4>
+					</ul>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetReport.ts#L242">src/modules/circleci/status/PipelineExecSetReport.ts:242</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<footer class="with-border-bottom">
+				<div class="tsd-legend-group">
+					<ul class="tsd-legend">
+						<li class="tsd-is-inherited"><span class="tsd-kind-icon">Inherited</span></li>
+						<li class="tsd-is-protected"><span class="tsd-kind-icon">Protected</span></li>
+						<li class="tsd-is-private"><span class="tsd-kind-icon">Private</span></li>
+						<li class="tsd-is-static"><span class="tsd-kind-icon">Static</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+						<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object</span></li>
+						<li class="tsd-kind-property"><span class="tsd-kind-icon">Property</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+						<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+						<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type</span></li>
+						<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+						<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enum</span></li>
+						<li class="tsd-kind-constructor"><span class="tsd-kind-icon">Constructor</span></li>
+						<li class="tsd-kind-accessor"><span class="tsd-kind-icon">Getter/Setter</span></li>
+					</ul>
+				</div>
+			</footer>
+			<div>Made with ❤️ by <a href="https://github.com/pirix-gh/eledoc" target="_blank">pirix-gh</a>. Documentation generated by <a href="http://typedoc.org/" target="_blank">TypeDoc.</a></div>
+		</div>
+	</div>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

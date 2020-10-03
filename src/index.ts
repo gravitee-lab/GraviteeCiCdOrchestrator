@@ -24,7 +24,7 @@ console.log('')
 
 
 
-throw new Error("DEBUG STOP POINT")
+/// throw new Error("DEBUG STOP POINT")
 
 export const cli : Cli = new Cli();
 

@@ -1,5 +1,5 @@
 import * as rxjs from 'rxjs';
-import { CircleCIClient } from '../../modules/circleci/CircleCIClient';
+import { CircleCIClient, WorkflowsData, WorkflowJobsData } from '../../modules/circleci/CircleCIClient';
 import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
 
 
@@ -87,8 +87,8 @@ export class ReactiveParallelExecutionSet {
          console.log(`[ --- progress Matrix Observer: NEXT  `);
          console.log(`[ --- All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
-         const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
-         pipeExecStatusWatcher.finalStateNotifier.subscribe({
+         /// const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
+         /* pipeExecStatusWatcher.finalStateNotifier.subscribe({
            next: this.notifyExecCompleted,
            error: (error) => {
              console.log("[-----------------------------------------------]");
@@ -100,15 +100,17 @@ export class ReactiveParallelExecutionSet {
            complete: () => {
              console.log('Just Completed Pipeline  ')
            }
-         })
+         }) */
          // pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
 
-         /// will be replaced by this.notifyExecCompleted()
+         console.log(` [{ReactiveParallelExecutionSet}] Now verifying that If I do not invoke [this.orchestratorNotifier.next(${this.parallelExecutionSetIndex});] then nothing happens at all`)
+         /*
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
          this.orchestratorNotifier.next(this.parallelExecutionSetIndex);
          console.log("[-----------------------------------------------]");
          console.log("[-----------------------------------------------]");
+         */
        }
 
      }).bind(this),
@@ -225,7 +227,8 @@ export class ReactiveParallelExecutionSet {
       pipeline_exec_number: `${circleCiJsonResponse.number}`,
       id : `${circleCiJsonResponse.id}`,
       created_at: `${circleCiJsonResponse.created_at}`,
-      exec_state: `${circleCiJsonResponse.state}`
+      exec_state: `${circleCiJsonResponse.state}`,
+      project_slug: `${circleCiJsonResponse.project_slug}`
     }
     this.progressMatrix.push(entry.pipeline);
     /// this.progressMatrixSubject.next(entry.pipeline);

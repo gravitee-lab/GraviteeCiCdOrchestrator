@@ -138,9 +138,6 @@
 											<li class="tsd-kind-variable tsd-parent-kind-module">
 												<a href="modules/_index_.html#cli" class="tsd-kind-icon">cli</a>
 											</li>
-											<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-												<a href="modules/_index_.html#machin" class="tsd-kind-icon">machin</a>
-											</li>
 										</ul>
 									</li>
 								</ul>
@@ -168,9 +165,6 @@
 													</li>
 													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
 														<a href="classes/_lib_errors_.errorreporter.html#http_release_git_repo" class="tsd-kind-icon">http_<wbr>release_<wbr>git_<wbr>repo</a>
-													</li>
-													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-														<a href="classes/_lib_errors_.errorreporter.html#max_nb_of_wflows_per_pipeline" class="tsd-kind-icon">max_<wbr>nb_<wbr>of_<wbr>wflows_<wbr>per_<wbr>pipeline</a>
 													</li>
 													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
 														<a href="classes/_lib_errors_.errorreporter.html#pipeline_complete_timeout" class="tsd-kind-icon">pipeline_<wbr>complete_<wbr>timeout</a>
@@ -267,6 +261,12 @@
 														<a href="classes/_modules_circleci_circleciclient_.circleciclient.html#inspectpipelineexecstate" class="tsd-kind-icon">inspect<wbr>Pipeline<wbr>Exec<wbr>State</a>
 													</li>
 													<li class="tsd-kind-method tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_circleciclient_.circleciclient.html#inspectpipelineworkflowsexecstate" class="tsd-kind-icon">inspect<wbr>Pipeline<wbr>Workflows<wbr>Exec<wbr>State</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_circleciclient_.circleciclient.html#inspectworkflowjobsexecstate" class="tsd-kind-icon">inspect<wbr>Workflow<wbr>Jobs<wbr>Exec<wbr>State</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class">
 														<a href="classes/_modules_circleci_circleciclient_.circleciclient.html#loadcirclecisecrets" class="tsd-kind-icon">load<wbr>CircleCISecrets</a>
 													</li>
 													<li class="tsd-kind-method tsd-parent-kind-class">
@@ -274,6 +274,17 @@
 													</li>
 													<li class="tsd-kind-method tsd-parent-kind-class">
 														<a href="classes/_modules_circleci_circleciclient_.circleciclient.html#whoami" class="tsd-kind-icon">whoami</a>
+													</li>
+												</ul>
+											</li>
+											<li class="tsd-kind-interface tsd-parent-kind-module">
+												<a href="interfaces/_modules_circleci_circleciclient_.workflowjobsdata.html" class="tsd-kind-icon">Workflow<wbr>Jobs<wbr>Data</a>
+												<ul>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_circleciclient_.workflowjobsdata.html#cci_json_response" class="tsd-kind-icon">cci_<wbr>json_<wbr>response</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_circleciclient_.workflowjobsdata.html#workflow_guid" class="tsd-kind-icon">workflow_<wbr>guid</a>
 													</li>
 												</ul>
 											</li>
@@ -608,10 +619,93 @@
 												</ul>
 											</li>
 											<li class="tsd-kind-class tsd-parent-kind-module">
-												<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportbuilder.html" class="tsd-kind-icon">Pipeline<wbr>Exec<wbr>Set<wbr>Report<wbr>Builder</a>
+												<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html" class="tsd-kind-icon">Pipeline<wbr>Exec<wbr>Set<wbr>Report<wbr>Logger</a>
 												<ul>
+													<li class="tsd-kind-constructor tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#constructor" class="tsd-kind-icon">constructor</a>
+													</li>
 													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
-														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportbuilder.html#report" class="tsd-kind-icon">report</a>
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#circleci_client" class="tsd-kind-icon">circleci_<wbr>client</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#jobpaginationnotifier" class="tsd-kind-icon">job<wbr>Pagination<wbr>Notifier</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#jobsreportingnotifier" class="tsd-kind-icon">jobs<wbr>Reporting<wbr>Notifier</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#pipelinereportingnotifier" class="tsd-kind-icon">pipeline<wbr>Reporting<wbr>Notifier</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#report" class="tsd-kind-icon">report</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportingcompletionnotifier" class="tsd-kind-icon">reporting<wbr>Completion<wbr>Notifier</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#rxsubscriptions" class="tsd-kind-icon">rx<wbr>Subscriptions</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#workflowpaginationnotifier" class="tsd-kind-icon">workflow<wbr>Pagination<wbr>Notifier</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-class">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#workflowreportingnotifier" class="tsd-kind-icon">workflow<wbr>Reporting<wbr>Notifier</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#buildreport" class="tsd-kind-icon">build<wbr>Report</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#get2dimindexofworkflowinreport" class="tsd-kind-icon">get2<wbr>Dim<wbr>Index<wbr>OfWorkflow<wbr>InReport</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#getindexofpipelinestateinreport" class="tsd-kind-icon">get<wbr>Index<wbr>OfPipeline<wbr>State<wbr>InReport</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#initnotiferssubscriptions" class="tsd-kind-icon">init<wbr>Notifers<wbr>Subscriptions</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#initreport" class="tsd-kind-icon">init<wbr>Report</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsexecstateccierrorhandler" class="tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIError<wbr>Handler</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsexecstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Jobs<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportjobsstate" class="tsd-kind-icon">report<wbr>Jobs<wbr>State</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelineexecstateccierrorhandler" class="tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIError<wbr>Handler</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelineexecstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Pipeline<wbr>Exec<wbr>StateCCIResponse<wbr>Handler</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportpipelinesstate" class="tsd-kind-icon">report<wbr>Pipelines<wbr>State</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworflowstateccierrorhandler" class="tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIError<wbr>Handler</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworflowstatecciresponsehandler" class="tsd-kind-icon">report<wbr>Worflow<wbr>StateCCIResponse<wbr>Handler</a>
+													</li>
+													<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+														<a href="classes/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreportlogger.html#reportworkflowsstate" class="tsd-kind-icon">report<wbr>Workflows<wbr>State</a>
+													</li>
+												</ul>
+											</li>
+											<li class="tsd-kind-interface tsd-parent-kind-module">
+												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html" class="tsd-kind-icon">CCi<wbr>Job<wbr>Request<wbr>Ref</a>
+												<ul>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html#next_page_token" class="tsd-kind-icon">next_<wbr>page_<wbr>token</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccijobrequestref.html#wf_guid" class="tsd-kind-icon">wf_<wbr>guid</a>
 													</li>
 												</ul>
 											</li>
@@ -627,13 +721,30 @@
 												</ul>
 											</li>
 											<li class="tsd-kind-interface tsd-parent-kind-module">
+												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html" class="tsd-kind-icon">Cci<wbr>Pipeline<wbr>Ref</a>
+												<ul>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html#cci_project_slug" class="tsd-kind-icon">cci_<wbr>project_<wbr>slug</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelineref.html#pipeline_number" class="tsd-kind-icon">pipeline_<wbr>number</a>
+													</li>
+												</ul>
+											</li>
+											<li class="tsd-kind-interface tsd-parent-kind-module">
 												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html" class="tsd-kind-icon">Cci<wbr>Pipeline<wbr>State</a>
 												<ul>
 													<li class="tsd-kind-property tsd-parent-kind-interface">
 														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html#cci_api_infos" class="tsd-kind-icon">cci_<wbr>api_<wbr>infos</a>
 													</li>
 													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html#exec_state" class="tsd-kind-icon">exec_<wbr>state</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
 														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html#pipeline_guid" class="tsd-kind-icon">pipeline_<wbr>guid</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html#pipeline_number" class="tsd-kind-icon">pipeline_<wbr>number</a>
 													</li>
 													<li class="tsd-kind-property tsd-parent-kind-interface">
 														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.ccipipelinestate.html#workflows_states" class="tsd-kind-icon">workflows_<wbr>states</a>
@@ -655,10 +766,43 @@
 												</ul>
 											</li>
 											<li class="tsd-kind-interface tsd-parent-kind-module">
+												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.jobpaginationref.html" class="tsd-kind-icon">Job<wbr>Pagination<wbr>Ref</a>
+												<ul>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.jobpaginationref.html#next_page_token" class="tsd-kind-icon">next_<wbr>page_<wbr>token</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.jobpaginationref.html#workflow_guid" class="tsd-kind-icon">workflow_<wbr>guid</a>
+													</li>
+												</ul>
+											</li>
+											<li class="tsd-kind-interface tsd-parent-kind-module">
 												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreport.html" class="tsd-kind-icon">Pipeline<wbr>Exec<wbr>Set<wbr>Report</a>
 												<ul>
 													<li class="tsd-kind-property tsd-parent-kind-interface">
 														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.pipelineexecsetreport.html#pipelines_states" class="tsd-kind-icon">pipelines_<wbr>states</a>
+													</li>
+												</ul>
+											</li>
+											<li class="tsd-kind-interface tsd-parent-kind-module">
+												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.wfpaginationref.html" class="tsd-kind-icon">Wf<wbr>Pagination<wbr>Ref</a>
+												<ul>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.wfpaginationref.html#next_page_token" class="tsd-kind-icon">next_<wbr>page_<wbr>token</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.wfpaginationref.html#pipeline_guid" class="tsd-kind-icon">pipeline_<wbr>guid</a>
+													</li>
+												</ul>
+											</li>
+											<li class="tsd-kind-interface tsd-parent-kind-module">
+												<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html" class="tsd-kind-icon">Workflow2<wbr>Dim<wbr>Index</a>
+												<ul>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html#pipeline_index" class="tsd-kind-icon">pipeline_<wbr>index</a>
+													</li>
+													<li class="tsd-kind-property tsd-parent-kind-interface">
+														<a href="interfaces/_modules_circleci_status_pipelineexecsetreport_.workflow2dimindex.html#workflow_index" class="tsd-kind-icon">workflow_<wbr>index</a>
 													</li>
 												</ul>
 											</li>
@@ -682,9 +826,6 @@
 													</li>
 													<li class="tsd-kind-property tsd-parent-kind-class">
 														<a href="classes/_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#finalstatenotifier" class="tsd-kind-icon">final<wbr>State<wbr>Notifier</a>
-													</li>
-													<li class="tsd-kind-property tsd-parent-kind-class">
-														<a href="classes/_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#max_nb_of_wflows" class="tsd-kind-icon">max_<wbr>nb_<wbr>of_<wbr>wflows</a>
 													</li>
 													<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
 														<a href="classes/_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>

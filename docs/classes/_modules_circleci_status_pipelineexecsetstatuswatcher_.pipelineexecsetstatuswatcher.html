@@ -86,9 +86,6 @@
 								<li class=" tsd-kind-property tsd-parent-kind-class">
 									<a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#finalstatenotifier" class="tsd-kind-icon">final<wbr>State<wbr>Notifier</a>
 								</li>
-								<li class=" tsd-kind-property tsd-parent-kind-class">
-									<a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#max_nb_of_wflows" class="tsd-kind-icon">max_<wbr>nb_<wbr>of_<wbr>wflows</a>
-								</li>
 								<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 									<a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
 								</li>
@@ -247,13 +244,6 @@
 							</div>
 							<div class="tsd-navigation secondary">
 								<ul>
-									<li class="tsd-kind-property tsd-parent-kind-class">
-										<a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#max_nb_of_wflows" class="tsd-kind-icon">max_<wbr>nb_<wbr>of_<wbr>wflows</a>
-									</li>
-								</ul>
-							</div>
-							<div class="tsd-navigation secondary">
-								<ul>
 									<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
 										<a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html#progressmatrix" class="tsd-kind-icon">progress<wbr>Matrix</a>
 									</li>
@@ -349,7 +339,7 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Pipeline<wbr>Exec<wbr>Set<wbr>Status<wbr>Watcher<span class="tsd-signature-symbol">(</span>progressMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>, circleci_client<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html" class="tsd-signature-type">PipelineExecSetStatusWatcher</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Pipeline<wbr>Exec<wbr>Set<wbr>Status<wbr>Watcher<span class="tsd-signature-symbol">(</span>progressMatrix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>, circleci_client<span class="tsd-signature-symbol">: </span><a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html" class="tsd-signature-type">PipelineExecSetStatusWatcher</a></li>
 					</ul>
 					<h4 class="tsd-parameters-title">Parameters</h4>
 					<ul class="tsd-parameters">
@@ -357,14 +347,14 @@
 							<span class="name">progressMatrix</span>: <span class="tsd-signature-type">any</span>    <span class="tsd-signature-symbol">[]</span>
 						</li>
 						<li>
-							<span class="name">circleci_client</span>: <span class="tsd-signature-type">any</span>
+							<span class="name">circleci_client</span>: <a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a>
 						</li>
 					</ul>
 					<h4 class="tsd-returns-title">Returns <a href="_modules_circleci_status_pipelineexecsetstatuswatcher_.pipelineexecsetstatuswatcher.html" class="tsd-signature-type">PipelineExecSetStatusWatcher</a></h4>
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L79">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:79</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L73">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:73</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -377,7 +367,7 @@
 					<div class="tsd-signature tsd-kind-icon">circleci_client<span class="tsd-signature-symbol">:</span> <a href="_modules_circleci_circleciclient_.circleciclient.html" class="tsd-signature-type">CircleCIClient</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L60">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L60">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:60</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -399,33 +389,14 @@
 							with <code>this.finalStateNotifier.next()</code> method, only after <code>this.start()</code> is invoked.</p>
 							<hr>
 							<p>The <a href="_modules_circleci_reactiveparallelexecutionset_.reactiveparallelexecutionset.html">ReactiveParallelExecutionSet</a> subscribes to this RxSubject, so that it
-							is notified when all Pipelines have reached a final execution state,with or without errors.</p>
+							is notified when all Pipelines have reached a final execution state, with or without errors.</p>
 						</div>
 					</div>
 					<div class="tsd-comment">
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L38">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:38</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-descriptions">
-					<a name="max_nb_of_wflows" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> max_<wbr>nb_<wbr>of_<wbr>wflows</h3>
-					<div class="tsd-signature tsd-kind-icon">max_nb_of_wflows<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
-					<div class="tsd-comment">
-						<div class="lead">
-							<p>The maximum number of workflows allowedforany Pipeline execution
-								If that number is exceeded by any Circle Pipeline execution, then the
-							current CI CD Stage is aborted (stops its execution)</p>
-						</div>
-					</div>
-					<div class="tsd-comment">
-					</div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L79">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:79</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L38">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -455,7 +426,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L59">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L59">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:59</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -465,7 +436,7 @@
 					<div class="tsd-signature tsd-kind-icon">startDate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L61">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L61">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:61</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -475,7 +446,7 @@
 					<div class="tsd-signature tsd-kind-icon">timeoutDate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L63">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L63">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:63</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -493,7 +464,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L68">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L68">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -510,7 +481,7 @@
 					</div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L73">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:73</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L73">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:73</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -533,7 +504,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L281">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:281</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L324">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:324</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -553,7 +524,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L300">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:300</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L343">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:343</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -622,7 +593,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L260">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:260</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L305">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:305</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -636,7 +607,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L196">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:196</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L196">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:196</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -650,7 +621,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L156">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:156</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L152">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:152</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -664,7 +635,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L144">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:144</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L139">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:139</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -693,7 +664,7 @@
 					</ul>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/811749d/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L110">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:110</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/88131fb/src/modules/circleci/status/PipelineExecSetStatusWatcher.ts#L105">src/modules/circleci/status/PipelineExecSetStatusWatcher.ts:105</a></li>
 						</ul>
 					</aside>
 				</section>

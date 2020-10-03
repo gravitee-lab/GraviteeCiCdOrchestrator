@@ -201,7 +201,7 @@ export class CircleCIClient {
      *
      *
      **/
-   inspectPipelineWorkflowsExecState(pipeline_guid: string, next_page_token: string): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+   inspectPipelineWorkflowsExecState(parent_pipeline_guid: string, next_page_token: string): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
 
      let observableRequest: any = rxjs.Observable.create( ( observer ) => {
          let config = {
@@ -214,19 +214,23 @@ export class CircleCIClient {
          //
 
 
-         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow");
+         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/pipeline/" + `${parent_pipeline_guid}` + "/workflow");
 
          /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
          let httpRequest = null;
          if (next_page_token === null) {
-           httpRequest = "https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + "/workflow";
+           httpRequest = "https://circleci.com/api/v2/pipeline/" + `${parent_pipeline_guid}` + "/workflow";
          } else {
-           httpRequest = "https://circleci.com/api/v2/pipeline/" + `${pipeline_guid}` + `/workflow?next_page_token=${next_page_token}`;
+           httpRequest = "https://circleci.com/api/v2/pipeline/" + `${parent_pipeline_guid}` + `/workflow?next_page_token=${next_page_token}`;
          }
 
          axios.get(httpRequest, config )
          .then( ( response ) => {
-             observer.next( response.data );
+             let emitted: WorkflowsData = {
+               cci_json_response: response.data,
+               parent_pipeline_guid: parent_pipeline_guid
+             }
+             observer.next( emitted );
              observer.complete();
          } )
          .catch( ( error ) => {
@@ -312,7 +316,7 @@ export class CircleCIClient {
    *
    *
    **/
-   inspectWorkflowJobsExecState(workflow_guid: string, next_page_token: string): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
+   inspectWorkflowJobsExecState(parent_workflow_guid: string, next_page_token: string): any/*Observable<any> or Observable<AxiosResponse<any>>*/ {
 
      let observableRequest: any = rxjs.Observable.create( ( observer ) => {
          let config = {
@@ -325,21 +329,21 @@ export class CircleCIClient {
          //
 
 
-         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/workflow/" + `${workflow_guid}` + "/job");
+         console.info("curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Circle-Token: <secret token value>' https://circleci.com/api/v2/workflow/" + `${parent_workflow_guid}` + "/job");
 
          /// axios.post( 'https://circleci.com/api/v2/me', jsonPayloadExample, config ).then(....)
          let httpRequest = null;
          if (next_page_token === null) {
-           httpRequest = "https://circleci.com/api/v2/workflow/" + `${workflow_guid}` + "/job";
+           httpRequest = "https://circleci.com/api/v2/workflow/" + `${parent_workflow_guid}` + "/job";
          } else {
-           httpRequest = "https://circleci.com/api/v2/workflow/" + `${workflow_guid}` + `/job?next_page_token=${next_page_token}`;
+           httpRequest = "https://circleci.com/api/v2/workflow/" + `${parent_workflow_guid}` + `/job?next_page_token=${next_page_token}`;
          }
 
          axios.get(httpRequest, config )
          .then( ( response ) => {
              let emitted: WorkflowJobsData = {
                cci_json_response: response.data,
-               workflow_guid : workflow_guid
+               parent_workflow_guid : parent_workflow_guid
              }
              observer.next( emitted );
              observer.complete();
@@ -391,5 +395,16 @@ export class CircleCIClient {
  **/
 export interface WorkflowJobsData {
   cci_json_response: any,
-  workflow_guid: string
+  parent_workflow_guid: string
+}
+
+/**
+ * we need this type, because we don't want to be doomed to inspect the CircleCI API JSON Response  about Workflows Execution State
+ * to retrieve the inspected Workflows parent pipeline GUID
+ * not include enough information to retrieve the workflow execution,toxhich a JobExecution belongs to.
+ * Now the Observable Stream emiting CircleCI API JSON Response about Jobs Execution, willalso mention workflow_guid
+ **/
+export interface WorkflowsData {
+  cci_json_response: any,
+  parent_pipeline_guid: string
 }

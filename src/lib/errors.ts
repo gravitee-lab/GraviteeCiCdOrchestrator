@@ -29,12 +29,8 @@ class ErrorReporter {
   private pipeline_complete_timeout: string;
   /// The Gihub.com Organization whre all the git repos live.
   private gh_org: string;
-  /**
-   *
-   **/
-  private max_nb_of_wflows_per_pipeline: string;
 
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_complete_timeout: string, gh_org: string, max_nb_of_wflows_per_pipeline: string) {
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_complete_timeout: string, gh_org: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -94,12 +90,7 @@ class ErrorReporter {
     } else {
       this.gh_org = gh_org;
     }
-    if (gh_org === undefined || gh_org === "") {
-      console.warn("{[.DOTENV]} - [MAX_NB_OF_WFLOWS_PER_PIPELINE] is undefined, defaulting value to '2'")
-      this.max_nb_of_wflows_per_pipeline = '2';
-    } else {
-      this.gh_org = gh_org;
-    }
+
 
   }
 
@@ -110,4 +101,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETE_TIMEOUT, process.env.GH_ORG, process.env.MAX_NB_OF_WFLOWS_PER_PIPELINE);
+export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETE_TIMEOUT, process.env.GH_ORG);

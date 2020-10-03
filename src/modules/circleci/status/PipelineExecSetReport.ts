@@ -1,6 +1,5 @@
 import * as rxjs from 'rxjs';
-import { CircleCIClient, WorkflowJobsData } from '../../../modules/circleci/CircleCIClient';
-/// import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../../modules/circleci/status/PipelineExecSetStatusWatcher';
+import { CircleCIClient, WorkflowsData, WorkflowJobsData } from '../../../modules/circleci/CircleCIClient';
 
 export enum VCS_TYPE {
   GITHUB,
@@ -101,6 +100,7 @@ export interface Workflow2DimIndex {
 }
 
 export class PipelineExecSetReportLogger {
+
   private circleci_client: CircleCIClient;
   private report: PipelineExecSetReport;
   /**
@@ -292,39 +292,41 @@ export class PipelineExecSetReportLogger {
    * ---
    *
    **/
-  private reportWorflowStateCCIResponseHandler (circleCiJsonResponse: any) : void {
-    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+  private reportWorflowStateCCIResponseHandler (observedResponse: WorkflowsData) : void {
+    console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', observedResponse.cci_json_response  /* circleCiJsonResponse.data // when retryWhen is used*/ )
 
-    if (circleCiJsonResponse.items.length == 0) {
+    if (observedResponse.cci_json_response.items.length == 0) {
       // if response does not include any workkflow, we have a problem in the pipeline.
       // Should not ever happen, because Circle CI guarantees there always is at least one Workflow, the default one, but just in case...
-      throw new Error(`[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] the Circle Ci API response does not mentionany workflow. Circie cle Response is [${circleCiJsonResponse}]`)
+      throw new Error(`[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] the Circle Ci API response does not mention any workflow. Circie CI JSON Response is [${observedResponse.cci_json_response}]`)
     }
-    let pipeline_guid = circleCiJsonResponse.items[0].pipeline_id;
 
-
-    let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(pipeline_guid);
+    let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(observedResponse.parent_pipeline_guid);
     /// we push each entires,to be able topaginate when necessary because [next_page_token] is null
-    circleCiJsonResponse.items.forEach((wflowstate) => {
+    observedResponse.cci_json_response.items.forEach((wflowstate) => {
       this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.states.push(wflowstate);
     });
 
     /// let next_page_token = circleCiJsonResponse.next_page_token;
-    if (circleCiJsonResponse.next_page_token === null) {
+    if (observedResponse.cci_json_response.next_page_token === null) {
       this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.completed = true;
       this.pipelineReportingNotifier.next({ // triggers [reportPipelinesState]
-        cci_project_slug: `${circleCiJsonResponse.items[0].project_slug}`,
-        pipeline_number: parseInt(`${circleCiJsonResponse.items[0].pipeline_number}`)
+        cci_project_slug: `${observedResponse.cci_json_response.items[0].project_slug}`,
+        pipeline_number: parseInt(`${observedResponse.cci_json_response.items[0].pipeline_number}`)
       });
 
-      for (let k: number; k < circleCiJsonResponse.items; k++) { // triggers [reportJobsState] for each workflow
+      for (let k: number; k < observedResponse.cci_json_response.items; k++) { // triggers [reportJobsState] for each workflow
         this.jobsReportingNotifier.next({
-          wf_guid: circleCiJsonResponse.items[k].id,
+          wf_guid: observedResponse.cci_json_response.items[k].id,
           next_page_token: null
         });
       }
     } else {
-      this.workflowPaginationNotifier.next(circleCiJsonResponse.next_page_token)
+      let paginator: WfPaginationRef = {
+         next_page_token: observedResponse.cci_json_response.next_page_token,
+         pipeline_guid: observedResponse.parent_pipeline_guid
+      }
+      this.workflowPaginationNotifier.next(paginator);
     }
 
   }
@@ -465,7 +467,7 @@ export class PipelineExecSetReportLogger {
         throw new Error(`[{PipelineExecSetReportLogger}] - [reportJobsExecStateCCIResponseHandler] the Circle Ci API response does not mention any job. Circle CI Response is [${observedResponse.cci_json_response}]`)
       }
 
-      let workflowIndexInReport = this.get2DimIndexOfWorkflowInReport(observedResponse.workflow_guid);
+      let workflowIndexInReport = this.get2DimIndexOfWorkflowInReport(observedResponse.parent_workflow_guid);
       /// we push each entries,to be able topaginate when necessary because [next_page_token] is null
       observedResponse.cci_json_response.items.forEach((jobstate: any) => {
         this.report.pipelines_states[workflowIndexInReport.pipeline_index].workflows_states.states[workflowIndexInReport.workflow_index].jobs_states.states.push(jobstate);
@@ -479,7 +481,11 @@ export class PipelineExecSetReportLogger {
         this.reportingCompletionNotifier.next(this.report);
 
       } else {
-        this.jobPaginationNotifier.next(observedResponse.cci_json_response.next_page_token)
+        let paginator: JobPaginationRef = {
+          next_page_token: observedResponse.cci_json_response.next_page_token,
+          workflow_guid: observedResponse.parent_workflow_guid
+        }
+        this.jobPaginationNotifier.next(paginator)
       }
 
     }
