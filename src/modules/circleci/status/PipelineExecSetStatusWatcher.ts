@@ -9,7 +9,10 @@ export interface PipeExecSetStatusNotification {
 
 export interface EmptyCat { // Because this is the only Type which has only one possible instance, the Empty Set : {}.andalso the only type which is exactly equal to one ofits instances. It is not the EmptySet, because no set Ehas the property : E is an element of E.
 }
-// EmptyCatcouldbe useful to define progressMatrixUpdatesNotifier = new rxjs.Subject<EmptyCat>();
+// EmptyCat could be useful to define progressMatrixUpdatesNotifier: rxjs.Subject<EmptyCat>();
+// Indeed, this notifier [next:] callback does not need to retrieve [this.progressMatrix] from
+// its paramters, since it already is a member of the [PipelineExecSetStatusWatcher] instance
+// Never the less, passing as paramters of the callback, the progressMatrix,might be useful tomake binding the callback useless (binding a method to an object is something I do not like doing)
 
 /**
  * ---
