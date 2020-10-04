@@ -127,7 +127,13 @@ export class PipelineExecSetStatusWatcher {
     });
     let progressMatrixUpdatesSubscription = this.progressMatrixUpdatesNotifier.subscribe({
         next: (progressMatrix) => {
-          // here we have to check if, for all entries of the [progressMatrix], the [watch_round] JSON Property are equal to [this.watch_round]
+          // here we have to check if, for all entries of the [progressMatrix], the
+          // [watch_round] JSON Property are equal to [this.watch_round]
+          // If yes, then we have to :
+          //  => check if all pipeline workflows execution have reached a 'success' status :
+          //     ++ If not, we call again the [launchExecStatusInspectionRound()] method (which will query again Circle CI to update workflows execution status' )
+          //     ++ If yeswecallthe finalStateNotifier.next(), method we call again the [launchExecStatusInspectionRound()] method
+
 
         }
     });
