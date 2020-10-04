@@ -295,23 +295,51 @@ export class PipelineExecSetStatusWatcher {
 
     let pipelineIndexInProgressMatrix = this.getIndexInProgressMatrixOfPipeline(observedResponse.parent_pipeline_guid);
 
-
+    /// ---
+    /// Here looping and pushing each entries, one after the other, to be able to
+    /// cumulatively add all Workflow States in
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
 
       /// --- ///
-      /// Here we check if the execution status of the workflow is errored, and if so, we
+      /// Here we check if the execution status of the workflow makessure a problem has occured, and if so, we
       /// build and log a {@link PipelineExecSetReport}, passing it an Error to throw
       ///
-      /// looping through array,to be able to paginate, and cumulatively add
-      /// workflow states returned bythe Circle CI API
-      if (wflowstate.status === 'success') {
-
-      } else {
-
+      /// Looping through array, to be able to paginate, and cumulatively add
+      /// workflow states returned by the Circle CI API
+      let occuredProblem = null;
+      let erroMsg = `For Circle CI Pipline of GUID [${observedResponse.parent_pipeline_guid}], the [${wflowstate.name}] workflow of GUID [${wflowstate.id}] `;
+      if (wflowstate.status === 'failed') {
+        erroMsg = erroMsg + ` completed its execution with errors`;
+        occuredProblem = new Error(erroMsg);
+      } else if (wflowstate.status === 'error') {
+        erroMsg = erroMsg + ` failed to run because of syntax errors within the [.circleci/config.yml]`;
+        occuredProblem = new Error(erroMsg);
+      } else if (wflowstate.status === 'failing') {
+        erroMsg = erroMsg + ` at least one job already failed, although not all job have completed their execution`;
+        occuredProblem = new Error(erroMsg);
+      } else if (wflowstate.status === 'canceled') {
+        erroMsg = erroMsg + ` has failed to complete its execution, because some human canceled the Pipeline execution`;
+        occuredProblem = new Error(erroMsg);
+      } else if (wflowstate.status === 'unauthorized') {
+        erroMsg = erroMsg + ` failed to run because the Circle CI user who triggered the Pipeline is unauthorized to run this Pipeline.`;
+        occuredProblem = new Error(erroMsg);
       }
     }
+    /// -------------
+    ///  All Workflow Execution Statuses
+    ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
+    ///     |----------------------------------------------------|-------------------------------------------------------------------------------------------------|
+    ///     | `success`                                          |  execution completed without any error                                                          |
+    ///     | `running`                                          |  execution is running                                                                           |
+    ///     | `not_run`                                          |  execution is scheduled, but did not start yet                                                  |
+    ///     | `failed`                                           |  execution completed with errors                                                                |
+    ///     | `error`                                            |  execution was canceled, because of `.circleci/config.yml` syntax errors                        |
+    ///     | `failing`                                          |  execution is still running, and at least one error already occured, without stopping execution. Actually at least one job failed, but not all job have completed execution |
+    ///     | `on_hold`                                          |  waiting for approval (workflows was configured to require an approval, before being scheduled see [this forum entry](https://discuss.circleci.com/t/do-on-hold-jobs-count-against-time-quota/24136) and  [this Circle CI doc entry](https://circleci.com/docs/2.0/workflows/#holding-a-workflow-for-a-manual-approval) )                                                                   |
+    ///     | `canceled`                                         |  someone canceled the execution                                                                 |
+    ///     | `unauthorized`                                     |  an unauthorized Circle CI user requested the execution, using `Circle CI` API, and it was therefore denied |
 
     ///////
     /// finally, we check if there are more Workflows to paginate, to execute again the
