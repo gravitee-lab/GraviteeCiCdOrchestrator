@@ -298,22 +298,20 @@ export class PipelineExecSetStatusWatcher {
 
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
-      
-    }
-    observedResponse.cci_json_response.items.forEach((wflowstate) => { //looping through array,to be able to paginate, and cumulatively add workflow states returned bythe Circle CI API
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
 
       /// --- ///
       /// Here we check if the execution status of the workflow is errored, and if so, we
       /// build and log a {@link PipelineExecSetReport}, passing it an Error to throw
       ///
+      /// looping through array,to be able to paginate, and cumulatively add
+      /// workflow states returned bythe Circle CI API
       if (wflowstate.status === 'success') {
 
       } else {
 
       }
-
-    });
+    }
 
     ///////
     /// finally, we check if there are more Workflows to paginate, to execute again the
