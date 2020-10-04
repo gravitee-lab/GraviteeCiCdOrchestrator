@@ -7,6 +7,10 @@ export interface PipeExecSetStatusNotification {
   is_errored: boolean
 }
 
+export interface EmptyCat { // Because this is the only Type which has only one possible instance, the Empty Set : {}.andalso the only type which is exactly equal to one ofits instances. It is not the EmptySet, because no set Ehas the property : E is an element of E.
+}
+// EmptyCatcouldbe useful to define progressMatrixUpdatesNotifier = new rxjs.Subject<EmptyCat>();
+
 /**
  * ---
  * Keeps fetching the Circle CI API, to determine when either :
