@@ -84,26 +84,19 @@ export class ReactiveParallelExecutionSet {
        if (triggerProgress.length == this.pipelines_nb){
          console.log("[-----------------------------------------------]");
          console.log("[-----------------------------------------------]");
-         console.log(`[ --- progress Matrix Observer: NEXT  `);
-         console.log(`[ --- All Pipelines have been triggered !   `);
+         console.log(`[ --- [{ReactiveParallelExecutionSet}] - progress Matrix Observer: NEXT  `);
+         console.log(`[ --- [{ReactiveParallelExecutionSet}] - All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
-         /// const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
-         /* pipeExecStatusWatcher.finalStateNotifier.subscribe({
+         const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
+         pipeExecStatusWatcher.finalStateNotifier.subscribe({
            next: this.notifyExecCompleted,
-           error: (error) => {
-             console.log("[-----------------------------------------------]");
-             console.log('An error occured while watching pipeline execution status for the following ParallelExecutionSet : ');
-             console.log(this.parallelExecutionSet);
-             console.log("[-----------------------------------------------]");
-             throw new Error(`An error occured while watching pipeline execution status for the following ParallelExecutionSet : [${this.parallelExecutionSet}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
-           },
            complete: () => {
-             console.log('Just Completed Pipeline  ')
+             console.log('[{ReactiveParallelExecutionSet}] - Just Completed Watching Pipeline Execution Status!');
            }
-         }) */
-         // pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
+         })
+         pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
 
-         console.log(` [{ReactiveParallelExecutionSet}] Now verifying that If I do not invoke [this.orchestratorNotifier.next(${this.parallelExecutionSetIndex});] then nothing happens at all`)
+         console.log(`[{ReactiveParallelExecutionSet}] Now verifying that If I do not invoke [this.orchestratorNotifier.next(${this.parallelExecutionSetIndex});] then nothing happens at all`)
          /*
          console.log("[-----------------------------------------------]");
          console.log(`[ --- notifier call to proceed with next Parallel Execution Set :  `);
