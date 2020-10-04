@@ -149,10 +149,16 @@ export class PipelineExecSetReportLogger {
    private jobPaginationNotifier: rxjs.Subject<JobPaginationRef>;
 
    private rxSubscriptions: rxjs.Subscription[];
-
-  constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
+   private cicd_error: Error;
+  /**
+   * @parameters progressMatrix The progress matrix provided by the {@link ReactiveParallelExecutionSet}, which defines the Pipeline Executions Set for which to build the report
+   * @parameters circleci_client The {@link CircleCIClient} service to use to query the Circle CI API
+   * @parameters error pass a non null Error instance to throw after the report is completely built and logged, to stop the whole CI CD Process. If set to null, then no Error will be thrown, and the CI CD Process can proceeed afterthe report is logged. The Error message should contain the Workflow GUID which was detected as errored.
+   **/
+  constructor(progressMatrix: any[], circleci_client: CircleCIClient, cicd_error: Error) {
     this.circleci_client = circleci_client;
     this.progressMatrix = progressMatrix;
+    this.cicd_error = cicd_error;
     this.initReport();
     this.initNotifersSubscriptions();
     this.buildReport();

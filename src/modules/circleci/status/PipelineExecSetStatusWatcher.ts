@@ -58,9 +58,6 @@ export class PipelineExecSetStatusWatcher {
    **/
   private progressMatrix: any[];
   private circleci_client: CircleCIClient;
-  private startDate: Date;
-  /// the date when watcher will timeout
-  private timeoutDate: Date;
 
 
   /**
@@ -89,9 +86,6 @@ export class PipelineExecSetStatusWatcher {
     this.workflowPaginationNotifier = new rxjs.Subject<WfPaginationRef>();
     this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
 
-    /// --- TIMEOUT MECHANISM
-    this.startDate = null;
-    this.timeoutDate = null;
 
     /// --- INIT WATCH ROUND
 
@@ -188,17 +182,8 @@ export class PipelineExecSetStatusWatcher {
   }
 
   public start () {
-
-    if (this.startDate === null) {
-      this.startDate = new Date();
-      this.timeoutDate = new Date(this.startDate.getTime() + (1000 * parseInt(process.env.PIPELINE_COMPLETE_TIMEOUT)));
-    } else {
-      console.log("[this.startDate] is not null");
-    }
-
     this.launchExecStatusInspectionRound();
   }
-
 
   private launchExecStatusInspectionRound (): void {
     /// First increment watch_round, to start next round
@@ -302,6 +287,14 @@ export class PipelineExecSetStatusWatcher {
 
     observedResponse.cci_json_response.items.forEach((wflowstate) => { //looping through array,to be able to paginate, and cumulatively add workflow states returned bythe Circle CI API
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
+
+      /// Here we check if the execution status of the workflow is errored, and if so, we build and log a {@link PipelineExecSetReport}, and stop all CICD operations after
+      if (wflowstate.status === '') {
+
+      } else {
+
+      }
+
     });
 
     /// let next_page_token = circleCiJsonResponse.next_page_token;
