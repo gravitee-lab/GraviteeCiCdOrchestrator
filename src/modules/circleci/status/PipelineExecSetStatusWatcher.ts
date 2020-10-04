@@ -131,12 +131,12 @@ export class PipelineExecSetStatusWatcher {
           // [watch_round] JSON Property are equal to [this.watch_round]
           // If yes, then we have to :
           //
-          //  => check if all pipeline workflows execution have reached a 'success' status :
+          //  => check if all Pipelines Workflows Execution have reached a 'success' status :
           //     ++ If not, and if no error, we call again the [launchExecStatusInspectionRound()] method (which will query again Circle CI to update workflows execution status' )
-          //     ++ If yes we annihilate timeoutby unsubscribing the RXJS timer, and we call the finalStateNotifier.next() method
-          // the timeout will be triggered if it wasnot annihilated, by an RXJS timer
-          // The RxJS Timer will not throwany Error,but instead buildand logexecution report,passingas constructor third parameter, a new Error("Explaining that noWorkflow Execution Error was detected,it's just that the CICD Stage timed oud");
-          
+          //     ++ If yes we annihilate timeout by unsubscribing the RXJS timer, and we call the finalStateNotifier.next() method
+          // the timeout will be triggered if it was not annihilated, by an RxJS timer
+          // The RxJS Timer will not throw any Error, but instead build and log execution report, passing as constructor third parameter, a new Error("Explaining that no Workflow Execution Error was detected, it's just that the CICD Stage timed out");
+
           throw new Error("That's where I am working now");
 
         }
