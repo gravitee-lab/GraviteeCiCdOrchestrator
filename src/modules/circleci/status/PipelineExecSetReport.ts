@@ -218,7 +218,7 @@ export class PipelineExecSetReportLogger {
           if(this.cicd_error === null) {
             console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed, and no Pipeline Execution Error was reported`);
           } else {
-            console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed, and a Pipeline Execution Error was reported`);
+            console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed, and a Pipeline Execution Error was reported. Now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
             throw this.cicd_error;
           }
         } else {

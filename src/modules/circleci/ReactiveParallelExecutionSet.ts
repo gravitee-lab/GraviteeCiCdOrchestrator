@@ -138,11 +138,17 @@ export class ReactiveParallelExecutionSet {
   private notifyExecCompleted(execStatusNotification: PipeExecSetStatusNotification) {
     if (execStatusNotification.is_errored) {
       console.log("[-----------------------------------------------]");
-      console.log(`A Pipeline has reached an execution status with errors, or Pipeline Execution timeout has been reached, So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
-      console.log("The ParallelExecutionSet Execution Status Report is : ")
-      console.log(execStatusNotification.exec_status_report)
+      console.log(`A Pipeline has reached an execution status with errors, or Pipeline Execution timeout has been reached, So the {@link PipelineExecSetReportLogger} will build and log an Execution Report, and then stop the execution of the whole ${process.argv["cicd-stage"]} CI CD Stage.`);
       console.log("[-----------------------------------------------]");
-      throw new Error(`A Pipeline has reached an execution status with errors, or Pipeline Execution timeout has been reached, So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process. The ParallelExecutionSet Execution Status Report is : ${execStatusNotification.exec_status_report}`);
+      /**
+       * The {@link PipelineExecSetReportLogger} will stop all CI CD Operations : Anyway,
+       * since no [this.orchestratorNotifier.next(parallelExecutionSetIndex)] call is made here, the
+       * [CircleCiOrchestrator] will not ever take back the Execution flow control.
+       * That's why no [throw new Error(`blablah`)] is done here :
+       *  A./ We need to let the {@link PipelineExecSetReportLogger} build and log the Execution report
+       *  B./ The {@link PipelineExecSetReportLogger} will stop all CI CD Operations.
+       **/
+
     } else {
       console.log("[-----------------------------------------------]");
       console.log(`[ --- All pipelines in the ParallelExecutionSet of index [${this.parallelExecutionSetIndex}] have succesfully completed their execution`);
