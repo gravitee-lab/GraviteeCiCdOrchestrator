@@ -196,6 +196,7 @@ export class PipelineExecSetStatusWatcher {
     /// all workflows_exec_state in [progressMatrix] display an execution state equal to 'success'
     let totalSuccess: boolean = this.haveAllPipelinesSuccessfullyCompleted();
 
+    throw new Error("DEBUG STOP That's where I'm working now");
     // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
     let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
 
