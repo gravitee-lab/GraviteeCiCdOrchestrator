@@ -293,21 +293,16 @@ export class PipelineExecSetStatusWatcher {
       throw new Error(`The Pipeline of GUID ${observedResponse.parent_pipeline_guid} has no workflows, which is an anomaly, so stopping all operations.`)
     }
 
-
-    /// let next_page_token = circleCiJsonResponse.next_page_token;
     let pipelineIndexInProgressMatrix = this.getIndexInProgressMatrixOfPipeline(observedResponse.parent_pipeline_guid);
-
-    // this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state = observedResponse.cci_json_response;
-    console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
-    this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
-    console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] after incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
-
 
     observedResponse.cci_json_response.items.forEach((wflowstate) => { //looping through array,to be able to paginate, and cumulatively add workflow states returned bythe Circle CI API
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
 
-      /// Here we check if the execution status of the workflow is errored, and if so, we build and log a {@link PipelineExecSetReport}, and stop all CICD operations after
-      if (wflowstate.status === '') {
+      /// --- ///
+      /// Here we check if the execution status of the workflow is errored, and if so, we
+      /// build and log a {@link PipelineExecSetReport}, passing it an Error to throw
+      ///
+      if (wflowstate.status === 'success') {
 
       } else {
 
@@ -315,9 +310,17 @@ export class PipelineExecSetStatusWatcher {
 
     });
 
-    /// let next_page_token = circleCiJsonResponse.next_page_token;
+    ///////
+    /// finally, we check if there are more Workflows to paginate, to execute again the
+    /// [this.updateProgressMatrixWorkflowsExecStatus(paginator.pipeline_guid, paginator.next_page_token);]
+    /// method with Circle CI [next_page_token], if necessary.
+    /// We'll do that until last "page"
     if (observedResponse.cci_json_response.next_page_token === null) {
-      console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] finished workflow pagination to update [progressMatrix]`)
+      console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] finished workflow pagination to update [progressMatrix], so now incrementing [watch_round]`)
+      console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
+      this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
+      console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] after incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
+
     } else {
       let paginator: WfPaginationRef = {
          next_page_token: observedResponse.cci_json_response.next_page_token,
