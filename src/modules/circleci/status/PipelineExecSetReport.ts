@@ -212,9 +212,15 @@ export class PipelineExecSetReportLogger {
         ///
         console.log(`Now checking if all workflows, jobs and pipeline execution states have been reported`);
         if (this.isReportCompleted()) {
-          console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed!`);
+          report.cicd_error = this.cicd_error;
           console.log(report);
-          // and unsubscribe
+          // and unsubscribe ?
+          if(this.cicd_error === null) {
+            console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed, and no Pipeline Execution Error was reported`);
+          } else {
+            console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting completed, and a Pipeline Execution Error was reported`);
+            throw this.cicd_error;
+          }
         } else {
           /// else we just let the reporting job complete
           console.log(`[{PipelineExecSetReportLogger}] - [reportingCompletionNotifier] - reporting not completed yet, more [reportingCompletionNotifier] notifications will occur while reporting more Circle CI Jobs Execution States`);
