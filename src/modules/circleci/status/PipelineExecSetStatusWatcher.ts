@@ -295,6 +295,11 @@ export class PipelineExecSetStatusWatcher {
 
     let pipelineIndexInProgressMatrix = this.getIndexInProgressMatrixOfPipeline(observedResponse.parent_pipeline_guid);
 
+
+    for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
+      let wflowstate = observedResponse.cci_json_response.items[k];
+      
+    }
     observedResponse.cci_json_response.items.forEach((wflowstate) => { //looping through array,to be able to paginate, and cumulatively add workflow states returned bythe Circle CI API
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
 

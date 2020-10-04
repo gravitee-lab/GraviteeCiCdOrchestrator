@@ -2,7 +2,7 @@
 
 https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/
 
-A Component in `Gravitee`'s CICD, that orchestrates Gravitee CICD, bringing distributed builds in.
+A distributed software which orchestrates all Gravitee CI CD Processes, bringing distributed builds in.
 
 # How it works
 
