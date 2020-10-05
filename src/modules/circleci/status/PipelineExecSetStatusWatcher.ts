@@ -122,7 +122,10 @@ export class PipelineExecSetStatusWatcher {
 
     let wfPaginationSubscription = this.workflowPaginationNotifier.subscribe({
         next: (paginator) => {
-          this.updateProgressMatrixWorkflowsExecStatus(paginator.pipeline_guid, paginator.next_page_token);
+
+          let timedOutCallArgs = [paginator.pipeline_guid, paginator.next_page_token]
+          setTimeout(this.updateProgressMatrixWorkflowsExecStatus, 5000, timedOutCallArgs);
+
         }
     });
     let progressMatrixUpdatesSubscription = this.progressMatrixUpdatesNotifier.subscribe({
