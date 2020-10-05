@@ -124,8 +124,7 @@ export class PipelineExecSetStatusWatcher {
         next: (paginator) => {
 
           let timedOutCallArgs = [paginator.pipeline_guid, paginator.next_page_token]
-          setTimeout(this.updateProgressMatrixWorkflowsExecStatus, 5000, timedOutCallArgs);
-
+          setTimeout(this.updateProgressMatrixWorkflowsExecStatus, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL), timedOutCallArgs);
         }
     });
     let progressMatrixUpdatesSubscription = this.progressMatrixUpdatesNotifier.subscribe({

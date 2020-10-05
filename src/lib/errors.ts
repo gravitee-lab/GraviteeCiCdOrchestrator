@@ -27,10 +27,12 @@ class ErrorReporter {
   /// timeout to fetch for Build complete status
   /// PIPELINE_COMPLETE_TIMEOUT=360s
   private pipeline_complete_timeout: string;
-  /// The Gihub.com Organization whre all the git repos live.
+  /// The Gihub.com Organization where all the git repos live.
   private gh_org: string;
+  /// The time interval, in milliseconds, between 2 "Watch rounds", of the {@link PipelineExecSetStatusWatcher}
+  private exec_status_watch_interval: string;
 
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_complete_timeout: string, gh_org: string) {
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_complete_timeout: string, gh_org: string, exec_status_watch_interval: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -90,7 +92,21 @@ class ErrorReporter {
     } else {
       this.gh_org = gh_org;
     }
-
+    if (exec_status_watch_interval === undefined || gh_org === "") {
+      console.warn("{[.DOTENV]} - [EXEC_STATUS_WATCH_INTERVAL] is undefined, defaulting value to '7000'")
+      this.exec_status_watch_interval = '7000';
+    } else {
+      let testWatchInterval: number = null;
+      try {
+        testWatchInterval = parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL);
+      } catch (error) {
+        console.error(`{[.DOTENV]} - [EXEC_STATUS_WATCH_INTERVAL] value is [${process.env.EXEC_STATUS_WATCH_INTERVAL}], which is not a number, please set its value to an integer that is not zero. Its value is a time period exepresed in milliseconds.`);
+      }
+      if (testWatchInterval === 0) {
+        console.error(`{[.DOTENV]} - [EXEC_STATUS_WATCH_INTERVAL] value is zero [${process.env.EXEC_STATUS_WATCH_INTERVAL}], which is not a number, please set its value to an integer that is not zero. Its value is a time period exepresed in milliseconds.`);
+      }
+      this.exec_status_watch_interval = exec_status_watch_interval;
+    }
 
   }
 
@@ -101,4 +117,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETE_TIMEOUT, process.env.GH_ORG);
+export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETE_TIMEOUT, process.env.GH_ORG, process.env.EXEC_STATUS_WATCH_INTERVAL);
