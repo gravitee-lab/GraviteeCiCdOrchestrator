@@ -330,6 +330,7 @@ export class PipelineExecSetStatusWatcher {
       }
       console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
+        console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
         /// the [PipelineExecSetReportLogger] willthrow the Error, stopping all CI CD Operations
         let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
       }
