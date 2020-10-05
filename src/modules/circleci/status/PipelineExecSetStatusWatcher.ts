@@ -132,11 +132,18 @@ export class PipelineExecSetStatusWatcher {
           // If yes, then we have to :
           //
           //  => check if all Pipelines Workflows Execution have reached a 'success' status :
-          //     ++ If not, and if no error, we call again the [launchExecStatusInspectionRound()] method (which will query again Circle CI to update workflows execution status' )
+          //     ++ If not, we know there is no Workflow execution for which a problem occured, because
+          //        the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] guranteesthat.
+          //        Sowe can launch a new watch_round, by calling (again) the [launchExecStatusInspectionRound()] method (which
+          //        will query again Circle CI to update workflows execution status' )
           //     ++ If yes we annihilate timeout by unsubscribing the RXJS timer, and we call the finalStateNotifier.next() method
           // the timeout will be triggered if it was not annihilated, by an RxJS timer
           // The RxJS Timer will not throw any Error, but instead build and log execution report, passing as constructor third parameter, a new Error("Explaining that no Workflow Execution Error was detected, it's just that the CICD Stage timed out");
 
+
+          if(this.haveAllPipelinesSuccessfullyCompleted()) {
+
+          }
           throw new Error("That's where I am working now");
 
         }
@@ -148,6 +155,8 @@ export class PipelineExecSetStatusWatcher {
    * ---
    * This method queries the CircleCI API and adds or updates each entry of
    * the <code>this.progressMatrix</code> array's [workflows_exec_state] JSon property
+   *
+   * each entry of the <code>this.progressMatrix</code> array matches a Circle CI Pipeline in a [ReactiveParallelExecutionSet] Parallel Execution Set
    * ---
    * Now, when :
    *
@@ -179,7 +188,9 @@ export class PipelineExecSetStatusWatcher {
     }
 
   }
-
+  /**
+   * Updates the [progressMatrix] with the Workflows Execution Status for a given Pipeline of GUID [parent_pipeline_guid], with Circle CI API pagination option [next_page_token]
+   **/
   private updateProgressMatrixWorkflowsExecStatus(parent_pipeline_guid: string, next_page_token: string) {
     console.log( `[{PipelineExecSetStatusWatcher}] - [updateProgressMatrixWorkflowsExecStatus(parent_pipeline_guid: string)] - value of Pipeline GUID : [${parent_pipeline_guid}]`);
     /*
@@ -208,14 +219,9 @@ export class PipelineExecSetStatusWatcher {
     // then sending all HTTP Request to Circle CI and update progressMatrix entries
     this.updateProgressMatrixWithAllWorkflowsExecStatus();
 
-    /// Now we know all [progressMatrix] entries have been updated by
-    /// the [updateProgressMatrixWorkflowsExecStatus()] method, so we can check if
-    /// all workflows_exec_state in [progressMatrix] display an execution state equal to 'success'
-    let totalSuccess: boolean = this.haveAllPipelinesSuccessfullyCompleted();
-
     throw new Error("DEBUG STOP That's where I'm working now");
     // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
-    let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
+    /// let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
 
   }
   /**
@@ -232,6 +238,33 @@ export class PipelineExecSetStatusWatcher {
     return allPipeSuccess;
     /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
+  /**
+   *
+   **/
+  private isWatchRoundOver(): boolean {
+    let isWatchRoundOver: boolean = false;
+
+    console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [isWatchRoundOver] Current Watch Round is [this.watch_round = ${this.watch_round}]`)
+    for (let k:number= 0; k < this.progressMatrix.length; k++) {
+      /// let pipelineEntry = this.progressMatrix[k];
+      this.progressMatrix[k].watch_round == this.watch_round;
+
+      /// --- ///
+      /// Here we check if the execution status of the workflow makes us sure a problem has occured, and
+      /// if so, we build and log a {@link PipelineExecSetReport}, passing it an Error to throw
+      ///
+      /// Looping through array, to be able to paginate, and cumulatively add
+      /// workflow states returned by the Circle CI API
+
+
+
+      /// let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
+
+    }
+    return isWatchRoundOver;
+    /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
+  }
+
   /**
    * This method
    * Note that the HTTP JSON Response will be ofthe following form :
