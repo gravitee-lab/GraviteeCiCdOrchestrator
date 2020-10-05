@@ -299,6 +299,7 @@ export class PipelineExecSetStatusWatcher {
     /// Here looping and pushing each entries, one after the other, to be able to
     /// cumulatively add all Workflow States in
     let occuredProblem = null;
+    console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}]`)
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
@@ -327,6 +328,7 @@ export class PipelineExecSetStatusWatcher {
         erroMsg = erroMsg + ` failed to run because the Circle CI user who triggered the Pipeline is unauthorized to run this Pipeline.`;
         occuredProblem = new Error(erroMsg);
       }
+      console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
         /// the [PipelineExecSetReportLogger] willthrow the Error, stopping all CI CD Operations
         let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
@@ -356,8 +358,9 @@ export class PipelineExecSetStatusWatcher {
     /// method with Circle CI [next_page_token], if necessary.
     /// We'll do that until last "page"
     /// ---
-
+    console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] before pagination mgmt`)
     if (occuredProblem === null) {
+      console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] insid (if) for pagination management`)
         if (observedResponse.cci_json_response.next_page_token === null) {
           console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] finished workflow pagination to update [progressMatrix], so now incrementing [watch_round]`)
           console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
@@ -372,7 +375,7 @@ export class PipelineExecSetStatusWatcher {
           this.workflowPaginationNotifier.next(paginator);
         }
     } else {
-      console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData]  A problem was detected with a Workflow execution in the Circle CI Pipline of GUID [${observedResponse.parent_pipeline_guid}], so a fatal [PipelineExecSetReportLogger] was invoked, will build and log Execution Report, and stop all CICD Operations.   `);
+      console.info(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData]  A problem was detected with a Workflow execution in the Circle CI Pipline of GUID [${observedResponse.parent_pipeline_guid}], so a fatal [PipelineExecSetReportLogger] was instantiated, with a non-null [Error] passed to constructor, will build and log Execution Report, and stop all CICD Operations.   `);
     }
   }
 
