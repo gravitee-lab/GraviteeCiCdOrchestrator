@@ -188,6 +188,10 @@ export class PipelineExecSetStatusWatcher {
               /// console.log({progressMatrix: this.progressMatrix});
               console.log(`----`);
 
+              this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
+                is_errored: false
+              });
+
             } else { // we know there is no Workflow execution for which a problem occured, because
                      // the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] gurantees that.
                      // So we can launch a new watch_round, by calling (again) the [launchExecStatusInspectionRound()] method (which

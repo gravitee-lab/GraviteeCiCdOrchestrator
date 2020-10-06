@@ -92,7 +92,7 @@ export class ReactiveParallelExecutionSet {
 
          this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
          this.pipeExecStatusWatcher.finalStateNotifier.subscribe({
-           next: this.notifyExecCompleted,
+           next: this.notifyExecCompleted.bind(this),
            complete: () => {
              console.log('[{ReactiveParallelExecutionSet}] - Just Completed Watching Pipeline Execution Status!');
            }
