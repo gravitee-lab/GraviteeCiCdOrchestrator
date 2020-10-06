@@ -41,11 +41,11 @@ export interface CciWorkflowState {
  cci_api_infos: any
  jobs_states: {
    completed: boolean
-   states: CciJobState[]
+   states: CciJobsState
  }
 }
 
-export interface CciJobState {
+export interface CciJobsState {
  job_guid: string,
  /**
   * The JSON Object returned from the Circle CI API Endpoint :
@@ -366,10 +366,27 @@ export class PipelineExecSetReportLogger {
     }
 
     let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(observedResponse.parent_pipeline_guid);
-    /// we push each entires,to be able topaginate when necessary because [next_page_token] is null
+    /// we push each entires,to be able to paginate when necessary because [next_page_token] is null
+
+    /*
     observedResponse.cci_json_response.items.forEach((wflowstate) => {
       this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.states.push(wflowstate);
-    });
+    }); */
+
+    for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
+      let wflowstate = observedResponse.cci_json_response.items[k];
+
+
+      /// this.progressMatrix[pipelineStateIndexInReport].workflows_states.states.push(wflowstate);
+      this.updateWflowstateIn(wflowstate,this.progressMatrix[pipelineStateIndexInReport].workflows_states.states.cci_api_infos.items)
+      console.log(`DEBUG [{PipelineExecSetReport}] - [reportWorflowStateCCIResponseHandler] - In FOR LOOP Inspecting object [ this.progressMatrix[${pipelineStateIndexInReport}] ] : `);
+      console.log(`----`);
+      console.log(`${JSON.stringify(this.progressMatrix[pipelineStateIndexInReport], null, " ")}`);
+      /// console.log({progressMatrix: this.progressMatrix});
+      console.log(`----`);
+
+    }
+
 
     /// let next_page_token = circleCiJsonResponse.next_page_token;
     if (observedResponse.cci_json_response.next_page_token === null) {
@@ -393,6 +410,86 @@ export class PipelineExecSetReportLogger {
       this.workflowPaginationNotifier.next(paginator);
     }
 
+  }
+  /**
+   * For each entry (Circle CI Pipeline) in the [workflows_states.states.cci_api_infos.items] JSON Property named
+   * holds the Circle CI Pipeline 's Workflows execution states :
+   * => [workflows_states.states.cci_api_infos.items] is an array
+   * => each entry in [workflows_states.states.cci_api_infos.items], matches a workflow, uniquely identified by its 'id'JSON Property :
+   *
+   * ---
+   *      {
+   *        /// one example [report] entry
+   *        "pipeline_guid": "5445sdf-sdsfs4-f54dfg-dfg-574"
+   *        "pipeline_number": "39",
+   *        "exec_state": "pending",
+   *        "cci_api_infos": {...},
+   *        "workflows_states": {
+   *                       completed: false,
+   *                       states: {
+   *                                  "workflow_guid": "435dfg-5445sdf-dgf576-dfg",
+   *                                  "cci_api_infos":  {
+   *                                       "next_page_token": null,
+   *                                       "items":  [
+   *                                          {
+   *                                            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *                                            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+   *                                            "name": "docker_build_and_push",
+   *                                            "project_slug": "gh/gravitee-lab/gravitee-json-imaginary-policy",
+   *                                            "status": "failed",
+   *                                            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *                                            "pipeline_number": 126,
+   *                                            "created_at": "2020-09-12T17:47:21Z",
+   *                                            "stopped_at": "2020-09-12T17:48:26Z"
+   *                                          },
+   *                                          {
+   *                                            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *                                            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
+   *                                            "name": "yet_another_test_workflow",
+   *                                            "project_slug": "gh/gravitee-lab/gravitee-json-imaginary-policy",
+   *                                            "status": "success",
+   *                                            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *                                            "pipeline_number": 126,
+   *                                            "created_at": "2020-09-12T17:47:21Z",
+   *                                            "stopped_at": "2020-09-12T17:48:11Z"
+   *                                          }
+   *                                        ]
+   *                                      },
+   *                                  "jobs_states": { ... }
+   *                               }
+   *          }
+   *      }
+   * ---
+   * This method :
+   * adds the provided <code>wflowstate</code>, to the provided <code>inThis_workflows_exec_state</code> array,
+   * or updates the provided <code>wflowstate</code>, to the provided <code>inThis_workflows_exec_state</code> array,
+   *
+   * ensuring unicity of Workflow <code>id</code>s in the [workflows_exec_state] JSON property of each entry in <code>this.progressMatrix</code>
+   *
+   * This behavior typically shows that The global software design should as soon as possible
+   * strongly type <code>this.progressMatrix</code>, to make its  [workflows_exec_state] JSON property, an acutal member of a Class, with a Set Collection Type (unicity behavior,andequels based on [id]).
+   **/
+  private updateWflowstateIn(wflowstate: any, workflows_items: any[]) {
+      ///
+      let isTheWorkflowIDalreadyReferenced: boolean = false;
+      let wfIndexInarray: number = null;
+
+      if(!wflowstate.hasOwnProperty('id')) {
+        throw new Error(`[{PipelineExecSetStatusWatcher}] - [{updateWflowstateIn(wflowstate: any, workflows_items: any[])}] provided [${wflowstate}] has no [id] property, while it is expected to have one, as a Workflow State CircleCI API JSON Response...`)
+      }
+
+      for (let k: number = 0; k < workflows_items.length; k++) {
+        if (workflows_items[k].id === wflowstate.id) {
+          isTheWorkflowIDalreadyReferenced = true;
+          wfIndexInarray = k;
+          break;
+        }
+      }
+      if (isTheWorkflowIDalreadyReferenced) { /// then it's an update case
+        workflows_items[wfIndexInarray] = wflowstate /// (replaces the entryin array)
+      } else { // then case when we just have to add it
+        workflows_items.push(wflowstate) // adds a new entry in array, aka [wflowstate]
+      }
   }
 
   private reportWorflowStateCCIErrorHandler(error: any) : void {
@@ -461,6 +558,9 @@ export class PipelineExecSetReportLogger {
     console.info('')
     throw new Error('[{PipelineExecSetReportLogger}] - [reportPipelineExecStateCCIErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
+
+
+
   /// ----------------------------------------------------------------------
   /// ----------------------------------------------------------------------
   /// ----------------------------------------------------------------------
@@ -532,9 +632,9 @@ export class PipelineExecSetReportLogger {
       }
 
       let workflowIndexInReport = this.get2DimIndexOfWorkflowInReport(observedResponse.parent_workflow_guid);
-      /// we push each entries,to be able topaginate when necessary because [next_page_token] is null
+      /// we push each entries,to be able to paginate when necessary because [next_page_token] is null
       observedResponse.cci_json_response.items.forEach((jobstate: any) => {
-        this.report.pipelines_states[workflowIndexInReport.pipeline_index].workflows_states.states[workflowIndexInReport.workflow_index].jobs_states.states.push(jobstate);
+        this.report.pipelines_states[workflowIndexInReport.pipeline_index].workflows_states.states[workflowIndexInReport.workflow_index].jobs_states.states.cci_api_infos.items.push(jobstate);
       });
 
       /// let next_page_token = circleCiJsonResponse.next_page_token;
@@ -554,7 +654,28 @@ export class PipelineExecSetReportLogger {
 
     }
 
+    private updateJobsStateIn(jobstate: any, jobs_items: any[] ) {
+        ///
+        let isTheWorkflowIDalreadyReferenced: boolean = false;
+        let wfIndexInarray: number = null;
 
+        if(!jobstate.hasOwnProperty('id')) {
+          throw new Error(`[{PipelineExecSetStatusWatcher}] - [{updateJobsStateIn(jobstate: any, jobs_items: any[])}] provided [${jobstate}] has no [id] property, while it is expected to have one, as a Workflow State CircleCI API JSON Response...`)
+        }
+
+        for (let k: number = 0; k < jobs_items.length; k++) {
+          if (jobs_items[k].id === jobstate.id) {
+            isTheWorkflowIDalreadyReferenced = true;
+            wfIndexInarray = k;
+            break;
+          }
+        }
+        if (isTheWorkflowIDalreadyReferenced) { /// then it's an update case
+          jobs_items[wfIndexInarray] = jobstate /// (replaces the entry in array)
+        } else { // then case when we just have to add it
+          jobs_items.push(jobstate) // adds a new entry in array, aka [jobstate]
+        }
+    }
     private reportJobsExecStateCCIErrorHandler(error: any) : void {
       console.info('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
       console.info('');

@@ -396,7 +396,7 @@ export class PipelineExecSetStatusWatcher {
    **/
   private handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) : void {
     console.log('[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', observedResponse.cci_json_response  /* circleCiJsonResponse.data // when retryWhen is used*/ )
-    /// if the pipeline has zero workflows,then we have a problem here : so we stop all operations
+    /// if the pipeline has zero workflows, then we have a problem here : so we stop all operations
     if (observedResponse.cci_json_response.items.length == 0) {
       throw new Error(`The Pipeline of GUID ${observedResponse.parent_pipeline_guid} has no workflows, which is an anomaly, so stopping all operations.`)
     }
@@ -576,7 +576,6 @@ export class PipelineExecSetStatusWatcher {
       inThis_workflows_exec_state.push(wflowstate) // adds a new entry in array, aka [wflowstate]
     }
 
-    inThis_workflows_exec_state
   }
 
   /**
