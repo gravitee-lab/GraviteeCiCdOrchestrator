@@ -238,7 +238,8 @@ export class PipelineExecSetStatusWatcher {
      console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is true');
     } else {
      console.log( '[{PipelineExecSetStatusWatcher}] - (process.argv["dry-run"] === \'true\') condition is false');
-   }*/
+    }
+    */
 
     let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(parent_pipeline_guid, next_page_token).subscribe({
       next: this.handleInspectPipelineExecStateResponseData.bind(this),
