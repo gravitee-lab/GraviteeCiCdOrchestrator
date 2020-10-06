@@ -283,6 +283,9 @@ export class PipelineExecSetStatusWatcher {
       next: this.handleInspectPipelineExecStateResponseData.bind(this),
       complete: data => {
          console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${parent_pipeline_guid}] Workflows Execution state, in Circle CI Page [next_page_token=${next_page_token}]  completed! :) ]`)
+         console.log(`[{PipelineExecSetStatusWatcher}] - and now, using the RxJS Subject to check if current watch_round is over`);
+         /// and now, using the RxJS Subject to check if Watch Round is over
+         this.progressMatrixUpdatesNotifier.next(this.progressMatrix);
       },
       error: this.errorHandlerInspectPipelineExecState.bind(this)
     });
@@ -457,9 +460,7 @@ export class PipelineExecSetStatusWatcher {
           console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] finished workflow pagination to update [progressMatrix], so now incrementing [watch_round]`)
           console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
           this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
-          console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] after incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
-          /// and now,using the RxJS Subject to check if watchRound is over
-          this.progressMatrixUpdatesNotifier.next(this.progressMatrix);
+
         } else {
           let paginator: WfPaginationRef = {
              next_page_token: observedResponse.cci_json_response.next_page_token,
