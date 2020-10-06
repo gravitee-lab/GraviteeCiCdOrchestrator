@@ -455,7 +455,8 @@ export class PipelineExecSetStatusWatcher {
           console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
           this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
           console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] after incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
-
+          /// and now,using the RxJS Subject to check if watchRound is over
+          this.progressMatrixUpdatesNotifier.next(this.progressMatrix);
         } else {
           let paginator: WfPaginationRef = {
              next_page_token: observedResponse.cci_json_response.next_page_token,
