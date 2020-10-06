@@ -154,7 +154,7 @@ export class PipelineExecSetStatusWatcher {
           //
           //  => check if all Pipelines Workflows Execution have reached a 'success' status :
           //     ++ If not, we know there is no Workflow execution for which a problem occured, because
-          //        the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] guranteesthat.
+          //        the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] gurantees that.
           //        Sowe can launch a new watch_round, by calling (again) the [launchExecStatusInspectionRound()] method (which
           //        will query again Circle CI to update workflows execution status' )
           //     ++ If yes we annihilate timeout by unsubscribing the RXJS timer, and we call the finalStateNotifier.next() method
@@ -162,10 +162,37 @@ export class PipelineExecSetStatusWatcher {
           // The RxJS Timer will not throw any Error, but instead build and log execution report, passing as constructor third parameter, a new Error("Explaining that no Workflow Execution Error was detected, it's just that the CICD Stage timed out");
 
 
-          if(this.haveAllPipelinesSuccessfullyCompleted()) {
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - this.progressMatrix is :`);
+          console.log(`----`);
+          console.log(`${JSON.stringify({ inspectedArray: this.progressMatrix }, null, " ")}`);
+          /// console.log({progressMatrix: this.progressMatrix});
+          console.log(`----`);
 
+          if(this.isWatchRoundOver()) {
+            if(this.haveAllPipelinesSuccessfullyCompleted()) {
+              /// Now, when All Pipelines in the progressMatrix have successfully
+              /// completed their execution, hey, job is finished, let's tell that to
+              /// the {@link ReactiveParallelExecutionSet}
+
+
+            } else { // we know there is no Workflow execution for which a problem occured, because
+                     // the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] gurantees that.
+                     // So we can launch a new watch_round, by calling (again) the [launchExecStatusInspectionRound()] method (which
+                     // will query again Circle CI to update workflows execution status' )
+
+               console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - laucnching a new watch round in [${parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL)}] milliseconds.`);
+               /// setTimeout(this.launchExecStatusInspectionRound, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+
+               setTimeout(() => {
+                 this.launchExecStatusInspectionRound()
+               }, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+
+            }
+
+          } else {
+            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - The watch round is not over, So not launching a new watch just now, let the {for loop} in the current watch round complete ({for loop} tha tis inthe [this.launchExecStatusInspectionRound] method) `);
           }
-          throw new Error("That's where I am working now");
+          /// throw new Error("That's where I am working now");
 
         }
     });
@@ -252,7 +279,7 @@ export class PipelineExecSetStatusWatcher {
     let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(parent_pipeline_guid, next_page_token).subscribe({
       next: this.handleInspectPipelineExecStateResponseData.bind(this),
       complete: data => {
-         console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${parent_pipeline_guid}] Workflows Execution state completed! :) ]`)
+         console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${parent_pipeline_guid}] Workflows Execution state, in Circle CI Page [next_page_token=${next_page_token}]  completed! :) ]`)
       },
       error: this.errorHandlerInspectPipelineExecState.bind(this)
     });
