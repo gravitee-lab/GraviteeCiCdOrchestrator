@@ -137,8 +137,9 @@ export class PipelineExecSetStatusWatcher {
     let wfPaginationSubscription = this.workflowPaginationNotifier.subscribe({
         next: (paginator) => {
 
-          let timedOutCallArgs = [paginator.pipeline_guid, paginator.next_page_token]
-          setTimeout(this.updateProgressMatrixWorkflowsExecStatus, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL), timedOutCallArgs);
+          setTimeout(() => {
+            this.updateProgressMatrixWorkflowsExecStatus(paginator.pipeline_guid, paginator.next_page_token)
+          }, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
 
         }
     });
@@ -175,7 +176,11 @@ export class PipelineExecSetStatusWatcher {
     // won't start
     // console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [start()] - actually starting in  [${2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL)}] milliseconds.`);
     /// setTimeout(this.launchExecStatusInspectionRound, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
-    this.launchExecStatusInspectionRound()
+
+    setTimeout(() => {
+      this.launchExecStatusInspectionRound()
+    }, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+    
   }
 
   private launchExecStatusInspectionRound (): void {
