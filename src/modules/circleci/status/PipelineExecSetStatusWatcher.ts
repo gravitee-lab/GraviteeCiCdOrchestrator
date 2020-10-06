@@ -15,6 +15,7 @@ export interface EmptyCat { // Because this is the only Type which has only one 
 // Never the less, passing as paramters of the callback, the progressMatrix,might be useful tomake binding the callback useless (binding a method to an object is something I do not like doing)
 
 /**
+ *
  * ---
  * Keeps fetching the Circle CI API, to determine when either :
  * => all Pipelines referenced in <code>this.progressMatrix</code>
@@ -94,7 +95,7 @@ export class PipelineExecSetStatusWatcher {
     this.workflowPaginationNotifier = new rxjs.Subject<WfPaginationRef>();
     this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
     this.circleci_client = circleci_client;
-
+    this.initPrivateNotifersSubscriptions();
     /// --- INIT WATCH ROUND
 
     /// ---
@@ -121,9 +122,12 @@ export class PipelineExecSetStatusWatcher {
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [constructor] - AFTER FOR LOOP - Inspecting Array [ this.progressMatrix ] : `);
     console.log(`----`);
     // console.log(`${JSON.stringify({ inspectedArray: this.progressMatrix })}`);
-    console.log({progressMatrix: this.progressMatrix});
+    console.log({
+      progressMatrix: this.progressMatrix
+    });
     console.log(`----`);
-/// [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - Inspecting object [ this.progressMatrix
+
+    /// [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - Inspecting object [ this.progressMatrix
 
     /// this.watch_round will be incremented everytime all [progressMatrix] entries have
     /// been updated with a new execution state in the [workflows_exec_state] JSON Property
@@ -396,8 +400,10 @@ export class PipelineExecSetStatusWatcher {
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}]`)
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
-      this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
 
+
+      this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
+      this.updateWflowstateIn(wflowstate,this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state)
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - In FOR LOOP Inspecting object [ this.progressMatrix[${pipelineIndexInProgressMatrix}] ] : `);
       console.log(`----`);
       console.log(`${JSON.stringify(this.progressMatrix[pipelineIndexInProgressMatrix], null, " ")}`);
@@ -487,6 +493,81 @@ export class PipelineExecSetStatusWatcher {
     console.log(`----`);
   }
 
+  /**
+   * For each entry (Circle CI Pipeline) in <code>this.progressMatrix</code>, a JSON Property named [workflows_exec_state]
+   * holds the Circle CI Pipeline 's Workflows execution states :
+   * => [workflows_exec_state] is an array
+   * => each entry in [workflows_exec_state], matches a workflow, uniquely identified by its 'id'JSON Property :
+   *
+   * ---
+   *      {
+   *        /// one example [progressMatrix] entry
+   *        "pipeline_exec_number": "39",
+   *        "id": "71c6d01e-9a87-4b84-9fa7-12d241e374de",
+   *        "created_at": "2020-10-06T15:11:32.262Z",
+   *        "exec_state": "pending",
+   *        "project_slug": "gh/gravitee-lab/gravitee-fetcher-api",
+   *        "watch_round": 2,
+   *        "workflows_exec_state": [
+   *          {
+   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
+   *            "name": "docker_build_and_push",
+   *            "project_slug": "gh/gravitee-lab/gravitee-json-imaginary-policy",
+   *            "status": "failed",
+   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *            "pipeline_number": 126,
+   *            "created_at": "2020-09-12T17:47:21Z",
+   *            "stopped_at": "2020-09-12T17:48:26Z"
+   *          },
+   *          {
+   *            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
+   *            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
+   *            "name": "yet_another_test_workflow",
+   *            "project_slug": "gh/gravitee-lab/gravitee-json-imaginary-policy",
+   *            "status": "success",
+   *            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+   *            "pipeline_number": 126,
+   *            "created_at": "2020-09-12T17:47:21Z",
+   *            "stopped_at": "2020-09-12T17:48:11Z"
+   *          }
+   *        ]
+   *      }
+   *
+   * ---
+   * This method :
+   * adds the provided <code>wflowstate</code>, to the provided <code>inThis_workflows_exec_state</code> array,
+   * or updates the provided <code>wflowstate</code>, to the provided <code>inThis_workflows_exec_state</code> array,
+   *
+   * ensuring unicity of Workflow <code>id</code>s in the [workflows_exec_state] JSON property of each entry in <code>this.progressMatrix</code>
+   *
+   * This behavior typically shows that The global software design should as soon as possible
+   * strongly type <code>this.progressMatrix</code>, to make its  [workflows_exec_state] JSON property, an acutal member of a Class, with a Set Collection Type (unicity behavior,andequels based on [id]).
+   **/
+  private updateWflowstateIn(wflowstate: any, inThis_workflows_exec_state: any[] ) {
+    ///
+    let isTheWorkflowIDalreadyReferenced: boolean = false;
+    let wfIndexInarray: number = null;
+
+    if(!wflowstate.hasOwnProperty('id')) {
+      throw new Error(`[{PipelineExecSetStatusWatcher}] - [{updateWflowstateIn(wflowstate: any, inThis_workflows_exec_state: any[] )}] provided [${wflowstate}] ahs no [id] property, while it is expected to have one, as a Workflow State CircleCI API JSON Response...`)
+    }
+
+    for (let k: number = 0; k < inThis_workflows_exec_state.length; k++) {
+      if (inThis_workflows_exec_state[k].id === wflowstate.id) {
+        isTheWorkflowIDalreadyReferenced = true;
+        wfIndexInarray = k;
+        break;
+      }
+    }
+    if (isTheWorkflowIDalreadyReferenced) { /// then it's an update case
+      inThis_workflows_exec_state[wfIndexInarray] = wflowstate /// (replaces the entryin array)
+    } else { // then case when we just have to add it
+      inThis_workflows_exec_state.push(wflowstate) // adds a new entry in array, aka [wflowstate]
+    }
+
+    inThis_workflows_exec_state
+  }
 
   /**
    *
