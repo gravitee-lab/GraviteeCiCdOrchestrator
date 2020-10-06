@@ -181,6 +181,12 @@ export class PipelineExecSetStatusWatcher {
               /// completed their execution, hey, job is finished, let's tell that to
               /// the {@link ReactiveParallelExecutionSet}
 
+              console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - All Workflows ofall Pipelines in [this.progressMatrix] have reached 'success' execution status ! :D  `);
+              console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - [this.progressMatrix] finally is  : `);
+              console.log(`----`);
+              console.log(`${JSON.stringify({ finalProgressMatrix : this.progressMatrix }, null, " ")}`);
+              /// console.log({progressMatrix: this.progressMatrix});
+              console.log(`----`);
 
             } else { // we know there is no Workflow execution for which a problem occured, because
                      // the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] gurantees that.
@@ -311,7 +317,7 @@ export class PipelineExecSetStatusWatcher {
     for (let k: number = 0; k < this.progressMatrix.length; k++) {
       let wfArray = this.progressMatrix[k].workflows_exec_state
       for(let j: number = 0; j < wfArray.length; j++) {
-        allPipeSuccess = allPipeSuccess && (wfArray.status === 'success')
+        allPipeSuccess = allPipeSuccess && (wfArray[j].status === 'success')
       }
     }
     return allPipeSuccess;
