@@ -197,6 +197,9 @@ export class PipelineExecSetStatusWatcher {
           }
           /// throw new Error("That's where I am working now");
 
+        },
+        complete: () => {
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - COMPLETE`);
         }
     });
 
