@@ -200,6 +200,11 @@ export class PipelineExecSetStatusWatcher {
         },
         complete: () => {
           console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - COMPLETE`);
+        },
+        error: (error) => {
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - ERROR: `);
+          console.log(`${error}`);
+
         }
     });
 
