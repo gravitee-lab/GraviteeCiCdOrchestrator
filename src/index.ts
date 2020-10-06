@@ -22,26 +22,8 @@ console.log('I am the Gravitee CI CD Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
-let val1: number = 152;
-let val2: number = 152;
 
-let val3: string = '152';
-let val4: string = '152';
-
-if (val1 == val2) {
-  console.log(`cas number égalité ok avec deux signes egal [${val1}==${val2}]`)
-} else {
-  console.log(`cas number égalité KO avec deux signes egal [${val1}==${val2}]`)
-}
-
-if (val1 === val2) {
-  console.log(`cas number égalité ok avec 3 signes egal [${val1}===${val2}]`)
-} else {
-  console.log(`cas number égalité KO avec 3 signes egal [${val1}===${val2}]`)
-}
-
-
-throw new Error("DEBUG STOP POINT")
+/// throw new Error("DEBUG STOP POINT")
 
 export const cli : Cli = new Cli();
 

@@ -88,11 +88,12 @@ export class PipelineExecSetStatusWatcher {
   private rxSubscriptions: rxjs.Subscription[];
 
   constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
+    console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [constructor] - I am the constructor, I actually am called`);
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
     this.workflowPaginationNotifier = new rxjs.Subject<WfPaginationRef>();
     this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
-
+    this.circleci_client = circleci_client;
 
     /// --- INIT WATCH ROUND
 
@@ -106,16 +107,29 @@ export class PipelineExecSetStatusWatcher {
     /// + [watch_round] : a number, which will say how many times the [workflows_exec_state] JSON
     ///                   property hasbeen updated, by querying the Circle CI API
     ///                   [GET /api/v2/pipeline/${PARENT_PIPELINE_GUID}/workflow] Endpoint
-    for (let y: number; y < this.progressMatrix.length; y++) {
+
+
+    for (let y: number = 0; y < this.progressMatrix.length; y++) {
       this.progressMatrix[y].watch_round = 0;
       this.progressMatrix[y].workflows_exec_state = []
+      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [constructor] - Inspecting object [ this.progressMatrix[${y}] ] : `);
+      console.log(`----`);
+      console.log(`${JSON.stringify({ inspectedArrayItem: this.progressMatrix[y] })}`);
+      console.log(`----`);
     }
+    console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [constructor] - AFTER FOR LOOP - Inspecting Array [ this.progressMatrix ] : `);
+    console.log(`----`);
+    console.log(`${JSON.stringify({ inspectedArray: this.progressMatrix })}`);
+    console.log(`----`);
+/// [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - Inspecting object [ this.progressMatrix
+
     /// this.watch_round will be incremented everytime all [progressMatrix] entries have
     /// been updated with a new execution state in the [workflows_exec_state] JSON Property
     ///
     this.watch_round = 0; // initializing watch_round before the first round
     ///
   }
+
   private initPrivateNotifersSubscriptions () { // all but [this.finalStateNotifier]
 
     this.rxSubscriptions = [];
@@ -125,8 +139,10 @@ export class PipelineExecSetStatusWatcher {
 
           let timedOutCallArgs = [paginator.pipeline_guid, paginator.next_page_token]
           setTimeout(this.updateProgressMatrixWorkflowsExecStatus, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL), timedOutCallArgs);
+
         }
     });
+
     let progressMatrixUpdatesSubscription = this.progressMatrixUpdatesNotifier.subscribe({
         next: (progressMatrix) => {
           // here we have to check if, for all entries of the [progressMatrix], the
@@ -152,7 +168,28 @@ export class PipelineExecSetStatusWatcher {
     });
 
     this.rxSubscriptions.push(wfPaginationSubscription);
+    this.rxSubscriptions.push(progressMatrixUpdatesSubscription);
   }
+
+  public start() {
+    // won't start
+    // console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [start()] - actually starting in  [${2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL)}] milliseconds.`);
+    /// setTimeout(this.launchExecStatusInspectionRound, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+    this.launchExecStatusInspectionRound()
+  }
+
+  private launchExecStatusInspectionRound (): void {
+    /// First increment watch_round, to start next round
+    this.watch_round++;
+    // then sending all HTTP Request to Circle CI and update progressMatrix entries
+    this.updateProgressMatrixWithAllWorkflowsExecStatus();
+
+    /// throw new Error("DEBUG STOP That's where I'm working now");
+    // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
+    /// let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
+
+  }
+
   /**
    * ---
    * This method queries the CircleCI API and adds or updates each entry of
@@ -171,10 +208,11 @@ export class PipelineExecSetStatusWatcher {
    * ---
    *
    **/
-  updateProgressMatrixWithAllWorkflowsExecStatus() {
+  private updateProgressMatrixWithAllWorkflowsExecStatus (): void {
+
     console.info("");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-    console.info("{[PipelineExecSetStatusWatcher]} - Updating Progress Matrix Execution state ofeach Pipeline : ");
+    console.info("{[PipelineExecSetStatusWatcher]} - [{updateProgressMatrixWithAllWorkflowsExecStatus}] Updating Progress Matrix Execution state of each Pipeline : ");
     console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
     console.info(" ---");
     console.info(JSON.stringify({ progressMatrix: this.progressMatrix }, null, " "));
@@ -205,27 +243,12 @@ export class PipelineExecSetStatusWatcher {
     let inspectPipelineWorkflowsExecStateSubscription = this.circleci_client.inspectPipelineWorkflowsExecState(parent_pipeline_guid, next_page_token).subscribe({
       next: this.handleInspectPipelineExecStateResponseData.bind(this),
       complete: data => {
-         console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${parent_pipeline_guid}] Execution state completed! :) ]`)
+         console.log( `[{PipelineExecSetStatusWatcher}] - Inspecting Pipeline of GUID [${parent_pipeline_guid}] Workflows Execution state completed! :) ]`)
       },
       error: this.errorHandlerInspectPipelineExecState.bind(this)
     });
   }
 
-  public start () {
-    this.launchExecStatusInspectionRound();
-  }
-
-  private launchExecStatusInspectionRound (): void {
-    /// First increment watch_round, to start next round
-    this.watch_round++;
-    // then sending all HTTP Request to Circle CI and update progressMatrix entries
-    this.updateProgressMatrixWithAllWorkflowsExecStatus();
-
-    throw new Error("DEBUG STOP That's where I'm working now");
-    // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
-    /// let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
-
-  }
   /**
    *
    **/
@@ -241,30 +264,16 @@ export class PipelineExecSetStatusWatcher {
     /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
   /**
-   *
+   * returns true if the current watch round is over
    **/
   private isWatchRoundOver(): boolean {
-    let isWatchRoundOver: boolean = false;
+    let isWatchRoundOver: boolean = true;
 
     console.info(`DEBUG [{PipelineExecSetStatusWatcher}] - [isWatchRoundOver] Current Watch Round is [this.watch_round = ${this.watch_round}]`)
     for (let k:number= 0; k < this.progressMatrix.length; k++) {
-      /// let pipelineEntry = this.progressMatrix[k];
-      this.progressMatrix[k].watch_round == this.watch_round;
-
-      /// --- ///
-      /// Here we check if the execution status of the workflow makes us sure a problem has occured, and
-      /// if so, we build and log a {@link PipelineExecSetReport}, passing it an Error to throw
-      ///
-      /// Looping through array, to be able to paginate, and cumulatively add
-      /// workflow states returned by the Circle CI API
-
-
-
-      /// let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
-
+      isWatchRoundOver = isWatchRoundOver && (this.progressMatrix[k].watch_round == this.watch_round);
     }
     return isWatchRoundOver;
-    /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
 
   /**
@@ -322,7 +331,7 @@ export class PipelineExecSetStatusWatcher {
    *
    **/
   private handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) : void {
-    console.info( '[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', observedResponse.cci_json_response  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+    console.info('[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', observedResponse.cci_json_response  /* circleCiJsonResponse.data // when retryWhen is used*/ )
     /// if the pipeline has zero workflows,then we have a problem here : so we stop all operations
     if (observedResponse.cci_json_response.items.length == 0) {
       throw new Error(`The Pipeline of GUID ${observedResponse.parent_pipeline_guid} has no workflows, which is an anomaly, so stopping all operations.`)
@@ -338,6 +347,13 @@ export class PipelineExecSetStatusWatcher {
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
       this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
+
+      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - Inspecting object [ this.progressMatrix[${pipelineIndexInProgressMatrix}] ] : `);
+      console.log(`----`);
+      console.log(`${JSON.stringify(this.progressMatrix[pipelineIndexInProgressMatrix])}`);
+      console.log(`----`);
+
+
 
       /// --- ///
       /// Here we check if the execution status of the workflow makes us sure a problem has occured, and
@@ -371,7 +387,10 @@ export class PipelineExecSetStatusWatcher {
       }
     }
 
-
+    console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - AFTER PUSHING RETRIEVED WORKFLOW STATES - Inspecting Array [ this.progressMatrix ] : `);
+    console.log(`----`);
+    console.log(`${JSON.stringify({ inspectedArray: this.progressMatrix })}`);
+    console.log(`----`);
     /// -------------
     ///  All Workflow Execution Statuses
     ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |

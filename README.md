@@ -4,6 +4,14 @@ https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/
 
 A distributed software which orchestrates all Gravitee CI CD Processes, bringing distributed builds in.
 
+This Distributed CI CD solution was designed, because of the requirements we, at https://gravitee.io , wanted our CI CD System to meet, and because there exists today in the world no CI CD System meeting those :
+
+* can manage multi repo CI CD business processes :
+  * without any central server
+  * without webhooks
+  * without using a specific package manager (on our cicd `release.json` defines a product dependency tree, not  a parent pom)
+  * without using the monorepo versioning pattern (our case)
+
 # How it works
 
 ## Where and how the Gravitee CI CD Orchestrator runs

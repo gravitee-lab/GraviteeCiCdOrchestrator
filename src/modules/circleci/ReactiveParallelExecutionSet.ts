@@ -47,6 +47,7 @@ export class ReactiveParallelExecutionSet {
 
   private circleci_client: CircleCIClient;
   private pipelines_nb: number;
+  private pipeExecStatusWatcher: PipelineExecSetStatusWatcher;
 
   /**
    * Instantiate a new {@link ReactiveParallelExecutionSet}
@@ -59,6 +60,7 @@ export class ReactiveParallelExecutionSet {
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
     this.orchestratorNotifier = orchestratorNotifier;
+
   }
 
   /**
@@ -87,14 +89,15 @@ export class ReactiveParallelExecutionSet {
          console.log(`[ --- [{ReactiveParallelExecutionSet}] - progress Matrix Observer: NEXT  `);
          console.log(`[ --- [{ReactiveParallelExecutionSet}] - All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
-         const pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
-         pipeExecStatusWatcher.finalStateNotifier.subscribe({
+
+         this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
+         this.pipeExecStatusWatcher.finalStateNotifier.subscribe({
            next: this.notifyExecCompleted,
            complete: () => {
              console.log('[{ReactiveParallelExecutionSet}] - Just Completed Watching Pipeline Execution Status!');
            }
-         })
-         pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
+         });
+         this.pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
 
          console.log(`[{ReactiveParallelExecutionSet}] Now verifying that If I do not invoke [this.orchestratorNotifier.next(${this.parallelExecutionSetIndex});] then nothing happens at all`)
          /*

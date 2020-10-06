@@ -129,6 +129,16 @@
 				</a>
 				<p><a href="https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/">https://gravitee-lab.github.io/GraviteeReleaseOrchestrator/</a></p>
 				<p>A distributed software which orchestrates all Gravitee CI CD Processes, bringing distributed builds in.</p>
+				<p>This Distributed CI CD solution was designed, because of the requirements we, at <a href="https://gravitee.io">https://gravitee.io</a> , wanted our CI CD System to meet, and because there exists today in the world no CI CD System meeting those :</p>
+				<ul>
+					<li>can manage multi repo CI CD business processes :<ul>
+							<li>without any central server</li>
+							<li>without webhooks</li>
+							<li>without using a specific package manager (on our cicd <code>release.json</code> defines a product dependency tree, not  a parent pom)</li>
+							<li>without using the monorepo versioning pattern (our case)</li>
+						</ul>
+					</li>
+				</ul>
 				<a href="#how-it-works" id="how-it-works" style="color: inherit; text-decoration: none;">
 					<h1>How it works</h1>
 				</a>
