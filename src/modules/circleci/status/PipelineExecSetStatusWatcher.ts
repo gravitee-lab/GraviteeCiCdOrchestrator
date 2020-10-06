@@ -138,10 +138,13 @@ export class PipelineExecSetStatusWatcher {
 
     let wfPaginationSubscription = this.workflowPaginationNotifier.subscribe({
         next: (paginator) => {
-
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.workflowPaginationNotifier SUBSCRIPTION] - paginating Circle CI for workflows to page [${paginator.next_page_token}] for Circle CI Pipeline [${paginator.pipeline_guid}]`);
+          this.updateProgressMatrixWorkflowsExecStatus(paginator.pipeline_guid, paginator.next_page_token)
+          /**
           setTimeout(() => {
             this.updateProgressMatrixWorkflowsExecStatus(paginator.pipeline_guid, paginator.next_page_token)
           }, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+          */
 
         }
     });
