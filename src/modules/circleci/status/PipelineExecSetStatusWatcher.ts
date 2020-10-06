@@ -402,7 +402,7 @@ export class PipelineExecSetStatusWatcher {
       let wflowstate = observedResponse.cci_json_response.items[k];
 
 
-      this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
+      /// this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state.push(wflowstate);
       this.updateWflowstateIn(wflowstate,this.progressMatrix[pipelineIndexInProgressMatrix].workflows_exec_state)
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - In FOR LOOP Inspecting object [ this.progressMatrix[${pipelineIndexInProgressMatrix}] ] : `);
       console.log(`----`);
