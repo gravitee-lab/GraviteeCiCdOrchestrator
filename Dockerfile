@@ -52,7 +52,9 @@ FROM base AS release
 # --
 # GIT COMMIT ID
 ARG GIT_COMMIT=unspecified
-LABEL git_commit=$GIT_COMMIT
+LABEL git.commit.id=$GIT_COMMIT
+LABEL vendor=gravitee.io
+LABEL maintainer=jean-baptiste.lasselle@graviteesource.com
 # Define General Docker environment
 # --- DEFINE DOTENV Environment
 # PRODUCT='Gravitee APIM'
