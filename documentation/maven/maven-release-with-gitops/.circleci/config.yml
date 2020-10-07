@@ -1,0 +1,422 @@
+# ---------------------------------------------------
+# ---------------------------------------------------
+# ----- Factorization of all jobs filters :
+# ----- mainly, all jobs in the same workflow, share
+# ----- the same Circle CI filter
+# ---------------------------------------------------
+# ---------------------------------------------------
+# This kind of factorization is valalid for
+#  any YAML file
+# ---------------------------------------------------
+product_release_filter: &product_release_filter
+  filters:
+    tags:
+      # only: /^v.*/
+      # will run only when on release branches
+      only:
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+        - /^*.x/
+      # will not run on pull requests from
+      #
+      ignore:
+        - /^fix*/
+        - /^issues*/
+        - /^*support/
+        - /^*snyk*/
+        - /^*dependabot*/
+dev_pr_filter: &dev_pr_filter
+  filters:
+    branches:
+      # will run only when pull request is from
+      # Gravitee Dev / Support Team members
+      only:
+        - /^issues*/
+        # - /^*snyk*/
+        # - /^*dependabot*/
+      # will not run on pull requests from one
+      # release branche, to another, for
+      # STS / LTS support Releases
+      ignore:
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+        - /^*.x/
+        - /^fix*/
+        - /^*support/
+        # - /^*snyk*/
+        # - /^*dependabot*/
+dev_pr_filter: &dev_pr_filter
+  filters:
+    branches:
+      # will run only when pull request is from
+
+# ---------------------------------------------------
+# ---------------------------------------------------
+# ----- Circle CI Pipeline Definition
+# ---------------------------------------------------
+# ---------------------------------------------------
+
+# Machine executor, set the machine key to true in .circleci/config.yml:
+version: 2.1
+orbs:
+  secrethub: secrethub/cli@1.0.0
+jobs:
+  mvn_release:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_RELEASE_TAG: 5.27.1
+      JFROG_BUILD_NUMBER: 1524548
+      DESIRED_MAVEN_VERSION: 3.6.3
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Git Tagging the Release, on Release Branch"
+          command: |
+                    echo " Release branch is [${CIRCLE_BRANCH}], and must match major/minor verions of DESIRED_RELEASE_TAG=[${DESIRED_RELEASE_TAG}]"
+                    git tag ${DESIRED_RELEASE_TAG} -m "Gravitee Bot tagging release from Circle CI Pipeline"
+                    git push -u origin --tags ${CIRCLE_BRANCH}
+      - run:
+          name: "Maven Test the Gravitee Component"
+          command: |
+                    echo "Run Maven Tests"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean test"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+      - run:
+          name: "Maven Package the Gravitee Component"
+          command: |
+                    echo "Run Maven Package"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean package"
+                    echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+      - run: # print the name of the branch we're on
+          name: "Maven Deploy the Gravitee Component to Central Maven Repo : JFrog"
+          command: |
+                    echo "Run Maven Deploy using JFrog Maven Plugin"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    #
+                    # see https://github.com/jfrog/project-examples/tree/master/artifactory-maven-plugin-example
+                    export JFROG_USERNAME=$(secrethub read gravitee-io/cicd/staging/jfrog/username)
+                    export JFROG_SECRET=$(secrethub read gravitee-io/cicd/staging/jfrog/password)
+                    echo "JFROG_USERNAME=[${JFROG_USERNAME}]"
+                    # echo "JFROG_SECRET=[${JFROG_SECRET}]"
+                    export JFROG_USERNAME=test
+                    export JFROG_SECRET=test
+                    export MAVEN_COMMAND="mvn deploy -Dusername=${JFROG_USERNAME} -Dpassword=${JFROG_SECRET} -Dbuildnumber=${JFROG_BUILD_NUMBER}"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+  build:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_MAVEN_VERSION: 3.6.3
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Maven Package n Install the Gravitee Component"
+          command: |
+                    echo "Run Maven Package"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean package install"
+                    echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+  tests_without_deployment:
+    machine:
+      resource_class: medium
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_MAVEN_VERSION: 3.6.3
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Maven Test the Gravitee Component"
+          command: |
+                    echo "Run Maven Tests"
+                    export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
+                    export MAVEN_COMMAND="mvn clean test"
+                    echo "MAVEN_COMMAND=[${MAVEN_COMMAND}]"
+                    docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
+
+workflows:
+  version: 2.1
+  # ---
+  # Runs only when Pipeline invoked
+  # using Circle CI API v2 to
+  # Releases the Product
+  # ---
+  # When releasing Product :
+  # => we assume unit/source code quality tests have successfully passed
+  #
+  # => we re-run all integration tests AFTER merge happened  :
+  #    Cause Integration tests may pass on branch, and not pass after merge, whole
+  #    point of Integration, is to Integrate, not only different developers work on a branch,
+  #    but to integrate, the work done by a Team on a bracnh, to the
+  #    work already done before, on its base branch.
+  # => we re-run all staging tests after merge happened : Performance tests, big data
+  #    load tests, production grade tests in a word. We release Production Grade Product.
+  #
+  # => each component release, consists of :
+  # >>>>> run a git tagging on an existing release branch
+  # >>>>> run a maven release : jar is sent to mùaven central repo, eg. nexus or JFrog
+  # >>>>> ONLY FOR main components (last in 'buildDependencies' in 'release.json') :
+  #        > building all zip bundles of all dependencies, and send them to HTTP downloads server. Here dependencies could also be infered not from release.json, but from 'pom.xml' ...
+  #        > docker build and push docker image
+  #
+  product_release:
+    jobs:
+      - build:
+          context: gravitee-lab
+          <<: *product_filter
+      - integ_env_initial_state:
+          # This workflow will not tear down the k8S cluster
+          # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
+          # This workflow will :
+          # => helm delete every Gravitee component in the k8S cluster
+          # => Empty databases in MongoDB service, PostgreSQL service and Elasticsearch service
+          # => Restore initial state of databases in MongoDB, PostgreSQL, and Elasticsearch services
+          # => Deploy a fresh Gravitee Stack
+          # context holds integration env. secrets
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among Integration Tests :
+        # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
+        # => User Stories End 2 End Tests
+      - product_integration_tests: # runs integration tests for Gravitee Product Releases (not support)
+          requires:
+            - integ_env_initial_state
+          context: gravitee-lab
+          # filters:
+      - staging_env_initial_state:
+          # This workflow will not tear down the k8S cluster
+          # This workflow will not tear down and provision again a new MongoDB (same for PostgreSQL and Elasticsearch)
+          # This workflow will :
+          # => helm delete every Gravitee component in the k8S cluster
+          # => Empty databases in MongoDB service, PostgreSQL service and Elasticsearch service
+          # => Restore initial state of databases in MongoDB, PostgreSQL, and Elasticsearch services
+          # => Deploy a fresh Gravitee Stack in the K8S Cluster
+          # not worth spending money if integration tests did not pass
+          requires:
+            - product_integration_tests
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among staging tests :
+        # => performance tests
+        # => big database End 2 End Tests
+      - product_staging_tests:
+          requires:
+            - staging_env_initial_state
+          context: gravitee-lab
+          # filters:
+      - git_release:
+          # ---
+          # When releasing, all unit/source code quality
+          # have successfully passed
+          # we do not release product if it does not pass
+          requires:
+            - product_integration_tests
+            - product_staging_tests
+          context: gravitee-lab
+          # filters:
+      - mvn_release:
+          # ---
+          # When releasing, all unit/source code quality
+          # have successfully passed
+          # we do not release product if it does not pass
+          requires:
+            - product_integration_tests
+            - product_staging_tests
+            - git_release
+          context: gravitee-lab
+          filters:
+            tags:
+              # only: /^v.*/
+              # will run only when on release branches
+              only:
+                - 1.20.x
+                - 1.25.x
+                - 1.30.x
+                - 3.0.x
+                - 3.1.x
+                - /^*.x/
+              # will not run on pull requests from
+              #
+              ignore:
+                - /^fix*/
+                - /^issues*/
+                - /^*support/
+                - /^*snyk*/
+                - /^*dependabot*/
+  # ---
+  # This workflow runs only
+  # to conduct pull request reviews from :
+  # => Dev Team During Development
+  # ---
+  # When reviewing Dev Team deliveries :
+  # => we run unit / source code quality tests, but only on a reduced scope : tests on
+  #    the components which are modified during the Dev Sprint.
+  # => we run all integration tests BEFORE merge happens  :
+  #    Whole point of Integration, during Dev  Team Sprints, is to
+  #    Integrate different developers work on a branch.
+  #    In a word, We want to detect and fix asap any regression, and any new issue.
+  # => we run all staging tests BEFORE merge happens : Performance tests, big data
+  #    load tests, production grade tests in a word. We want to avoid regression on
+  #    our Product Production Grade.
+  #
+
+  dev_pr_review:
+    jobs:
+      - build:
+          context: gravitee-lab
+          <<: *dev_pr_filter
+      # ---
+      # Will run all tests which can be run without any deployment, but only on a reduced scope : tests on
+      # the components which are modified during the Dev / Support Sprint.
+      - tests_without_deployment:
+          requires:
+            - build
+          context: gravitee-lab
+          # filters:
+      # ---
+      # A small 3-nodes kubernetes Cluster on AWS, with minimum storage capacity
+      - integ_env_initial_state:
+          # not worth spending money if unit/ source code quality tests did not pass
+          requires:
+            - tests_without_deployment
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among Integration Tests :
+        # => Data Storage providers tests (GRravitee works just as well, with PostgresQL, or Redis, instead of MongoDB)
+        # => User Stories End 2 End Tests
+      - integ_tests:
+          requires:
+            - deploy_integ_env
+          context: gravitee-lab
+          # filters:
+      # ---
+      # A bigger 9-nodes kubernetes Cluster on AWS, with production-grade storage capacity
+      - staging_env_initial_state:
+          # not worth spending money if integration tests did not pass
+          requires:
+            - integration_tests
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among staging tests :
+        # => performance tests
+        # => big data load, and End 2 End Tests
+      - staging_tests:
+          requires:
+            - deploy_staging_env
+          context: gravitee-lab
+          # filters:
+  # ---
+  # This workflow runs only
+  # to conduct pull request reviews from :
+  # => Support Team During Support Cases Sprints
+  # ---
+  # When reviewing Dev or Support Team deliveries :
+  # => we run unit / source code quality tests, but only on a reduced scope : tests on
+  #    the components which are modified during the Support Sprint.
+  # => we run a few integration tests BEFORE merge happens :
+  #    Whole point of Integration, during  Support Team Sprints, is to
+  #    Integrate different support engineers work on a branch, quiclkly, therefore, on a
+  #    reduced scope, I.e. integration tests on the components which are modified during the Support Sprint.
+  #    In a word, We want to detect and fix asap any integration regression, and any new issue caused by support case or quick bugfix.
+  #
+  supp_pr_review:
+    jobs:
+      - build:
+          context: gravitee-lab
+          filters:
+            branches:
+              # ---
+              # Will run only when pull request is from
+              # Gravitee Support Team members
+              # ---
+              # Will also run on pull requests from one
+              # release branch, to another, for
+              # STS / LTS support Releases
+              only:
+                - /^fix*/
+                - /^*support/
+                - 1.20.x
+                - 1.25.x
+                - 1.30.x
+                - 3.0.x
+                - 3.1.x
+              # will not run on pull requests from one
+              # release branch, to another, for
+              # STS / LTS support Releases
+              ignore:
+                - /^*.x/
+                - /^issues*/
+                - /^*snyk*/
+                - /^*dependabot*/
+      # ---
+      # Will run all tests before deployment, but only on a reduced scope : tests on
+      # the components which are modified during the Support Sprint.
+      - supp_tests_without_deployment:
+          requires:
+            - build
+          context: gravitee-lab
+          # filters:
+          # this deployment should be exetremely quick, like only a docker-compose inside one AWS EC2 instance.
+      - supp_integ_env_initial_state:
+          # not worth spending money if unit / source code quality tests did not pass
+          requires:
+            - tests_without_deployment
+          context: gravitee-lab
+          # filters:
+        # ---
+        # among Integration Tests :
+        # => A few User Stories End 2 End Tests
+      - supp_integration_tests:
+          requires:
+            - deploy_integ_env
+          context: gravitee-lab
+          # filters:
+#
+  LTS_support_release:
+    jobs:
+      - lts_first_job:
+          context: gravitee-lab
+          # filters:
+      - lts_second_job:
+          requires:
+            - lts_first_job
+          context: gravitee-lab
+          # filters:
+  STS_support_release:
+    jobs:
+      - sts_first_job:
+          context: gravitee-lab
+          # filters:
+      - sts_second_job:
+          requires:
+            - sts_first_job
+          context: gravitee-lab
+          # filters:

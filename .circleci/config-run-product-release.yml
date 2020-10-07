@@ -1,0 +1,60 @@
+# Machine executor, set the machine key to true in .circleci/config.yml:
+version: 2.1
+orbs:
+  secrethub: secrethub/cli@1.0.0
+jobs:
+  run_orchestrator:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      DESIRED_DOCKER_TAG: stable-latest
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Testing local docker installation"
+          command: docker version
+      - run: # print the name of the branch we're on
+          name: "What branch am I on ?"
+          command: echo ${CIRCLE_BRANCH}
+      - run:
+          name: "Docker pull"
+          command: |
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+      - run: # print the name of the branch we're on
+          name: "Running the Gio CICD Orchestrator as docker container"
+          command: |
+                    echo "Checking local SGF : "
+                    ls -allh
+
+                    # checking docker image pulled in previous step is there
+                    docker images
+                    # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
+                    CCI_SECRET_FILE=$PWD/.secrets.json
+                    secrethub read --out-file ${CCI_SECRET_FILE} gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json
+                    ls -allh ${CCI_SECRET_FILE}
+                    # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
+                    export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
+                    docker run --name orchestrator ${DOCKER_VOLUMES} --restart always -itd quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+                    docker logs -f orchestrator
+workflows:
+  version: 2.1
+  release_process:
+    jobs:
+      - run_orchestrator:
+          context: cicd-orchestrator
+          filters:
+            branches:
+              # ---
+              # Will run only when git commits are pushed to a release branch
+              # Therefore, will be triggered when a pull request, with target branch being
+              # a release branch, is accepted
+              only:
+                - 1.20.x
+                - 1.25.x
+                - 1.29.x
+                - 1.30.x
+                - 3.0.x
+                - 3.1.x
