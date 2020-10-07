@@ -108,11 +108,17 @@ export interface CciJobsState {
    * A number, which is the job execution number, as understood by the Circle CI API v2
    **/
   job_number: number,
+  /**
+   * The Circle CI Job GUID
+   **/
   id: string,
   /**
    * example : "2020-09-12T17:44:51Z"
    **/
   started_at: string,
+  /**
+   * The Job name, defined in the '.circleci/config.yml' version 2
+   **/
   name: string,
   /**
    * example : "gh/gravitee-lab/GraviteeCiCdOrchestrator"
