@@ -78,7 +78,7 @@ export interface PipelineExecSetReportOld {
  **/
 
 export interface CciPipelineState {
-  number: string,
+  number: number,
   state: string,
   id: string,
   created_at: string
@@ -91,13 +91,45 @@ export interface CciWorkflowState {
   project_slug: string,
   status: string,
   started_by: string,
-  pipeline_number: string,
+  pipeline_number: number,
   created_at: string,
   stopped_at: string
 }
 
+/**
+ *
+ **/
 export interface CciJobsState {
-
+  /**
+   * Array of job names of all job names that are 'required' in the '.circleci/config.yml' version 2
+   **/
+  dependencies: string[],
+  /**
+   * A number, which is the job execution number, as understood by the Circle CI API v2
+   **/
+  job_number: number,
+  id: string,
+  /**
+   * example : "2020-09-12T17:44:51Z"
+   **/
+  started_at: string,
+  name: string,
+  /**
+   * example : "gh/gravitee-lab/GraviteeCiCdOrchestrator"
+   **/
+  project_slug: string,
+  /**
+   * example : "failed"
+   **/
+  status: string,
+  /**
+   * example : "build"
+   **/
+  type: string,
+  /**
+   * example : "2020-09-12T17:48:26Z"
+   **/
+  stopped_at: string
 }
 
 export class PipelineExecSetReport {
@@ -148,7 +180,38 @@ export class PipelineExecSetReport {
     this.pipelines_states = new Collections.Dictionary<string, CciPipelineState>();
     this.workflow_states = new Collections.Dictionary<string, Collections.Dictionary<string, CciWorkflowState>>();
     this.jobs_states = new Collections.Dictionary<string, Collections.Dictionary<string, CciJobsState>>();
+  }
 
+  /**
+   *
+   **/
+  public addPipelineState(pipeline_guid: string, state: CciPipelineState) {
+    this.pipelines_states.setValue(pipeline_guid, state);
+  }
+  /**
+   *
+   **/
+  public addWorkflowState(state: CciWorkflowState) {
+    if (this.workflow_states.containsKey(state.pipeline_id)) {
+      let wfStateEntry: CciWorkflowState = this.workflow_states.getValue(state.pipeline_id).setValue(state.id, state)
+    } else {
+      let newDict: Collections.Dictionary<string, CciWorkflowState> = new Collections.Dictionary<string, CciWorkflowState>();
+      newDict.setValue(state.id, state);
+      this.workflow_states.setValue(state.pipeline_id, newDict);
+    }
+  }
+  /**
+   *
+   **/
+  public addJobState(workflow_guid: string, state: CciJobsState) {
+    state.
+    if (this.jobs_states.containsKey()) {
+      let wfStateEntry: CciWorkflowState = this.workflow_states.getValue(state.pipeline_id).setValue(state.id, state)
+    } else {
+      let newDict: Collections.Dictionary<string, CciWorkflowState> = new Collections.Dictionary<string, CciWorkflowState>();
+      newDict.setValue(state.id, state);
+      this.workflow_states.setValue(state.pipeline_id, newDict);
+    }
 
   }
 
