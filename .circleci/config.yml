@@ -62,7 +62,7 @@ workflows:
           context: cicd-orchestrator
           filters:
             branches:
-              - master
+              only: /^master/
             tags:
               # only: /^v.*/
               only: /^[0-999].[0-999].[0-999]/
