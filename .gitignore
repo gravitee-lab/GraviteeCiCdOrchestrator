@@ -1,5 +1,14 @@
 # node / typescript build cycle
 node_modules/
 dist/
-# folders structure i am not sure about yet
-tests-data/
+# folders with test data
+# release-data/apim/*/tests/
+# Secrets as files
+.secret.circleci.json
+.secrets.json
+# privately versioned files
+documentation/global-process
+# docker volume mapped to Circle CI pipeline
+graviteeio/
+graviteeio/cicd/
+graviteeio/cicd/pipeline/
