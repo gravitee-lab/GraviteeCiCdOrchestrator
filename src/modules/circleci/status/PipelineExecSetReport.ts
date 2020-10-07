@@ -109,20 +109,38 @@ export class PipelineExecSetReport {
   /**
    * The id (a GUID) of the Circle CI Pipeline, is the root key :
    *
-   * Associate a <GUID of a Circle CI Pipeline> => <worklflow_guid_1, workflow_state_1>
+   *                         <pipeline_guid_1> => <worklflow_guid_1, workflow_state_1>
    *                                               <worklflow_guid_2, workflow_state_2>
-   *                                                ...
-   *                                               <worklflow_guid_N, workflow_state_N>
+   *                                                           ...
+   *                                               <worklflow_guid_N_1, workflow_state_N_1>
+   *
+   *                                ...
+   *
+   *                          <pipeline_guid_1> => <worklflow_guid_1, workflow_state_1>
+   *                                               <worklflow_guid_2, workflow_state_2>
+   *                                                           ...
+   *                                               <worklflow_guid_N_2, workflow_state_N_2>
+   *
    **/
   private workflow_states: Collections.Dictionary<string, Collections.Dictionary<string, CciWorkflowState>>;
 
   /**
    * The id (a GUID) of the Circle CI Workflow, is the root key :
    *
-   * Associate a <GUID of a Circle CI Workflow> => <job_guid_1, job_state_1>
-   *                                               <job_guid_2, job_state_2>
+   *             <worklflow_guid_1> => <job_guid_1, job_state_1>
+   *                                   <job_guid_2, job_state_2>
    *                                                ...
-   *                                               <job_guid_N, job_state_N>
+   *                                   <job_guid_N_1, job_state_N_1>
+   *
+   *                                ...
+   *
+   *             <worklflow_guid_2> => <job_guid_1, job_state_1>
+   *                                   <job_guid_2, job_state_2>
+   *                                                ...
+   *                                   <job_guid_N_2, job_state_N_2>
+   *
+   *                   ...
+   *
    **/
   private jobs_states: Collections.Dictionary<string, Collections.Dictionary<string, CciJobsState>>;
 
@@ -130,7 +148,7 @@ export class PipelineExecSetReport {
     this.pipelines_states = new Collections.Dictionary<string, CciPipelineState>();
     this.workflow_states = new Collections.Dictionary<string, Collections.Dictionary<string, CciWorkflowState>>();
     this.jobs_states = new Collections.Dictionary<string, Collections.Dictionary<string, CciJobsState>>();
-    
+
 
   }
 
