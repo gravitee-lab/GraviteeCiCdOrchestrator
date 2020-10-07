@@ -1,5 +1,6 @@
 import * as rxjs from 'rxjs';
 import { CircleCIClient, WorkflowsData, WorkflowJobsData, WfPaginationRef, JobPaginationRef } from '../../../modules/circleci/CircleCIClient';
+import * as Collections from 'typescript-collections';
 
 export enum VCS_TYPE {
   GITHUB,
@@ -7,7 +8,7 @@ export enum VCS_TYPE {
   BITBUCKET
 }
 
-export interface CciPipelineState {
+export interface CciPipelineStateOld {
  /**
   * The Pipeline GUID
   **/
@@ -27,7 +28,7 @@ export interface CciPipelineState {
  };
 }
 
-export interface CciWorkflowState {
+export interface CciWorkflowStateOld {
  /**
   * The Workflow GUID
   **/
@@ -45,7 +46,7 @@ export interface CciWorkflowState {
  }
 }
 
-export interface CciJobsState {
+export interface CciJobsStateOld {
  job_guid: string,
  /**
   * The JSON Object returned from the Circle CI API Endpoint :
@@ -63,8 +64,76 @@ export interface CciJobsState {
  *
  * A Pipeline Execution Set Report is a set of Pipeline State
  **/
-export interface PipelineExecSetReport {
-  pipelines_states: CciPipelineState[]
+export interface PipelineExecSetReportOld {
+  pipelines_states: CciPipelineStateOld[]
+}
+
+/**
+ * --------------------------------------------------------------
+ * --------------------------------------------------------------
+ * ------- NEW DESIGN OF REPORT
+ * --------------------------------------------------------------
+ * --------------------------------------------------------------
+ *
+ **/
+
+export interface CciPipelineState {
+  number: string,
+  state: string,
+  id: string,
+  created_at: string
+}
+
+export interface CciWorkflowState {
+  pipeline_id: string,
+  id: string,
+  name: string,
+  project_slug: string,
+  status: string,
+  started_by: string,
+  pipeline_number: string,
+  created_at: string,
+  stopped_at: string
+}
+
+export interface CciJobsState {
+
+}
+
+export class PipelineExecSetReport {
+
+  /**
+   * The id (a GUID) of the Circle CI Pipeline , is the key
+   **/
+  private pipelines_states: Collections.Dictionary<string, CciPipelineState>;
+  /**
+   * The id (a GUID) of the Circle CI Pipeline, is the root key :
+   *
+   * Associate a <GUID of a Circle CI Pipeline> => <worklflow_guid_1, workflow_state_1>
+   *                                               <worklflow_guid_2, workflow_state_2>
+   *                                                ...
+   *                                               <worklflow_guid_N, workflow_state_N>
+   **/
+  private workflow_states: Collections.Dictionary<string, Collections.Dictionary<string, CciWorkflowState>>;
+
+  /**
+   * The id (a GUID) of the Circle CI Workflow, is the root key :
+   *
+   * Associate a <GUID of a Circle CI Workflow> => <job_guid_1, job_state_1>
+   *                                               <job_guid_2, job_state_2>
+   *                                                ...
+   *                                               <job_guid_N, job_state_N>
+   **/
+  private jobs_states: Collections.Dictionary<string, Collections.Dictionary<string, CciJobsState>>;
+
+  constructor() {
+    this.pipelines_states = new Collections.Dictionary<string, CciPipelineState>();
+    this.workflow_states = new Collections.Dictionary<string, Collections.Dictionary<string, CciWorkflowState>>();
+    this.jobs_states = new Collections.Dictionary<string, Collections.Dictionary<string, CciJobsState>>();
+    
+
+  }
+
 }
 
 
