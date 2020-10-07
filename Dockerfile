@@ -49,7 +49,10 @@ RUN npm run test
 #
 # ---- Release ----
 FROM base AS release
-
+# --
+# GIT COMMIT ID
+ARG GIT_COMMIT=unspecified
+LABEL git_commit=$GIT_COMMIT
 # Define General Docker environment
 # --- DEFINE DOTENV Environment
 # PRODUCT='Gravitee APIM'
