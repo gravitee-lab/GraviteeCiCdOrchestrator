@@ -50,6 +50,8 @@ jobs:
                     echo "QUAY_BOT_USERNAME=[${QUAY_BOT_USERNAME}]"
                     # echo "QUAY_BOT_SECRET=[${QUAY_BOT_SECRET}]"
                     docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
+                    export DESIRED_DOCKER_TAG=$(git describe --match "[0-999].[0-999].[0-999]" --abbrev=0 --tags)
+                    export DESIRED_DOCKER_TAG="${DESIRED_DOCKER_TAG}-$(git rev-parse --short HEAD)"
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
                     docker tag "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
