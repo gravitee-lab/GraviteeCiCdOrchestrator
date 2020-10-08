@@ -526,7 +526,7 @@ export class PipelineExecSetReportLogger {
       throw new Error(`[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] the Circle Ci API response does not mention any workflow. Circie CI JSON Response is [${observedResponse.cci_json_response}]`)
     }
 
-    let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(observedResponse.parent_pipeline_guid);
+
     /// we push each entires,to be able to paginate when necessary because [next_page_token] is null
 
     /*
@@ -573,86 +573,7 @@ export class PipelineExecSetReportLogger {
     }
 
   }
-  /**
-   * For each entry (Circle CI Pipeline) in the [workflows_states.states.cci_api_infos.items] JSON Property named
-   * holds the Circle CI Pipeline 's Workflows execution states :
-   * => [workflows_states.states.cci_api_infos.items] is an array
-   * => each entry in [workflows_states.states.cci_api_infos.items], matches a workflow, uniquely identified by its 'id'JSON Property :
-   *
-   * ---
-   *      {
-   *        /// one example [report] entry
-   *        "pipeline_guid": "5445sdf-sdsfs4-f54dfg-dfg-574"
-   *        "pipeline_number": "39",
-   *        "exec_state": "pending",
-   *        "cci_api_infos": {...},
-   *        "workflows_states": {
-   *                       completed: false,
-   *                       states: {
-   *                                  "workflow_guid": "435dfg-5445sdf-dgf576-dfg",
-   *                                  "cci_api_infos":  {
-   *                                       "next_page_token": null,
-   *                                       "items":  [
-   *                                          {
-   *                                            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
-   *                                            "id": "75e83261-5b3c-4bc0-ad11-514bb01f634c",
-   *                                            "name": "docker_build_and_push",
-   *                                            "project_slug": "gh/gravitee-lab/gravitee-json-imaginary-policy",
-   *                                            "status": "failed",
-   *                                            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
-   *                                            "pipeline_number": 126,
-   *                                            "created_at": "2020-09-12T17:47:21Z",
-   *                                            "stopped_at": "2020-09-12T17:48:26Z"
-   *                                          },
-   *                                          {
-   *                                            "pipeline_id": "b4f4eabc-d572-4fdf-916a-d5f05d178221",
-   *                                            "id": "cd7b408f-48d4-4ba7-8a0a-644d82267434",
-   *                                            "name": "yet_another_test_workflow",
-   *                                            "project_slug": "gh/gravitee-lab/gravitee-json-imaginary-policy",
-   *                                            "status": "success",
-   *                                            "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
-   *                                            "pipeline_number": 126,
-   *                                            "created_at": "2020-09-12T17:47:21Z",
-   *                                            "stopped_at": "2020-09-12T17:48:11Z"
-   *                                          }
-   *                                        ]
-   *                                      },
-   *                                  "jobs_states": { ... }
-   *                               }
-   *          }
-   *      }
-   * ---
-   * This method :
-   * adds the provided <code>wflowstate</code>, to the provided <code>inThis_workflows_exec_state</code> array,
-   * or updates the provided <code>wflowstate</code>, to the provided <code>inThis_workflows_exec_state</code> array,
-   *
-   * ensuring unicity of Workflow <code>id</code>s in the [workflows_exec_state] JSON property of each entry in <code>this.progressMatrix</code>
-   *
-   * This behavior typically shows that The global software design should as soon as possible
-   * strongly type <code>this.progressMatrix</code>, to make its  [workflows_exec_state] JSON property, an acutal member of a Class, with a Set Collection Type (unicity behavior,andequels based on [id]).
-   **/
-  private updateWflowstateIn(wflowstate: any, workflows_items: any[]) {
-      ///
-      let isTheWorkflowIDalreadyReferenced: boolean = false;
-      let wfIndexInarray: number = null;
 
-      if(!wflowstate.hasOwnProperty('id')) {
-        throw new Error(`[{PipelineExecSetStatusWatcher}] - [{updateWflowstateIn(wflowstate: any, workflows_items: any[])}] provided [${wflowstate}] has no [id] property, while it is expected to have one, as a Workflow State CircleCI API JSON Response...`)
-      }
-
-      for (let k: number = 0; k < workflows_items.length; k++) {
-        if (workflows_items[k].id === wflowstate.id) {
-          isTheWorkflowIDalreadyReferenced = true;
-          wfIndexInarray = k;
-          break;
-        }
-      }
-      if (isTheWorkflowIDalreadyReferenced) { /// then it's an update case
-        workflows_items[wfIndexInarray] = wflowstate /// (replaces the entryin array)
-      } else { // then case when we just have to add it
-        workflows_items.push(wflowstate) // adds a new entry in array, aka [wflowstate]
-      }
-  }
 
   private reportWorflowStateCCIErrorHandler(error: any) : void {
     console.info('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] - Reporting Circle CI pipeline failed Circle CI API Response [data] => ', error )
@@ -664,20 +585,7 @@ export class PipelineExecSetReportLogger {
     throw new Error('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
   }
 
-  private getIndexOfPipelineStateInReport(ofGuid: string): number {
-    let indexToReturn: number = -1;
-     for (let k = 0; k < this.report.pipelines_states.length; k++) {
-       if (this.report.pipelines_states[k].pipeline_guid === ofGuid) {
-         console.log(`[{PipelineExecSetReportLogger}] - [getIndexOfPipelineStateInReport] - Pipeline of GUID [${ofGuid}] was found in progressMatrix, its index is : [${k}]`);
-         indexToReturn = k;
-         break;
-       }
-     }
-    if (indexToReturn == -1) {
-      throw new Error(`[{PipelineExecSetReportLogger}] - [getIndexOfPipelineStateInReport] - Pipeline of GUID [${ofGuid}] was not found in report : [${this.report}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
-    }
-    return indexToReturn;
-  }
+
 
   /// ----------------------------------------------------------------------
   /// ----------------------------------------------------------------------
@@ -847,33 +755,6 @@ export class PipelineExecSetReportLogger {
       console.info(this.report);
       console.info('')
       throw new Error('[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIErrorHandler] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE WORKFLOW EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
-    }
-
-    /**
-     * returns a {@link Workflow2DimIndex} which basically is a 2 -dimensional index, made of the pipeline index, and the workflow index
-     **/
-    private get2DimIndexOfWorkflowInReport(wf_guid: string): Workflow2DimIndex {
-      let indexToReturn: Workflow2DimIndex = null;
-       for (let k = 0; k < this.report.pipelines_states.length; k++) {
-         if (!(indexToReturn === null)) { // then index wasfound, no need to trigger any other loop (Euler triangle)
-           break;
-         }
-         for (let j = 0; j < this.report.pipelines_states[k].workflows_states.states.length; j++) {
-           if (this.report.pipelines_states[k].workflows_states.states[j].workflow_guid === wf_guid) {
-             indexToReturn = {
-               pipeline_index:k,
-               workflow_index: j
-             };
-             console.log(`[{PipelineExecSetReportLogger}] - [get2DimIndexOfWorkflowInReport] - Workflow of GUID [${wf_guid}] was found in report, its 2-Dim index is : [${indexToReturn}]`);
-             break;
-           }
-         }
-       }
-
-      if (indexToReturn === null) {
-        throw new Error(`[{PipelineExecSetReportLogger}] - [get2DimIndexOfWorkflowInReport] - Workflow of GUID [${wf_guid}] was not found in report : [${this.report}], So this CICD Stage is now stopping execution of the whole ${process.argv["cicd-stage"]} CI CD Process`);
-      }
-      return indexToReturn;
     }
 
 }
