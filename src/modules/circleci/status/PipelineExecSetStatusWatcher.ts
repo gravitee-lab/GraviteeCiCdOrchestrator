@@ -454,7 +454,6 @@ export class PipelineExecSetStatusWatcher {
       }
     }
 
-
     /// -------------
     ///  All Workflow Execution Statuses
     ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
