@@ -8,65 +8,9 @@ export enum VCS_TYPE {
   BITBUCKET
 }
 
-export interface CciPipelineStateOld {
- /**
-  * The Pipeline GUID
-  **/
- pipeline_guid: string,
- pipeline_number: number,
- exec_state: string,
- /**
-  * The JSON Object returned from the Circle CI API Endpoint :
-  *
-  * curl -X GET https://circleci.com/api/v2/project/gh/gravitee-lab/GraviteeCiCdOrchestrator/pipeline/$PIPELINE_NUMBER -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
-  *
-  **/
- cci_api_infos: any
- workflows_states: {
-   completed: boolean
-   states:CciWorkflowState[]
- };
-}
 
-export interface CciWorkflowStateOld {
- /**
-  * The Workflow GUID
-  **/
- workflow_guid: string,
- /**
-  * The JSON Object returned from the Circle CI API Endpoint :
-  *
-  * curl -X GET https://circleci.com/api/v2/workflow/${WF_GUID} -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
-  *
-  **/
- cci_api_infos: any
- jobs_states: {
-   completed: boolean
-   states: CciJobsState
- }
-}
 
-export interface CciJobsStateOld {
- job_guid: string,
- /**
-  * The JSON Object returned from the Circle CI API Endpoint :
-  *
-  * curl -X GET https://circleci.com/api/v2/project/${PROJ_SLUG}/job/${JOB_NUMB} -H 'Accept: application/json' -H "Circle-Token: ${CCI_API_KEY}"
-  *
-  **/
- cci_api_infos: any
-}
 
-/**
- * In th Circle CI model :
- * - A Pipeline is made of Workflows
- * - A Worflow is made of jobs
- *
- * A Pipeline Execution Set Report is a set of Pipeline State
- **/
-export interface PipelineExecSetReportOld {
-  pipelines_states: CciPipelineStateOld[]
-}
 
 /**
  * --------------------------------------------------------------
@@ -410,34 +354,8 @@ export class PipelineExecSetReportLogger {
   private isReportCompleted(): boolean {
 
     let allPipelineStatesReported: boolean = true;
-    let allWorkflowStatesReported: boolean = true;
-    let allJobStatesReported: boolean = true;
-
-    /// checking pipeline exec states presence in report
-    for(let m: number = 0; m < this.progressMatrix.length; m++) {
-      allPipelineStatesReported = allPipelineStatesReported && (this.report.getPipelinesStates().containsKey(this.progressMatrix[m].id)); /// if [cci_api_infos] entr is not null anymore (as initialized), then we know for sure pipeline exec state has been reported
-    }
-    /// checking workflow exec states completed updates (with pagination) in report
-    for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
-      if ((!allWorkflowStatesReported)) { //as soon as one is not completed, no need to keep on looping, reporting Workflow Execution States has not completed.
-        break;
-      }
-      allWorkflowStatesReported = allWorkflowStatesReported && this.report.pipelines_states[m].workflows_states.completed;
-    }
-
-    /// checking jobs exec states completed updates (with pagination) in report
-    if (allWorkflowStatesReported) { // then we knowwe won'thave undefined JSON properties trying to fetch each [workflows_states] for a [jobs_states] JSON Property
-      for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
-        if ((!allJobStatesReported)) { //as soon as one is not completed, no need to keep on looping, reporting Workflow Execution States has not completed.
-          break;
-        }
-        for(let k: number = 0; k < this.report.pipelines_states[m].workflows_states.states.length; k++) {
-          allJobStatesReported = allJobStatesReported && this.report.pipelines_states[m].workflows_states.states[k].jobs_states.completed
-        }
-      }
-    } else { /// reporting jobs execution state is not considered completed before workflows' are.
-       allJobStatesReported = false;
-    }
+    let allWorkflowStatesReported: boolean = this.workflowsReportingCompleted;
+    let allJobStatesReported: boolean = this.jobsReportingCompleted;
 
     return allPipelineStatesReported && allWorkflowStatesReported && allJobStatesReported;
   }
@@ -450,10 +368,10 @@ export class PipelineExecSetReportLogger {
     /// reporting a workflow execution state triggers reporting the parent Pipeline 's execution states (because the workflow execution state holds the Pipeline [project_slug])
     /// reporting a workflow execution state triggers reporting the worklow's jobs execution states
     /// reporting a workflow job execution state trigger checking for report completion ( using RxJS Subject)
-    for (let k = 0; k < this.report.pipelines_states.length; k++) {
-      this.reportWorkflowsState(this.report.pipelines_states[k].pipeline_guid, null)
+    for (let k = 0; k < this.progressMatrix.length; k++) {
+      this.reportWorkflowsState(this.progressMatrix[k].id, null)
     }
-    throw new Error(`Not implemented`);
+    throw new Error(`Implementation not finished`);
   }
 
   /// ----------------------------------------------------------------------
