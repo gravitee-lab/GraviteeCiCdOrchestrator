@@ -220,6 +220,24 @@ export class PipelineExecSetReport {
     }
 
   }
+  /**
+   *
+   **/
+  public getPipelinesStates(): Collections.Dictionary<string, CciPipelineState> {
+    return this.pipelines_states;
+  }
+  /**
+   *
+   **/
+  public getWorkflowsStates(): Collections.Dictionary<string, Collections.Dictionary<string, CciWorkflowState>> {
+    return this.workflow_states;
+  }
+  /**
+   *
+   **/
+   public getJobsStates(): Collections.Dictionary<string, Collections.Dictionary<string, CciJobState>> {
+     return this.jobs_states;
+   }
 
 }
 
@@ -252,6 +270,9 @@ export class PipelineExecSetReportLogger {
 
   private circleci_client: CircleCIClient;
   private report: PipelineExecSetReport;
+  private workflowsReportingCompleted: boolean;
+  private jobsReportingCompleted: boolean;
+
   /**
    * An array, in which for each entry has  a JSon Property named 'id', which is the GUID of a Circle CI Pipeline execution
    *
@@ -315,26 +336,15 @@ export class PipelineExecSetReportLogger {
     this.circleci_client = circleci_client;
     this.progressMatrix = progressMatrix;
     this.cicd_error = cicd_error;
+    this.workflowsReportingCompleted = false;
+    this.jobsReportingCompleted = false;
+    
     this.initReport();
     this.initNotifersSubscriptions();
     this.buildReport();
   }
   private initReport(): void {
-    this.report = {
-      pipelines_states: []
-    }
-    for (let k = 0; k < this.progressMatrix.length; k++) {
-      this.report.pipelines_states.push({
-        pipeline_guid: this.progressMatrix[k].id,
-        pipeline_number: this.progressMatrix[k].pipeline_exec_number,
-        exec_state: this.progressMatrix[k].exec_state,
-        cci_api_infos: null,
-        workflows_states: {
-          completed:false,
-          states: [],
-        }
-      })
-    }
+    this.report = new PipelineExecSetReport();
   }
   private initNotifersSubscriptions () {
 
@@ -404,13 +414,8 @@ export class PipelineExecSetReportLogger {
     let allJobStatesReported: boolean = true;
 
     /// checking pipeline exec states presence in report
-
-    for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
-      if ((!allPipelineStatesReported) || this.report.pipelines_states[m].cci_api_infos === null) { //as soon as one of them is null, no need to keep on looping, reporting Pipeline Execution States has not completed.
-        allPipelineStatesReported = false;
-        break;
-      }
-      allPipelineStatesReported = allPipelineStatesReported && (!(this.report.pipelines_states[m].cci_api_infos === null)); /// if [cci_api_infos] entr is not null anymore (as initialized), then we know for sure pipeline exec state has been reported
+    for(let m: number = 0; m < this.progressMatrix.length; m++) {
+      allPipelineStatesReported = allPipelineStatesReported && (this.report.getPipelinesStates().containsKey(this.progressMatrix[m].id)); /// if [cci_api_infos] entr is not null anymore (as initialized), then we know for sure pipeline exec state has been reported
     }
     /// checking workflow exec states completed updates (with pagination) in report
     for(let m: number = 0; m < this.report.pipelines_states.length; m++) {
