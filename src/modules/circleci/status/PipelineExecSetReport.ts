@@ -214,8 +214,34 @@ export class PipelineExecSetReportLogger {
 
   private circleci_client: CircleCIClient;
   private report: PipelineExecSetReport;
-  private workflowsReportingCompleted: boolean;
-  private jobsReportingCompleted: boolean;
+
+  /**
+   * When all workflows, of all Pipelines, have been reported in <code>this.report</code>
+   **/
+  private allWorkflowsReportingCompleted: boolean;
+  /**
+   *      <worklflow_guid_1> =>  <true|false> ("completed")
+   *      <worklflow_guid_2> =>  <true|false> ("completed")
+   *                         ...
+   *      <worklflow_guid_N> =>  <true|false> ("completed")
+   *
+   **/
+  private workflowsReportingCompleted: Collections.Dictionary<string, boolean>;
+
+  /**
+   * When all jobs, of all workflows, of all Pipelines, have been reported in <code>this.report</code>
+   **/
+  private allJobsReportingCompleted: boolean;
+  /**
+   *
+   *      <job_guid_1> =>  <true|false> ("completed")
+   *      <job_guid_2> =>  <true|false> ("completed")
+   *                         ...
+   *      <job_guid_N> =>  <true|false> ("completed")
+   *
+   **/
+  private jobsReportingCompleted: Collections.Dictionary<string, boolean>;
+
 
   /**
    * An array, in which for each entry has  a JSon Property named 'id', which is the GUID of a Circle CI Pipeline execution
@@ -280,8 +306,13 @@ export class PipelineExecSetReportLogger {
     this.circleci_client = circleci_client;
     this.progressMatrix = progressMatrix;
     this.cicd_error = cicd_error;
-    this.workflowsReportingCompleted = false;
-    this.jobsReportingCompleted = false;
+
+    this.allWorkflowsReportingCompleted = false;
+    this.workflowsReportingCompleted = new Collections.Dictionary<string, boolean>();
+    
+    this.allJobsReportingCompleted = false;
+    this.jobsReportingCompleted = new Collections.Dictionary<string, boolean>();
+
 
     this.initReport();
     this.initNotifersSubscriptions();
