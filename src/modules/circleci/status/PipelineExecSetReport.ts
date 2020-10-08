@@ -245,7 +245,7 @@ export class PipelineExecSetReportLogger {
 
   /**
    * An array, in which for each entry has  a JSon Property named 'id', which is the GUID of a Circle CI Pipeline execution
-   *
+   * ---
    * Each entry of the array has the following JSON properties :
    *
    *  {
@@ -255,7 +255,7 @@ export class PipelineExecSetReportLogger {
    *     exec_state: `${circleCiJsonResponse.state}`,
    *     project_slug: `${circleCiJsonResponse.project_slug}`
    *  }
-   *
+   * ---
    * Provided by a {@link ReactiveParallelExecutionSet}, when is has finished triggering all Circle CI Pipelines for its Parallel Execution Set
    *
    **/

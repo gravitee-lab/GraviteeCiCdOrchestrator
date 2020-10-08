@@ -12,6 +12,17 @@ export class ReactiveParallelExecutionSet {
    * the whole execution plan, as understood by the {@link CircleCiOrchestrator} class.
    * --
    * Will be filled with JSON responses of Circle CI API calls to trigger pipelines.
+   * ---
+   * Each entry of the array has the following JSON properties :
+   *
+   *  {
+   *     pipeline_exec_number: `${circleCiJsonResponse.number}`,
+   *     id : `${circleCiJsonResponse.id}`,
+   *     created_at: `${circleCiJsonResponse.created_at}`,
+   *     exec_state: `${circleCiJsonResponse.state}`,
+   *     project_slug: `${circleCiJsonResponse.project_slug}`
+   *  }
+   * ---
    **/
   private progressMatrix: any[]; //
   /// private pipeExecStatusWatcher: PipelineExecSetStatusWatcher; /// no circular dependencies
