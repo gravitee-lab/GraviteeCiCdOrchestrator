@@ -338,7 +338,7 @@ export class PipelineExecSetReportLogger {
     this.cicd_error = cicd_error;
     this.workflowsReportingCompleted = false;
     this.jobsReportingCompleted = false;
-    
+
     this.initReport();
     this.initNotifersSubscriptions();
     this.buildReport();
@@ -551,7 +551,8 @@ export class PipelineExecSetReportLogger {
 
     /// let next_page_token = circleCiJsonResponse.next_page_token;
     if (observedResponse.cci_json_response.next_page_token === null) {
-      this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.completed = true;
+      /// this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.completed = true;
+      this.workflowsReportingCompleted = true;
       this.pipelineReportingNotifier.next({ // triggers [reportPipelinesState]
         cci_project_slug: `${observedResponse.cci_json_response.items[0].project_slug}`,
         pipeline_number: parseInt(`${observedResponse.cci_json_response.items[0].pipeline_number}`)
@@ -801,7 +802,8 @@ export class PipelineExecSetReportLogger {
       /// let next_page_token = circleCiJsonResponse.next_page_token;
       if (observedResponse.cci_json_response.next_page_token === null) {
 
-        this.report.pipelines_states[workflowIndexInReport.pipeline_index].workflows_states.states[workflowIndexInReport.workflow_index].jobs_states.completed = true;
+        /// this.report.pipelines_states[workflowIndexInReport.pipeline_index].workflows_states.states[workflowIndexInReport.workflow_index].jobs_states.completed = true;
+        this.jobsReportingCompleted = true;
 
         this.reportingCompletionNotifier.next(this.report);
 
