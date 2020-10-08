@@ -718,7 +718,10 @@ export class PipelineExecSetReportLogger {
     *
     **/
     private reportJobsExecStateCCIResponseHandler (observedResponse: WorkflowJobsData) : void {
-      console.info( '[{PipelineExecSetReportLogger}] - [reportJobsExecStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', observedResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+      throw new Error(`Implementationnot finished: needs redesignlike forWorkflows and Pipelines `);
+
+      // console.info( '[{PipelineExecSetReportLogger}] - [reportJobsExecStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', observedResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
+      /*
       ///let observedResponse: WorkflowJobsData  = circleCiJsonResponse;
       if (observedResponse.cci_json_response.items.length == 0) {
         // if response does not include any jobs, we have a problem in the pipeline.
@@ -746,7 +749,7 @@ export class PipelineExecSetReportLogger {
           workflow_guid: observedResponse.parent_workflow_guid
         }
         this.jobPaginationNotifier.next(paginator)
-      }
+      }*/
 
     }
 
