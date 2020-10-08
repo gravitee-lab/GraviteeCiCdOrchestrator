@@ -246,16 +246,28 @@ export class PipelineExecSetReportLogger {
   /**
    * An array, in which for each entry has  a JSon Property named 'id', which is the GUID of a Circle CI Pipeline execution
    *
+   * Each entry of the array has the following JSON properties :
+   *
+   *  {
+   *     pipeline_exec_number: `${circleCiJsonResponse.number}`,
+   *     id : `${circleCiJsonResponse.id}`,
+   *     created_at: `${circleCiJsonResponse.created_at}`,
+   *     exec_state: `${circleCiJsonResponse.state}`,
+   *     project_slug: `${circleCiJsonResponse.project_slug}`
+   *  }
+   *
    * Provided by a {@link ReactiveParallelExecutionSet}, when is has finished triggering all Circle CI Pipelines for its Parallel Execution Set
    *
    **/
   private progressMatrix: any[];
+
   /**
    * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all pipeline executions state
    *
    * The emited string is the Circle CI pipeline GUID which will be used to report WorkflowsState of he Circle CI Pipeline
    **/
   pipelineReportingNotifier: rxjs.Subject<CciPipelineRef>;
+
   /**
    * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for all workflows state
    *
@@ -263,6 +275,7 @@ export class PipelineExecSetReportLogger {
    *
    **/
   workflowReportingNotifier: rxjs.Subject<CciPipelineRef>;
+
   /**
    * An RxJS Subject which notifies when all JSON HTTP Responses have been received, when querying Circle CI API v2 for pipeline jobs state
    *
@@ -297,6 +310,7 @@ export class PipelineExecSetReportLogger {
 
    private rxSubscriptions: rxjs.Subscription[];
    private cicd_error: Error;
+
   /**
    * @parameters progressMatrix The progress matrix provided by the {@link ReactiveParallelExecutionSet}, which defines the Pipeline Executions Set for which to build the report
    * @parameters circleci_client The {@link CircleCIClient} service to use to query the Circle CI API
@@ -309,7 +323,7 @@ export class PipelineExecSetReportLogger {
 
     this.allWorkflowsReportingCompleted = false;
     this.workflowsReportingCompleted = new Collections.Dictionary<string, boolean>();
-    
+
     this.allJobsReportingCompleted = false;
     this.jobsReportingCompleted = new Collections.Dictionary<string, boolean>();
 
@@ -341,13 +355,15 @@ export class PipelineExecSetReportLogger {
 
     let pipelineReportingNotifierSubsciption = this.pipelineReportingNotifier.subscribe({
       next: this.reportPipelinesState
-    })
+    });
+
     let wfReportingNotifierSubsciption = this.workflowReportingNotifier.subscribe({
       next: this.reportPipelinesState/*(pipeline_guid: string) => {
         // So workflows states have been reported for pipeline of GUID [pipeline_guid]
         // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
       }*/
-    })
+    });
+
     let jobReportingNotifierSubsciption = this.reportingCompletionNotifier.subscribe({
       next: ((report) => {
         ///
@@ -371,7 +387,7 @@ export class PipelineExecSetReportLogger {
         // So workflows states have been reported for pipeline of GUID [pipeline_guid]
         // Now we can report Pipeline state itself, using the 'pipeline_number' in the workflow states
       }*/
-    })
+    });
 
     this.rxSubscriptions.push(pipelineReportingNotifierSubsciption);
     this.rxSubscriptions.push(wfReportingNotifierSubsciption);
@@ -383,12 +399,16 @@ export class PipelineExecSetReportLogger {
 
   }
   private isReportCompleted(): boolean {
+    let allPipelineStatesReported = false;
+    this.report.getPipelinesStates().size()
 
-    let allPipelineStatesReported: boolean = true;
-    let allWorkflowStatesReported: boolean = this.workflowsReportingCompleted;
-    let allJobStatesReported: boolean = this.jobsReportingCompleted;
+    for(let k: number; k < this.progressMatrix.length; k++) {
+      this.progressMatrix[k].id
+    }
+    this.report.getPipelinesStates().keys().length
 
-    return allPipelineStatesReported && allWorkflowStatesReported && allJobStatesReported;
+
+    return allPipelineStatesReported && this.allWorkflowsReportingCompleted && this.allJobsReportingCompleted;
   }
   /**
    *
