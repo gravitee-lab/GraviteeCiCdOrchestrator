@@ -183,6 +183,53 @@ export class PipelineExecSetReport {
      return this.jobs_states;
    }
 
+   /**
+    * Returns a JSON Object, which contains
+    * a list of the currently reported workflows states for
+    * a given pipeline
+    *
+    * @parameters <code>pipeline_guid</code> The GUID of the pipeline for which we want to "peek at all the reported workflows"
+    **/
+   public toJSONworkflows(pipeline_guid: string): any {
+
+     let toReturn: any = {
+       pipeline_guid: pipeline_guid,
+       workflows: []
+     }
+
+     this.getWorkflowsStates().getValue(pipeline_guid);
+
+     let theKeys = this.getWorkflowsStates().getValue(pipeline_guid).keys();
+
+     for (let k: number; k < theKeys.length; k++) {
+       toReturn.workflows.push(this.getWorkflowsStates().getValue(theKeys[k]));
+     }
+
+     return toReturn;
+   }
+
+   /**
+   * Returns a JSON Object, which contains
+   * a list of the currently reported jobs states for
+   * a given Workflow
+   *
+   * @parameters <code>workflow_guid</code> The GUID of the pipeline for which we want to "peek at all the reported jobs"
+    **/
+   public toJSONJobs(workflow_guid: string): any {
+
+     let toReturn: any = {
+       workflow_guid: workflow_guid,
+       jobs: []
+     }
+
+     let theKeys = this.getJobsStates().getValue(workflow_guid).keys();
+
+     for (let k: number; k < theKeys.length; k++) {
+       toReturn.jobs.push(this.getJobsStates().getValue(theKeys[k]));
+     }
+
+     return toReturn;
+   }
 }
 
 
@@ -220,10 +267,10 @@ export class PipelineExecSetReportLogger {
    **/
   private allWorkflowsReportingCompleted: boolean;
   /**
-   *      <worklflow_guid_1> =>  <true|false> ("completed")
-   *      <worklflow_guid_2> =>  <true|false> ("completed")
+   *      <pipeline_guid_1> =>  <true|false> ("completed" reporting all workflows for a given pipeline)
+   *      <pipeline_guid_2> =>  <true|false> ("completed")
    *                         ...
-   *      <worklflow_guid_N> =>  <true|false> ("completed")
+   *      <pipeline_guid_N> =>  <true|false> ("completed")
    *
    **/
   private workflowsReportingCompleted: Collections.Dictionary<string, boolean>;
@@ -234,10 +281,10 @@ export class PipelineExecSetReportLogger {
   private allJobsReportingCompleted: boolean;
   /**
    *
-   *      <job_guid_1> =>  <true|false> ("completed")
-   *      <job_guid_2> =>  <true|false> ("completed")
+   *      <worklflow_guid_1> =>  <true|false> ("completed" reporting all jobs for a given workflow)
+   *      <worklflow_guid_2> =>  <true|false> ("completed")
    *                         ...
-   *      <job_guid_N> =>  <true|false> ("completed")
+   *      <worklflow_guid_N> =>  <true|false> ("completed")
    *
    **/
   private jobsReportingCompleted: Collections.Dictionary<string, boolean>;
@@ -399,13 +446,17 @@ export class PipelineExecSetReportLogger {
 
   }
   private isReportCompleted(): boolean {
-    let allPipelineStatesReported = false;
+    let allPipelineStatesReported = true;
     this.report.getPipelinesStates().size()
 
     for(let k: number; k < this.progressMatrix.length; k++) {
-      this.progressMatrix[k].id
+      if (allPipelineStatesReported) {
+        break; // as soon as one pipeline state has not been reported, no need to keep on looping
+      }
+      allPipelineStatesReported = allPipelineStatesReported && this.report.getPipelinesStates().containsKey(this.progressMatrix[k].id) && (!(this.report.getPipelinesStates().getValue(this.progressMatrix[k].id) === null));
     }
-    this.report.getPipelinesStates().keys().length
+
+
 
 
     return allPipelineStatesReported && this.allWorkflowsReportingCompleted && this.allJobsReportingCompleted;
@@ -505,13 +556,12 @@ export class PipelineExecSetReportLogger {
 
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
+      this.report.addWorkflowState(wflowstate);
+      let currentPipelineWorkflows: any = this.report.toJSONworkflows(observedResponse.cci_json_response.id);
 
-
-      /// this.progressMatrix[pipelineStateIndexInReport].workflows_states.states.push(wflowstate);
-      this.updateWflowstateIn(wflowstate,this.progressMatrix[pipelineStateIndexInReport].workflows_states.states.cci_api_infos.items)
-      console.log(`DEBUG [{PipelineExecSetReport}] - [reportWorflowStateCCIResponseHandler] - In FOR LOOP Inspecting object [ this.progressMatrix[${pipelineStateIndexInReport}] ] : `);
+      console.log(`DEBUG [{PipelineExecSetReport}] - [reportWorflowStateCCIResponseHandler] - In FOR LOOP Inspecting workflowsforthe pipeline of GUID [ ${observedResponse.parent_pipeline_guid} ] : `);
       console.log(`----`);
-      console.log(`${JSON.stringify(this.progressMatrix[pipelineStateIndexInReport], null, " ")}`);
+      console.log(`${JSON.stringify({ workflows : currentPipelineWorkflows}, null, " ")}`);
       /// console.log({progressMatrix: this.progressMatrix});
       console.log(`----`);
 
@@ -521,7 +571,7 @@ export class PipelineExecSetReportLogger {
     /// let next_page_token = circleCiJsonResponse.next_page_token;
     if (observedResponse.cci_json_response.next_page_token === null) {
       /// this.report.pipelines_states[pipelineStateIndexInReport].workflows_states.completed = true;
-      this.workflowsReportingCompleted = true;
+      this.workflowsReportingCompleted.setValue(observedResponse.parent_pipeline_guid, true);
       this.pipelineReportingNotifier.next({ // triggers [reportPipelinesState]
         cci_project_slug: `${observedResponse.cci_json_response.items[0].project_slug}`,
         pipeline_number: parseInt(`${observedResponse.cci_json_response.items[0].pipeline_number}`)
@@ -585,8 +635,14 @@ export class PipelineExecSetReportLogger {
 
   private reportPipelineExecStateCCIResponseHandler (circleCiJsonResponse: any) : void {
     console.info( '[{PipelineExecSetReportLogger}] - [reportWorflowStateCCIResponseHandler] Processing Circle CI API Response [data] is : ', circleCiJsonResponse  /* circleCiJsonResponse.data // when retryWhen is used*/ )
-    let pipelineStateIndexInReport = this.getIndexOfPipelineStateInReport(circleCiJsonResponse.id);
-    this.report.pipelines_states[pipelineStateIndexInReport].cci_api_infos = circleCiJsonResponse;
+    let cciresponse: CciPipelineState = {
+      number: circleCiJsonResponse.number,
+      id: circleCiJsonResponse.id,
+      state: circleCiJsonResponse.state,
+      created_at: circleCiJsonResponse.created_at
+    }
+    this.report.addPipelineState(circleCiJsonResponse.id, cciresponse);
+
   }
   private reportPipelineExecStateCCIErrorHandler(error: any) : void {
     console.info('[{PipelineExecSetReportLogger}] - [reportPipelineExecStateCCIErrorHandler] - Reporting Circle CI pipeline excution state failed ', error )
