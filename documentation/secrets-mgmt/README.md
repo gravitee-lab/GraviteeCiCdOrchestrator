@@ -113,7 +113,8 @@ https://secrethub.io/docs/guides/key-files/#store
 ### Secrethub everyday CLI
 
 * Installing secrethub CLI :
-  * on linux debian  and probably all deban based linux distrib such as ubuntu, potentially all GNU/Linux distribs) :
+
+ * on linux debian  and probably all deban based linux distrib such as ubuntu, potentially all GNU/Linux distribs) :
 
 ```bash
 
@@ -124,6 +125,8 @@ export SECRETHUB_CLI_VERSION=0.41.0
 export SECRETHUB_OS=linux
 export SECRETHUB_CPU_ARCH=amd64
 
+curl -LO https://github.com/secrethub/secrethub-cli/releases/download/v${SECRETHUB_CLI_VERSION}/secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB_OS}-${SECRETHUB_CPU_ARCH}.tar.gz
+
 
 mkdir -p /usr/local/secrethub
 tar -C /usr/local/secrethub -xzf secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB_OS}-${SECRETHUB_CPU_ARCH}.tar.gz
@@ -131,6 +134,28 @@ tar -C /usr/local/secrethub -xzf secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB
 # note : on debian binary is installed to [/usr/bin/secrethub] by package manager
 
 ```
+
+
+ * on `Macos` linux debian  and probably all deban based linux distrib such as ubuntu, potentially all GNU/Linux distribs) :
+
+```bash
+
+# TODO
+
+# eg : https://github.com/secrethub/secrethub-cli/releases/download/v0.41.2/secrethub-v0.41.2-darwin-amd64.tar.gz
+export SECRETHUB_CLI_VERSION=0.41.0
+export SECRETHUB_OS=darwin
+export SECRETHUB_CPU_ARCH=amd64
+
+
+curl -LO https://github.com/secrethub/secrethub-cli/releases/download/v${SECRETHUB_CLI_VERSION}/secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB_OS}-${SECRETHUB_CPU_ARCH}.tar.gz
+
+mkdir -p /usr/local/secrethub
+tar -C /usr/local/secrethub -xzf secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB_OS}-${SECRETHUB_CPU_ARCH}.tar.gz
+
+```
+
+
 
 * Signup secret hub uisng the CLI : `secrethub signup` (interactive)
 

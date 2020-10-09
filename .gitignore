@@ -12,3 +12,6 @@ documentation/global-process
 graviteeio/
 graviteeio/cicd/
 graviteeio/cicd/pipeline/
+
+# when I have to quickly edit some markdown for any purpose
+deleteme.md

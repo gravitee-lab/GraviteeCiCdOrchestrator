@@ -188,15 +188,34 @@ export class ReactiveParallelExecutionSet {
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of component.name : [${component.name}]`);
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of component.version : [${component.version}]`);
       let theSplitVersionArr = component.version.split('.');
-      console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - so component git branch to trigger pipeline on is : [${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x]`);
+      let pipelineTargetBranch: string = null;
+
+      if (theSplitVersionArr.length != 3) {
+        throw new Error(`The Gravitee component [${component.name}] has a non-semver compliant version number : [${component.version}]`)
+      } else {
+        if (theSplitVersionArr[2] === '0') {
+          /// if the patch version number is zero, then
+          /// Gravitee Team Git workflow rule is that
+          /// the ${component.version} is on the [master] git branch of the
+          ///  git repo versioning the component
+          pipelineTargetBranch = 'master'
+        } else {
+          pipelineTargetBranch = `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
+        }
+
+      }
+
+      console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - so component git branch to trigger pipeline on is : [${pipelineTargetBranch}]`);
       console.log( `[{[ReactiveParallelExecutionSet # triggerPipelines()]} - value of process.argv["dry-run"] : [${process.argv["dry-run"]}]`);
 
-      /// pipeline execution parameters, same as Jenkins build parameters
+      /// pipeline execution parameters, same as [Jenkins] build parameters
+      /// ---
+
       let pipelineConfig = {
         parameters: {
          gio_action: null
         },
-        branch: `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
+        branch: `${pipelineTargetBranch}`
       }
       /// if (process.argv["dry-run"] === 'true') {
       if (process.argv["dry-run"]) {
@@ -208,7 +227,7 @@ export class ReactiveParallelExecutionSet {
       }
       /// let pipelineConfig = { parameters: {},branch : 'dependabot/npm_and_yarn/handlebars-4.5.3'};
 
-      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(process.env.GH_ORG, `${component.name}`, `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`, pipelineConfig).subscribe({
+      let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(process.env.GH_ORG, `${component.name}`, `${pipelineTargetBranch}`, pipelineConfig).subscribe({
         next: this.handleTriggerPipelineCircleCIResponseData.bind(this),
         complete: data => {
            console.log( '[{[ReactiveParallelExecutionSet]} - triggering Circle CI Build completed! :)]')
