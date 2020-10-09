@@ -63,9 +63,14 @@ workflows:
       - docker_build_and_push:
           context: cicd-orchestrator
           filters:
-            # branches:
-              # only:
-                # - master
+            branches:
+              ignore:
+                - develop
+                - /^feature\/*/
+                - /^support\/*/
+                - /^bugfix\/*/
+                - /^hotfix\/*/
+                - /^release\/*/
             tags:
               # only: /^v.*/
               only:
