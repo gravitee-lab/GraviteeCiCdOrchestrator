@@ -68,4 +68,4 @@ workflows:
                 - master
             tags:
               # only: /^v.*/
-              only: /^[0-999].[0-999].[0-999]/
+              only: /^[0-999].[0-999].[0-999][-beta|-alpha]?/
