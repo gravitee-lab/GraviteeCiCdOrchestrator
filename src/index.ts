@@ -22,7 +22,6 @@ console.log('I am the Gravitee CI CD Orchestrator !')
 console.log('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
 console.log('')
 
-
 /// throw new Error("DEBUG STOP POINT")
 
 export const cli : Cli = new Cli();
