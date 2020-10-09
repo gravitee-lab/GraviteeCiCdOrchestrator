@@ -64,8 +64,13 @@ workflows:
           context: cicd-orchestrator
           filters:
             branches:
-              only:
-                - master
+              ignore:
+                - develop
+                - /^feature\/*/
+                - /^support\/*/
+                - /^bugfix\/*/
+                - /^hotfix\/*/
+                - /^release\/*/
             tags:
               # only: /^v.*/
               only:
