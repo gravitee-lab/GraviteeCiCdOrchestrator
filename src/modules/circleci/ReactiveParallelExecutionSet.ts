@@ -136,6 +136,7 @@ export class ReactiveParallelExecutionSet {
 
    return toReturn;
   }
+  
   /**
    *
    * Notifies the {@link CircleCiOrchestrator} that all pipelines in
@@ -143,6 +144,7 @@ export class ReactiveParallelExecutionSet {
    *
    **/
   private notifyExecCompleted(execStatusNotification: PipeExecSetStatusNotification) {
+
     if (execStatusNotification.is_errored) {
       console.log("[-----------------------------------------------]");
       console.log(`A Pipeline has reached an execution status with errors, or Pipeline Execution timeout has been reached, So the {@link PipelineExecSetReportLogger} will build and log an Execution Report, and then stop the execution of the whole ${process.argv["cicd-stage"]} CI CD Stage.`);
