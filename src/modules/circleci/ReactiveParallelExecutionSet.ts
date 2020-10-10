@@ -136,7 +136,7 @@ export class ReactiveParallelExecutionSet {
 
    return toReturn;
   }
-  
+
   /**
    *
    * Notifies the {@link CircleCiOrchestrator} that all pipelines in
@@ -194,8 +194,10 @@ export class ReactiveParallelExecutionSet {
 
       if (theSplitVersionArr.length != 3) {
         throw new Error(`The Gravitee component [${component.name}] has a non-semver compliant version number : [${component.version}]`)
+      } else if (!`${component.version}`.endsWith('-SNAPSHOT')) {
+        throw new Error(`The Gravitee component [${component.name}] has a version number which does not end with the '-SNAPSHOT' suffix (but it should, since filtered from the 'release.json') : [${component.version}]`)
       } else {
-        if (theSplitVersionArr[2] === '0') {
+        if (theSplitVersionArr[2] === '0-SNAPSHOT') {
           /// if the patch version number is zero, then
           /// Gravitee Team Git workflow rule is that
           /// the ${component.version} is on the [master] git branch of the
@@ -204,6 +206,7 @@ export class ReactiveParallelExecutionSet {
         } else {
           pipelineTargetBranch = `${theSplitVersionArr[0]}.${theSplitVersionArr[1]}.x`
         }
+
 
       }
 
