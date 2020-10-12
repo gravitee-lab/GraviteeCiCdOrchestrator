@@ -36,13 +36,13 @@ curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master
 # The [circleci] executable file will be found installed into an mktemp created dir, : a Folder of path '/tmp/tmp.<RANDOM STRING>'
 # To fix installation, all you will have to do is to run :
 # mv /tmp/tmp.<RANDOM STRING>/* ${CCI_CLI_FOLDER}
-# 
+#
 export PATH="${PATH}:${CCI_CLI_FOLDER}"
 circleci version
 circleci --help
 ```
 
-
+For the record, when I wrote this `README.md`, and installed Circle CI CLI, I downloaded the installation script to `documentation/circleci-orbs/circleci-installation.sh` in this repo.
 
 
 
