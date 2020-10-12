@@ -74,13 +74,13 @@ orb_publishing:
 
 ```bash
 # validate the Yaml Syntax of `~/.circleci/cli.yml`
-circleci orb validate /tmp/my_orb.yml
+circleci config validate
 # validate the Yaml Syntax of an orb
 circleci orb validate /tmp/my_orb.yml
 
 ```
 
-* Given the fact that there are 
+* Given the fact that there are many configurations and commands to run, to manage the development cyle of an Orb, I factorized all those commands in a tiny nodejs /typescript utility, which you will find in the `documentation/circleci-orbs/examples/1`
 
 
 

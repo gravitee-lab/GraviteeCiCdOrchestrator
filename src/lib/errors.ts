@@ -53,7 +53,7 @@ class ErrorReporter {
     this.http_release_git_repo = http_release_git_repo;
     this.release_branches = release_branches;
 
-    if (product === undefined || product === "") {
+    if (secrets_file_path === undefined || secrets_file_path === "") {
       console.warn("{[.DOTENV]} - [SECRETS_FILE_PATH] is undefined, defaulting value to './.secrets.json'")
       this.secrets_file_path = './.secrets.json';
     } else {

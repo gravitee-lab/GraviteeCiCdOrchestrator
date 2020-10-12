@@ -1,0 +1,208 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>circleci-orb-project-name</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">circleci-orb-project-name</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</header>
+<div class="container">
+	<div class="row container container-main">
+		<div class="col-3 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul>
+					<li>📑 Index</li>
+					<li><br></li>
+					<li class=" ">
+						<a href="globals.html">Globals</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="modules/_lib_errors_.html">&quot;lib/errors&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="modules/_main_.html">&quot;main&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="modules/_runner_runner_.html">&quot;runner/runner&quot;</a>
+				</li>                </ul>
+			</nav>
+		</div>
+		<div class="col-9 col-content">
+			<div class="tsd-panel">
+				<a href="#circle-ci-orbs-for-the-graviteeio-team" id="circle-ci-orbs-for-the-graviteeio-team" style="color: inherit; text-decoration: none;">
+					<h1>Circle CI Orbs for the Gravitee.io Team</h1>
+				</a>
+				<a href="#a-first-simple-orb" id="a-first-simple-orb" style="color: inherit; text-decoration: none;">
+					<h2>A First simple Orb</h2>
+				</a>
+				<p>First, I will try and make a simple <code>Orb</code>, including the <code>.circleci/config.yml</code> defined for
+				all Gravitee &quot;dev repos&quot;, cf. :</p>
+				<ul>
+					<li><code>src/modules/circleci/status/tests/.circleci/config.yml</code> (actually deployed by scripts)</li>
+					<li><code>documentation/cci-pipelines-commons/.circleci/config.yml</code> : should always be the same as <code>src/modules/circleci/status/tests/.circleci/config.yml</code></li>
+				</ul>
+				<p>To do that, I will follow steps in <a href="https://circleci.com/docs/2.0/orb-author-intro/">https://circleci.com/docs/2.0/orb-author-intro/</a></p>
+				<a href="#step-1--installing-the-circle-ci-cli" id="step-1--installing-the-circle-ci-cli" style="color: inherit; text-decoration: none;">
+					<h4>Step 1 : Installing the Circle CI CLI</h4>
+				</a>
+				<p>Installation for both <code>GNU/Linux</code> distributions, and <code>Mac OS</code> <code>Darwin</code> :</p>
+				<pre><code class="language-bash"><span class="hljs-comment"># curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | bash</span>
+
+<span class="hljs-comment"># ---</span>
+<span class="hljs-comment"># CCI_CLI_FOLDER : the path to the folder to which you want to install Circle CI CLI</span>
+<span class="hljs-comment"># You (the Linux user executing the downloaded bash script) need(s) to</span>
+<span class="hljs-comment"># have write permissions to that folder.</span>
+<span class="hljs-comment"># ---</span>
+<span class="hljs-comment"># The version to install and the binary location can be passed in via VERSION and DESTDIR respectively.</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-built_in">export</span> CCI_CLI_FOLDER=/opt/<span class="hljs-built_in">local</span>/bin/circleci
+<span class="hljs-built_in">export</span> MYUSER=$(whoami)
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;MYUSER=[<span class="hljs-variable">${MYUSER}</span>]&quot;</span>
+sudo mkdir -p <span class="hljs-variable">${CCI_CLI_FOLDER}</span>
+sudo chown -R <span class="hljs-variable">${MYUSER}</span>:<span class="hljs-variable">${MYUSER}</span> <span class="hljs-variable">${CCI_CLI_FOLDER}</span>
+
+curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | DESTDIR=<span class="hljs-variable">${CCI_CLI_FOLDER}</span> bash
+
+<span class="hljs-comment"># If you get an error, just read the output, fixing installation won&#x27;t be hard :</span>
+<span class="hljs-comment"># The [circleci] executable file will be found installed into an mktemp created dir, : a Folder of path &#x27;/tmp/tmp.&lt;RANDOM STRING&gt;&#x27;</span>
+<span class="hljs-comment"># To fix installation, all you will have to do is to run :</span>
+<span class="hljs-comment"># mv /tmp/tmp.&lt;RANDOM STRING&gt;/* ${CCI_CLI_FOLDER}</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-built_in">export</span> PATH=<span class="hljs-string">&quot;<span class="hljs-variable">${PATH}</span>:<span class="hljs-variable">${CCI_CLI_FOLDER}</span>&quot;</span>
+circleci version
+circleci --<span class="hljs-built_in">help</span></code></pre>
+				<p>For the record, when I wrote this <code>README.md</code>, and installed Circle CI CLI, I downloaded the installation script to <code>documentation/circleci-orbs/circleci-installation.sh</code> in this repo.</p>
+				<ul>
+					<li>Now, we need a Circle CI Personal Access Token, to use the Circle CI CLI. Go to Web UI on <a href="https://app.circleci.com">https://app.circleci.com</a> to create that, the the User Settings menu</li>
+					<li>then :</li>
+				</ul>
+				<pre><code class="language-bash"><span class="hljs-built_in">export</span> CCI_TOKEN=&lt;very long value of yur personal access token&gt;
+<span class="hljs-comment"># circleci setup : is interactive</span>
+circleci setup --token <span class="hljs-string">&quot;<span class="hljs-variable">${CCI_TOKEN}</span>&quot;</span> --host https://circleci.com --no-prompt</code></pre>
+				<ul>
+					<li>after that, your configuration including your secret, is saved to <code>~/.circleci/cli.yml</code></li>
+					<li>the formof that Yaml file is :</li>
+				</ul>
+				<pre><code class="language-Yaml"><span class="hljs-attr">host:</span> <span class="hljs-string">https://circleci.com</span>
+<span class="hljs-attr">endpoint:</span> <span class="hljs-string">graphql-unstable</span>
+<span class="hljs-attr">token:</span> <span class="hljs-string">&lt;very</span> <span class="hljs-string">long</span> <span class="hljs-string">value</span> <span class="hljs-string">of</span> <span class="hljs-string">yur</span> <span class="hljs-string">personal</span> <span class="hljs-string">access</span> <span class="hljs-string">token&gt;</span>
+<span class="hljs-attr">rest_endpoint:</span> <span class="hljs-string">api/v2</span>
+<span class="hljs-attr">orb_publishing:</span>
+    <span class="hljs-attr">default_namespace:</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-attr">default_vcs_provider:</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-attr">default_owner:</span> <span class="hljs-string">&quot;&quot;</span></code></pre>
+				<ul>
+					<li>Ok, so we will publish our Orbs using this <code>Circle CI</code> CLI, and its configuration determines to which server the Orb will be published.</li>
+					<li>The Circle CI CLI can be used to validate Yaml syntax of :<ul>
+							<li>the <code>~/.circleci/cli.yml</code> above mentioned config file</li>
+							<li>and the <code>Yaml</code> of an orb</li>
+						</ul>
+					</li>
+				</ul>
+				<pre><code class="language-bash"><span class="hljs-comment"># validate the Yaml Syntax of `~/.circleci/cli.yml`</span>
+circleci config validate
+<span class="hljs-comment"># validate the Yaml Syntax of an orb</span>
+circleci orb validate /tmp/my_orb.yml
+</code></pre>
+				<ul>
+					<li>Given the fact that there are</li>
+				</ul>
+				<a href="#ref-documentation" id="ref-documentation" style="color: inherit; text-decoration: none;">
+					<h2>Ref. Documentation</h2>
+				</a>
+				<ul>
+					<li><a href="https://circleci.com/docs/2.0/orb-intro/">https://circleci.com/docs/2.0/orb-intro/</a></li>
+					<li><a href="https://circleci.com/docs/2.0/orb-author-intro/">https://circleci.com/docs/2.0/orb-author-intro/</a></li>
+					<li><a href="https://circleci.com/docs/2.0/creating-orbs/">https://circleci.com/docs/2.0/creating-orbs/</a></li>
+				</ul>
+			</div>
+			<footer class="with-border-bottom">
+				<div class="tsd-legend-group">
+					<ul class="tsd-legend">
+						<li class="tsd-is-inherited"><span class="tsd-kind-icon">Inherited</span></li>
+						<li class="tsd-is-protected"><span class="tsd-kind-icon">Protected</span></li>
+						<li class="tsd-is-private"><span class="tsd-kind-icon">Private</span></li>
+						<li class="tsd-is-static"><span class="tsd-kind-icon">Static</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+						<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object</span></li>
+						<li class="tsd-kind-property"><span class="tsd-kind-icon">Property</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+						<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+						<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type</span></li>
+						<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+						<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+					</ul>
+					<ul class="tsd-legend">
+						<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enum</span></li>
+						<li class="tsd-kind-constructor"><span class="tsd-kind-icon">Constructor</span></li>
+						<li class="tsd-kind-accessor"><span class="tsd-kind-icon">Getter/Setter</span></li>
+					</ul>
+				</div>
+			</footer>
+			<div>Made with ❤️ by <a href="https://github.com/pirix-gh/eledoc" target="_blank">pirix-gh</a>. Documentation generated by <a href="http://typedoc.org/" target="_blank">TypeDoc.</a></div>
+		</div>
+	</div>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
