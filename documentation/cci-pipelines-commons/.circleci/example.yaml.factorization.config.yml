@@ -1,5 +1,92 @@
+# ---------------------------------------------------
+# ---------------------------------------------------
+# ----- Factorization of all jobs filters :
+# ----- mainly, all jobs in the same workflow, share
+# ----- the same Circle CI filter
+# ---------------------------------------------------
+# ---------------------------------------------------
+# This kind of factorization is valalid for
+#  any YAML file
+# ---------------------------------------------------
+product_release_filter: &product_release_filter
+  filters:
+    tags:
+      only: /^rc-*.*.*/
+      # will run only when pulling requests with source branch is a release branch, or when on master and tag is a release candidate (test after merge)
+    branches:
+      only:
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+        - /^*.x/
+      # will not run on pull requests from issues fix or support bracnhes as source branch
+      #
+      ignore:
+        - /^fix*/
+        - /^issues*/
+        - /^*support/
+        - /^*snyk*/
+        - /^*dependabot*/
+support_release_filter: &support_release_filter
+  <<: *product_release_filter
+dev_pr_filter: &dev_pr_filter
+  filters:
+    branches:
+      # will run only when pull request is from
+      # Gravitee Dev / Support Team members
+      only:
+        - /^issues*/
+        # - /^*snyk*/
+        # - /^*dependabot*/
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+        - /^*.x/
+      # will not run on pull requests from one
+      # release branche, to another, for
+      # STS / LTS support Releases
+
+support_pr_filter: &support_pr_filter
+  filters:
+    branches:
+      # ---
+      # Will run only when pull request is from
+      # Gravitee Support Team members
+      # ---
+      # Will also run on pull requests from one
+      # release branch, to another, for
+      # STS / LTS support Releases
+      only:
+        - /^fix*/
+        - /^*support/
+        - 1.20.x
+        - 1.25.x
+        - 1.30.x
+        - 3.0.x
+        - 3.1.x
+      # will not run on pull requests from one
+      # release branch, to another, for
+      # STS / LTS support Releases
+      ignore:
+        - /^*.x/
+        - /^issues*/
+        - /^*snyk*/
+        - /^*dependabot*/
+
+# ---------------------------------------------------
+# ---------------------------------------------------
+# ----- Circle CI Pipeline Definition
+# ---------------------------------------------------
+# ---------------------------------------------------
+
+# Machine executor, set the machine key to true in .circleci/config.yml:
 # Machine executor, set the machine key to true in .circleci/config.yml:
 version: 2.1
+
 parameters:
   gio_action:
     type: enum
@@ -19,6 +106,7 @@ parameters:
 orbs:
   secrethub: secrethub/cli@1.0.0
 jobs:
+
   pull_requests_bot_exec:
     machine:
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
@@ -47,7 +135,6 @@ jobs:
                     echo " ---"
                     echo "CIRCLE_PULL_REQUEST=[${CIRCLE_PULL_REQUEST}] "
                     echo "CIRCLE_PULL_REQUESTS=[${CIRCLE_PULL_REQUESTS}] "
-                    echo "Those env.var. are not set empty (do not know why yet: are they set only on Pull request creation events ?)"
                     echo "CIRCLE_PR_NUMBER=[${CIRCLE_PR_NUMBER}] "
                     echo "CIRCLE_PR_REPONAME=[${CIRCLE_PR_REPONAME}] "
                     echo "CIRCLE_PR_USERNAME=[${CIRCLE_PR_USERNAME}] "
@@ -66,12 +153,12 @@ jobs:
                     secrethub read --out-file ${CCI_SECRET_FILE} gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json
                     ls -allh ${CCI_SECRET_FILE}
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
-                    # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
+                    # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
                     export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
-                    docker run --name orchestrator ${DOCKER_VOLUMES} --restart no -itd quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s pull_req --dry-run false
+                    docker run --name orchestrator ${DOCKER_VOLUMES} --restart no -itd quay.io/gravitee-lab/cicd-orchestrator:stable-latest -- --pr-bot true --pr-bot-mode support
                     docker logs -f orchestrator
 
-  mvn_verify:
+  mvn_build:
     machine:
       image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
       # resource_class: medium
@@ -89,7 +176,7 @@ jobs:
                     echo "Never the less, there might be just any"
                     echo "Run Maven Package"
                     export MVN_DOCKER="maven:${DESIRED_MAVEN_VERSION}-openjdk-16 "
-                    export MAVEN_COMMAND="mvn clean verify"
+                    export MAVEN_COMMAND="mvn clean package"
                     echo "Run Maven Tests MAVEN_COMMAND=[${MAVEN_COMMAND}]"
                     docker run -it --rm -v "$PWD":/usr/src/mymaven -v "$HOME/.m2":/root/.m2 -w /usr/src/mymaven ${MVN_DOCKER} ${MAVEN_COMMAND}
 
@@ -118,7 +205,7 @@ jobs:
       - checkout
       - secrethub/install
       - run:
-          name: "[DRY RUN] First WORKFLOW for Product Release Dry Run"
+          name: "[DRY RUN] First WORKFLOW for Product Release Dry Run"
           command: |
                     echo "[DRY RUN] First WORKFLOW for Product Release Dry Run"
                     echo "Here what will be done is just echoing all Product Release Shell commands, to check their paramters /optionsvalues, the git branch etc..."
@@ -212,9 +299,10 @@ workflows:
     jobs:
       - dev_pr_job1:
           context: gravitee-lab
-  build:
+          # filters:
+ build:
     when:
       equal: [ build, << pipeline.parameters.gio_action >> ]
     jobs:
-      - mvn_verify:
+      - mvn_build:
           context: cicd-orchestrator
