@@ -68,7 +68,19 @@ orb_publishing:
 ```
 
 * Ok, so we will publish our Orbs using this `Circle CI` CLI, and its configuration determines to which server the Orb will be published.
+* The Circle CI CLI can be used to validate Yaml syntax of :
+  * the `~/.circleci/cli.yml` above mentioned config file
+  * and the `Yaml` of an orb
 
+```bash
+# validate the Yaml Syntax of `~/.circleci/cli.yml`
+circleci orb validate /tmp/my_orb.yml
+# validate the Yaml Syntax of an orb
+circleci orb validate /tmp/my_orb.yml
+
+```
+
+* Given the fact that there are 
 
 
 
