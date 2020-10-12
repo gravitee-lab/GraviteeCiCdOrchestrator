@@ -21,3 +21,9 @@ proper `Nodejs` / `Typescript` brings in the whole dev Cycle engineering feature
     * validating,
   * run the `npm run test` to test your Orb (it will be tested with the `./test/.circleci/config.yml`)
   * run the `npm run share` to deploy your Orb to the Orb repository of your Circle CI Server (private or the default public https://circleci.com)
+
+
+## Install the Circle CI CLI
+
+See `utils/circleci-installation.sh` : an installation script to help / show you how to install the Circle CI CLI.
+  
