@@ -1,5 +1,5 @@
 {
-  "name": "circleci-orb-project-name",
+  "name": "gravitee-dev-repos-cci-orb",
   "version": "0.0.1",
   "description": "A simple node project to manage.",
   "main": "src/main.ts",

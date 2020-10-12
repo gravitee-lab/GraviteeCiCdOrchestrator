@@ -80,7 +80,10 @@ circleci orb validate /tmp/my_orb.yml
 
 ```
 
-* Given the fact that there are many configurations and commands to run, to manage the development cyle of an Orb, I factorized all those commands in a tiny nodejs /typescript utility, which you will find in the `documentation/circleci-orbs/examples/1`
+* Given the fact that there are many configurations and commands to run, to manage the development cyle of a Cicle CI `Orb`, I factorized all those commands in a tiny `nodejs` / `typescript` utility, which :
+  * I named `orbinoid` and you will find in the `documentation/circleci-orbs/orbinoid` folder
+  * I duplicated in the `documentation/circleci-orbs/examples/1` to develop a first `Orb` example.
+  * I will duplicate in the `documentation/circleci-orbs/examples/${EXAMPLE_NUMBER}` folders to develop other `Orb` examples.
 
 
 

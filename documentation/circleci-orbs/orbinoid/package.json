@@ -1,7 +1,7 @@
 {
-  "name": "circleci-orb-project-name",
-  "version": "0.0.1",
-  "description": "A simple node project to manage.",
+  "name": "orbinoid",
+  "version": "0.0.1-alpha",
+  "description": "A simple node project to manage Circle CI Orb Projects.",
   "main": "src/main.ts",
   "dependencies": {
     "dotenv": "^8.2.0",
