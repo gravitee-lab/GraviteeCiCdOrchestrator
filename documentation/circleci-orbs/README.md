@@ -44,6 +44,35 @@ circleci --help
 
 For the record, when I wrote this `README.md`, and installed Circle CI CLI, I downloaded the installation script to `documentation/circleci-orbs/circleci-installation.sh` in this repo.
 
+* Now, we need a Circle CI Personal Access Token, to use the Circle CI CLI. Go to Web UI on https://app.circleci.com to create that, the the User Settings menu
+* then :
+
+```bash
+export CCI_TOKEN=<very long value of yur personal access token>
+# circleci setup : is interactive
+circleci setup --token "${CCI_TOKEN}" --host https://circleci.com --no-prompt
+```
+
+* after that, your configuration including your secret, is saved to `~/.circleci/cli.yml`
+* the formof that Yaml file is :
+
+```Yaml
+host: https://circleci.com
+endpoint: graphql-unstable
+token: <very long value of yur personal access token>
+rest_endpoint: api/v2
+orb_publishing:
+    default_namespace: ""
+    default_vcs_provider: ""
+    default_owner: ""
+```
+
+* Ok, so we will publish our Orbs using this `Circle CI` CLI, and its configuration determines to which server the Orb will be published.
+
+
+
+
+
 
 
 ## Ref. Documentation
