@@ -10,9 +10,6 @@
 The Circle CI CLI is a rather dumb utility, and wrapping its command in a
 proper `Nodejs` / `Typescript` brings in the whole dev Cycle engineering features along.
 
-## The dev Cycle of an Orb
-
-![thedev cycle](docs/images/orb-publishing-process.png)
 
 ## How to use
 
@@ -29,3 +26,4 @@ proper `Nodejs` / `Typescript` brings in the whole dev Cycle engineering feature
 ## Install the Circle CI CLI
 
 See `utils/circleci-installation.sh` : an installation script to help / show you how to install the Circle CI CLI.
+  

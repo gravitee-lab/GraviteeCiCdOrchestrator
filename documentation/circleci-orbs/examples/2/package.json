@@ -1,0 +1,41 @@
+{
+  "name": "some-orb",
+  "version": "0.0.1-alpha",
+  "description": "A simple node project to manage Circle CI Orb Projects.",
+  "main": "src/main.ts",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "path": "^0.12.7",
+    "directory-tree": "^2.2.4",
+    "@types/shelljs": "^0.8.8",
+    "shelljs": "^0.8.4",
+    "typescript": "^3.9.6",
+    "ts-node": "^8.10.2"
+  },
+  "devDependencies": {
+    "eledoc": "^0.2.1",
+    "typedoc": "^0.18.0"
+  },
+  "scripts": {
+    "test": "echo 'no tests implemented yet'",
+    "dev": "npm run build && ./node_modules/ts-node/dist/bin.js ./src/main.ts",
+    "start": "node ./dist/main.js",
+    "doc": "./node_modules/typedoc/bin/typedoc --out docs/ ./src --theme node_modules/eledoc/bin/default/",
+    "compile": "tsc ",
+    "build": "npm run compile && npm run test && npm run doc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/gravitee-lab/GraviteeCiCdOrchestrator.git"
+  },
+  "keywords": [
+    "circleci",
+    "typescript"
+  ],
+  "author": "Jean-Baptiste Lasselle <jean.baptiste.lasselle@gmail.com>",
+  "license": "GNU GPL v3",
+  "bugs": {
+    "url": "https://github.com/Jean-Baptiste-Lasselle/pokus/issues"
+  },
+  "homepage": "https://github.com/Jean-Baptiste-Lasselle/pokus#readme"
+}
