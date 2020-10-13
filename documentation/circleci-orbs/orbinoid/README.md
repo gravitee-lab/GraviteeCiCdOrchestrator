@@ -12,7 +12,7 @@ proper `Nodejs` / `Typescript` brings in the whole dev Cycle engineering feature
 
 ## The dev Cycle of an Orb
 
-![thedev cycle](docs/images/orb-publishing-process.png)
+![the Circle CI Orb dev cycle](docs/images/orb-publishing-process.png)
 
 ## How to use
 

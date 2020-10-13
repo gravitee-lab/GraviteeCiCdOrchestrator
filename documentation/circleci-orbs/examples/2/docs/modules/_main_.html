@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;main&quot; | circleci-orb-project-name</title>
+	<title>&quot;main&quot; | some-orb</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">circleci-orb-project-name</a>
+					<a href="../index.html" class="title">some-orb</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -72,8 +72,8 @@
 						<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 							<a href="_main_.html#cci_cli_cmd" class="tsd-kind-icon">CCI_<wbr>CLI_<wbr>CMD</a>
 						</li>
-						<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-							<a href="_main_.html#pre_cmd" class="tsd-kind-icon">PRE_<wbr>CMD</a>
+						<li class=" tsd-kind-variable tsd-parent-kind-module">
+							<a href="_main_.html#cli" class="tsd-kind-icon">cli</a>
 						</li>
 						<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 							<a href="_main_.html#orbrunner" class="tsd-kind-icon">orb<wbr>Runner</a>
@@ -85,6 +85,10 @@
 					<li><br></li>
 					<li class=" ">
 						<a href="../globals.html">Globals</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="_cli_cli_.html">&quot;cli/<wbr>Cli&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="_cli_gnuoptions_.html">&quot;cli/GNUOptions&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="_lib_errors_.html">&quot;lib/errors&quot;</a>
 						</li>                        <li class="current tsd-kind-module">
@@ -98,7 +102,7 @@
 			<section class="tsd-panel-group tsd-index-group">
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<div class="tsd-navigation secondary">
 								<ul>
@@ -109,8 +113,8 @@
 							</div>
 							<div class="tsd-navigation secondary">
 								<ul>
-									<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-										<a href="_main_.html#pre_cmd" class="tsd-kind-icon">PRE_<wbr>CMD</a>
+									<li class="tsd-kind-variable tsd-parent-kind-module">
+										<a href="_main_.html#cli" class="tsd-kind-icon">cli</a>
 									</li>
 								</ul>
 							</div>
@@ -125,7 +129,7 @@
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported tsd-descriptions">
 					<a name="cci_cli_cmd" class="tsd-anchor"></a>
@@ -133,17 +137,17 @@
 					<div class="tsd-signature tsd-kind-icon">CCI_CLI_CMD<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x60;${process.env.CCI_CLI_BINARY} config validate&#x60;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/df5e497/documentation/circleci-orbs/examples/1/src/main.ts#L14">main.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/b0ee130/documentation/circleci-orbs/examples/2/src/main.ts#L14">main.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported tsd-descriptions">
-					<a name="pre_cmd" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagLet">Let</span> PRE_<wbr>CMD</h3>
-					<div class="tsd-signature tsd-kind-icon">PRE_CMD<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x60;pwd &amp;&amp; tree src/ &amp;&amp; ls -allh .&#x60;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-descriptions">
+					<a name="cli" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> cli</h3>
+					<div class="tsd-signature tsd-kind-icon">cli<span class="tsd-signature-symbol">:</span> <a href="../classes/_cli_cli_.cli.html" class="tsd-signature-type">Cli</a><span class="tsd-signature-symbol"> = new Cli()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/df5e497/documentation/circleci-orbs/examples/1/src/main.ts#L8">main.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/b0ee130/documentation/circleci-orbs/examples/2/src/main.ts#L6">main.ts:6</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -153,7 +157,7 @@
 					<div class="tsd-signature tsd-kind-icon">orbRunner<span class="tsd-signature-symbol">:</span> <a href="../classes/_runner_runner_.cciclirunner.html" class="tsd-signature-type">CciCLIRunner</a><span class="tsd-signature-symbol"> = new runner.CciCLIRunner()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/df5e497/documentation/circleci-orbs/examples/1/src/main.ts#L20">main.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/blob/b0ee130/documentation/circleci-orbs/examples/2/src/main.ts#L20">main.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>

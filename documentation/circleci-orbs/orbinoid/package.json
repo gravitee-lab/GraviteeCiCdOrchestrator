@@ -1,5 +1,5 @@
 {
-  "name": "orbinoid",
+  "name": "some-orb",
   "version": "0.0.1-alpha",
   "description": "A simple node project to manage Circle CI Orb Projects.",
   "main": "src/main.ts",
@@ -10,7 +10,9 @@
     "@types/shelljs": "^0.8.8",
     "shelljs": "^0.8.4",
     "typescript": "^3.9.6",
-    "ts-node": "^8.10.2"
+    "ts-node": "^8.10.2",
+    "@types/yargs": "^15.0.6",
+    "yargs": "^16.0.3"
   },
   "devDependencies": {
     "eledoc": "^0.2.1",

@@ -19,6 +19,8 @@ class ErrorReporter {
   private cci_server: string;
   // the path to the local Circle CI secrets file
   private cci_secrets_file_path: string;
+  // 
+  private orb_git_repo: string;
 
   constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string) {
 

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>circleci-orb-project-name</title>
+	<title>some-orb</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">circleci-orb-project-name</a>
+					<a href="index.html" class="title">some-orb</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -70,6 +70,10 @@
 					<li class=" ">
 						<a href="globals.html">Globals</a>
 						</li>                        <li class=" tsd-kind-module">
+						<a href="modules/_cli_cli_.html">&quot;cli/<wbr>Cli&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
+						<a href="modules/_cli_gnuoptions_.html">&quot;cli/GNUOptions&quot;</a>
+						</li>                        <li class=" tsd-kind-module">
 						<a href="modules/_lib_errors_.html">&quot;lib/errors&quot;</a>
 						</li>                        <li class=" tsd-kind-module">
 						<a href="modules/_main_.html">&quot;main&quot;</a>
@@ -80,92 +84,13 @@
 		</div>
 		<div class="col-9 col-content">
 			<div class="tsd-panel">
-				<a href="#circle-ci-orbs-for-the-graviteeio-team" id="circle-ci-orbs-for-the-graviteeio-team" style="color: inherit; text-decoration: none;">
-					<h1>Circle CI Orbs for the Gravitee.io Team</h1>
-				</a>
-				<a href="#a-first-simple-orb" id="a-first-simple-orb" style="color: inherit; text-decoration: none;">
-					<h2>A First simple Orb</h2>
-				</a>
-				<p>First, I will try and make a simple <code>Orb</code>, including the <code>.circleci/config.yml</code> defined for
-				all Gravitee &quot;dev repos&quot;, cf. :</p>
-				<ul>
-					<li><code>src/modules/circleci/status/tests/.circleci/config.yml</code> (actually deployed by scripts)</li>
-					<li><code>documentation/cci-pipelines-commons/.circleci/config.yml</code> : should always be the same as <code>src/modules/circleci/status/tests/.circleci/config.yml</code></li>
-				</ul>
-				<p>To do that, I will follow steps in <a href="https://circleci.com/docs/2.0/orb-author-intro/">https://circleci.com/docs/2.0/orb-author-intro/</a></p>
-				<a href="#step-1--installing-the-circle-ci-cli" id="step-1--installing-the-circle-ci-cli" style="color: inherit; text-decoration: none;">
-					<h4>Step 1 : Installing the Circle CI CLI</h4>
-				</a>
-				<p>Installation for both <code>GNU/Linux</code> distributions, and <code>Mac OS</code> <code>Darwin</code> :</p>
-				<pre><code class="language-bash"><span class="hljs-comment"># curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | bash</span>
-
-<span class="hljs-comment"># ---</span>
-<span class="hljs-comment"># CCI_CLI_FOLDER : the path to the folder to which you want to install Circle CI CLI</span>
-<span class="hljs-comment"># You (the Linux user executing the downloaded bash script) need(s) to</span>
-<span class="hljs-comment"># have write permissions to that folder.</span>
-<span class="hljs-comment"># ---</span>
-<span class="hljs-comment"># The version to install and the binary location can be passed in via VERSION and DESTDIR respectively.</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-built_in">export</span> CCI_CLI_FOLDER=/opt/<span class="hljs-built_in">local</span>/bin/circleci
-<span class="hljs-built_in">export</span> MYUSER=$(whoami)
-<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;MYUSER=[<span class="hljs-variable">${MYUSER}</span>]&quot;</span>
-sudo mkdir -p <span class="hljs-variable">${CCI_CLI_FOLDER}</span>
-sudo chown -R <span class="hljs-variable">${MYUSER}</span>:<span class="hljs-variable">${MYUSER}</span> <span class="hljs-variable">${CCI_CLI_FOLDER}</span>
-
-curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | DESTDIR=<span class="hljs-variable">${CCI_CLI_FOLDER}</span> bash
-
-<span class="hljs-comment"># If you get an error, just read the output, fixing installation won&#x27;t be hard :</span>
-<span class="hljs-comment"># The [circleci] executable file will be found installed into an mktemp created dir, : a Folder of path &#x27;/tmp/tmp.&lt;RANDOM STRING&gt;&#x27;</span>
-<span class="hljs-comment"># To fix installation, all you will have to do is to run :</span>
-<span class="hljs-comment"># mv /tmp/tmp.&lt;RANDOM STRING&gt;/* ${CCI_CLI_FOLDER}</span>
-<span class="hljs-comment">#</span>
-<span class="hljs-built_in">export</span> PATH=<span class="hljs-string">&quot;<span class="hljs-variable">${PATH}</span>:<span class="hljs-variable">${CCI_CLI_FOLDER}</span>&quot;</span>
-circleci version
-circleci --<span class="hljs-built_in">help</span></code></pre>
-				<p>For the record, when I wrote this <code>README.md</code>, and installed Circle CI CLI, I downloaded the installation script to <code>documentation/circleci-orbs/circleci-installation.sh</code> in this repo.</p>
-				<ul>
-					<li>Now, we need a Circle CI Personal Access Token, to use the Circle CI CLI. Go to Web UI on <a href="https://app.circleci.com">https://app.circleci.com</a> to create that, the the User Settings menu</li>
-					<li>then :</li>
-				</ul>
-				<pre><code class="language-bash"><span class="hljs-built_in">export</span> CCI_TOKEN=&lt;very long value of yur personal access token&gt;
-<span class="hljs-comment"># circleci setup : is interactive</span>
-circleci setup --token <span class="hljs-string">&quot;<span class="hljs-variable">${CCI_TOKEN}</span>&quot;</span> --host https://circleci.com --no-prompt</code></pre>
-				<ul>
-					<li>after that, your configuration including your secret, is saved to <code>~/.circleci/cli.yml</code></li>
-					<li>the formof that Yaml file is :</li>
-				</ul>
-				<pre><code class="language-Yaml"><span class="hljs-attr">host:</span> <span class="hljs-string">https://circleci.com</span>
-<span class="hljs-attr">endpoint:</span> <span class="hljs-string">graphql-unstable</span>
-<span class="hljs-attr">token:</span> <span class="hljs-string">&lt;very</span> <span class="hljs-string">long</span> <span class="hljs-string">value</span> <span class="hljs-string">of</span> <span class="hljs-string">yur</span> <span class="hljs-string">personal</span> <span class="hljs-string">access</span> <span class="hljs-string">token&gt;</span>
-<span class="hljs-attr">rest_endpoint:</span> <span class="hljs-string">api/v2</span>
-<span class="hljs-attr">orb_publishing:</span>
-    <span class="hljs-attr">default_namespace:</span> <span class="hljs-string">&quot;&quot;</span>
-    <span class="hljs-attr">default_vcs_provider:</span> <span class="hljs-string">&quot;&quot;</span>
-    <span class="hljs-attr">default_owner:</span> <span class="hljs-string">&quot;&quot;</span></code></pre>
-				<ul>
-					<li>Ok, so we will publish our Orbs using this <code>Circle CI</code> CLI, and its configuration determines to which server the Orb will be published.</li>
-					<li>The Circle CI CLI can be used to validate Yaml syntax of :<ul>
-							<li>the <code>~/.circleci/cli.yml</code> above mentioned config file</li>
-							<li>and the <code>Yaml</code> of an orb</li>
-						</ul>
-					</li>
-				</ul>
-				<pre><code class="language-bash"><span class="hljs-comment"># validate the Yaml Syntax of `~/.circleci/cli.yml`</span>
-circleci config validate
-<span class="hljs-comment"># validate the Yaml Syntax of an orb</span>
-circleci orb validate /tmp/my_orb.yml
-</code></pre>
-				<ul>
-					<li>Given the fact that there are</li>
-				</ul>
-				<a href="#ref-documentation" id="ref-documentation" style="color: inherit; text-decoration: none;">
-					<h2>Ref. Documentation</h2>
+				<a href="#yargs-and-the-gravitee-cicd-orchestrator-gnu-options" id="yargs-and-the-gravitee-cicd-orchestrator-gnu-options" style="color: inherit; text-decoration: none;">
+					<h1><code>Yargs</code>, and the Gravitee CICD Orchestrator GNU options</h1>
 				</a>
 				<ul>
-					<li><a href="https://circleci.com/docs/2.0/orb-intro/">https://circleci.com/docs/2.0/orb-intro/</a></li>
-					<li><a href="https://circleci.com/docs/2.0/orb-author-intro/">https://circleci.com/docs/2.0/orb-author-intro/</a></li>
-					<li><a href="https://circleci.com/docs/2.0/creating-orbs/">https://circleci.com/docs/2.0/creating-orbs/</a></li>
+					<li>To install runtime dependencies :</li>
 				</ul>
+				<pre><code class="language-bash">npm i --save @types/yargs yargs</code></pre>
 			</div>
 			<footer class="with-border-bottom">
 				<div class="tsd-legend-group">
