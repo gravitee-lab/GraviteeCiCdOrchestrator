@@ -16,41 +16,61 @@ export interface CircleCISecrets {
  * Circle CI API v2 based
  **/
 export class CciCLIRunner {
-  private secrets: CircleCISecrets;
-  private orb_prj_folder: string;
-  private package_json: any;
+    private secrets: CircleCISecrets;
+    private orb_prj_folder: string;
+    private package_json: any;
 
-  constructor() {
+    constructor() {
+      this.checkDependencies();
+      const this_package_json: any = JSON.parse(fs.readFileSync('./package.json','utf8'));
+      console.log(`{[.CciCLIRunner]} =================== `);
+      console.log(`{[.CciCLIRunner]} - package.json is : `);
+      console.log(`{[.CciCLIRunner]} =================== `);
+      console.log(this_package_json);
+      console.log(`{[.CciCLIRunner]} =================== `);
+      this.package_json = this_package_json;
 
-    const this_package_json: any = JSON.parse(fs.readFileSync('./package.json','utf8'));
-    console.log(`{[.CciCLIRunner]} =================== `);
-    console.log(`{[.CciCLIRunner]} - package.json is : `);
-    console.log(`{[.CciCLIRunner]} =================== `);
-    console.log(this_package_json);
-    console.log(`{[.CciCLIRunner]} =================== `);
-    this.package_json = this_package_json;
-
-    this.orb_prj_folder = './orb';
-    this.loadCircleCISecrets();
-    let CCI_CLI_CMD: string =`${process.env.CCI_CLI_BINARY} setup --token "${this.secrets.circleci.auth.token}" --host ${process.env.CCI_SERVER} --no-prompt`
-    if (shelljs.exec(CCI_CLI_CMD).code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
-      throw new Error('Error setting up Circle CI CLI Orb ');
-      // shelljs.exit(1);
+      this.orb_prj_folder = './orb';
+      this.loadCircleCISecrets();
+      let CCI_CLI_CMD: string =`${process.env.CCI_CLI_BINARY} setup --token "${this.secrets.circleci.auth.token}" --host ${process.env.CCI_SERVER} --no-prompt`
+      if (shelljs.exec(CCI_CLI_CMD).code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
+        throw new Error('Error setting up Circle CI CLI Orb ');
+        // shelljs.exit(1);
+      }
+      CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} diagnostic`
+      if (shelljs.exec(CCI_CLI_CMD).code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
+        throw new Error('Error running [circleci diagnsostic] command ');
+        // shelljs.exit(1);
+      }
     }
-    CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} diagnostic`
-    if (shelljs.exec(CCI_CLI_CMD).code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
-      throw new Error('Error running [circleci diagnsostic] command ');
-      // shelljs.exit(1);
+
+    loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
+      /// first load the secretfile
+
+      let secretFileAsString: string = fs.readFileSync(process.env.CCI_SECRETS_FILE_PATH,'utf8');
+      this.secrets = JSON.parse(secretFileAsString);
     }
-  }
-
-  loadCircleCISecrets () : void { ///     private secrets: CircleCISecrets;
-    /// first load the secretfile
-
-    let secretFileAsString: string = fs.readFileSync(process.env.CCI_SECRETS_FILE_PATH,'utf8');
-    this.secrets = JSON.parse(secretFileAsString);
-  }
-
+    private checkDependencies() {
+      console.log(` =============================== `);
+      console.log(` = Orbinoid Dependencies Check = `);
+      console.log(` =============================== `);
+      console.log(` =++ [git] `);
+      let CHECK_DEPENDENCY_CMD: string =`git --version`
+      if (shelljs.exec(CHECK_DEPENDENCY_CMD).code !== 0) {
+        shelljs.echo('Error : Orbinoid requires [git] as a dependency, and git is not installed on this system.');
+        shelljs.exit(1);
+      } else {
+        shelljs.echo('Orbinoid [git] dependency found ');
+      }
+      console.log(` =++ [tree] `);
+      CHECK_DEPENDENCY_CMD =`tree --version`
+      if (shelljs.exec(CHECK_DEPENDENCY_CMD).code !== 0) {
+        shelljs.echo('Error : Orbinoid requires [tree] as a dependency, and git is not installed on this system.');
+        shelljs.exit(1);
+      } else {
+        shelljs.echo('Orbinoid [tree] dependency found ');
+      }
+    }
     /**
      * Runs all Shell commands for the Dev cycle of a Circle CI Orb
      *
@@ -62,7 +82,7 @@ export class CciCLIRunner {
     run(): void {
 
       if (process.argv["init"]) {
-        console.log(` === Initializing Orb `)
+        console.log(` === Initializing Orb source code in [${this.orb_prj_folder}] from Orb starter project `)
         console.log(` === Skipped [Initializing Orb] 'circleci orb init' command, because of https://github.com/CircleCI-Public/circleci-cli/issues/491`)
         /*
         let INIT_CMD: string =`${process.env.CCI_CLI_BINARY} orb init ${this.orb_prj_folder} --host ${process.env.CCI_SERVER} --token "${this.secrets.circleci.auth.token}"`
@@ -70,6 +90,33 @@ export class CciCLIRunner {
           shelljs.echo('Error initializing Orb ');
           shelljs.exit(1);
         }*/
+        /// instead, I will use the [ORB_STARTER] git repo as a starter orb template source code, to initialize content of the [orb/] folder
+        /// A./ git clone [ORB_STARTER] into ${this.orb_prj_folder}
+        /// A.bis/ git checkout [ORB_STARTER_VERSION], if not set, git checkout latest semver version tag, if none, warn it's not a stablerelease, but later master commit.
+        /// B./ Replace [README.md] by [starter.README.md]
+        /// C./ run pack and validate, to check generated orb.yml, keep exit code somewhere and remove the generated
+        /// D./ based on exit code check if validation passed, console log  instructions "Now run [npm start] to build your Orb"
+        /// E./ if validation did not pass, console log the [ORB_STARTER] git uri of the starter and say it has a problem, can't use it,
+        let INIT_CMD: string =`git clone ${process.env.ORB_STARTER} ${this.orb_prj_folder}`
+        if (shelljs.exec(INIT_CMD).code !== 0) {
+          shelljs.echo(`Error git cloning Circle CI Orb Starter Project [${process.env.ORB_STARTER}] in [${this.orb_prj_folder}] workspace.`);
+          shelljs.exit(1);
+        }
+        INIT_CMD =`cd ${this.orb_prj_folder} && git checkout ${process.env.ORB_STARTER_VERSION}`
+        if (shelljs.exec(INIT_CMD).code !== 0) {
+          shelljs.echo(`Error git checkouting the [${process.env.ORB_STARTER_VERSION}] version ofthe Circle CI Orb Starter Project [${process.env.ORB_STARTER}].`);
+          shelljs.exit(1);
+        }
+        INIT_CMD =`cp -f ${this.orb_prj_folder}/starter.README.md ${this.orb_prj_folder}/README.md && rm ${this.orb_prj_folder}/starter.README.md`
+        if (shelljs.exec(INIT_CMD).code !== 0) {
+          shelljs.echo(`Error : it seems like [${process.env.ORB_STARTER}] misses a [starter.README.md] on its  [${process.env.ORB_STARTER_VERSION}] git version.`);
+          shelljs.exit(1);
+        }
+        console.log(` === Succesfully initialized Orb Project in [${this.orb_prj_folder}] from Starter [${process.env.ORB_STARTER}]`);
+        INIT_CMD =`tree ${this.orb_prj_folder}`
+        if (shelljs.exec(INIT_CMD).code !== 0) {
+          shelljs.exit(1);
+        }
       }
 
       console.log(` === Current Folder `)

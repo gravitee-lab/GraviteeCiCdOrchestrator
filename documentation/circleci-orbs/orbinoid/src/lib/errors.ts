@@ -27,7 +27,11 @@ class ErrorReporter {
   private orb_name: string;
   private orb_version: string;
 
-  constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string, orb_git_repo: string, orb_namespace: string, vcs_type: string, vcs_org_name: string, orb_name: string, orb_version: string) {
+  private orb_starter: string;
+  private orb_starter_version: string;
+
+
+  constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string, orb_git_repo: string, orb_namespace: string, vcs_type: string, vcs_org_name: string, orb_name: string, orb_version: string, orb_starter: string, orb_starter_version: string) {
 
     const package_json: any = JSON.parse(fs.readFileSync('./package.json','utf8'));
     console.log(`{[.DOTENV]} =================== `);
@@ -98,6 +102,20 @@ class ErrorReporter {
     } else {
       this.orb_version = orb_version;
     }
+
+    if (orb_starter === undefined || orb_starter === "") {
+      console.warn(`{[.DOTENV]} - [ORB_STARTER] is undefined, defaulting value to [https://github.com/gravitee-lab/orb-starter]`)
+      process.env.ORB_STARTER = 'https://github.com/gravitee-lab/orb-starter';
+    } else {
+      this.orb_starter = orb_starter;
+    }
+
+    if (orb_starter_version === undefined || orb_starter_version === "") {
+      console.warn(`{[.DOTENV]} - [ORB_STARTER_VERSION] is undefined, defaulting value to [https://github.com/gravitee-lab/orb-starter]`)
+      process.env.ORB_STARTER_VERSION = 'HEAD';
+    } else {
+      this.orb_starter_version = orb_starter_version;
+    }
   }
 
   report(err: Error) {
@@ -107,4 +125,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.CCI_CLI_BINARY, process.env.CCI_SERVER, process.env.CCI_SECRETS_FILE_PATH, process.env.ORB_GIT_REPO, process.env.ORB_NAMESPACE, process.env.VCS_TYPE, process.env.VCS_ORG_NAME, process.env.ORB_NAME, process.env.ORB_VERSION);
+export default new ErrorReporter(process.env.CCI_CLI_BINARY, process.env.CCI_SERVER, process.env.CCI_SECRETS_FILE_PATH, process.env.ORB_GIT_REPO, process.env.ORB_NAMESPACE, process.env.VCS_TYPE, process.env.VCS_ORG_NAME, process.env.ORB_NAME, process.env.ORB_VERSION, process.env.ORB_STARTER, process.env.ORB_STARTER_VERSION);
