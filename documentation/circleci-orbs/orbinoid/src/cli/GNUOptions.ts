@@ -8,9 +8,14 @@ export class GNUOptions {
 
     let init_option_desc = "\n\n" +`Set to true to init a new orb project. This will generate an Org Source code from the Circle CI generic template for an Orb, in the 'orb/' folder. Defaults to false`
     init_option_desc += "\n\n"
+    let publish_option_desc = "\n\n" +`Set to true to publish your orb project. Defaults to false`
+    publish_option_desc += "\n\n"
+
+
 
     this.argv = yargsLib.options({
       'init': { type: 'boolean', default: false, demandOption: false, desc: `${init_option_desc}`, alias: 'i' },
+      'publish': { type: 'boolean', default: false, demandOption: false, desc: `${publish_option_desc}`, alias: 'p' }
       /*,
       b: { type: 'string', demandOption: true },
       c: { type: 'number', alias: 'chill' },

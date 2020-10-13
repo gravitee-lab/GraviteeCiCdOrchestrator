@@ -1,5 +1,5 @@
 import * as shelljs from 'shelljs';
-
+import * as fs from 'fs';
 
 
 /**
@@ -19,12 +19,23 @@ class ErrorReporter {
   private cci_server: string;
   // the path to the local Circle CI secrets file
   private cci_secrets_file_path: string;
-  // 
+  //
   private orb_git_repo: string;
+  private orb_namespace: string;
+  private vcs_type: string;
+  private vcs_org_name: string;
+  private orb_name: string;
+  private orb_version: string;
 
-  constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string) {
+  constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string, orb_git_repo: string, orb_namespace: string, vcs_type: string, vcs_org_name: string, orb_name: string, orb_version: string) {
 
-    console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
+    const package_json: any = JSON.parse(fs.readFileSync('./package.json','utf8'));
+    console.log(`{[.DOTENV]} =================== `);
+    console.log(`{[.DOTENV]} - package.json is : `);
+    console.log(`{[.DOTENV]} =================== `);
+    console.log(package_json);
+    console.log(`{[.DOTENV]} =================== `);
+
     if (cci_cli_binary === undefined || cci_cli_binary === "") {
       throw new Error("{[.DOTENV]} - [CCI_CLI_BINARY] is undefined, or an empty string, but is required. Value should be set to the full path to the Circle CI CLI binary of your local Circle CI CLI installation.")
     } else {
@@ -46,10 +57,45 @@ class ErrorReporter {
     } else {
       this.cci_secrets_file_path = cci_secrets_file_path;
     }
+    if (orb_git_repo === undefined || orb_git_repo === "") {
+      throw new Error("{[.DOTENV]} - [ORB_GIT_REPO] is undefined, or an empty string, but is required. Value should be set to the URI of the git repo versioning this Circle CI Orb's source code.")
+    } else {
+      this.orb_git_repo = orb_git_repo;
+    }
+    if (orb_namespace === undefined || orb_namespace === "") {
+      throw new Error("{[.DOTENV]} - [ORB_NAMESPACE] is undefined, or an empty string, but is required. Value should be set to the desired Orb namespace for this Circle CI Orb.")
+    } else {
+      this.orb_namespace = orb_namespace;
+    }
+    if (vcs_type === undefined || vcs_type === "") {
+      throw new Error("{[.DOTENV]} - [VCS_TYPE] is undefined, or an empty string, but is required. Value should be set to 'github' or 'bitbucket' to configure the git service of the git repo versioning this Circle CI Orb's source code.")
+    } else {
+      this.vcs_type = vcs_type;
+    }
 
+    if (vcs_org_name === undefined || vcs_org_name === "") {
+      throw new Error(`{[.DOTENV]} - [VCS_ORG_NAME] is undefined, or an empty string, but is required. Value should be the nameofthe organization to which the git repo versioning this Circle CI Orb's source code, belongs, in the ${this.vcs_type} git service provider.`)
+    } else {
+      this.vcs_org_name = vcs_org_name;
+    }
 
+    if (orb_name === undefined || orb_name === "") {
+      console.warn("{[.DOTENV]} - [ORB_NAME] is undefined, defaulting value to [package.json] project name")
+      let project_name: string = package_json.name;
+      /// let project_version: string = package_json.version;
+      this.orb_name = project_name;
+    } else {
+      this.orb_name = orb_name;
+    }
 
-
+    if (orb_version === undefined || orb_version === "") {
+      console.warn("{[.DOTENV]} - [ORB_VERSION] is undefined, defaulting value to [package.json] project version")
+      /// let project_name: string = package_json.name;
+      let project_version: string = package_json.version;
+      this.orb_version = project_version;
+    } else {
+      this.orb_version = orb_version;
+    }
   }
 
   report(err: Error) {
@@ -59,4 +105,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.CCI_CLI_BINARY, process.env.CCI_SERVER, process.env.CCI_SECRETS_FILE_PATH);
+export default new ErrorReporter(process.env.CCI_CLI_BINARY, process.env.CCI_SERVER, process.env.CCI_SECRETS_FILE_PATH, process.env.ORB_GIT_REPO, process.env.ORB_NAMESPACE, process.env.VCS_TYPE, process.env.VCS_ORG_NAME, process.env.ORB_NAME, process.env.ORB_VERSION);

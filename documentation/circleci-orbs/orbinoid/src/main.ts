@@ -3,6 +3,7 @@ import { Cli } from './cli/Cli';
 import * as runner from './runner/runner';
 import * as shelljs from 'shelljs';
 
+
 export const cli : Cli = new Cli();
 console.log(`{[ index.ts ]} --- valeur yargs de l'option YARGS 'init' : ${cli.gnuOptions.argv["init"]}`);
 

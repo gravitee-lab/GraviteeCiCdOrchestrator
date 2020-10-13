@@ -9,6 +9,7 @@ export interface CircleCISecrets {
     }
   }
 }
+
 /**
  *
  * Mimics the official Circle CI cLient, only much simpler, and with [RxJS]
@@ -19,11 +20,16 @@ export class CciCLIRunner {
   private orb_prj_folder: string;
 
   constructor() {
-    this.orb_prj_folder = './orb'
+    this.orb_prj_folder = './orb';
     this.loadCircleCISecrets();
     let CCI_CLI_CMD: string =`${process.env.CCI_CLI_BINARY} setup --token "${this.secrets.circleci.auth.token}" --host ${process.env.CCI_SERVER} --no-prompt`
     if (shelljs.exec(CCI_CLI_CMD).code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
       throw new Error('Error setting up Circle CI CLI Orb ');
+      // shelljs.exit(1);
+    }
+    CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} diagnostic`
+    if (shelljs.exec(CCI_CLI_CMD).code !== 0) { // synchrone sleep to simulate waiting for Pipeline execution to complete. (RxJS Subscription)
+      throw new Error('Error running [circleci diagnsostic] command ');
       // shelljs.exit(1);
     }
   }
@@ -75,9 +81,32 @@ export class CciCLIRunner {
       if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
         shelljs.echo('Error validating Orb ');
         shelljs.exit(1);
+      } // so if packed orb is validated, then we can (test n) publish
+
+      console.log(` === Creating Circle CI Orb namespace in remote Orb registry`)
+      CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} namespace create ${process.env.ORB_NAMESPACE} ${process.env.VCS_TYPE} ${process.env.VCS_ORG_NAME} --no-prompt`
+      if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
+        shelljs.echo(`Error Creating Circle CI Orb namespace [${process.env.ORB_NAMESPACE}]`);
+        /// shelljs.exit(1);
       }
 
+      console.log(` === Creating Circle CI Orb in remote Orb registry`)
+      CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb create ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME} --no-prompt`
+      if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
+        shelljs.echo(`Error Creating Circle CI Orb [${process.env.ORB_NAME}] in remote Orb registry`);
+        /// shelljs.exit(1);
+      }
+      if (process.argv["publish"]) {
+        /// circleci orb publish orb/src/@orb.yml orbinoid/ubitetorbi@0.0.1
+        console.log(` === Publishing Circle CI Orb to remote Orb registry`)
+        CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb publish ${this.orb_prj_folder}/src/@orb.yml ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}@${process.env.ORB_VERSION}`
+        if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
+          shelljs.echo(`Error Publishing Circle CI Orb [${process.env.ORB_NAME}] in remote Orb registry`);
+          shelljs.exit(1);
+        }
+      }
     }
+
 
 
 }
