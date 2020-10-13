@@ -14,7 +14,7 @@ To do that, I will follow steps in https://circleci.com/docs/2.0/orb-author-intr
 
 To publish my orb, without using `circleci orb init` command, The following process worked.
 
-Note that in the process, I never created any git repo on github.com, allthat is important, istaht I have enough Github.com user permissions on the `gravitee-lab` Github Org, used in the below example (or creating the namespace will be unautorized) 
+Note that in the process, I never created any git repo on github.com, allthat is important, istaht I have enough Github.com user permissions on the `gravitee-lab` Github Org, used in the below example (or creating the namespace will be unautorized)
 
 * create namespace in remote registry on https://circle.com :
 
@@ -78,6 +78,9 @@ circleci orb publish orb/src/@orb.yml orbinoid/ubitetorbi@0.0.1
 Orb `orbinoid/ubitetorbi@0.0.1` was published.
 Please note that this is an open orb and is world-readable.
 ```
+
+
+Finally, I could find my orb on https://circleci.com at https://circleci.com/developer/orbs/orb/orbinoid/ubitetorbi
 
 #### Step 1 : Installing the Circle CI CLI
 
