@@ -15,7 +15,26 @@ proper `Nodejs` / `Typescript` brings in the whole dev Cycle engineering feature
 ![the Circle CI Orb dev cycle](documentation/images/orb-publishing-process.png)
 
 
-### Update  : how to create namespace, orb in remote registry, and then publish orb
+### Ref. test suite for the gravitee dev repos
+
+* When an `Orb` is referenced into a `.circleci/config.yml` Pipeline definition,the CircleCI Web UI allows you to view the "compiled" version of the Pipeline definition, where you can actually see what the `Orb` inserts into your pipeline :
+
+![Viewing compiled CircleCI Pipeline defintion](documentation/images/viewing-compiled-circleci-config-yaml.png)
+
+* Using the `Orbinoid`, I created the `orbinoid2/gravitee-dev-repos` `Orb`, Orb namespace being associated to the https://github.com/gravitee-lab2 Github organization, and published versions :
+
+  * `0.0.1` - tested works fine with :
+    * https://app.circleci.com/pipelines/github/gravitee-lab/testrepo3/2/workflows/efc80e86-a13a-4942-83d4-3e3f42931fa8/jobs/2
+    * https://github.com/gravitee-lab/testrepo3 pipeline definition
+
+  * `0.0.1` - tested works fine with :
+    * https://app.circleci.com/pipelines/github/gravitee-lab/testrepo3/2/workflows/efc80e86-a13a-4942-83d4-3e3f42931fa8/jobs/2
+    * https://github.com/gravitee-lab/testrepo3 pipeline definition
+
+
+
+
+### How to create namespace, orb in remote registry, and then publish orb
 
 To publish my orb, without using `circleci orb init` command, The following process worked.
 
