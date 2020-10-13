@@ -10,6 +10,75 @@ all Gravitee "dev repos", cf. :
 
 To do that, I will follow steps in https://circleci.com/docs/2.0/orb-author-intro/
 
+### Update  : how to create namespace, orb in remote registry, and then publish orb
+
+To publish my orb, without using `circleci orb init` command, The following process worked.
+
+Note that in the process, I never created any git repo on github.com, allthat is important, istaht I have enough Github.com user permissions on the `gravitee-lab` Github Org, used in the below example (or creating the namespace will be unautorized) 
+
+* create namespace in remote registry on https://circle.com :
+
+```bash
+export ORB_NAMESPACE=orbinoid
+export VCS_TYPE=github
+export VCS_ORG_NAME=gravitee-lab
+circleci namespace create ${NAMESPACE_TO_CREATE} ${VCS_TYPE} ${VCS_ORG_NAME} --no-prompt
+```
+
+* output :
+
+```bash
+You are creating a namespace called "orbinoid".
+
+This is the only namespace permitted for your github organization, gravitee-lab.
+
+To change the namespace, you will have to contact CircleCI customer support.
+
+✔ Are you sure you wish to create the namespace: `orbinoid`: y
+Namespace `orbinoid` created.
+Please note that any orbs you publish in this namespace are open orbs and are world-readable.
+```
+
+* create orb in remote registry on https://circle.com
+
+```bash
+export ORB_NAMESPACE=orbinoid
+export ORB_NAME=ubitetorbi
+circleci orb create ${ORB_NAMESPACE}/${ORB_NAME} --no-prompt
+```
+* sample output :
+
+```bash
+You are creating an orb called "orbinoid/ubitetorbi".
+
+You will not be able to change the name of this orb.
+
+If you change your mind about the name, you will have to create a new orb with the new name.
+
+✔ Are you sure you wish to create the orb: `orbinoid/ubitetorbi`: y
+Orb `orbinoid/ubitetorbi` created.
+Please note that any versions you publish of this orb are world-readable.
+You can now register versions of `orbinoid/ubitetorbi` using `circleci orb publish`.
+```
+
+* and publish the orb to remote registry on https://circle.com :
+
+
+```bash
+export ORB_NAMESPACE=orbinoid
+export ORB_NAME=ubitetorbi
+export ORB_VERSION=0.0.1
+circleci orb publish orb/src/@orb.yml orbinoid/ubitetorbi@0.0.1
+
+```
+
+* sample output :
+
+```bash
+Orb `orbinoid/ubitetorbi@0.0.1` was published.
+Please note that this is an open orb and is world-readable.
+```
+
 #### Step 1 : Installing the Circle CI CLI
 
 Installation for both `GNU/Linux` distributions, and `Mac OS` `Darwin` :
@@ -54,7 +123,7 @@ circleci setup --token "${CCI_TOKEN}" --host https://circleci.com --no-prompt
 ```
 
 * after that, your configuration including your secret, is saved to `~/.circleci/cli.yml`
-* the formof that Yaml file is :
+* the form of that Yaml file is :
 
 ```Yaml
 host: https://circleci.com
