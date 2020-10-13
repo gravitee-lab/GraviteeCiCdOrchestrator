@@ -45,15 +45,16 @@ class ErrorReporter {
         /// shelljs.exit(1);
       }
     }
+
     if (cci_server === undefined || cci_server === "") {
       console.warn("{[.DOTENV]} - [CCI_SERVER] is undefined, defaulting value to 'https://circleci.com'")
-      this.cci_server = 'https://circleci.com';
+      process.env.CCI_SERVER = 'https://circleci.com';
     } else {
       this.cci_server = cci_server;
     }
     if (cci_secrets_file_path === undefined || cci_secrets_file_path === "") {
       console.warn("{[.DOTENV]} - [CCI_SECRETS_FILE_PATH] is undefined, defaulting value to './.secrets.json'")
-      this.cci_secrets_file_path = './.secrets.json';
+      process.env.CCI_SECRETS_FILE_PATH = './.secrets.json';
     } else {
       this.cci_secrets_file_path = cci_secrets_file_path;
     }
@@ -80,19 +81,20 @@ class ErrorReporter {
     }
 
     if (orb_name === undefined || orb_name === "") {
-      console.warn("{[.DOTENV]} - [ORB_NAME] is undefined, defaulting value to [package.json] project name")
+      console.warn(`{[.DOTENV]} - [ORB_NAME] is undefined, defaulting value to [package.json] project name [${package_json.name}]`)
       let project_name: string = package_json.name;
       /// let project_version: string = package_json.version;
-      this.orb_name = project_name;
+      process.env.ORB_NAME = project_name;
     } else {
       this.orb_name = orb_name;
     }
 
     if (orb_version === undefined || orb_version === "") {
-      console.warn("{[.DOTENV]} - [ORB_VERSION] is undefined, defaulting value to [package.json] project version")
+      console.warn(`{[.DOTENV]} - [ORB_VERSION] is undefined, defaulting value to [package.json] project version [${package_json.version}]`)
       /// let project_name: string = package_json.name;
       let project_version: string = package_json.version;
-      this.orb_version = project_version;
+      // this.orb_version = project_version;
+      process.env.ORB_VERSION = project_version;
     } else {
       this.orb_version = orb_version;
     }

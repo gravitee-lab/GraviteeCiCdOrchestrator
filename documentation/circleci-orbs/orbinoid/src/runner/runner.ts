@@ -80,44 +80,56 @@ export class CciCLIRunner {
       }
 
       console.log(` === Packing the Circle CI Orb`)
-      let CCI_CLI_CMD: string=`${process.env.CCI_CLI_BINARY} orb pack ${this.orb_prj_folder}/src`
+      let CCI_CLI_CMD: string=`${process.env.CCI_CLI_BINARY} orb pack ${this.orb_prj_folder}/src | tee ${this.orb_prj_folder}/src/orb.yml`
       if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
         shelljs.echo('Error packing Orb with [FYAML](https://github.com/CircleCI-Public/fyaml) Standard ');
         shelljs.exit(1);
       }
 
       console.log(` === Validating the packed Circle CI Orb`)
-      CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb validate ${this.orb_prj_folder}/src/@orb.yml`
+      CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb validate ${this.orb_prj_folder}/src/orb.yml`
       if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
         shelljs.echo('Error validating Orb ');
         shelljs.exit(1);
       } // so if packed orb is validated, then we can (test n) publish
 
-      console.log(` === Creating Circle CI Orb namespace in remote Orb registry`)
+      console.log(` === Creating Circle CI Orb namespace [${process.env.ORB_NAMESPACE}] in remote Orb registry`)
       CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} namespace create ${process.env.ORB_NAMESPACE} ${process.env.VCS_TYPE} ${process.env.VCS_ORG_NAME} --no-prompt`
       if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
         shelljs.echo(`Error Creating Circle CI Orb namespace [${process.env.ORB_NAMESPACE}]`);
         /// shelljs.exit(1);
       }
 
-      console.log(` === Creating Circle CI Orb in remote Orb registry`)
+
+      /// === Creating Circle CI Orb in remote Orb registry
+      /*
+      let this_orb_name:string = null;
+      if(process.env.ORB_NAME === undefined) {
+        this_orb_name = this.package_json.name;
+      } else {
+        this_orb_name = process.env.ORB_NAME;
+      }*/
+      console.log(` === Creating Circle CI Orb [${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}] in remote Orb registry`)
       CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb create ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME} --no-prompt`
       if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
-        shelljs.echo(`Error Creating Circle CI Orb [${process.env.ORB_NAME}] in remote Orb registry`);
+        shelljs.echo(`Error Creating Circle CI Orb [${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}] in remote Orb registry`);
         /// shelljs.exit(1);
       }
+
       if (process.argv["publish"]) {
         /// circleci orb publish orb/src/@orb.yml orbinoid/ubitetorbi@0.0.1
-        console.log(` === Publishing Circle CI Orb to remote Orb registry`)
+        /*
         let this_orb_version:string = null;
         if(process.env.ORB_VERSION === undefined) {
           this_orb_version = this.package_json.version;
         } else {
           this_orb_version = process.env.ORB_VERSION;
-        }
-        CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb publish ${this.orb_prj_folder}/src/@orb.yml ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}@${this_orb_version}`
+        }*/
+        console.log(` === Publishing Circle CI Orb [${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}:${process.env.ORB_VERSION}] to remote Orb registry`)
+
+        CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb publish ${this.orb_prj_folder}/src/orb.yml ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}@${process.env.ORB_VERSION}`
         if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
-          shelljs.echo(`Error Publishing Circle CI Orb [${process.env.ORB_NAME}] in remote Orb registry`);
+          shelljs.echo(`Error Publishing Circle CI Orb [${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}@${process.env.ORB_VERSION}] in remote Orb registry`);
           shelljs.exit(1);
         }
       }

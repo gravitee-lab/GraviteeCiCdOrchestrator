@@ -1,17 +1,17 @@
 {
-  "name": "some-orb",
+  "name": "gravitee-dev-repos",
   "version": "0.0.1",
   "description": "A simple node project to manage Circle CI Orb Projects.",
   "main": "src/main.ts",
   "dependencies": {
+    "@types/shelljs": "^0.8.8",
+    "@types/yargs": "^15.0.6",
+    "directory-tree": "^2.2.4",
     "dotenv": "^8.2.0",
     "path": "^0.12.7",
-    "directory-tree": "^2.2.4",
-    "@types/shelljs": "^0.8.8",
     "shelljs": "^0.8.4",
-    "typescript": "^3.9.6",
     "ts-node": "^8.10.2",
-    "@types/yargs": "^15.0.6",
+    "typescript": "^3.9.6",
     "yargs": "^16.0.3"
   },
   "devDependencies": {
