@@ -18,8 +18,18 @@ export interface CircleCISecrets {
 export class CciCLIRunner {
   private secrets: CircleCISecrets;
   private orb_prj_folder: string;
+  private package_json: any;
 
   constructor() {
+
+    const this_package_json: any = JSON.parse(fs.readFileSync('./package.json','utf8'));
+    console.log(`{[.CciCLIRunner]} =================== `);
+    console.log(`{[.CciCLIRunner]} - package.json is : `);
+    console.log(`{[.CciCLIRunner]} =================== `);
+    console.log(this_package_json);
+    console.log(`{[.CciCLIRunner]} =================== `);
+    this.package_json = this_package_json;
+
     this.orb_prj_folder = './orb';
     this.loadCircleCISecrets();
     let CCI_CLI_CMD: string =`${process.env.CCI_CLI_BINARY} setup --token "${this.secrets.circleci.auth.token}" --host ${process.env.CCI_SERVER} --no-prompt`
@@ -99,7 +109,13 @@ export class CciCLIRunner {
       if (process.argv["publish"]) {
         /// circleci orb publish orb/src/@orb.yml orbinoid/ubitetorbi@0.0.1
         console.log(` === Publishing Circle CI Orb to remote Orb registry`)
-        CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb publish ${this.orb_prj_folder}/src/@orb.yml ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}@${process.env.ORB_VERSION}`
+        let this_orb_version:string = null;
+        if(process.env.ORB_VERSION === undefined) {
+          this_orb_version = this.package_json.version;
+        } else {
+          this_orb_version = process.env.ORB_VERSION;
+        }
+        CCI_CLI_CMD =`${process.env.CCI_CLI_BINARY} orb publish ${this.orb_prj_folder}/src/@orb.yml ${process.env.ORB_NAMESPACE}/${process.env.ORB_NAME}@${this_orb_version}`
         if (shelljs.exec(CCI_CLI_CMD).code !== 0) {
           shelljs.echo(`Error Publishing Circle CI Orb [${process.env.ORB_NAME}] in remote Orb registry`);
           shelljs.exit(1);

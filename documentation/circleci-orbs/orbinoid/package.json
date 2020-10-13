@@ -1,6 +1,6 @@
 {
   "name": "some-orb",
-  "version": "0.0.1-alpha",
+  "version": "0.0.1",
   "description": "A simple node project to manage Circle CI Orb Projects.",
   "main": "src/main.ts",
   "dependencies": {
