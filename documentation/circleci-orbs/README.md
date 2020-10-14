@@ -10,7 +10,41 @@ all Gravitee "dev repos", cf. :
 
 To do that, I will follow steps in https://circleci.com/docs/2.0/orb-author-intro/
 
-### Update  : how to create namespace, orb in remote registry, and then publish orb
+## How to pass values to Orbs
+
+In this section, I will describe the different techniques I explored, to pass on values to Orbs, at runtime
+
+
+
+### Commands parameters
+
+Here I will explain how to pass on values at runtime to Orbs, using Orbs commands parameters.
+
+* On the `Orb` source code side, in the `commands` folder, we have a `my_command.yml` file, defining a _command_ for the `Orb`. Defining a parameter `myparameter` in an `Orb` command, is done using the following syntax :
+
+```Yaml
+description: >
+  This command was deigned by JEan-Baptiste LAsselle todemo use of Orb commands parameters.
+# What will this command do?
+# Descriptions should be short, simple, and clear.
+parameters:
+  myparameter:
+    type: string
+    default: "World of Orbs"
+    description: "Hello to whom?"
+steps:
+  - run:
+      environment:
+        PARAM_TO: <<parameters.to>>
+      name: Hello Greeting
+      command: <<include(scripts/greet.sh)>>
+
+```
+
+
+* test I used to confirm this : https://app.circleci.com/pipelines/github/gravitee-lab/testrepo3/24/workflows/7039fb09-5a5b-470b-832f-3602f17ee507/jobs/24
+
+### How to create namespace, orb in remote registry, and then publish orb
 
 To publish my orb, without using `circleci orb init` command, The following process worked.
 

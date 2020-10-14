@@ -2,7 +2,28 @@
 
 This is where your testing scripts for whichever language is embeded in your orb live, which can be executed locally and within a CircleCI pipeline prior to publishing.
 
-# Testing Orbs
+# Testing Orbs (According Jean-Baptiste Lasselle at https://gravitee.io)
+
+When we develop a Circle CI Orb,what do we do to test it ?
+
+Well, of course, we :
+* create a github repo, and add an example application source code, and a `.circleci/config.yml` Pipeline defintion
+* we setup the project to start building
+* we commit and push the whole thing, which triggers the Circle CI Pipeline, to make sure the Pipeline works ok without our `Orb`
+* we add the `orb` ref, and `Orb` command / job usage into the `.circleci/config.yml`
+* and we git commit and push the whole thing, to test our Orb
+
+Don't we ?
+
+This is why you will find in the `tests/` folder, a new subfloder, named `git-repo`, where I put :
+* the source code of an example application,
+* and its `.circleci/config.yml` Pipeline definition, which uses this `Orb`
+
+And that's how this `Orb` can be tested :
+* manually, by manually creating your repo, and pushing the example application source code to it
+* automatically, using [`Orbinoïd`](https://github.com/gravitee-lab/orbinoid)  : this is how i personally run the integration tests for this (any) `Orb`
+
+# Testing Orbs (According Circle CI Team)
 
 This orb is built using the `circleci orb pack` command, which allows the _command_ logic to be separated out into separate _shell script_ `.sh` files. Because the logic now sits in a known and executable language, it is possible to perform true unit testing using existing frameworks such a [BATS-Core](https://github.com/bats-core/bats-core#installing-bats-from-source).
 

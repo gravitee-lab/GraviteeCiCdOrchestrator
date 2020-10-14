@@ -1,11 +1,14 @@
 # Orbinoid : A utility to managea proper development Cycle for CircleCI Orbs
 
+#### _Make your Circle CI Orb Dev Cycle easy_
+
 `Orbinoïd` is a utility designed to manage a proper development Cycle for CircleCI Orbs :
 
 * packing,
 * validating,
-* testing,
-* deploying to Orb repositry
+* testing
+* integration testing, (tests on a real-life git repo with `.circleci/config.yml`)
+* publishing to an `Orb` registry
 
 The Circle CI CLI is a rather dumb utility, and wrapping its command in a
 proper `Nodejs` / `Typescript` brings in the whole dev Cycle engineering features along.

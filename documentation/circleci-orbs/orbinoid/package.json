@@ -1,7 +1,7 @@
 {
   "name": "gravitee-dev-repos",
-  "version": "0.0.1",
-  "description": "A simple node project to manage Circle CI Orb Projects.",
+  "version": "0.0.6",
+  "description": "A CLI Tool to manage Circle CI Orb Projects Lifecycle.",
   "main": "src/main.ts",
   "dependencies": {
     "@types/shelljs": "^0.8.8",
@@ -35,7 +35,7 @@
     "typescript"
   ],
   "author": "Jean-Baptiste Lasselle <jean.baptiste.lasselle@gmail.com>",
-  "license": "GNU GPL v3",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/Jean-Baptiste-Lasselle/pokus/issues"
   },

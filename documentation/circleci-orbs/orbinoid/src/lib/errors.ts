@@ -1,3 +1,35 @@
+/*
+Author (Copyright) 2020 <Jean-Baptiste-Lasselle>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Also add information on how to contact you by electronic and paper mail.
+
+If your software can interact with users remotely through a computer
+network, you should also make sure that it provides a way for users to
+get its source.  For example, if your program is a web application, its
+interface could display a "Source" link that leads users to an archive
+of the code.  There are many ways you could offer source, and different
+solutions will be better for different programs; see section 13 for the
+specific requirements.
+
+You should also get your employer (if you work as a programmer) or school,
+if any, to sign a "copyright disclaimer" for the program, if necessary.
+For more information on this, and how to apply and follow the GNU AGPL, see
+<https://www.gnu.org/licenses/>.
+*/
+
 import * as shelljs from 'shelljs';
 import * as fs from 'fs';
 
@@ -29,9 +61,29 @@ class ErrorReporter {
 
   private orb_starter: string;
   private orb_starter_version: string;
+  private git_user_name: string;
+  private git_user_email: string;
+  private git_gpg_signing_key: string;
+  private git_ssh_priv_key: string;
+
+  /**
+   * SSH URI for the git repository to use to run Orb Integration tests
+   **/
+   private orb_tests_git_repo: string;
+   private orb_tests_git_branch: string;
+
+/*
+  GIT_USER_NAME=Jean-Baptiste-Lasselle
+  GIT_USER_EMAIL=jean.baptiste.lasselle.pegasus@gmail.com
+  GIT_GPG_SINGING_KEY=7B19A8E1574C2883
+  GIT_SSH_PRIV_KEY=~/.ssh.perso.backed/id_rsa
 
 
-  constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string, orb_git_repo: string, orb_namespace: string, vcs_type: string, vcs_org_name: string, orb_name: string, orb_version: string, orb_starter: string, orb_starter_version: string) {
+
+
+
+*/
+  constructor(cci_cli_binary: string, cci_server: string, cci_secrets_file_path: string, orb_git_repo: string, orb_namespace: string, vcs_type: string, vcs_org_name: string, orb_name: string, orb_version: string, orb_starter: string, orb_starter_version: string, git_user_name: string, git_user_email: string, git_gpg_signing_key: string, git_ssh_priv_key: string, orb_tests_git_repo: string, orb_tests_git_branch: string) {
 
     const package_json: any = JSON.parse(fs.readFileSync('./package.json','utf8'));
     console.log(`{[.DOTENV]} =================== `);
@@ -116,6 +168,42 @@ class ErrorReporter {
     } else {
       this.orb_starter_version = orb_starter_version;
     }
+
+    /// git_user_name: string, git_user_email: string, git_gpg_signing_key: string, git_ssh_priv_key: string
+    if (git_user_name === undefined || git_user_name === "") {
+      throw new Error("{[.DOTENV]} - [GIT_USER_NAME] is undefined, or an empty string, but is required. Value should be set to your 'github' or 'bitbucket' git username to configure your local git.")
+    } else {
+      this.git_user_name = git_user_name;
+    }
+    if (git_user_email === undefined || git_user_email === "") {
+      throw new Error("{[.DOTENV]} - [GIT_USER_EMAIL] is undefined, or an empty string, but is required. Value should be set to your git user email to configure your local git.")
+    } else {
+      this.git_user_email = git_user_email;
+    }
+
+    if (git_gpg_signing_key === undefined || git_gpg_signing_key === "") {
+      throw new Error("{[.DOTENV]} - [GIT_GPG_SIGNING_KEY] is undefined, or an empty string, but is required. Value should be set to your GPG PUBLIC KEY to sign  SIGNING to configure your local git.")
+    } else {
+      this.git_gpg_signing_key = git_gpg_signing_key;
+    }
+    if (git_ssh_priv_key === undefined || git_ssh_priv_key === "") {
+      throw new Error("{[.DOTENV]} - [GIT_SSH_PRIV_KEY] is undefined, or an empty string, but is required. Value should be set to the path of your local SSH PRIVATE KEY to configure your local git.")
+    } else {
+      this.git_ssh_priv_key = git_ssh_priv_key;
+    }
+
+    if (orb_tests_git_repo === undefined || orb_tests_git_repo === "") { // Tests are not an option, they are mandatory, when developing a Circle CI Orb .
+      throw new Error("{[.DOTENV]} - [ORB_TESTS_GIT_REPO] is undefined, or an empty string, but is required. Value should be set to the git ssh URI of the git repo you want to use for running integrations tests on your Orb.")
+    } else {
+      this.orb_tests_git_repo = orb_tests_git_repo;
+    }
+    if (orb_tests_git_branch === undefined || orb_tests_git_branch === "") {
+      console.warn(`{[.DOTENV]} - [orb_tests_git_branch] is undefined, defaulting value to [master]`)
+      process.env.ORB_TESTS_GIT_BRANCH = 'master';
+    } else {
+      this.orb_tests_git_branch = orb_tests_git_branch;
+    }
+
   }
 
   report(err: Error) {
@@ -125,4 +213,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.CCI_CLI_BINARY, process.env.CCI_SERVER, process.env.CCI_SECRETS_FILE_PATH, process.env.ORB_GIT_REPO, process.env.ORB_NAMESPACE, process.env.VCS_TYPE, process.env.VCS_ORG_NAME, process.env.ORB_NAME, process.env.ORB_VERSION, process.env.ORB_STARTER, process.env.ORB_STARTER_VERSION);
+export default new ErrorReporter(process.env.CCI_CLI_BINARY, process.env.CCI_SERVER, process.env.CCI_SECRETS_FILE_PATH, process.env.ORB_GIT_REPO, process.env.ORB_NAMESPACE, process.env.VCS_TYPE, process.env.VCS_ORG_NAME, process.env.ORB_NAME, process.env.ORB_VERSION, process.env.ORB_STARTER, process.env.ORB_STARTER_VERSION, process.env.GIT_USER_NAME, process.env.GIT_USER_EMAIL, process.env.GIT_GPG_SIGNING_KEY, process.env.GIT_SSH_PRIV_KEY, process.env.ORB_TESTS_GIT_REPO, process.env.ORB_TESTS_GIT_BRANCH);
