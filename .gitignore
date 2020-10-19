@@ -15,3 +15,11 @@ graviteeio/cicd/pipeline/
 
 # when I have to quickly edit some markdown for any purpose
 deleteme.md
+
+# ---
+# included node projects for orbs : secrets file and node_modules/ folder exclusion
+documentation/circleci-orbs/examples/1/.secrets.json
+documentation/circleci-orbs/examples/1/node_modules/
+
+documentation/circleci-orbs/orbinoid/.secrets.json
+documentation/circleci-orbs/orbinoid/node_modules/

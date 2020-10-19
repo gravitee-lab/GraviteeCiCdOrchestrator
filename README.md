@@ -12,6 +12,16 @@ This Distributed CI CD solution was designed, because of the requirements we, at
   * without using a specific package manager (on our cicd `release.json` defines a product dependency tree, not  a parent pom)
   * without using the monorepo versioning pattern (our case)
 
+# License
+
+The Gravitee CI CD Orchestrator is licensed under the `GNU AFFERO GENERAL PUBLIC LICENSE Version 3, released 19 November 2007`
+
+Which means you can freely copy it, use it, and design a new software statring fromthis one, as long as you keep mentioning the nameof the original author, `Jean-Baptiste Lasselle`.
+
+Which also means you cannot sell any software a as service offer based on this software.
+
+Gravitee strongly believes in open source, and sells cutting-edge API Gateway features, not CI CD features. This is why I chose this License.
+
 # How it works
 
 ## Where and how the Gravitee CI CD Orchestrator runs
