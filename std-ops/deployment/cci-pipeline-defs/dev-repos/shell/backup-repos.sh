@@ -50,30 +50,26 @@ setupSSHGithubUser () {
   fi;
 }
 
-setupCircleCIConfig () {
+backUpRepo () {
   export THIS_REPO_URL=$1
   export THIS_REPO_NAME=$(echo ${THIS_REPO_URL} | awk -F '/' '{print $NF}')
-  cd ${WSPACE}/gitops/
-  echo "[setupCircleCIConfig => ] processing THIS_REPO_URL=[${THIS_REPO_URL}]"
-  echo "[setupCircleCIConfig => ] processing THIS_REPO_NAME=[${THIS_REPO_NAME}]"
+  cd ${WSPACE}/gitops.backup/
+  echo "[BACKUP => ] backing-up THIS_REPO_URL=[${THIS_REPO_URL}]"
+  echo "[BACKUP => ] backing-up THIS_REPO_NAME=[${THIS_REPO_NAME}]"
   git clone ${THIS_REPO_URL}
   if [ "$?" == "0" ]; then
     # then the git clone succeeded (the git repo does exists)
-    cd ${WSPACE}/gitops/${THIS_REPO_NAME}
-    git branch -a | grep -E '*.*.x$' | awk -F '/' '{print $NF}' > ${WSPACE}/gitops/${THIS_REPO_NAME}.branches.list
-    echo "master" >> ${WSPACE}/gitops/${THIS_REPO_NAME}.branches.list
+    cd ${WSPACE}/gitops.backup/${THIS_REPO_NAME}
+    git branch -a | grep -E '*.*.x$' | awk -F '/' '{print $NF}' > ${WSPACE}/gitops.backup/${THIS_REPO_NAME}.branches.list
     while read THIS_GIT_BRANCH; do
       git checkout ${THIS_GIT_BRANCH}
-      mkdir -p ${WSPACE}/gitops/${THIS_REPO_NAME}/.circleci/
-      cp -f ${WSPACE}/.circleci/config.yml ${WSPACE}/gitops/${THIS_REPO_NAME}/.circleci/
-      export THIS_COMMIT_MESSAGE="[$0] automatic CICD test setup : adding circleci git config"
-      git add --all && git commit -m "${THIS_COMMIT_MESSAGE}" && git push -u origin HEAD
-    done <${WSPACE}/gitops/${THIS_REPO_NAME}.branches.list
+      git fetch && git pull
+    done <${WSPACE}/gitops.backup/${THIS_REPO_NAME}.branches.list
   else
-    echo "[setupCircleCIConfig => ] the [${THIS_REPO_URL}] git repo doesnot exist, skipping any git operation"
+    echo "[backUpRepo => ] the [${THIS_REPO_URL}] git repo does not exist, skipping any git operation"
   fi;
 
-  cd ${WSPACE}/gitops/
+  cd ${WSPACE}/gitops.backup/
 }
 
 
@@ -92,17 +88,13 @@ fi;
 
 export BARE_FILENAME=$(echo "${REPOS_URL_LIST_FILE}" | awk -F '/' '{print $NF}')
 cp ${REPOS_URL_LIST_FILE} ${WSPACE}/${BARE_FILENAME}.ssh
-# ---
-# WORKING TESTS ON GRAVITEE-LAB , NOT GRAVITEE-IO !!! BEWARE !!! => never the less,there is a local backup made locally, just in case
 
 sed -i "s#https://github.com/gravitee-io#git@github.com:gravitee-lab#g" ${WSPACE}/${BARE_FILENAME}.ssh
 echo "---"
 echo "SECURITY CHECK NO GRAVITEE-IO in \${WSPACE}/\${BARE_FILENAME}.ssh=[${WSPACE}/${BARE_FILENAME}.ssh] : "
 echo "---"
 cat ${WSPACE}/${BARE_FILENAME}.ssh
-echo "---"
-echo " IN CASE ANY PROBLEM, A BACK-UP WAS PREPARED ON THIS MACHINE [$(hostname)] in the [${WSPACE}/gitops.backup/] Folder "
-echo "---"
+
 
 echo "---"
 echo "  REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
@@ -118,14 +110,16 @@ echo "---"
 # -- OPS
 # ------
 
+# ------
+# -- First, setup Github User Git SSH config
+# ------
 
-# first, setup Github User Git SSH config
 setupSSHGithubUser
 
-rm -fr ${WSPACE}/gitops/
-mkdir -p ${WSPACE}/gitops/
+rm -fr ${WSPACE}/gitops.backup/
+mkdir -p ${WSPACE}/gitops.backup/
 
 while read REPO_URL; do
   echo "---"
-  setupCircleCIConfig ${REPO_URL}
+  backUpRepo ${REPO_URL}
 done <${WSPACE}/${BARE_FILENAME}.ssh

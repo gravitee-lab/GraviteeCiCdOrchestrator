@@ -249,11 +249,13 @@ export class ReactiveParallelExecutionSet {
 
       let pipelineConfig = {
         parameters: {
-         gio_action: null
+         gio_action: `product_release`,
+         dry_run: process.argv["dry-run"]
         },
         branch: `${pipelineTargetBranch}`
       }
       /// if (process.argv["dry-run"] === 'true') {
+      /* // thanks to the new  'dry_run' pipeline parameter, this "if"statement is no logner useful !
       if (process.argv["dry-run"]) {
        console.log( '[{[ReactiveParallelExecutionSet]} - (process.argv["dry-run"] === \'true\') condition is true');
        pipelineConfig.parameters.gio_action = `product_release_dry_run`;
@@ -261,6 +263,7 @@ export class ReactiveParallelExecutionSet {
        console.log( '[{[ReactiveParallelExecutionSet]} - (process.argv["dry-run"] === \'true\') condition is false');
        pipelineConfig.parameters.gio_action = `product_release`;
       }
+      */
       /// let pipelineConfig = { parameters: {},branch : 'dependabot/npm_and_yarn/handlebars-4.5.3'};
 
       let triggerPipelineSubscription = this.circleci_client.triggerCciPipeline(process.env.GH_ORG, `${component.name}`, `${pipelineTargetBranch}`, pipelineConfig).subscribe({

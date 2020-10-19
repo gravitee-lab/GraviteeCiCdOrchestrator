@@ -24,9 +24,7 @@ ssh-add ~/.ssh.perso.backed/id_rsa
 export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
 ssh -Ti ~/.ssh.perso.backed/id_rsa git@github.com
 
-# will re-define the default identity in use
-# https://docstore.mik.ua/orelly/networking_2ndEd/ssh/ch06_04.htm
-ssh-add ~/.ssh.perso.backed/id_rsa
+
 export LOCAL_WORKSPACE=~/gravitee-orchestra
 cd ${LOCAL_WORKSPACE}
 export FEATURE_ALIAS="cicd_modularization"

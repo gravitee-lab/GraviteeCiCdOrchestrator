@@ -5,10 +5,16 @@
 
 First, I will try and make a simple `Orb`, including the `.circleci/config.yml` defined for
 all Gravitee "dev repos", cf. :
-* `src/modules/circleci/status/tests/.circleci/config.yml` (actually deployed by scripts)
-* `documentation/cci-pipelines-commons/.circleci/config.yml` : should always be the same as `src/modules/circleci/status/tests/.circleci/config.yml`
+
+* `src/modules/circleci/status/tests/.circleci/config-full.yml` (actually deployed by scripts)
+* `documentation/cci-pipelines-commons/.circleci/config-full.yml` : should always be the same as `src/modules/circleci/status/tests/.circleci/config.yml`
 
 To do that, I will follow steps in https://circleci.com/docs/2.0/orb-author-intro/
+
+Note that I developed small Utility to manage an Orb devops cycle, called `orbinoid`, which :
+* I first developed in a subfolder here,
+* and is now versioned in https://github.com/gravitee-io/gravitee-circleci-orbinoid
+
 
 ## How to pass values to Orbs
 
@@ -24,7 +30,7 @@ Here I will explain how to pass on values at runtime to Orbs, using Orbs command
 
 ```Yaml
 description: >
-  This command was deigned by JEan-Baptiste LAsselle todemo use of Orb commands parameters.
+  This command was deigned by Jean-Baptiste Lasselle to demo use of Orb commands parameters.
 # What will this command do?
 # Descriptions should be short, simple, and clear.
 parameters:

@@ -1,1 +1,0 @@
-adsShowPopup = true;
