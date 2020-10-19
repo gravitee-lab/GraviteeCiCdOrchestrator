@@ -53,21 +53,21 @@ class ErrorReporter {
     this.http_release_git_repo = http_release_git_repo;
     this.release_branches = release_branches;
 
-    if (product === undefined || product === "") {
+    if (secrets_file_path === undefined || secrets_file_path === "") {
       console.warn("{[.DOTENV]} - [SECRETS_FILE_PATH] is undefined, defaulting value to './.secrets.json'")
-      this.secrets_file_path = './.secrets.json';
+      process.env.SECRETS_FILE_PATH = './.secrets.json';
     } else {
       this.secrets_file_path = secrets_file_path;
     }
     if (product === undefined || product === "") {
       console.warn("{[.DOTENV]} - [HTTP_RELEASE_GIT_REPO] is undefined, defaulting value to 'Gravitee APIM'")
-      this.product = "Gravitee APIM";
+      process.env.HTTP_RELEASE_GIT_REPO = "Gravitee APIM";
     } else {
       this.product = product;
     }
     if (retries_before_failure === undefined) {
       console.warn("{[.DOTENV]} - [RETRY_BEFORE_FAILURE] is undefined, defaulting value to '3'")
-      this.retries_before_failure = "3";
+      process.env.RETRY_BEFORE_FAILURE = "3";
     } else {
       if (Number.isNaN(retries_before_failure)) {
         throw new Error("{[.DOTENV]} - [RETRY_BEFORE_FAILURE] is defined, but is not a Number. Example value : '7'");
@@ -76,25 +76,25 @@ class ErrorReporter {
     }
     if (pipeline_completion_timeout === undefined) {
       console.warn("{[.DOTENV]} - [PIPELINE_COMPLETION_TIMEOUT] is undefined, defaulting value to '360' (seconds)")
-      this.pipeline_completion_timeout = "360";
+      process.env.PIPELINE_COMPLETION_TIMEOUT = "360";
     } else {
       this.pipeline_completion_timeout = pipeline_completion_timeout;
     }
     if (trigger_timeout === undefined) {
       console.warn("{[.DOTENV]} - [TRIGGER_TIMEOUT] is undefined, defaulting value to '360' (seconds)")
-      this.trigger_timeout = "360";
+      process.env.TRIGGER_TIMEOUT = "360";
     } else {
       this.trigger_timeout = trigger_timeout;
     }
     if (gh_org === undefined || gh_org === "") {
       console.warn("{[.DOTENV]} - [GH_ORG] is undefined, defaulting value to 'graviteeio-lab'")
-      this.gh_org = 'graviteeio-lab';
+      process.env.GH_ORG = 'graviteeio-lab';
     } else {
       this.gh_org = gh_org;
     }
     if (exec_status_watch_interval === undefined || gh_org === "") {
       console.warn("{[.DOTENV]} - [EXEC_STATUS_WATCH_INTERVAL] is undefined, defaulting value to '7000'")
-      this.exec_status_watch_interval = '7000';
+      process.env.EXEC_STATUS_WATCH_INTERVAL = '7000';
     } else {
       let testWatchInterval: number = null;
       try {
