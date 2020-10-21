@@ -275,8 +275,6 @@ export class PipelineExecSetStatusWatcher {
     this.updateProgressMatrixWithAllWorkflowsExecStatus();
 
     /// throw new Error("DEBUG STOP That's where I'm working now");
-    // we build an execution state report, and send it with PipeExecSetStatusNotification to {@link ReactiveParallelExecutionSet}
-    /// let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client);
 
   }
 
@@ -480,8 +478,10 @@ export class PipelineExecSetStatusWatcher {
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
-        /// the [PipelineExecSetReportLogger] willthrow the Error, stopping all CI CD Operations
-        let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
+        /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
+        throw occuredProblem;
+        /// for the time being, [PipelineExecSetReportLogger] is too complex a feature to bring it in for now.We'll seein future releases. And It just occured to me, that consolidating an errorreport, is responsiblity of the log aggregation system.
+        ///let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
       }
     }
 
