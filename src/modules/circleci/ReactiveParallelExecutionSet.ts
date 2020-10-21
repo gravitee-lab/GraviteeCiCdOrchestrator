@@ -249,7 +249,7 @@ export class ReactiveParallelExecutionSet {
 
       let pipelineConfig = {
         parameters: {
-         gio_action: `product_release`,
+         gio_action: `release`, // should be releated to cicd_stage...? mvn_release ?
          dry_run: process.argv["dry-run"]
         },
         branch: `${pipelineTargetBranch}`
