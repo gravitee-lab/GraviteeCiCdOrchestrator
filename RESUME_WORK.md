@@ -30,6 +30,10 @@ cd ${LOCAL_WORKSPACE}
 export FEATURE_ALIAS="cicd_modularization"
 export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): [documentation/circleci-orbs/orbinoid/orb] contains a much better orb starter, added orbinoid integration tests feature, orbinoid orb publishing process now also git flow releases the orb source code,  working on https://github.com/gravitee-io/release/issues/145"
 export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): finishing Implementation of [cc], for Error Management, in case of a Pipeline execution failure detection,  "
+
+export FEATURE_ALIAS="pipelines_autodeploy"
+export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): adding automation main structure in [std-ops/deployment/cci-pipeline-defs/dev-repos],  working on https://github.com/gravitee-io/release/issues/145"
+
 # git add --all && git commit -m "${COMMIT_MESSAGE}" && git push -u origin HEAD
 atom .
 
