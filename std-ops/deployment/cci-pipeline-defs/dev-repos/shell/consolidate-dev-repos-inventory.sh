@@ -6,7 +6,7 @@ export OPS_DIR=$(pwd)
 export GITHUB_ORG=${GITHUB_ORG:-'gravitee-io'}
 # export RELEASE_BRANCHES=${RELEASE_BRANCHES:-'master, 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '}
 export RELEASE_BRANCHES=${RELEASE_BRANCHES:-' 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '}
-export SCOPE_FILES_DIR=${SCOPE_FILES_DIR:-"${OPS_DIR}/gio_release_scope"}
+# export SCOPE_FILES_DIR=${SCOPE_FILES_DIR:-"${OPS_DIR}/gio_release_scope"}
 export SCOPE_FILES_DIR=${SCOPE_FILES_DIR:-"${OPS_DIR}/inventory"}
 
 # ----
