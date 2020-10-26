@@ -7,17 +7,29 @@ Gravitee Software Development git repositories.
 
 ## How to use
 
+What is below called a Gravitee.io dev repo, is  :
+* a git repository in the https://github.com/gravitee-io/ Github Organization
+* in which is versioned the source code of any https://gravitee.io software component
 
+To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you must :
 
-  * the `https://github.com/${GITHUB_ORG}/release` git repository, has one branch per
-  * for each branch of the `https://github.com/${GITHUB_ORG}/realease` git repository,
-
+* Execute the below commands, to consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will jsut generate files, used in the next operation) :
 
 ```bash
 export GITHUB_ORG="gravitee-io"
 ./shell/consolidate-dev-repos-inventory.sh
 
 ```
+
+* The `<GIT REPO ROOT>/std-ops/deployment/cci-pipeline-defs/dev-repos/.circleci/config.yml` file contains the Circle CI Pipeline Definition to deploy to all Gravitee.io dev repos : edit this to the desired Circle CI Pipeline definition to deploy
+* Execute the below commands, to deploy the pipeline definition to all Gravitee.io dev repos :
+
+```bash
+export GITHUB_ORG="gravitee-io"
+./shell/deploy.sh
+
+```
+
 
 <!--
 ## ANNEX A. SemVer and Product management
