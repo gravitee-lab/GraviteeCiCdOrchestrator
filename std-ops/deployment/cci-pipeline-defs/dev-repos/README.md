@@ -16,6 +16,20 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
 * Execute the below commands, to consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will jsut generate files, used in the next operation) :
 
 ```bash
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export GIO_ORCHESTRATOR_VERSION=0.0.4
+# latest commit on develop branch is used to test the automation
+export GIO_ORCHESTRATOR_VERSION=develop
+
+mkdir -p ${A_FOLDER_OF_UR_CHOICE}
+git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
+
+cd ${A_FOLDER_OF_UR_CHOICE}
+
+git checkout ${GIO_ORCHESTRATOR_VERSION}
+
+cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
 export GITHUB_ORG="gravitee-io"
 # on gavitee-lab org, for tests
 # comment the line below, to consolidate from "gavitee-io" org
@@ -29,6 +43,20 @@ export GITHUB_ORG="gravitee-io"
 * Execute the below commands, to deploy the pipeline definition to all Gravitee.io dev repos :
 
 ```bash
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export GIO_ORCHESTRATOR_VERSION=0.0.4
+# latest commit on develop branch is used to test the automation
+export GIO_ORCHESTRATOR_VERSION=develop
+
+mkdir -p ${A_FOLDER_OF_UR_CHOICE}
+git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
+
+cd ${A_FOLDER_OF_UR_CHOICE}
+
+git checkout ${GIO_ORCHESTRATOR_VERSION}
+
+cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
 export GITHUB_ORG="gravitee-io"
 # on "gavitee-lab" org, for tests
 # comment the line below, to deploy to "gavitee-io" org
