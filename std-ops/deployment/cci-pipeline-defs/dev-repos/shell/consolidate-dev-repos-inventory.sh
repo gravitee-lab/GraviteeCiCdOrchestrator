@@ -17,7 +17,8 @@ export SCOPE_FILES_DIR=${SCOPE_FILES_DIR:-"${HOME}/gio_release_scope"}
 # ----
 
 mkdir -p ${OPS_DIR}/inventory
-
+echo "QUICK DEBUG POINT"
+exit 0
 # ----
 # FUNCTIONS
 # ----
