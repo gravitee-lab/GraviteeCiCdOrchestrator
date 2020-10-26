@@ -58,9 +58,7 @@ git clone https://github.com/${GITHUB_ORG}/release ${SCOPE_FILES_DIR}/git
 
 echo "${RELEASE_BRANCHES}" | awk -F ',' '{for (i = 0; i < NF + 1; i++) {print $i}}' | grep -v ',' > ${SCOPE_FILES_DIR}/release-branches.list.raw
 
-echo "QUICK DEBUG POINT"
-echo "check out [${SCOPE_FILES_DIR}/release-branches.list.raw]"
-exit 0
+
 # echo "--->> content of [${SCOPE_FILES_DIR}/release-branches.list.raw] : "
 
 # cat ${SCOPE_FILES_DIR}/release-branches.list.raw
@@ -71,7 +69,9 @@ while read line; do
   echo "$line" | awk '{print $1}' | tee -a ${SCOPE_FILES_DIR}/release-branches.list
 done <${SCOPE_FILES_DIR}/release-branches.list.raw
 
-
+echo "QUICK DEBUG POINT"
+echo "check out [${SCOPE_FILES_DIR}/release-branches.list]"
+exit 0
 
 echo "--->> <<---"
 echo "--->> content of [${SCOPE_FILES_DIR}/release-branches.list] : "
