@@ -31,6 +31,9 @@ ls -allh .
 
 cat release-data-files.list
 
+echo "QUICK DEBUG POINT"
+
+exit 0
 
 while read FILEPATH; do
   echo "---"
