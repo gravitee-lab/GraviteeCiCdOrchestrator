@@ -13,6 +13,7 @@ What is below called a Gravitee.io dev repo, is  :
 
 To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you must :
 
+* Edit `<THIS GIT REPO ROOT>/std-ops/deployment/cci-pipeline-defs/dev-repos/.circleci/config.yml` file, which contains the Circle CI Pipeline Definition to deploy to all Gravitee.io dev repos : and git commit and push it, with a new release version number.
 * Execute the below commands, to
   * consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will just generate files, used in the next operation)
   * and execute the deployment
@@ -24,6 +25,7 @@ export GIO_ORCHESTRATOR_VERSION=0.0.4
 export GIO_ORCHESTRATOR_VERSION=develop
 
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
+
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 
 cd ${A_FOLDER_OF_UR_CHOICE}
@@ -49,33 +51,6 @@ export GITHUB_ORG="gravitee-io"
 export GITHUB_ORG="gravitee-lab"
 
 ./shell/deploy-all-pipeline-defs.sh
-
-```
-
-* The `<GIT REPO ROOT>/std-ops/deployment/cci-pipeline-defs/dev-repos/.circleci/config.yml` file contains the Circle CI Pipeline Definition to deploy to all Gravitee.io dev repos : edit this to the desired Circle CI Pipeline definition to deploy
-* Execute the below commands, to deploy the pipeline definition to all Gravitee.io dev repos :
-
-```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
-export GIO_ORCHESTRATOR_VERSION=0.0.4
-# latest commit on develop branch is used to test the automation
-export GIO_ORCHESTRATOR_VERSION=develop
-
-mkdir -p ${A_FOLDER_OF_UR_CHOICE}
-git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
-
-cd ${A_FOLDER_OF_UR_CHOICE}
-
-git checkout ${GIO_ORCHESTRATOR_VERSION}
-
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
-
-export GITHUB_ORG="gravitee-io"
-# on "gavitee-lab" org, for tests
-# comment the line below, to deploy to "gavitee-io" org
-export GITHUB_ORG="gravitee-lab"
-
-./shell/deploy.sh
 
 ```
 
