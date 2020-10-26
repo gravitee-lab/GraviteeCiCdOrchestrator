@@ -17,8 +17,7 @@ export SCOPE_FILES_DIR=${SCOPE_FILES_DIR:-"${HOME}/gio_release_scope"}
 # ----
 
 mkdir -p ${OPS_DIR}/inventory
-echo "QUICK DEBUG POINT"
-exit 0
+
 # ----
 # FUNCTIONS
 # ----
@@ -59,6 +58,9 @@ git clone https://github.com/${GITHUB_ORG}/release ${SCOPE_FILES_DIR}/git
 
 echo "${RELEASE_BRANCHES}" | awk -F ',' '{for (i = 0; i < NF + 1; i++) {print $i}}' | grep -v ',' > ${SCOPE_FILES_DIR}/release-branches.list.raw
 
+echo "QUICK DEBUG POINT"
+echo "check out [${SCOPE_FILES_DIR}/release-branches.list.raw]"
+exit 0
 # echo "--->> content of [${SCOPE_FILES_DIR}/release-branches.list.raw] : "
 
 # cat ${SCOPE_FILES_DIR}/release-branches.list.raw
