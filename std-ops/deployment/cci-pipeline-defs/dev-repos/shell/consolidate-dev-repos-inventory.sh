@@ -89,13 +89,10 @@ echo "--->> completed scope lists files generation <<---"
 echo "--->> Folder where files were generated : [${SCOPE_FILES_DIR}]"
 echo "--->> Generated scope list files : [${OPS_DIR}/inventory]"
 echo "--->> <<---"
-echo "QUICK DEBUG POINT"
-# echo "check out [${SCOPE_FILES_DIR}/release-branches.list]"
-exit 0
 
 # ls -allh ${SCOPE_FILES_DIR}
 # ls -allh ${SCOPE_FILES_DIR}/repos-scope.*.list
-cp -f ${SCOPE_FILES_DIR}/repos-scope.*.list ${OPS_DIR}/inventory/
+# cp -f ${SCOPE_FILES_DIR}/repos-scope.*.list ${OPS_DIR}/inventory/
 ls -allh ${OPS_DIR}/inventory
 echo "--->> <<---"
 echo "--->> To run again, execute : <<---"
