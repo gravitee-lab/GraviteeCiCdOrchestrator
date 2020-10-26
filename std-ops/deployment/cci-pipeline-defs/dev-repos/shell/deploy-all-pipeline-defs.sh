@@ -35,7 +35,7 @@ while read FILEPATH; do
   echo "---"
   echo "backing-up repos listed in [${FILEPATH}]"
   echo "---"
-  ${OPS_HOME}/inventory/backup-repos.sh ${FILEPATH}
+  ${OPS_HOME}/shell/backup-repos.sh ${FILEPATH}
 
   echo "QUICK DEBUG POINT (after backing up first repo)"
 
@@ -50,7 +50,7 @@ while read FILEPATH; do
     echo "---"
     # testing error handling
     # ${OPS_HOME}/deploy-repo-pipeline-def.sh
-    ${OPS_HOME}/deploy-repo-pipeline-def.sh ${FILEPATH}
+    ${OPS_HOME}/shell/deploy-repo-pipeline-def.sh ${FILEPATH}
     echo "---"
   else
     echo "there has been a problem backing up one of the reposlisted in  [${FILEPATH}] "
