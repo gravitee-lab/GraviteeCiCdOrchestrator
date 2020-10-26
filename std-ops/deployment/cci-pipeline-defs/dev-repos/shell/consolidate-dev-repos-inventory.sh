@@ -69,9 +69,6 @@ while read line; do
   echo "$line" | awk '{print $1}' | tee -a ${SCOPE_FILES_DIR}/release-branches.list
 done <${SCOPE_FILES_DIR}/release-branches.list.raw
 
-echo "QUICK DEBUG POINT"
-echo "check out [${SCOPE_FILES_DIR}/release-branches.list]"
-exit 0
 
 echo "--->> <<---"
 echo "--->> content of [${SCOPE_FILES_DIR}/release-branches.list] : "
@@ -91,6 +88,10 @@ echo "--->> completed scope lists files generation <<---"
 echo "--->> Folder where files were generated : [${SCOPE_FILES_DIR}]"
 echo "--->> Generated scope list files : [${OPS_DIR}/inventory]"
 echo "--->> <<---"
+echo "QUICK DEBUG POINT"
+# echo "check out [${SCOPE_FILES_DIR}/release-branches.list]"
+exit 0
+
 # ls -allh ${SCOPE_FILES_DIR}
 # ls -allh ${SCOPE_FILES_DIR}/repos-scope.*.list
 cp -f ${SCOPE_FILES_DIR}/repos-scope.*.list ${OPS_DIR}/inventory/
