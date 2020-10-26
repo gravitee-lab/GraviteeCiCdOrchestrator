@@ -13,7 +13,9 @@ What is below called a Gravitee.io dev repo, is  :
 
 To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you must :
 
-* Execute the below commands, to consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will jsut generate files, used in the next operation) :
+* Execute the below commands, to
+  * consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will just generate files, used in the next operation)
+  * and execute the deployment
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
@@ -36,6 +38,17 @@ export GITHUB_ORG="gravitee-io"
 # export GITHUB_ORG="gravitee-lab"
 
 ./shell/consolidate-dev-repos-inventory.sh
+
+# Once execution has completed, all inventory files will be in
+# the "./inventory" folder.
+# that is, the "std-ops/deployment/cci-pipeline-defs/dev-repos/inventory" folder.
+
+export GITHUB_ORG="gravitee-io"
+# on "gavitee-lab" org, for tests
+# comment the line below, to deploy to "gavitee-io" org
+export GITHUB_ORG="gravitee-lab"
+
+./shell/deploy-all-pipeline-defs.sh
 
 ```
 
