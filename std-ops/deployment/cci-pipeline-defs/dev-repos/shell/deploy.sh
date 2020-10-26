@@ -10,14 +10,14 @@ export OPS_HOME=$(pwd)
 
 
 rm -f ${OPS_HOME}/release-data-files.list
-rm -f ${OPS_HOME}/*.sh
-rm -fr ${OPS_HOME}/.circleci
+# rm -f ${OPS_HOME}/*.sh
+# rm -fr ${OPS_HOME}/.circleci
 rm -fr ${OPS_HOME}/gitops
 
 cp ${DEV_REPOS_DATASPACE}/src/modules/circleci/status/tests/backup-repos.sh ${OPS_HOME}
 cp ${DEV_REPOS_DATASPACE}/src/modules/circleci/status/tests/deploy-repo-pipeline-def.sh ${OPS_HOME}
 
-cp -fR ${DEV_REPOS_DATASPACE}/src/modules/circleci/status/tests/.circleci ${OPS_HOME}
+# cp -fR ${DEV_REPOS_DATASPACE}/src/modules/circleci/status/tests/.circleci ${OPS_HOME}
 
 echo "${DEV_REPOS_DATASPACE}/release-data/repos-scope.1.20.x.list" >> ${OPS_HOME}/release-data-files.list
 echo "${DEV_REPOS_DATASPACE}/release-data/repos-scope.1.25.x.list" >> ${OPS_HOME}/release-data-files.list

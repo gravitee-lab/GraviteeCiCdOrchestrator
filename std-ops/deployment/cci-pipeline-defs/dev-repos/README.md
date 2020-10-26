@@ -17,6 +17,10 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
 
 ```bash
 export GITHUB_ORG="gravitee-io"
+# on gavitee-lab org, for tests
+# comment the line below, to consolidate from "gavitee-io" org
+# export GITHUB_ORG="gravitee-lab"
+
 ./shell/consolidate-dev-repos-inventory.sh
 
 ```
@@ -26,6 +30,10 @@ export GITHUB_ORG="gravitee-io"
 
 ```bash
 export GITHUB_ORG="gravitee-io"
+# on "gavitee-lab" org, for tests
+# comment the line below, to deploy to "gavitee-io" org
+export GITHUB_ORG="gravitee-lab"
+
 ./shell/deploy.sh
 
 ```
