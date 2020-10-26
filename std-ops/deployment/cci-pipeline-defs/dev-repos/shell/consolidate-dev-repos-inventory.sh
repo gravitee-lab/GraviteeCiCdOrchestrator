@@ -86,13 +86,16 @@ done <${SCOPE_FILES_DIR}/release-branches.list
 
 echo "--->> <<---"
 echo "--->> completed scope lists files generation <<---"
-echo "--->> Folder where files were generated : [${SCOPE_FILES_DIR}]"
-echo "--->> Generated scope list files : [${OPS_DIR}/inventory]"
+echo "--->> Folder where inventory files were generated : [${SCOPE_FILES_DIR}]"
+# echo "--->> Generated inventory list files : [${OPS_DIR}/inventory]"
 echo "--->> <<---"
 
 # ls -allh ${SCOPE_FILES_DIR}
 # ls -allh ${SCOPE_FILES_DIR}/repos-scope.*.list
 # cp -f ${SCOPE_FILES_DIR}/repos-scope.*.list ${OPS_DIR}/inventory/
+# mv ${SCOPE_FILES_DIR}/repos-names.*.list ${OPS_DIR}/inventory/apim
+
+tree ${OPS_DIR}/inventory/apim/
 ls -allh ${OPS_DIR}/inventory
 echo "--->> <<---"
 echo "--->> To run again, execute : <<---"
