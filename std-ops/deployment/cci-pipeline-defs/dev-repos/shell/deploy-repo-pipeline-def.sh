@@ -121,6 +121,7 @@ echo "---"
 
 
 # first, setup Github User Git SSH config
+
 setupSSHGithubUser
 
 rm -fr ${OPS_HOME}/gitops/

@@ -40,6 +40,12 @@ while read FILEPATH; do
   echo "backing-up repos listed in [${FILEPATH}]"
   echo "---"
   ${OPS_HOME}/inventory/backup-repos.sh ${FILEPATH}
+
+  echo "QUICK DEBUG POINT (after backing up first repo)"
+
+  exit 0
+
+
   export EXIT_CODE_HERE="$?"
   echo "EXIT_CODE_HERE=[${EXIT_CODE_HERE}]"
   if [ "${EXIT_CODE_HERE}" == "0" ]; then
