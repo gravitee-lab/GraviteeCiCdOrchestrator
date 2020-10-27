@@ -43,6 +43,7 @@ export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline co
 # --- #
 # List of all git branches to work with, from
 # the https://github.com/${GITHUB_ORG}/release
+# list must be comma-separated
 # --- #
 export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 ./deploy.sh
