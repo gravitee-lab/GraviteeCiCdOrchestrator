@@ -18,13 +18,18 @@ rm -fr ${OPS_HOME}/gitops
 
 # cp -fR ${DEV_REPOS_DATASPACE}/src/modules/circleci/status/tests/.circleci ${OPS_HOME}
 
-# As required, only 3.* and 1.30.* , we forget about [1.20.*] [1.25.*] [1.29.*]
+# As required, we forget about [1.20.*] [1.25.*] [1.29.*]
 # echo "${DEV_REPOS_DATASPACE}/repos-scope.1.20.x.list" >> ${OPS_HOME}/release-data-files.list
 # echo "${DEV_REPOS_DATASPACE}/repos-scope.1.25.x.list" >> ${OPS_HOME}/release-data-files.list
 # echo "${DEV_REPOS_DATASPACE}/repos-scope.1.29.x.list" >> ${OPS_HOME}/release-data-files.list
-echo "${DEV_REPOS_DATASPACE}/repos-scope.1.30.x.list" >> ${OPS_HOME}/release-data-files.list
-echo "${DEV_REPOS_DATASPACE}/repos-scope.3.0.x.list" >> ${OPS_HOME}/release-data-files.list
-echo "${DEV_REPOS_DATASPACE}/repos-scope.3.1.x.list" >> ${OPS_HOME}/release-data-files.list
+# echo "${DEV_REPOS_DATASPACE}/repos-scope.1.30.x.list" >> ${OPS_HOME}/release-data-files.list
+# echo "${DEV_REPOS_DATASPACE}/repos-scope.3.0.x.list" >> ${OPS_HOME}/release-data-files.list
+# echo "${DEV_REPOS_DATASPACE}/repos-scope.3.1.x.list" >> ${OPS_HOME}/release-data-files.list
+
+# --- #
+# As required, we forget about [1.20.*] [1.25.*] [1.29.*]
+ls ${DEV_REPOS_DATASPACE}/repos-scope.*.list | grep -v '1.20.x' | grep -v '1.25.x' | grep -v '1.29.x' | awk '{for (i=0; i < NF ;i++){print $i}}' | tee ${OPS_HOME}/release-data-files.list
+
 
 # tree
 ls -allh .
@@ -34,6 +39,7 @@ cat release-data-files.list
 while read FILEPATH; do
   echo "---"
   echo "backing-up repos listed in [${FILEPATH}]"
+  # In each ${FILEPATH} 
   echo "---"
   ${OPS_HOME}/shell/backup-repos.sh ${FILEPATH}
 
