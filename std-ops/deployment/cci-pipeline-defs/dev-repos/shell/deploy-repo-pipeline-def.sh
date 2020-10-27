@@ -25,42 +25,86 @@ Usage () {
   echo "---"
   echo "  $0 <REPOS_URL_LIST_FILE>"
   echo "---"
+  echo "Where :"
+  echo "---"
+  echo "  <REPOS_URL_LIST_FILE> is the path fo a text file containing the list of the git repos to which the Circle Ci Pipeline definition must be deployed."
+  echo "                        each line of that file, must be the HTTP URL of a git repo"
+  echo "---"
+  echo "env. variables :"
+  echo "---"
+  echo "  GIT_USER_NAME (mandatory) The git user name to use, to configure git [git config --global user.name]"
+  echo "  GIT_USER_EMAIL (mandatory) The git user eamil to use, to configure git [git config --global user.email]"
+  echo "  GIT_SSH_COMMAND (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
+  echo "---"
 }
 
 setupSSHGithubUser () {
-  git config --global commit.gpgsign true
-  git config --global user.name "Jean-Baptiste-Lasselle"
-  git config --global user.email jean.baptiste.lasselle.pegasus@gmail.com
-  git config --global user.signingkey 7B19A8E1574C2883
+  echo "[$0 - setupSSHGithubUser] QUICK DEBUG "
+  echo "[$0 - setupSSHGithubUser] [GIT_USER_NAME=[${GIT_USER_NAME}]] "
+  echo "[$0 - setupSSHGithubUser] [GIT_USER_EMAIL=[${GIT_USER_EMAIL}]] "
+  echo "[$0 - setupSSHGithubUser] [GIT_SSH_COMMAND=[${GIT_SSH_COMMAND}]] "
+
+  # export GIT_USER_NAME=${GIT_USER_NAME:-'Jean-Baptiste-Lasselle'}
+  if [ "x${GIT_USER_NAME}" == "x" ]; then
+    echo "[$0 - setupSSHGithubUser] You did not set the [GIT_USER_NAME] env. var."
+    Usage
+    exit 1
+  fi;
+  # export GIT_USER_EMAIL=${GIT_USER_EMAIL:-'jean.baptiste.lasselle.pegasus@gmail.com'}
+  if [ "x${GIT_USER_EMAIL}" == "x" ]; then
+    echo "[$0 - setupSSHGithubUser] You did not set the [GIT_USER_EMAIL] env. var."
+    Usage
+    exit 1
+  fi;
+  # export GIT_SSH_COMMAND=${GIT_SSH_COMMAND:-'ssh -i ~/.ssh.perso.backed/id_rsa'}
+  export GIT_SSH_COMMAND=${GIT_SSH_COMMAND:-'ssh -i ~/.ssh/id_rsa'}
+  export SSH_PRIVATE_KEY=$(echo "$GIT_SSH_COMMAND" | awk '{print $3}' | sed "s#~#${HOME}#g")
+
+  # git config --global commit.gpgsign true
+  git config --global commit.gpgsign false
+  # git config --global user.name "Jean-Baptiste-Lasselle"
+  git config --global user.name "${GIT_USER_NAME}"
+  # git config --global user.email jean.baptiste.lasselle.pegasus@gmail.com
+  git config --global user.email "${GIT_USER_EMAIL}"
+
+  # git config --global user.signingkey 7B19A8E1574C2883
 
   git config --global --list
 
   # will re-define the default identity in use
   # https://docstore.mik.ua/orelly/networking_2ndEd/ssh/ch06_04.htm
-  ssh-add ~/.ssh.perso.backed/id_rsa
+  ssh-add ${SSH_PRIVATE_KEY}
 
-  export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
-  # ssh -Ti ~/.ssh.perso.backed/id_rsa git@github.com
+  # --- #
   # ssh-add -D
-  # export TEST_STR=$(ssh -T git@github.com 2>&1|tee)
-  export TEST_STR=$(ssh -Ti ~/.ssh.perso.backed/id_rsa git@github.com 2>&1|tee)
-  echo "before final test TEST_STR=[${TEST_STR}]"
+  # --- #
+  # case of gitlab.com
+  # export TEST_STR=$(ssh -Ti ${SSH_PRIVATE_KEY} git@gitlab.com 2>&1|tee)
+  # case of github.com
+  export TEST_STR=$(ssh -Ti ${SSH_PRIVATE_KEY} git@github.com 2>&1|tee)
+
+  echo "[$0 - setupSSHGithubUser] Before final test TEST_STR=[${TEST_STR}]"
+  # case of gitlab.com
+  export SUCCESS_STR="Welcome to GitLab"
+  # case of github.com
   export SUCCESS_STR="You've successfully authenticated"
   # echo "${TEST_STR}" | grep "${SUCCESS_STR}"
   export GIT_SSH_CONF_TEST_STR=$(echo "${TEST_STR}" | grep "${SUCCESS_STR}")
-  echo "final test GIT_SSH_CONF_TEST_STR=[${GIT_SSH_CONF_TEST_STR}]"
+  echo "[$0 - setupSSHGithubUser] final test GIT_SSH_CONF_TEST_STR=[${GIT_SSH_CONF_TEST_STR}]"
 
   if [ "x${GIT_SSH_CONF_TEST_STR}" == "x" ]; then
     echo "---"
-    echo "You must change the content of the [setupSSHGithubUser] function in [$0], to match your github user local git config"
+    echo "[$0 - setupSSHGithubUser] You must change the content of the [setupSSHGithubUser] function in [$0], to properly configure your local git for your github user"
     echo "---"
     Usage
     exit 3
   else
     echo "---"
-    echo "your github user local git config is operational, starting operations"
+    echo "[$0 - setupSSHGithubUser] your github user local git config is operational, starting operations"
     echo "---"
   fi;
+  echo "[$0 - setupSSHGithubUser] QUICK DEBUG exit"
+  exit 0
 }
 
 setupCircleCIConfig () {
@@ -79,8 +123,8 @@ setupCircleCIConfig () {
       git checkout ${THIS_GIT_BRANCH}
       mkdir -p ${OPS_HOME}/gitops/${THIS_REPO_NAME}/.circleci/
       cp -f ${OPS_HOME}/.circleci/config.yml ${OPS_HOME}/gitops/${THIS_REPO_NAME}/.circleci/
-      export THIS_COMMIT_MESSAGE="[$0] automatic CICD test setup : adding circleci git config"
-      git add --all && git commit -m "${THIS_COMMIT_MESSAGE}" && git push -u origin HEAD
+      export GIT_COMMIT_MESSAGE=${GIT_COMMIT_MESSAGE:-"[$0] automatic CICD test setup : adding circleci git config"}
+      git add --all && git commit -m "${GIT_COMMIT_MESSAGE}" && git push -u origin HEAD
     done <${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list
   else
     echo "[setupCircleCIConfig => ] the [${THIS_REPO_URL}] git repo doesnot exist, skipping any git operation"

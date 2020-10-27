@@ -23,16 +23,23 @@ export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION=develop
-
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
-
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
-
 cd ${A_FOLDER_OF_UR_CHOICE}
-
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
+# --- #
+# Those 4 env. var. will be used to configure
+# your local Git for the deployment
+# --- #
+# 2 mandatory Env Vars.
+export GIT_USER_NAME='Jean-Baptiste-Lasselle'
+export GIT_USER_EMAIL='jean.baptiste.lasselle@gmail.com'
+# Optional, defaults to 'ssh -i ~/.ssh/id_rsa'
+export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
+# Optional, defaults to "[$0] automatic CICD test setup : adding circleci git config"
+export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline connfig version [${GIO_ORCHESTRATOR_VERSION}] "
 
 ./deploy.sh
 
