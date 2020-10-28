@@ -36,10 +36,13 @@ ls -allh .
 
 cat release-data-files.list
 
+echo "QUICK DEBUG POINT"
+exit 0
+
 while read FILEPATH; do
   echo "---"
   echo "backing-up repos listed in [${FILEPATH}]"
-  # In each ${FILEPATH} 
+  # In each ${FILEPATH}
   echo "---"
   ${OPS_HOME}/shell/backup-repos.sh ${FILEPATH}
 
