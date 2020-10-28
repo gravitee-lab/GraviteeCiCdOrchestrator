@@ -17,9 +17,9 @@ echo "backing-up repos listed in [${OPS_HOME}/all-git-uris.list]"
 echo "---"
 ${OPS_HOME}/shell/backup-repos.sh ${OPS_HOME}/all-git-uris.list
 
-export EXIT_CODE_HERE="$?"
-echo "EXIT_CODE_HERE=[${EXIT_CODE_HERE}]"
-if [ "${EXIT_CODE_HERE}" == "0" ]; then
+export BCKUP_EXIT_CODE="$?"
+echo "BCKUP_EXIT_CODE=[${BCKUP_EXIT_CODE}]"
+if [ "${BCKUP_EXIT_CODE}" == "0" ]; then
   echo "---"
   echo "processing repos listed in [${OPS_HOME}/all-git-uris.list]"
   echo "---"
