@@ -2,7 +2,7 @@
 
 # the folder in which you opened your IDE, i.e. where you
 export OPS_DIR=$(pwd)
-# those four can be reset from bash env.
+# Data are by default, consolidated from the "real" Gravitee.io Github Org.
 export GITHUB_ORG=${GITHUB_ORG:-'gravitee-io'}
 # export RELEASE_BRANCHES=${RELEASE_BRANCHES:-'master, 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '}
 export RELEASE_BRANCHES=${RELEASE_BRANCHES:-' 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '}

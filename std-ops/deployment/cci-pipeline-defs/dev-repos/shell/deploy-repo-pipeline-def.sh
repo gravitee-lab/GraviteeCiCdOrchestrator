@@ -3,7 +3,9 @@
 # ------
 # -- ENV
 # ------
-
+# Circle Ci Pipeline definition is by default, NOT deployed
+# to the "real" Gravitee.io Github Org.!!!
+export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
 export OPS_HOME=$(pwd)
 export REPOS_URL_LIST_FILE=$1
 

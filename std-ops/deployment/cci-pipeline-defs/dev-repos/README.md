@@ -30,6 +30,11 @@ git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
 # --- #
+# Opional :
+# determines from which Github Org, data are consolidated
+# determines to which Github Org, Circle Ci Pipeline definition is deployed
+export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
+# --- #
 # Those env. var. will be used to configure
 # your local Git for the deployment
 # --- #
