@@ -108,8 +108,6 @@ setupSSHGithubUser () {
     echo "[$0 - setupSSHGithubUser] your github user local git config is operational, starting operations"
     echo "---"
   fi;
-  echo "[$0 - setupSSHGithubUser] QUICK DEBUG exit"
-  exit 0
 }
 
 setupCircleCIConfig () {
@@ -147,20 +145,21 @@ cp ${REPOS_URL_LIST_FILE} ${OPS_HOME}/${BARE_FILENAME}.ssh
 
 sed -i "s#https://github.com/gravitee-io#git@github.com:gravitee-lab#g" ${OPS_HOME}/${BARE_FILENAME}.ssh
 echo "---"
-echo "SECURITY CHECK NO GRAVITEE-IO in \${OPS_HOME}/\${BARE_FILENAME}.ssh=[${OPS_HOME}/${BARE_FILENAME}.ssh] : "
+echo "-- Circle CI Pipeline defintion will be deployed to the following git repos : "
+# echo "SECURITY CHECK NO GRAVITEE-IO in \${OPS_HOME}/\${BARE_FILENAME}.ssh=[${OPS_HOME}/${BARE_FILENAME}.ssh] : "
 echo "---"
 cat ${OPS_HOME}/${BARE_FILENAME}.ssh
 echo "---"
 echo " IN CASE ANY PROBLEM, A BACK-UP WAS PREPARED ON THIS MACHINE [$(hostname)] in the [${OPS_HOME}/gitops.backup/] Folder "
 echo "---"
 
-echo "---"
-echo "  REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
-echo "---"
-echo "  \${OPS_HOME}/\${BARE_FILENAME}.ssh=[${OPS_HOME}/${BARE_FILENAME}.ssh]"
-echo "---"
-echo " Now turning [git HTTP URLs] into [git SSH URLs] REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
-echo "---"
+# echo "---"
+# echo "  REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
+# echo "---"
+# echo "  \${OPS_HOME}/\${BARE_FILENAME}.ssh=[${OPS_HOME}/${BARE_FILENAME}.ssh]"
+# echo "---"
+# echo " Now turned [git HTTP URLs] into [git SSH URLs] within file [${REPOS_URL_LIST_FILE}]"
+# echo "---"
 
 
 
@@ -169,13 +168,14 @@ echo "---"
 # ------
 
 
-# first, setup Github User Git SSH config
+# - first, setup Github User Git SSH config
 
 setupSSHGithubUser
 
 rm -fr ${OPS_HOME}/gitops/
 mkdir -p ${OPS_HOME}/gitops/
 
+# - Then deploy Circle CI Pipeline defintion to each git repo
 while read REPO_URL; do
   echo "---"
   setupCircleCIConfig ${REPO_URL}
