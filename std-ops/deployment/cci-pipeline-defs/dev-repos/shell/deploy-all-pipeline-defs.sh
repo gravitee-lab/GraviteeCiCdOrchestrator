@@ -63,6 +63,8 @@ while read FILEPATH; do
       if [ "x${SEARCH_RESULT}" == "x" ]; then
         # if git URIs was not found in [${OPS_HOME}/all-git-uris.list], then we add it
         echo "${CURRENT_GIT_URI}" | tee -a ${OPS_HOME}/all-git-uris.list
+      else
+        echo "EXCLUDED GT URI - The [${CURRENT_GIT_URI}] Git URI is already inside the [${OPS_HOME}/all-git-uris.list] - EXCLUDED "
       fi;
     done <${FILEPATH}
   fi;
