@@ -32,9 +32,10 @@ Usage () {
   echo "---"
   echo "env. variables :"
   echo "---"
+  echo "  GIT_SSH_COMMAND (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
   echo "  GIT_USER_NAME (mandatory) The git user name to use, to configure git [git config --global user.name]"
   echo "  GIT_USER_EMAIL (mandatory) The git user eamil to use, to configure git [git config --global user.email]"
-  echo "  GIT_SSH_COMMAND (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
+  echo "  GIT_USER_SIGNING_KEY (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]"
   echo "---"
 }
 
@@ -56,18 +57,22 @@ setupSSHGithubUser () {
     Usage
     exit 1
   fi;
+  if [ "x${GIT_USER_SIGNING_KEY}" == "x" ]; then
+    echo "[$0 - setupSSHGithubUser] You did not set the [GIT_USER_SIGNING_KEY] env. var."
+    git config --global commit.gpgsign false
+  else
+    git config --global commit.gpgsign true
+    git config --global user.signingkey ${GIT_USER_SIGNING_KEY}
+  fi;
+
   # export GIT_SSH_COMMAND=${GIT_SSH_COMMAND:-'ssh -i ~/.ssh.perso.backed/id_rsa'}
   export GIT_SSH_COMMAND=${GIT_SSH_COMMAND:-'ssh -i ~/.ssh/id_rsa'}
   export SSH_PRIVATE_KEY=$(echo "$GIT_SSH_COMMAND" | awk '{print $3}' | sed "s#~#${HOME}#g")
 
-  # git config --global commit.gpgsign true
-  git config --global commit.gpgsign false
   # git config --global user.name "Jean-Baptiste-Lasselle"
   git config --global user.name "${GIT_USER_NAME}"
   # git config --global user.email jean.baptiste.lasselle.pegasus@gmail.com
   git config --global user.email "${GIT_USER_EMAIL}"
-
-  # git config --global user.signingkey 7B19A8E1574C2883
 
   git config --global --list
 

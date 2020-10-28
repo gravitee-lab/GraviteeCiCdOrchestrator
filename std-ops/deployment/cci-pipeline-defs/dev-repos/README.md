@@ -30,16 +30,22 @@ git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
 # --- #
-# Those 4 env. var. will be used to configure
+# Those env. var. will be used to configure
 # your local Git for the deployment
 # --- #
-# 2 mandatory Env Vars.
+# (mandatory) The git user name to use, to configure git [git config --global user.name]
 export GIT_USER_NAME='Jean-Baptiste-Lasselle'
+# (mandatory) The git user eamil to use, to configure git [git config --global user.email]
 export GIT_USER_EMAIL='jean.baptiste.lasselle@gmail.com'
-# Optional, defaults to 'ssh -i ~/.ssh/id_rsa'
+# (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
 export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
-# Optional, defaults to "[$0] automatic CICD test setup : adding circleci git config"
+# (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline connfig version [${GIO_ORCHESTRATOR_VERSION}] "
+# (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
+# export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
+
+
+
 # --- #
 # List of all git branches to work with, from
 # the https://github.com/${GITHUB_ORG}/release
