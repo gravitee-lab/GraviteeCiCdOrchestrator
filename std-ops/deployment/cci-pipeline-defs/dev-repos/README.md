@@ -31,9 +31,9 @@ cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
 # --- #
 # Opional :
-# determines from which Github Org, data are consolidated
-# determines to which Github Org, Circle Ci Pipeline definition is deployed
-export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
+# determines from which Github Org, data are consolidated (defaults to "gravitee-io" (the real org))
+# determines to which Github Org, Circle Ci Pipeline definition is deployed (defaults to "gravitee-lab" (the fake org))
+# export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
 # --- #
 # Those env. var. will be used to configure
 # your local Git for the deployment
