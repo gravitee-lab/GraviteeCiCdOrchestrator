@@ -34,9 +34,48 @@ ls ${DEV_REPOS_DATASPACE}/repos-scope.*.list | grep -v '1.20.x' | grep -v '1.25.
 # tree
 ls -allh .
 
-cat release-data-files.list
+# cat release-data-files.list
+cat ${OPS_HOME}/release-data-files.list
 
-echo "QUICK DEBUG POINT"
+# --- #
+# --- #
+# each file listed in [release-data-files.list] contain a list of URIs of git repositories.
+# two different files listed in [release-data-files.list] may contain the same URIs of a git repository
+# --- #
+# Now merging all files listed in [release-data-files.list], into
+# one unique file listing all URIs of git
+# repositories, without redundancy : [${OPS_HOME}/all-git-uris.list]
+
+# cat $(cat ${OPS_HOME}/release-data-files.list | head -n 1) |  ${OPS_HOME}/all-git-uris.list
+
+ITERATION_COUNT=0
+while read FILEPATH; do
+  # echo "ITERATION NUMBER = [${ITERATION_COUNT}]"
+  if [ "x${ITERATION_COUNT}" == "x0" ]; then
+    # echo "This is the first iteration, of ITERATION NUMBER = [${ITERATION_COUNT}]"
+    # I begin by adding all git URIs from the first file
+    cat ${FILEPATH} | tee ${OPS_HOME}/all-git-uris.list
+  else
+    # echo "This is NOT the first iteration, and ITERATION NUMBER = [${ITERATION_COUNT}]"
+    while read CURRENT_GIT_URI; do
+      # is [CURRENT_GIT_URI] already in [${OPS_HOME}/all-git-uris.list] ?
+      export SEARCH_RESULT=$(cat ${OPS_HOME}/all-git-uris.list | grep ${CURRENT_GIT_URI})
+      if [ "x${SEARCH_RESULT}" == "x" ]; then
+        # if git URIs was not found in [${OPS_HOME}/all-git-uris.list], then we add it
+        echo "${CURRENT_GIT_URI}" | tee -a ${OPS_HOME}/all-git-uris.list
+      fi;
+    done <${FILEPATH}
+  fi;
+  (( ITERATION_COUNT++ ))
+done <${OPS_HOME}/release-data-files.list
+
+# And now, [${OPS_HOME}/all-git-uris.list] contains only
+# one occurrence of any GIT URI listed in Any of the [${DEV_REPOS_DATASPACE}/repos-scope.*.list] files
+
+# --- #
+# --- #
+
+echo "QUICK DEBUG POINT now check content of [${OPS_HOME}/all-git-uris.list] "
 exit 0
 
 while read FILEPATH; do
