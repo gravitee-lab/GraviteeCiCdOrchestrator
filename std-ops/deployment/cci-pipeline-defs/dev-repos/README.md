@@ -139,6 +139,9 @@ sudo ln -s /usr/local/secrethub/${SECRETHUB_CLI_VERSION}/bin/secrethub /usr/loca
 secrethub --version
 ```
 
+Now that you have secrethub CLI installed, go to [this page](https://github.com/gravitee-io/kb/wiki/Secrets-Everywhere#the-root-secret) to create your secrethub user, and do not forget to save the rrot secret to `Keypass2`
+
+
 #### Initialize the SSH Secrets for CI / CD
 
 ```bash
