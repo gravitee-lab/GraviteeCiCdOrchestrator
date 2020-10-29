@@ -95,6 +95,18 @@ cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
+
+# --
+# ENV. VARS
+SECRETHUB_ORG=gravitee-lab
+# SECRETHUB_ORG=gravitee-io
+SECRETHUB_REPO=cicd
+
+export PRIVATE_SSH_KEY=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/ssh")
+
+# and then use Circle CI API v2 to setup the SSH private key for
+# each Pipeline of each github repo listed in the [consolidated-git-repos-uris.list]
+
 ```
 
 ## Secret Management and SSH Keys for Circle CI Pipelines
@@ -104,17 +116,23 @@ will setup a secret used in the [Automated Ssh Key Setup of Pipelines](#automate
 
 
 
+* initialize the SSH Secrets for CI CD :
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
-export GIO_ORCHESTRATOR_VERSION=0.0.4
-# latest commit on develop branch is used to test the automation
-export GIO_ORCHESTRATOR_VERSION=develop
-mkdir -p ${A_FOLDER_OF_UR_CHOICE}
-git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
-cd ${A_FOLDER_OF_UR_CHOICE}
-git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+# --
+# ENV. VARS
+SECRETHUB_ORG=gravitee-lab
+# SECRETHUB_ORG=gravitee-io
+SECRETHUB_REPO=cicd
+
+secrethub org init ${SECRETHUB_ORG}
+secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
+
+
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/ssh"
+
+
+ssh-keygen -t rsa -b 4096 (TO FINISH)
 
 ```
 
