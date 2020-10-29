@@ -145,9 +145,9 @@ cat ${SCOPE_FILES_DIR}/scope-files.list
 # --- #
 # Now merging all files listed in [scope-files.list], into
 # one unique file listing all URIs of git
-# repositories, without redundancy : [${OPS_DIR}/all-git-uris.list]
+# repositories, without redundancy : [${OPS_DIR}/consolidated-git-repos-uris.list]
 
-# cat $(cat ${SCOPE_FILES_DIR}/scope-files.list | head -n 1) |  ${OPS_DIR}/all-git-uris.list
+# cat $(cat ${SCOPE_FILES_DIR}/scope-files.list | head -n 1) |  ${OPS_DIR}/consolidated-git-repos-uris.list
 
 ITERATION_COUNT=0
 while read FILEPATH; do
@@ -155,24 +155,24 @@ while read FILEPATH; do
   if [ "x${ITERATION_COUNT}" == "x0" ]; then
     # echo "This is the first iteration, of ITERATION NUMBER = [${ITERATION_COUNT}]"
     # I begin by adding all git URIs from the first file
-    cat ${FILEPATH} | tee ${OPS_DIR}/all-git-uris.list
+    cat ${FILEPATH} | tee ${OPS_DIR}/consolidated-git-repos-uris.list
   else
     # echo "This is NOT the first iteration, and ITERATION NUMBER = [${ITERATION_COUNT}]"
     while read CURRENT_GIT_URI; do
-      # is [CURRENT_GIT_URI] already in [${OPS_DIR}/all-git-uris.list] ?
-      export SEARCH_RESULT=$(cat ${OPS_DIR}/all-git-uris.list | grep ${CURRENT_GIT_URI})
+      # is [CURRENT_GIT_URI] already in [${OPS_DIR}/consolidated-git-repos-uris.list] ?
+      export SEARCH_RESULT=$(cat ${OPS_DIR}/consolidated-git-repos-uris.list | grep ${CURRENT_GIT_URI})
       if [ "x${SEARCH_RESULT}" == "x" ]; then
-        # if git URIs was not found in [${OPS_DIR}/all-git-uris.list], then we add it
-        echo "${CURRENT_GIT_URI}" | tee -a ${OPS_DIR}/all-git-uris.list
+        # if git URIs was not found in [${OPS_DIR}/consolidated-git-repos-uris.list], then we add it
+        echo "${CURRENT_GIT_URI}" | tee -a ${OPS_DIR}/consolidated-git-repos-uris.list
       else
-        echo "EXCLUDED GT URI - The [${CURRENT_GIT_URI}] Git URI is already inside the [${OPS_DIR}/all-git-uris.list] - EXCLUDED "
+        echo "EXCLUDED GT URI - The [${CURRENT_GIT_URI}] Git URI is already inside the [${OPS_DIR}/consolidated-git-repos-uris.list] - EXCLUDED "
       fi;
     done <${FILEPATH}
   fi;
   (( ITERATION_COUNT++ ))
 done <${SCOPE_FILES_DIR}/scope-files.list
 
-# And now, [${OPS_DIR}/all-git-uris.list] contains only
+# And now, [${OPS_DIR}/consolidated-git-repos-uris.list] contains only
 # one occurrence of any GIT URI listed in Any of the [${SCOPE_FILES_DIR}/repos-scope.*.list] files
 
 # --- #
@@ -180,7 +180,7 @@ done <${SCOPE_FILES_DIR}/scope-files.list
 echo "# --------------------------------------------------------------------------------------- #"
 echo "# --------------------------------------------------------------------------------------- #"
 echo "# --------------------------------------------------------------------------------------- #"
-echo "# ------------------ The [${OPS_DIR}/all-git-uris.list] file now contains  -------------- #"
+echo "# ------------------ The [${OPS_DIR}/consolidated-git-repos-uris.list] file now contains  -------------- #"
 echo "# ------------------ the list of URIs of all the git repo to  ----------------------------#"
 echo "# ------------------ deploy the Circle CI Pipeline Definition to.  -----------------------#"
 echo "# --------------------------------------------------------------------------------------- #"

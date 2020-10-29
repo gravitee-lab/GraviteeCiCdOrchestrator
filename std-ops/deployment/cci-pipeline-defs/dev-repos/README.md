@@ -5,8 +5,16 @@ The `Gravitee CI CD Orchestrator` relies a lot on Circle CI, to run most of its 
 The integration setup between the `Gravitee CI CD Orchestrator` and Circle CI, most consists of
 the following steps :
 
-*
-* For each Gravitee.io dev repo, you must _manually_ "setup to start building" each of them in the Cirlce CI Web UI
+* Run the [Automated Deployment of dev repos Pipeline Definition](#automated-deployment-of-dev-repos-pipeline-definition) :
+  * This will produce a `consolidated-git-repos-uris.list` file listing all github.com repositories the `Gravitee CI CD Orchestrator` will control.
+* For each Gravitee.io dev repo, listed in the `consolidated-git-repos-uris.list` file, you must _manually_ "setup to start building" each of them in the Cirlce CI Web UI :
+  * As of `2020`, Circle CI does not provide any mean to auomate this operation
+  * If any Circle CI pipeline keeps running, at this stage, manually cancel its execution.
+* Finally, you will run the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines) :
+  * Every Circle CI Pipeline will git clone the source code of the github git repository it stands for.
+  * and to run the git clone cloen command, Circle Ci mandatorily uses ssh, and therefore needs a private SSH Key
+  * before running the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines), an `Owner` of the `https://github.com/${GITHUB_ORG}` Github Organization must have [setup the SSH Secrets]()
+
 
 
 
@@ -73,6 +81,43 @@ export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.
 ./deploy.sh
 
 ```
+
+## Automated Ssh Key Setup of Pipelines
+
+```bash
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export GIO_ORCHESTRATOR_VERSION=0.0.4
+# latest commit on develop branch is used to test the automation
+export GIO_ORCHESTRATOR_VERSION=develop
+mkdir -p ${A_FOLDER_OF_UR_CHOICE}
+git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
+cd ${A_FOLDER_OF_UR_CHOICE}
+git checkout ${GIO_ORCHESTRATOR_VERSION}
+cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
+```
+
+## Secret Management and SSH Keys for Circle CI Pipelines
+
+This section is useful for the Owner of the `https://github.com/${GITHUB_ORG}` Github Organization who
+will setup a secret used in the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines)
+
+
+
+
+```bash
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export GIO_ORCHESTRATOR_VERSION=0.0.4
+# latest commit on develop branch is used to test the automation
+export GIO_ORCHESTRATOR_VERSION=develop
+mkdir -p ${A_FOLDER_OF_UR_CHOICE}
+git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
+cd ${A_FOLDER_OF_UR_CHOICE}
+git checkout ${GIO_ORCHESTRATOR_VERSION}
+cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
+```
+
 
 
 <!--
