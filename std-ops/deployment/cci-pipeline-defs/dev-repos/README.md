@@ -13,7 +13,7 @@ the following steps :
 * Finally, you will run the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines) :
   * Every Circle CI Pipeline will git clone the source code of the github git repository it stands for.
   * and to run the git clone cloen command, Circle Ci mandatorily uses ssh, and therefore needs a private SSH Key
-  * before running the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines), an `Owner` of the `https://github.com/${GITHUB_ORG}` Github Organization must have [setup the SSH Secrets]()
+  * **before running the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines)**, an `Owner` of the `https://github.com/${GITHUB_ORG}` Github Organization must have [setup the SSH Secrets]()
 
 
 
