@@ -157,13 +157,27 @@ secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
 
 secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh"
 
+# --- #
+# RSA Key Pair to use for Github SSH Service
+# --- #
+export LOCAL_SSH_PUBKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa.pub
+export LOCAL_SSH_PRVIKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa
+# https://github.com/graviteeio is the Github User
+export ROBOTS_ID=graviteeio
 
-ssh-keygen -t rsa -b 4096 (TO FINISH)
+export LE_COMMENTAIRE_DE_CLEF="[$ROBOTS_ID]-cicd-bot@github.com"
+# --- #
+# Is it extremely important that the Private Key passphrase is empty, for
+# the Key Pair to be used as SSH Key with Github.com Git Service
+# --- #
+export PRIVATE_KEY_PASSPHRASE=''
 
-export LOCAL_SSH_PUBKEY=~/.ssh/vm7/id_rsa.pub
-export LOCAL_SSH_PRVIKEY=~/.ssh/vm7/id_rsa
+mkdir -p ${HOME}/.ssh.cicd.graviteebot
+ssh-keygen -C "${LE_COMMENTAIRE_DE_CLEF}" -t rsa -b 4096 -f ${LOCAL_SSH_PRVIKEY} -q -P "${PRIVATE_KEY_PASSPHRASE}"
 
-
+sudo chmod 700 ${HOME}/.ssh.cicd.graviteebot
+sudo chmod 644 ${LOCAL_SSH_PUBKEY}
+sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
 
 secrethub write --in-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
 secrethub write --in-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
