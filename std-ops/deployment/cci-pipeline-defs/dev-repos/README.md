@@ -114,9 +114,32 @@ export PRIVATE_SSH_KEY=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/grav
 This section is useful for the Owner of the `https://github.com/${GITHUB_ORG}` Github Organization who
 will setup a secret used in the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines)
 
+#### Install Secrethub CLI
+
+* To install Secrethub CLI on Windows, go to https://secrethub.io/docs/reference/cli/install/#windows
+* To install Secrethub CLI on any GNU/Linux or Mac OS:
+
+```bash
+# eg : https://github.com/secrethub/secrethub-cli/releases/download/v0.41.2/secrethub-v0.41.2-darwin-amd64.tar.gz
+export SECRETHUB_CLI_VERSION=0.41.0
+# Use [export SECRETHUB_OS=linux] instead of [export SECRETHUB_OS=darwin] for
+# most of GNU/Linux Distribution that is not Mac OS.
+export SECRETHUB_OS=darwin
+export SECRETHUB_CPU_ARCH=amd64
 
 
-* initialize the SSH Secrets for CI CD :
+curl -LO https://github.com/secrethub/secrethub-cli/releases/download/v${SECRETHUB_CLI_VERSION}/secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB_OS}-${SECRETHUB_CPU_ARCH}.tar.gz
+
+sudo mkdir -p /usr/local/bin
+sudo mkdir -p /usr/local/secrethub/${SECRETHUB_CLI_VERSION}
+sudo tar -C /usr/local/secrethub/${SECRETHUB_CLI_VERSION} -xzf secrethub-v${SECRETHUB_CLI_VERSION}-${SECRETHUB_OS}-${SECRETHUB_CPU_ARCH}.tar.gz
+
+sudo ln -s /usr/local/secrethub/${SECRETHUB_CLI_VERSION}/bin/secrethub /usr/local/bin/secrethub
+
+secrethub --version
+```
+
+#### Initialize the SSH Secrets for CI / CD
 
 ```bash
 # --
@@ -129,10 +152,19 @@ secrethub org init ${SECRETHUB_ORG}
 secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
 
 
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/ssh"
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh"
 
 
 ssh-keygen -t rsa -b 4096 (TO FINISH)
+
+export LOCAL_SSH_PUBKEY=~/.ssh/vm7/id_rsa.pub
+export LOCAL_SSH_PRVIKEY=~/.ssh/vm7/id_rsa
+
+
+
+secrethub write --in-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
+secrethub write --in-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
+
 
 ```
 
