@@ -1,11 +1,24 @@
-# Deployment : dev repos Pipeline Definition
+# Gravitee CI CD Orchestrator Circle CI Integration
+
+The `Gravitee CI CD Orchestrator` relies a lot on Circle CI, to run most of its operations.
+
+The integration setup between the `Gravitee CI CD Orchestrator` and Circle CI, most consists of
+the following steps :
+
+*
+* For each Gravitee.io dev repo, you must _manually_ "setup to start building" each of them in the Cirlce CI Web UI
+
+
+
+
+
+
+
+## Automated Deployment of dev repos Pipeline Definition
 
 In this folder, is versioned the standard operation which consists in
 deploying the `.circleci/config.yml` Circle CI Pipeline Definition to all
 Gravitee Software Development git repositories.
-
-
-## How to use
 
 What is below called a Gravitee.io dev repo, is  :
 * a git repository in the https://github.com/gravitee-io/ Github Organization
