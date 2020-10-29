@@ -8,7 +8,7 @@ the following steps :
 * Run the [Automated Deployment of dev repos Pipeline Definition](#automated-deployment-of-dev-repos-pipeline-definition) :
   * This will produce a `consolidated-git-repos-uris.list` file listing all github.com repositories the `Gravitee CI CD Orchestrator` will control.
 * For each Gravitee.io dev repo, listed in the `consolidated-git-repos-uris.list` file, you must _manually_ "setup to start building" each of them in the Cirlce CI Web UI :
-  * As of `2020`, Circle CI does not provide any mean to auomate this operation
+  * As of `2020`, Circle CI does not provide any mean to automate this operation
   * If any Circle CI pipeline keeps running, at this stage, manually cancel its execution.
 * Finally, you will run the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines) :
   * Every Circle CI Pipeline will git clone the source code of the github git repository it stands for.
