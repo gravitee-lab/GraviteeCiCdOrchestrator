@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ "x${CCI_TOKEN}" == "x" ]; then
+  echo "[$0] You did not set the [CCI_TOKEN] env. var."
+  echo "     You must set the [CCI_TOKEN] env. var. to the value of a "
+  echo "     valid Circle CI Token, required to setup all Deploy Keys"
+  exit 1
+fi;
+
 export GITHUB_ORG="gravitee-io"
 # on gavitee-lab org, for tests
 # comment the line below, to consolidate from "gavitee-io" org
@@ -21,17 +28,11 @@ export GITHUB_ORG="gravitee-lab"
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
-#      RSA Key Pair to use for Github SSH Service     #
+#      Deploy Keys for Github SSH Service     #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 
-if [ "x${CCI_TOKEN}" == "x" ]; then
-  echo "[$0] You did not set the [CCI_TOKEN] env. var."
-  echo "     You must set the [CCI_TOKEN] env. var. to the value of a "
-  echo "     valid Circle CI Token, required to setup all Deploy Keys"
-  exit 1
-fi;
 
 export JSON_PAYLOAD="{
     \"type\": \"deploy-key\"
