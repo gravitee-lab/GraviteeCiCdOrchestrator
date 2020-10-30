@@ -106,7 +106,7 @@ secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
 export HUMAN_NAME=jblasselle
 secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci"
 
-export MY_CCI_USER_TOKEN=<YOU TOKEN VALUE>
+export MY_CCI_USER_TOKEN=<YOUR TOKEN VALUE>
 echo "${MY_CCI_USER_TOKEN}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token"
 
 ```
@@ -125,18 +125,43 @@ git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
 
-export GITHUB_ORG="gravitee-io"
+export GITHUB_ORG="gravitee-lab"
 export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 # Generate the [consolidated-git-repos-uris.list]
 ./shell/consolidate-dev-repos-inventory.sh
 
-# --
-# ENV. VARS
 SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
 SECRETHUB_REPO=cicd
 
-export PRIVATE_SSH_KEY=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/ssh")
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export GITHUB_ORG="gravitee-lab"
+
+export JSON_PAYLOAD="{
+    \"type\": \"deploy-key\"
+}"
+
+
+while read REPO_URL; do
+  # echo "${REPO_URL}" | awk -F '/' '{print $4}'
+  echo "# -------------------------------------------------- #"
+  echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
+  echo "# -------------------------------------------------- #"
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
+  # curl -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  echo "# -------------------------------------------------- #"
+  # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+done <./consolidated-git-repos-uris.list
+
+# --
+# ENV. VARS
+# SECRETHUB_ORG=gravitee-lab
+# SECRETHUB_ORG=gravitee-io
+# SECRETHUB_REPO=cicd
+
+# export PRIVATE_SSH_KEY=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/ssh")
 
 # and then use Circle CI API v2 to setup the SSH private key for
 # each Pipeline of each github repo listed in the [consolidated-git-repos-uris.list]
