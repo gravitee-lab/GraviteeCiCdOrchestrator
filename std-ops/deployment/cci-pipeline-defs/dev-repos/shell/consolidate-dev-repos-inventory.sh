@@ -14,7 +14,7 @@ export SCOPE_FILES_DIR=${SCOPE_FILES_DIR:-"${OPS_DIR}/inventory"}
 # the 'release repo' (https://github.com/${GITHUB_ORG}/release) :
 # - One file per git branch on the release repo : [repos-scope.${RELEASE_BRANCH}.list]
 # - each [repos-scope.${RELEASE_BRANCH}.list] will contain the list of all github git repos, potentially involved in each release
-# -
+# - and fianlly merge all listed git repositories into one file, [${OPS_DIR}/consolidated-git-repos-uris.list]
 # ----
 
 mkdir -p ${OPS_DIR}/inventory

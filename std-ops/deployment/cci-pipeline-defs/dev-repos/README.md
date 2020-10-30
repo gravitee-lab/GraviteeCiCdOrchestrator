@@ -35,7 +35,7 @@ What is below called a Gravitee.io dev repo, is  :
 To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you must :
 
 * Edit `<THIS GIT REPO ROOT>/std-ops/deployment/cci-pipeline-defs/dev-repos/.circleci/config.yml` file, which contains the Circle CI Pipeline Definition to deploy to all Gravitee.io dev repos : and git commit and push it, with a new release version number.
-* Execute the below commands, to
+* Execute the below commands, to :
   * consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will just generate files, used in the next operation)
   * and execute the deployment
 
@@ -84,6 +84,35 @@ export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.
 
 ## Automated Ssh Key Setup of Pipelines
 
+* First, go to the Circle CI Web UI, create a Token from the User Settings Menu, and save it as a secret to secrethub like this :
+
+```bash
+# --
+# ENV. VARS
+SECRETHUB_ORG=gravitee-lab
+# SECRETHUB_ORG=gravitee-io
+SECRETHUB_REPO=cicd
+
+secrethub org init ${SECRETHUB_ORG}
+secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
+
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+#   Circle CI Token to auth to the Circle CI API v2   #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+export HUMAN_NAME=jblasselle
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci"
+
+export MY_CCI_USER_TOKEN=<YOU TOKEN VALUE>
+echo "${MY_CCI_USER_TOKEN}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token"
+
+```
+
+* Then you will use your Circle CI User Token, and your secrethub user token, to setup the SSH Key for all git repositories listed in the generated `consolidated-git-repos-uris.list` file :
+
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
 export GIO_ORCHESTRATOR_VERSION=0.0.4
@@ -95,6 +124,11 @@ cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
+
+export GITHUB_ORG="gravitee-io"
+export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+# Generate the [consolidated-git-repos-uris.list]
+./shell/consolidate-dev-repos-inventory.sh
 
 # --
 # ENV. VARS
@@ -108,6 +142,7 @@ export PRIVATE_SSH_KEY=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/grav
 # each Pipeline of each github repo listed in the [consolidated-git-repos-uris.list]
 
 ```
+
 
 ## Secret Management and SSH Keys for Circle CI Pipelines
 
@@ -141,8 +176,24 @@ secrethub --version
 
 Now that you have secrethub CLI installed, go to [this page](https://github.com/gravitee-io/kb/wiki/Secrets-Everywhere#the-root-secret) to create your secrethub user, and do not forget to save the rrot secret to `Keypass2`
 
+Once your secrethub user is created, the `secrethub account inspect` command will allow you to check your user main informations. For example, my secrethub user is :
+
+```bash
+$ secrethub account inspect
+{
+    "Username": "graviteebot",
+    "FullName": "jean-baptiste-lasselle",
+    "Email": "jean-baptiste.lasselle@graviteesource.com",
+    "EmailVerified": true,
+    "CreatedAt": "2020-08-05T20:42:18+02:00",
+    "PublicAccountKey": "LS0tLS1CRUdJTiBSU0EgUFVCTElDIEtFWS0tLS0tCk1JSUNJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBZzhBTUlJQ0NnS0NBZ0VBcDNJMEhRQTNQVmJvWTkzOWg3MUkKV2Q4bnpBSmVaYklTYXhSM05VVldGMXBLWHB4cFRYODZacXZqZW4yQU9YdERhRUFEblZjTDJOMG1GT0E0cTlEMApFUnd0eSswNlVFTnMwYzNucnA4SkpyT3NaNUFTTklDZnFaVWw1ZllMYXR1L3VBNmZhc3lSbjVBakF6aGwrZ2ErCjFIRDBiVDRKUDJQREJHOXEzdmRMbU5lM0NNb0JpUUVvVWJnTC93SUFXSmVGR1VBUVNuTklvakNWMWFoTUgzMlgKM3pwOXpBblNFaE5yK21TNWFlWitITVNEYU52UmJTV2F6azhrS3l6ZGpPS2ZYMW1LaWJwVVpQUE9BWGJIdk9RegoyZGNmVkU4aXU4cW0rMFBPY2pmcThFNWxLNVoyalo2SnlyYzVSdkpaQjVldnRtNUpha1VIRHRyRjhkU1k1RkNVCmhabTJBRFRoWXVMUmh6aEFObFc1U241UEtHWVR4TXhuL0lkNUV1S2ZDYkU3dlBVTnBNNjh5c0hKdkxidjBwbHcKZkhHbnBhc3ZXMmlIVjUxblRjY3dwem8zWVhuL09Zdk80RGJaMW56b3dlR0N5dy82VzZRZnpoV25PMURlTG5QdwoyUTBpbVhIRHB5MUV4QUFWQ2hldllDUjh5cW0yVnpXNVlTRzdieDFzOVpNeHRsOGhyT2NzZndVNDh1RlBPSkdjCjlDdEk1WmdnV2VWN2lUdVdrQXBFVDdnUXkrOTN6SDBqS2FEV0w3MEl6WXV1QjNwTHZ3TkwySGhyKzNIYjlQUmYKbkdwdXBOQWZvYVFQOUlUY3NmQUlwR2x4blczYmI5TjJRY1gwYklmdVhzbThhK0VWM2g0UUNxL2dOYXpPdUZvcQpoQjh2c3ovWjVRYStmQVpsQ2paSzR4OENBd0VBQVE9PQotLS0tLUVORCBSU0EgUFVCTElDIEtFWS0tLS0tCg=="
+}
+```
 
 #### Initialize the SSH Secrets for CI / CD
+
+
+* Using your Secrethub user, and the below commands, you will create two secrethub secrets, for the RSA Key Pair which will be used by Circle CI Pipelines to git clone over SSH
 
 ```bash
 # --
@@ -155,14 +206,20 @@ secrethub org init ${SECRETHUB_ORG}
 secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
 
 
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+#      RSA Key Pair to use for Github SSH Service     #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
 secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh"
 
-# --- #
-# RSA Key Pair to use for Github SSH Service
-# --- #
 export LOCAL_SSH_PUBKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa.pub
 export LOCAL_SSH_PRVIKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa
+# --- #
 # https://github.com/graviteeio is the Github User
+# --- #
 export ROBOTS_ID=graviteeio
 
 export LE_COMMENTAIRE_DE_CLEF="[$ROBOTS_ID]-cicd-bot@github.com"
@@ -182,7 +239,24 @@ sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
 secrethub write --in-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
 secrethub write --in-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
 
+secrethub account inspect
 
+# --- #
+```
+
+
+
+
+
+
+
+
+* Test Retrieving the RSA Key Pair on another machine, with another secrethub user :
+
+```bash
+export PATH_ONMY_MACHINE=${HOME}/.ssh.cicd.graviteebot
+secrethub read --out-file "${PATH_ONMY_MACHINE}/id_rsa.pub" "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
+secrethub read --out-file "${PATH_ONMY_MACHINE}/id_rsa" "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
 ```
 
 
