@@ -38,7 +38,7 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
 * Execute the below commands, to :
   * consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will just generate files, used in the next operation)
   * execute the deployment the pipeline defintion
-  * and create a Github Deploy Key for each Gravitee.io dev repos Circle CI Project
+  * and create a Github Deploy Key for each Gravitee.io dev repos Circle CI Project :  these deploy Keys are used in Circle CI Pipeline to `git clone` over ssh.
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
@@ -83,9 +83,13 @@ export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.
 
 ```
 
-## Automated Ssh Key Setup of Pipelines
+## Automated Github Deploy Keys Setup of Pipelines
 
-The deployment
+This section explains how to automatically re-setup Github Deploy Keys for all Gravitee.io dev repositories.
+
+This is useful because those deploy keys often become invalid, or are deleted.
+
+
 
 * First, go to the Circle CI Web UI, create a Token from the User Settings Menu, and save it as a secret to secrethub like this :
 
@@ -162,7 +166,7 @@ done <./consolidated-git-repos-uris.list
 ```
 
 
-## Secret Management and SSH Keys for Circle CI Pipelines
+## Secret Management for Circle CI Pipelines
 
 This section is useful for the Owner of the `https://github.com/${GITHUB_ORG}` Github Organization who
 will setup a secret used in the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines)
@@ -208,6 +212,7 @@ $ secrethub account inspect
 }
 ```
 
+<!--
 #### Initialize the SSH Secrets for CI / CD
 
 
@@ -264,7 +269,7 @@ secrethub account inspect
 
 
 
-
+-->
 
 
 
