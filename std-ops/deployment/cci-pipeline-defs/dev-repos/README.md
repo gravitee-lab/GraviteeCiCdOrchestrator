@@ -37,7 +37,8 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
 * Edit `<THIS GIT REPO ROOT>/std-ops/deployment/cci-pipeline-defs/dev-repos/.circleci/config.yml` file, which contains the Circle CI Pipeline Definition to deploy to all Gravitee.io dev repos : and git commit and push it, with a new release version number.
 * Execute the below commands, to :
   * consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will just generate files, used in the next operation)
-  * and execute the deployment
+  * execute the deployment the pipeline defintion
+  * and create a Github Deploy Key for each Gravitee.io dev repos Circle CI Project
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
@@ -83,6 +84,8 @@ export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.
 ```
 
 ## Automated Ssh Key Setup of Pipelines
+
+The deployment
 
 * First, go to the Circle CI Web UI, create a Token from the User Settings Menu, and save it as a secret to secrethub like this :
 
@@ -137,6 +140,7 @@ SECRETHUB_REPO=cicd
 export HUMAN_NAME=jblasselle
 export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 export GITHUB_ORG="gravitee-lab"
+
 
 export JSON_PAYLOAD="{
     \"type\": \"deploy-key\"

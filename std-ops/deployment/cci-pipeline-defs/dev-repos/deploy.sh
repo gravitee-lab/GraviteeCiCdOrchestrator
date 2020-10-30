@@ -17,3 +17,35 @@ export GITHUB_ORG="gravitee-io"
 export GITHUB_ORG="gravitee-lab"
 
 ./shell/deploy-all-pipeline-defs.sh
+
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+#      RSA Key Pair to use for Github SSH Service     #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+
+if [ "x${CCI_TOKEN}" == "x" ]; then
+  echo "[$0] You did not set the [CCI_TOKEN] env. var."
+  echo "     You must set the [CCI_TOKEN] env. var. to the value of a "
+  echo "     valid Circle CI Token, required to setup all Deploy Keys"
+  exit 1
+fi;
+
+export JSON_PAYLOAD="{
+    \"type\": \"deploy-key\"
+}"
+
+
+while read REPO_URL; do
+  # echo "${REPO_URL}" | awk -F '/' '{print $4}'
+  echo "# ------------------------------------------------------------ #"
+  echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
+  echo "# ------------------------------------------------------------ #"
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
+  # curl -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  echo "# ------------------------------------------------------------ #"
+  # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+done <./consolidated-git-repos-uris.list
