@@ -24,6 +24,7 @@ Left todos :
 # --
 # ENV. VARS
 export SECRETHUB_ORG=gravitee-io
+export SECRETHUB_ORG=graviteeio
 export SECRETHUB_ORG=gravitee-lab
 export SECRETHUB_REPO=cicd
 
@@ -46,7 +47,18 @@ echo "Beware : you will see the service token only once, then you will not ever 
 # saving service account token
 secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account"
 cat ./.the-created.service.token | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account/token"
+
+
+# --- CREATE THE CIRCLE CI SECRET
+echo "<circleci user token value>" > ./.circleci.token
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api"
+cat ./.circleci.token | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token"
+
 ```
+
+* `secrethub signup`
+* create secrethub org `graviteeio`
+* `secrethub org invite graviteeio <username>`
 
 
 * Using your Secrethub user, and the below commands, you will create the secrethub secrets, for the Graviteebot
