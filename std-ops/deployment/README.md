@@ -57,17 +57,29 @@ echo "${GIT_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/g
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 
-export GRAVITEEBOT_GPG_USERNAME="Graviteebot.io <graviteeio-bot@gravitee.io>"
-export GRAVITEEBOT_GPG_USERNAME="Jean-Baptiste Lasselle <jean.baptiste.lasselle@gmail.com>"
+export GRAVITEEBOT_GPG_USER_NAME="Jean-Baptiste Lasselle"
+export GRAVITEEBOT_GPG_USER_EMAIL="jean.baptiste.lasselle@gmail.com"
+
+export GRAVITEEBOT_GPG_USER_NAME="Graviteebot.io"
+export GRAVITEEBOT_GPG_USER_EMAIL="graviteeio-bot@gravitee.io"
+
+export GRAVITEEBOT_GPG_USER_NAME="Graviteelab-bot.io"
+export GRAVITEEBOT_GPG_USER_EMAIL="graviteelab-bot@graviteelab.io"
+
+
+read -p "Create a GPG KEY for the Gravitee.io bot with username [${GRAVITEEBOT_GPG_USER_NAME}] and email [${GRAVITEEBOT_GPG_USER_EMAIL}], then hit the enter Key to proceed secrets initalization"
+
+export GPG_SIGNING_KEY=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+echo "GPG_SIGNING_KEY=${GPG_SIGNING_KEY}"
+
 export GPG_PUB_KEY_FILE="./graviteebot.gpg.pub.key"
 export GPG_PRIVATE_KEY_FILE="./graviteebot.gpg.priv.key"
-export GPG_SIGNING_KEY=$(gpg --list-signatures -a "Jean-Baptiste Lasselle <jean.baptiste.lasselle@gmail.com>" | grep 'sig' | tail -n 1 | awk '{print $2}')
 
-gpg --export -a "${GRAVITEEBOT_GPG_USERNAME}" | tee ${GPG_PUB_KEY_FILE}
+gpg --export -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PUB_KEY_FILE}
 # -- #
 # Will be interactive for private key : you
 # will have to type your GPG password
-gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USERNAME}" | tee ${GPG_PRIVATE_KEY_FILE}
+gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PRIVATE_KEY_FILE}
 
 secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/pub_key"
 secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/private_key"
