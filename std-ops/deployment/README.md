@@ -5,15 +5,22 @@
 
 Left todos :
 
-* release the `gravitee-io/gravitee@dev:1.0.1` : test it in `gravitee-lab` for last ops in mvn release
-* create for org gravitee-io , the Circle CI _context_ `cicd-orchestrator`, and in that context :
-  * create env. var `SECRETHUB_CREDENTIAL` (valeur du token secrethub service account)
-  * create env.var. `GRVT33_GH_ORG` with value `gravitee-io`
+* release the `gravitee-io/gravitee@dev:1.0.1` : test it in `gravitee-lab` for last ops in mvn release, then validate pull request 4
+* deploy to gravitee-io the pipeline `.circleci/config.yml` to all gravitee dev repos
+* setup run environement for the `Gravitee CI CD Orchestrator` in https://github.com/gravitee-io :
+  * in https://github.com/gravitee-io/release, git commit and push [the `.circleci/config.yml` pipeline definition](./cci-pipeline-defs/release/.circleci/config.yml) on all `*.*.x` Branches and master : doing that with
+  * create for org gravitee-io , the Circle CI _context_ `cicd-orchestrator`, and in that context :
+    * create env. var `SECRETHUB_CREDENTIAL` (valeur du token secrethub service account)
+    * create env.var. `GRVT33_GH_ORG` with value `gravitee-io`
 
 
 
 
 #### Initialize the Secrets
+
+
+* Using your Secrethub user, and the below commands, you will create the secrethub service account to integrate Circle Ci ans secrethub :
+
 
 
 * Using your Secrethub user, and the below commands, you will create the secrethub secrets, for the Graviteebot
