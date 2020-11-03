@@ -107,27 +107,21 @@ setupSSHGithubUser () {
 setupCircleCIConfig () {
   export THIS_REPO_URL=$1
   export THIS_REPO_NAME=$(echo ${THIS_REPO_URL} | awk -F '/' '{print $NF}')
-  cd ${OPS_HOME}/gitops/
-  echo "[setupCircleCIConfig => ] processing THIS_REPO_URL=[${THIS_REPO_URL}]"
-  echo "[setupCircleCIConfig => ] processing THIS_REPO_NAME=[${THIS_REPO_NAME}]"
-  git clone ${THIS_REPO_URL}
+  echo "[$0] automatic CICD test setup : adding circleci to run the [Gravitee CI CD Orchestrator] "
+  git clone ${THIS_REPO_URL} ${OPS_HOME}/gitops/
   if [ "$?" == "0" ]; then
     # then the git clone succeeded (the git repo does exists)
-    cd ${OPS_HOME}/gitops/${THIS_REPO_NAME}
-    git branch -a | grep -E '*.*.x$' | awk -F '/' '{print $NF}' > ${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list
-    echo "master" >> ${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list
+    cd ${OPS_HOME}/gitops/
     while read THIS_GIT_BRANCH; do
       git checkout ${THIS_GIT_BRANCH}
-      mkdir -p ${OPS_HOME}/gitops/${THIS_REPO_NAME}/.circleci/
-      cp -f ${OPS_HOME}/.circleci/config.yml ${OPS_HOME}/gitops/${THIS_REPO_NAME}/.circleci/
-      export GIT_COMMIT_MESSAGE=${GIT_COMMIT_MESSAGE:-"[$0] automatic CICD test setup : adding circleci git config"}
+      mkdir -p ${OPS_HOME}/gitops/.circleci/
+      cp -f ${OPS_HOME}/.circleci/config.yml ${OPS_HOME}/gitops/.circleci/
+      export GIT_COMMIT_MESSAGE="[$0] automatic CICD test setup : adding circleci to run the [Gravitee CI CD Orchestrator] "
       git add --all && git commit -m "${GIT_COMMIT_MESSAGE}" && git push -u origin HEAD
-    done <${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list
+    done <${OPS_HOME}/gitops/release-branches.list
   else
     echo "[setupCircleCIConfig => ] the [${THIS_REPO_URL}] git repo does not exist, skipping any git operation"
   fi;
-
-  cd ${OPS_HOME}/gitops/
 }
 
 
@@ -147,6 +141,11 @@ setupSSHGithubUser
 
 rm -fr ${OPS_HOME}/gitops/
 mkdir -p ${OPS_HOME}/gitops/
+
+echo "${RELEASE_BRANCHES}" | awk -F ',' '{for (i = 0; i < NF + 1; i++) {print $i}}' | grep -v ',' > ${OPS_HOME}/gitops/release-branches.list.raw
+while read line; do
+  echo "$line" | awk '{print $1}' | tee -a ${OPS_HOME}/gitops/release-branches.list
+done <${OPS_HOME}/gitops/release-branches.list.raw
 
 # - Then deploy Circle CI Pipeline defintion to each git repo
 setupCircleCIConfig git@github.com:${GITHUB_ORG}/release

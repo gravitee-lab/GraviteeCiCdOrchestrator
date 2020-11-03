@@ -56,8 +56,6 @@ restoreSSHGraviteeBotSSHKey () {
 export GIT_SSH_COMMAND='ssh -i ~/.ssh.cicd.graviteebot/id_rsa'
 export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
 
-# (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
-export GIT_COMMIT_MESSAGE="Deploying Gravitee.io release Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
 export GIT_USER_SIGNING_KEY=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/signing_key")
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
@@ -69,6 +67,7 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # the https://github.com/${GITHUB_ORG}/release
 # list must be comma-separated, white spaces are trimmed
 # --- #
+export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x , master  '
 ./deploy.sh
 
 ```
