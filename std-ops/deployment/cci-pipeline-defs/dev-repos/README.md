@@ -44,7 +44,7 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
-export GIO_ORCHESTRATOR_VERSION=feature/std_ops_deployment
+export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
