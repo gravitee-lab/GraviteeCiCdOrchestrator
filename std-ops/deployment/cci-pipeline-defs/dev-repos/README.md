@@ -125,7 +125,7 @@ https://github.com/gravitee-io/graviteeio-access-management
 Running the deployement for the diff list :
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real-diff
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
