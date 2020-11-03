@@ -10,10 +10,8 @@ Left todos :
 * setup run environement for the `Gravitee CI CD Orchestrator` in https://github.com/gravitee-io :
   * in https://github.com/gravitee-io/release, git commit and push [the `.circleci/config.yml` pipeline definition](./cci-pipeline-defs/release/.circleci/config.yml) on all `*.*.x` Branches and master : doing that with
   * create for org gravitee-io , the Circle CI _context_ `cicd-orchestrator`, and in that context :
-    * create env. var `SECRETHUB_CREDENTIAL` (valeur du token secrethub service account)
+    * create env. var `SECRETHUB_CREDENTIAL` (with value of the secrethub service account token created [here](#initialize-the-secrets) )
     * create env.var. `GRVT33_GH_ORG` with value `gravitee-io`
-
-
 
 
 #### Initialize the Secrets
@@ -21,6 +19,34 @@ Left todos :
 
 * Using your Secrethub user, and the below commands, you will create the secrethub service account to integrate Circle Ci ans secrethub :
 
+
+```bash
+# --
+# ENV. VARS
+export SECRETHUB_ORG=gravitee-io
+export SECRETHUB_ORG=gravitee-lab
+export SECRETHUB_REPO=cicd
+
+secrethub org init ${SECRETHUB_ORG}
+secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
+# --- #
+# created a service account
+secrethub service init "${SECRETHUB_ORG}/${SECRETHUB_REPO}" --description "Circle CI Gravitee.io Bot Service Account for Gravitee CI CD" --permission read | tee ./.the-created.service.token
+secrethub service ls "${SECRETHUB_ORG}/${SECRETHUB_REPO}"
+echo "Beware : you will see the service token only once, then you will not ever be able to see it again, don'tloose it (or create another)"
+# --- #
+# and give the service accoutn access to all directories and secrets in the given repo, with the option :
+# --- #
+# finally, in Circle CI, I created a 'cicd-orchestrator' context in the [gravitee-lab] organization
+# dedicated to the Gravitee Ci CD Orchestrator application
+# and in that 'cicd-orchestrator' Circle CI context, I set the 'SECRETHUB_CREDENTIAL' env. var. with
+# value the token of the service account I just created
+
+
+# saving service account token
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account"
+cat ./.the-created.service.token | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account/token"
+```
 
 
 * Using your Secrethub user, and the below commands, you will create the secrethub secrets, for the Graviteebot
