@@ -32,7 +32,7 @@ jobs:
       # resource_class: medium
       # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
-      DESIRED_DOCKER_TAG: stable-latest
+      GITHUB_ORG: ${GRVT33_GH_ORG}
     steps:
       - checkout
       - secrethub/install
@@ -49,9 +49,10 @@ jobs:
       - run: # print the name of the branch we're on
           name: "Running the Gio CICD Orchestrator as docker container"
           command: |
-                    echo "Checking local SGF : "
+                    echo "Checking pipeline env. : "
                     ls -allh
-
+                    echo "GRVT33_GH_ORG=${GRVT33_GH_ORG}"
+                    echo "GITHUB_ORG=${GITHUB_ORG}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
@@ -61,7 +62,7 @@ jobs:
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
                     export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
-                    docker run --name orchestrator ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_release --dry-run
+                    docker run --name orchestrator --env GH_ORG=${GITHUB_ORG} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_release --dry-run
                     exit "$?"
   run_orchestrator:
     machine:

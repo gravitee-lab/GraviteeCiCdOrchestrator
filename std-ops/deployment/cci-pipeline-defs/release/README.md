@@ -1,44 +1,8 @@
 # Gravitee CI CD Orchestrator Circle CI Integration
 
-The `Gravitee CI CD Orchestrator` relies a lot on Circle CI, to run most of its operations.
-
-The integration setup between the `Gravitee CI CD Orchestrator` and Circle CI, most consists of
-the following steps :
-
-* Run the [Automated Deployment of dev repos Pipeline Definition](#automated-deployment-of-dev-repos-pipeline-definition) :
-  * This will produce a `consolidated-git-repos-uris.list` file listing all github.com repositories the `Gravitee CI CD Orchestrator` will control.
-* For each Gravitee.io dev repo, listed in the `consolidated-git-repos-uris.list` file, you must _manually_ "setup to start building" each of them in the Cirlce CI Web UI :
-  * As of `2020`, Circle CI does not provide any mean to automate this operation
-  * If any Circle CI pipeline keeps running, at this stage, manually cancel its execution.
-* Finally, you will run the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines) :
-  * Every Circle CI Pipeline will git clone the source code of the github git repository it stands for.
-  * and to run the git clone cloen command, Circle Ci mandatorily uses ssh, and therefore needs a private SSH Key
-  * **before running the [Automated Ssh Key Setup of Pipelines](#automated-ssh-key-setup-of-pipelines)**, an `Owner` of the `https://github.com/${GITHUB_ORG}` Github Organization must have [setup the SSH Secrets]()
 
 
 
-
-
-
-
-
-## Automated Deployment of dev repos Pipeline Definition
-
-In this folder, is versioned the standard operation which consists in
-deploying the `.circleci/config.yml` Circle CI Pipeline Definition to all
-Gravitee Software Development git repositories.
-
-What is below called a Gravitee.io dev repo, is  :
-* a git repository in the https://github.com/gravitee-io/ Github Organization
-* in which is versioned the source code of any https://gravitee.io software component
-
-To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you must :
-
-* Edit `<THIS GIT REPO ROOT>/std-ops/deployment/cci-pipeline-defs/dev-repos/.circleci/config.yml` file, which contains the Circle CI Pipeline Definition to deploy to all Gravitee.io dev repos : and git commit and push it, with a new release version number.
-* Execute the below commands, to :
-  * consolidate the set of all Gravitee.io dev repos to which the pipeline defintion must be deployed (this will just generate files, used in the next operation)
-  * execute the deployment the pipeline defintion
-  * and create a Github Deploy Key for each Gravitee.io dev repos Circle CI Project :  these deploy Keys are used in Circle CI Pipeline to `git clone` over ssh.
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
@@ -75,10 +39,9 @@ export GIT_USER_EMAIL='jean.baptiste.lasselle@gmail.com'
 # (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
 export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
 # (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
-export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
+export GIT_COMMIT_MESSAGE="Deploying Gravitee.io release Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
-
 
 
 # --- #
@@ -86,7 +49,6 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # the https://github.com/${GITHUB_ORG}/release
 # list must be comma-separated, white spaces are trimmed
 # --- #
-export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 ./deploy.sh
 
 ```
