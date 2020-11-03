@@ -146,6 +146,7 @@ cp ${REPOS_URL_LIST_FILE} ${OPS_HOME}/${BARE_FILENAME}.ssh
 # WORKING TESTS ON GRAVITEE-LAB , NOT GRAVITEE-IO !!! BEWARE !!! => never the less,there is a local backup made locally, just in case
 ls -allh ${OPS_HOME}/${BARE_FILENAME}.ssh
 sed -i "s#https://github.com/gravitee-io#git@github.com:gravitee-lab#g" ${OPS_HOME}/${BARE_FILENAME}.ssh
+sed -i "s#https://github.com/gravitee-lab#git@github.com:gravitee-lab#g" ${OPS_HOME}/${BARE_FILENAME}.ssh
 echo "---"
 echo "-- Circle CI Pipeline defintion will be deployed to the following git repos : "
 # echo "SECURITY CHECK NO GRAVITEE-IO in \${OPS_HOME}/\${BARE_FILENAME}.ssh=[${OPS_HOME}/${BARE_FILENAME}.ssh] : "
@@ -155,8 +156,8 @@ echo "---"
 echo " IN CASE ANY PROBLEM, A BACK-UP WAS PREPARED ON THIS MACHINE [$(hostname)] in the [${OPS_HOME}/gitops.backup/] Folder "
 echo "---"
 
-echo "JBL DEBUG"
-exit 0
+# echo "JBL DEBUG"
+# exit 0
 
 # echo "---"
 # echo "  REPOS_URL_LIST_FILE=[${REPOS_URL_LIST_FILE}]"
