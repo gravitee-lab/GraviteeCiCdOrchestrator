@@ -7,7 +7,7 @@ if [ "x${CCI_TOKEN}" == "x" ]; then
   exit 1
 fi;
 
-export GITHUB_ORG=${GITHUB_ORG:"gravitee-io"}
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-io"}
 # on gavitee-lab org, for tests
 # comment the line below, to consolidate from "gavitee-io" org
 # export GITHUB_ORG="gravitee-lab"
@@ -18,10 +18,10 @@ export GITHUB_ORG=${GITHUB_ORG:"gravitee-io"}
 # the "./inventory" folder.
 # that is, the "std-ops/deployment/cci-pipeline-defs/dev-repos/inventory" folder.
 
-export GITHUB_ORG=${GITHUB_ORG:"gravitee-io"}
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-io"}
 # on "gavitee-lab" org, for tests
 # comment the line below, to deploy to "gavitee-io" org
-export GITHUB_ORG=${GITHUB_ORG:"gravitee-lab"}
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
 
 ./shell/deploy-all-pipeline-defs.sh
 
