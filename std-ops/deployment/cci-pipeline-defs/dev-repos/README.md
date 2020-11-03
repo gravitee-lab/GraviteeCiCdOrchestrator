@@ -91,6 +91,51 @@ export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.
 
 ```
 
+* To run the same `.circleci/config.yml` Pipeline definition deployment on a provided, arbitratry, list of Github git repos :
+
+```bash
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real-diff
+export GIO_ORCHESTRATOR_VERSION=0.0.4
+# latest commit on develop branch is used to test the automation
+export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
+mkdir -p ${A_FOLDER_OF_UR_CHOICE}
+git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
+cd ${A_FOLDER_OF_UR_CHOICE}
+git checkout ${GIO_ORCHESTRATOR_VERSION}
+cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
+export GITHUB_ORG="gravitee-io"
+export GITHUB_ORG="gravitee-lab"
+
+# --- #
+# Opional :
+# determines from which Github Org, data are consolidated (defaults to "gravitee-io" (the real org))
+# determines to which Github Org, Circle Ci Pipeline definition is deployed (defaults to "gravitee-lab" (the fake org))
+# export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
+# --- #
+# Those env. var. will be used to configure
+# your local Git for the deployment
+# --- #
+# (mandatory) The git user name to use, to configure git [git config --global user.name]
+export GIT_USER_NAME='Jean-Baptiste-Lasselle'
+# (mandatory) The git user eamil to use, to configure git [git config --global user.email]
+export GIT_USER_EMAIL='jean.baptiste.lasselle@gmail.com'
+# (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
+export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
+# (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
+export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
+export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config "
+# (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
+export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
+
+# --- #
+# provided-arbitratry-repos.list : must be a UTF-8 text file
+# provided-arbitratry-repos.list : each line must be the HTTP URI of a github repo
+# --- #
+./shell/deploy-repo-pipeline-def.sh ./shell/provided-arbitratry-repos.list
+```
+
+
 ## Hard listed repo list
 
 
@@ -122,7 +167,7 @@ https://github.com/gravitee-io/gravitee-ui-components
 https://github.com/gravitee-io/graviteeio-access-management
 ```
 
-Running the deployement for the diff list :
+Running the deployment for the diff list :
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real-diff
