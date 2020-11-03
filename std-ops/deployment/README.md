@@ -75,6 +75,8 @@ echo "GPG_SIGNING_KEY=${GPG_SIGNING_KEY}"
 export GPG_PUB_KEY_FILE="./graviteebot.gpg.pub.key"
 export GPG_PRIVATE_KEY_FILE="./graviteebot.gpg.priv.key"
 
+# --- #
+# saving
 gpg --export -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PUB_KEY_FILE}
 # -- #
 # Will be interactive for private key : you
@@ -84,6 +86,8 @@ gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER
 secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/pub_key"
 secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/private_key"
 
+echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/user_name"
+echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/user_email"
 echo "${GPG_SIGNING_KEY}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/signing_key"
 
 
