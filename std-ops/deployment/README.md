@@ -37,10 +37,10 @@ echo "Beware : you will see the service token only once, then you will not ever 
 # --- #
 # and give the service accoutn access to all directories and secrets in the given repo, with the option :
 # --- #
-# finally, in Circle CI, I created a 'cicd-orchestrator' context in the [gravitee-lab] organization
+# finally, in Circle CI, you created a 'cicd-orchestrator' context in the [gravitee-io] organization
 # dedicated to the Gravitee Ci CD Orchestrator application
-# and in that 'cicd-orchestrator' Circle CI context, I set the 'SECRETHUB_CREDENTIAL' env. var. with
-# value the token of the service account I just created
+# and in that 'cicd-orchestrator' Circle CI context, you set the 'SECRETHUB_CREDENTIAL' env. var. with
+# value the token of the service account you just created
 
 
 # saving service account token
