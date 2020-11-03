@@ -58,8 +58,86 @@ cat ./.circleci.token | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/grav
 
 * `secrethub signup`
 * create secrethub org `graviteeio`
-* `secrethub org invite graviteeio <username>`
+* Give Devops Team Leader JB read write permissions on all secrets in the Secrethub `${SECRETHUB_ORG}/${SECRETHUB_REPO}` secrethub repo :
 
+```bash
+
+export TEAM_MATE_SECRETHUB_USERNAME=<username>
+export SECRETHUB_ORG=graviteeio
+export SECRETHUB_REPO=cicd
+# invite into org
+secrethub org invite ${SECRETHUB_ORG} ${TEAM_MATE_SECRETHUB_USERNAME}
+# invite into repo
+secrethub org invite ${SECRETHUB_ORG}/${SECRETHUB_REPO} ${TEAM_MATE_SECRETHUB_USERNAME}
+# give permissions to ${TEAM_MATE_SECRETHUB_USERNAME} on the whole secrethub repo ${SECRETHUB_ORG}/${SECRETHUB_REPO}
+secrethub acl ${SECRETHUB_ORG}/${SECRETHUB_REPO} ${TEAM_MATE_SECRETHUB_USERNAME} write
+```
+
+* [x] `${TEAM_MATE_SECRETHUB_USERNAME}` Creates the secret file used by the `Gravitee CI CD Orchestrator`, containing the Circle CI Token to use to trigger Pipelines in the https://github.com/gravitee-io Github Org :
+
+```bash
+export CCI_SECRET_FILE=$PWD/.secrets.json
+export SECRETHUB_ORG=graviteeio
+export SECRETHUB_REPO=cicd
+
+export CIRCLECI_TOKEN=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token)
+
+echo "{" | tee -a ${CCI_SECRET_FILE}
+echo "  \"circleci\": {" | tee -a ${CCI_SECRET_FILE}
+echo "    \"auth\": {" | tee -a ${CCI_SECRET_FILE}
+echo "      \"username\": \"Graviteeio Bot\"," | tee -a ${CCI_SECRET_FILE}
+echo "      \"token\": \"${CIRCLECI_TOKEN}\"" | tee -a ${CCI_SECRET_FILE}
+echo "    }" | tee -a ${CCI_SECRET_FILE}
+echo "  }" | tee -a ${CCI_SECRET_FILE}
+echo "}" | tee -a ${CCI_SECRET_FILE}
+
+
+secrethub write --in-file ${CCI_SECRET_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/.secret.json"
+
+```
+* [ ] `${TEAM_MATE_SECRETHUB_USERNAME}` Changes the `.circleci/config.yml` defined for the `Gravitee CI CD Orchestrator` with the secret read :
+
+```bash
+secrethub read --out-file ${CCI_SECRET_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/.secret.json"
+
+```
+* [ ] `${TEAM_MATE_SECRETHUB_USERNAME}` git commit and push `.circleci/config.yml` on git branches :
+
+```bash
+- 1.20.x
+- 1.25.x
+- 1.29.x
+- 1.30.x
+- 3.0.0-beta
+- 3.0.x
+- 3.1.x
+- 3.2.x
+- master
+```
+
+* [ ] And `${TEAM_MATE_SECRETHUB_USERNAME}` triggers the the `Gravitee CI CD Orchestrator`, in the https://github.com/gravitee-io Github Org , with a `curl` :
+
+```bash
+export CCI_TOKEN=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token)
+export ORG_NAME="gravitee-io"
+export REPO_NAME="release"
+export BRANCH="master"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"dry_release\",
+    }
+
+}"
+
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline
+```
+
+
+#### More Secrets
 
 * Using your Secrethub user, and the below commands, you will create the secrethub secrets, for the Graviteebot
 
