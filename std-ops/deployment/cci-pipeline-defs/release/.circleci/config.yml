@@ -70,7 +70,7 @@ jobs:
       # resource_class: medium
       # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
-      DESIRED_DOCKER_TAG: stable-latest
+      GITHUB_ORG: ${GRVT33_GH_ORG}
     steps:
       - checkout
       - secrethub/install

@@ -5,7 +5,10 @@
 
 Left todos :
 
-* release the `gravitee-io/gravitee@dev:1.0.1`
+* release the `gravitee-io/gravitee@dev:1.0.1` : test it in `gravitee-lab` for last ops in mvn release
+* create for org gravitee-io , the Circle CI _context_ `cicd-orchestrator`, and in that context :
+  * create env. var `SECRETHUB_CREDENTIAL` (valeur du token secrethub service account)
+  * create env.var. `GRVT33_GH_ORG` with value `gravitee-io`
 
 
 
