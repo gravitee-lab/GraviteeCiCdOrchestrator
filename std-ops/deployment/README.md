@@ -5,7 +5,7 @@
 
 Left todos :
 
-*
+* release the `gravitee-io/gravitee@dev:1.0.1`
 
 
 
@@ -39,8 +39,14 @@ secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 
-echo "GIT_USER_NAME" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/name"
-echo "GIT_USER_EMAIL" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/email"
+# --- #
+# https://github.com/graviteeio is the Github User of the Gravitee.io Bot
+# --- #
+export GIT_USER_NAME="graviteeio"
+export GIT_USER_EMAIL="graviteeio-bot@gravitee.io"
+
+echo "${GIT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/name"
+echo "${GIT_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/email"
 
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
@@ -51,8 +57,23 @@ echo "GIT_USER_EMAIL" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/grav
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 
-echo "GPG_PUB_KEY" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/pub_key"
-echo "GPG_PRIVATE_KEY" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/private_key"
+export GRAVITEEBOT_GPG_USERNAME="Graviteebot.io <graviteeio-bot@gravitee.io>"
+export GRAVITEEBOT_GPG_USERNAME="Jean-Baptiste Lasselle <jean.baptiste.lasselle@gmail.com>"
+export GPG_PUB_KEY_FILE="./graviteebot.gpg.pub.key"
+export GPG_PRIVATE_KEY_FILE="./graviteebot.gpg.priv.key"
+export GPG_SIGNING_KEY=$(gpg --list-signatures -a "Jean-Baptiste Lasselle <jean.baptiste.lasselle@gmail.com>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+
+gpg --export -a "${GRAVITEEBOT_GPG_USERNAME}" | tee ${GPG_PUB_KEY_FILE}
+# -- #
+# Will be interactive for private key : you
+# will have to type your GPG password
+gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USERNAME}" | tee ${GPG_PRIVATE_KEY_FILE}
+
+secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/pub_key"
+secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/private_key"
+
+echo "${GPG_SIGNING_KEY}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/signing_key"
+
 
 
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
@@ -65,11 +86,10 @@ echo "GPG_PRIVATE_KEY" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/gra
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 
 
-
 export LOCAL_SSH_PUBKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa.pub
 export LOCAL_SSH_PRVIKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa
 # --- #
-# https://github.com/graviteeio is the Github User
+# https://github.com/graviteeio is the Github User of the Gravitee.io Bot
 # --- #
 export ROBOTS_ID=graviteeio
 

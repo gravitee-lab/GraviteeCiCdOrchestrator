@@ -80,7 +80,6 @@ export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline co
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 
 
-
 # --- #
 # List of all git branches to work with, from
 # the https://github.com/${GITHUB_ORG}/release
