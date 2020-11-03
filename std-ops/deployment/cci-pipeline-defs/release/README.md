@@ -39,8 +39,23 @@ export GIT_USER_NAME='Jean-Baptiste-Lasselle'
 # (mandatory) The git user eamil to use, to configure git [git config --global user.email]
 export GIT_USER_EMAIL=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/email")
 export GIT_USER_EMAIL='jean.baptiste.lasselle@gmail.com'
+
+restoreSSHGraviteeBotSSHKey () {
+  export LOCAL_SSH_PUBKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa.pub
+  export LOCAL_SSH_PRVIKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa
+  mkdir -p ${HOME}/.ssh.cicd.graviteebot
+  secrethub read --out-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
+  secrethub read --out-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
+  sudo chmod 700 ${HOME}/.ssh.cicd.graviteebot
+  sudo chmod 644 ${LOCAL_SSH_PUBKEY}
+  sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
+}
+# restoreSSHGraviteeBotSSHKey
+
 # (Optional) The git ssh command to use, defaults to 'ssh -i ~/.ssh/id_rsa'"
+export GIT_SSH_COMMAND='ssh -i ~/.ssh.cicd.graviteebot/id_rsa'
 export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
+
 # (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io release Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]

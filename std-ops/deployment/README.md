@@ -126,7 +126,22 @@ sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
 secrethub write --in-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
 secrethub write --in-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
 
+# secrethub read --out-file ${KUBECONFIG} gravitee-io/cicd/envs/integration/k8s/kubeconfig
+
 secrethub account inspect
 
 # --- #
+```
+* then anywhere, to restore the Gravitee.io Bot SSH Key pair :
+
+```bash
+export LOCAL_SSH_PUBKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa.pub
+export LOCAL_SSH_PRVIKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa
+mkdir -p ${HOME}/.ssh.cicd.graviteebot
+secrethub read --out-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
+secrethub read --out-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
+sudo chmod 700 ${HOME}/.ssh.cicd.graviteebot
+sudo chmod 644 ${LOCAL_SSH_PUBKEY}
+sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
+
 ```
