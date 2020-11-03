@@ -15,7 +15,7 @@ echo "---"
 echo "backing-up repos listed in [${OPS_HOME}/consolidated-git-repos-uris.list]"
 # In each ${OPS_HOME}/consolidated-git-repos-uris.list
 echo "---"
-${OPS_HOME}/shell/backup-repos.sh ${OPS_HOME}/consolidated-git-repos-uris.list
+# ${OPS_HOME}/shell/backup-repos.sh ${OPS_HOME}/consolidated-git-repos-uris.list
 
 export BCKUP_EXIT_CODE="$?"
 echo "BCKUP_EXIT_CODE=[${BCKUP_EXIT_CODE}]"
