@@ -42,6 +42,7 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
@@ -58,6 +59,8 @@ SECRETHUB_REPO=cicd
 export HUMAN_NAME=jblasselle
 export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 export GITHUB_ORG="gravitee-io"
+export GITHUB_ORG="gravitee-lab"
+
 
 # --- #
 # Opional :
