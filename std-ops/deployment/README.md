@@ -151,9 +151,9 @@ export SECRETHUB_REPO=cicd
 secrethub org init ${SECRETHUB_ORG}
 secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
 
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user"
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg"
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh"
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/user"
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg"
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/ssh"
 
 
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
@@ -171,8 +171,8 @@ secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github
 export GIT_USER_NAME="graviteeio"
 export GIT_USER_EMAIL="graviteeio-bot@gravitee.io"
 
-echo "${GIT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/name"
-echo "${GIT_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/user/email"
+echo "${GIT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/user/name"
+echo "${GIT_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/user/email"
 
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
@@ -186,8 +186,8 @@ echo "${GIT_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/g
 export GRAVITEEBOT_GPG_USER_NAME="Jean-Baptiste Lasselle"
 export GRAVITEEBOT_GPG_USER_EMAIL="jean.baptiste.lasselle@gmail.com"
 
-export GRAVITEEBOT_GPG_USER_NAME="Graviteebot.io"
-export GRAVITEEBOT_GPG_USER_EMAIL="graviteeio-bot@gravitee.io"
+export GRAVITEEBOT_GPG_USER_NAME="Gravitee.io Bot"
+export GRAVITEEBOT_GPG_USER_EMAIL="contact@gravitee.io"
 
 export GRAVITEEBOT_GPG_USER_NAME="Graviteelab-bot.io"
 export GRAVITEEBOT_GPG_USER_EMAIL="graviteelab-bot@graviteelab.io"
@@ -209,12 +209,12 @@ gpg --export -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" |
 # will have to type your GPG password
 gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PRIVATE_KEY_FILE}
 
-secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/pub_key"
-secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/private_key"
+secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/pub_key"
+secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/private_key"
 
-echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/user_name"
-echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/user_email"
-echo "${GPG_SIGNING_KEY}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/gpg/signing_key"
+echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/user_name"
+echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/user_email"
+echo "${GPG_SIGNING_KEY}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/signing_key"
 
 
 
@@ -249,10 +249,9 @@ sudo chmod 700 ${HOME}/.ssh.cicd.graviteebot
 sudo chmod 644 ${LOCAL_SSH_PUBKEY}
 sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
 
-secrethub write --in-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
-secrethub write --in-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
+secrethub write --in-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/ssh/public_key"
+secrethub write --in-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/ssh/private_key"
 
-# secrethub read --out-file ${KUBECONFIG} gravitee-io/cicd/envs/integration/k8s/kubeconfig
 
 secrethub account inspect
 
@@ -264,8 +263,8 @@ secrethub account inspect
 export LOCAL_SSH_PUBKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa.pub
 export LOCAL_SSH_PRVIKEY=${HOME}/.ssh.cicd.graviteebot/id_rsa
 mkdir -p ${HOME}/.ssh.cicd.graviteebot
-secrethub read --out-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
-secrethub read --out-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
+secrethub read --out-file ${LOCAL_SSH_PUBKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/ssh/public_key"
+secrethub read --out-file ${LOCAL_SSH_PRVIKEY} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/ssh/private_key"
 sudo chmod 700 ${HOME}/.ssh.cicd.graviteebot
 sudo chmod 644 ${LOCAL_SSH_PUBKEY}
 sudo chmod 600 ${LOCAL_SSH_PRVIKEY}
