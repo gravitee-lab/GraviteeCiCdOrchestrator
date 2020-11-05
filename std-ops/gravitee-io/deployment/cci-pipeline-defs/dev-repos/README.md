@@ -49,7 +49,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=graviteeio
 # SECRETHUB_ORG=gravitee-io

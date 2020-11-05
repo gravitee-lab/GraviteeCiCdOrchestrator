@@ -41,8 +41,7 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
   * and create a Github Deploy Key for each Gravitee.io dev repos Circle CI Project :  these deploy Keys are used in Circle CI Pipeline to `git clone` over ssh.
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-lab
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
@@ -50,7 +49,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
@@ -80,6 +79,8 @@ export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
 # (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config "
+export GIT_COMMIT_MESSAGE="Updating Gravitee.io dev repos Circle CI Pipeline config with new secrethub org and repo paramters"
+
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 
