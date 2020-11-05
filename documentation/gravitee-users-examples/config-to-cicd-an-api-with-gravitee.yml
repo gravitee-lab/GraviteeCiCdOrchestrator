@@ -1,0 +1,121 @@
+version: 2.1
+
+parameters:
+  cicd_env:
+    type: enum
+    enum: [dev, staging, prod]
+    default: staging
+    description: "Deploy ACME API to dev, staging, or production ?"
+
+orbs:
+  # secrethub: secrethub/cli@1.0.0
+  gio_cli: gravitee-io/graviteeio-cli@1.0.0
+
+jobs:
+  build_acme_api:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      BUILD_ENV: << pipeline.parameters.cicd_env >>
+    steps:
+      - checkout
+      - run:
+          name: "Run all ACME API Unit Tests / Code Coverage Tests"
+          command: echo "Run all ACME API Unit Tests / Code Coverage Tests"
+      - run:
+          name: "Build ACME API"
+          command: echo "Your API build commands, with buold option set for [${BUILD_ENV}] (like [mvn clean package -Denvironment=<dev|staging|prod>] ...)"
+      - run:
+          name: "publish the artifact"
+          command: mvn clean deploy
+
+
+  deploy_acme_api:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      DEPLOYMENT_TARGET_ENV: << pipeline.parameters.cicd_env >>
+    steps:
+      - checkout
+      # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      # here use Gavitee.io [gravitee-io/graviteeio-cli@1.0.0] Circle CI Orb
+      # to deploy your API to the [DEPLOYMENT_TARGET_ENV] K8S Cluster
+      # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      - gio_cli/deploy-api
+          deployment_env: << pipeline.parameters.cicd_env >>
+  test_deployed_acme_api:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      TEST_ENV: << pipeline.parameters.cicd_env >>
+    steps:
+      - checkout
+      - run:
+          name: "Integration Testing"
+          command: |
+                    echo "Run postman commands against Gravitee Gateway to hit deployed ACME API, in the [${TEST_ENV}] Kubernetes Cluster "
+
+  terraform_deployment_target:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      DEPLOYMENT_TARGET_ENV: << pipeline.parameters.cicd_env >>
+      # The git repo for your ATLANTIS managing your production cluster
+      # https://www.runatlantis.io/
+      ATLANTIS_REF_GIT_REPO: https://github.com/<your-organization>/
+    steps:
+      - checkout
+      - run:
+          name: "Terraform the [${DEPLOYMENT_TARGET_ENV}] Kubernetes Cluster"
+          command: |
+                    echo "Run the Terraform to create/update the [${DEPLOYMENT_TARGET_ENV}] Kubernetes Cluster "
+                    if [ "${DEPLOYMENT_TARGET_ENV}" == "prod" ]; then
+                      echo "Don't you try terraform production from this pipeline, FluxCD does this based on [${ATLANTIS_REF_GIT_REPO}]"
+                      exit 1
+                    fi;
+                    if [ "${DEPLOYMENT_TARGET_ENV}" == "staging" ]; then
+                      git clone [${ATLANTIS_REF_GIT_REPO}] ./temp.staging-update-so-iso-from-prod/
+                      cd ./temp.staging-update-so-iso-from-prod/
+                      terraform init
+                      terrafom plan && terraform apply -auto-approve
+                    fi;
+                    if [ "${DEPLOYMENT_TARGET_ENV}" == "dev" ]; then
+                      # terrafom recipe for the dev env.is versionined in your API git repo, just
+                      # like you usually do with docker-compose
+                      cd ./k8s/terraform/
+                      terraform init
+                      terrafom plan && terraform apply -auto-approve
+                    fi;
+workflows:
+  version: 2.1
+  terraform_deployment_target:
+    jobs:
+      - build_acme_api:
+          context: acme
+    triggers:
+      - schedule:
+          # Every day at 01:00 am UTC
+          # The staging K8s Cluster is Terraformed
+          # to the exact image of production
+          # (dev cluster is terraformed on demand)
+          # (production cluster is terraformed by
+          # [runatlantis.io] gitops approach, never using this pipeline)
+          cron: "0 1 * * *"
+          filters:
+            branches:
+              only:
+                - develop
+  build_n_test:
+    jobs:
+      - terraform_deployment_target:
+          context: acme
+      - deploy_acme_api:
+          context: acme
+          requires:
+            - build_acme_api
+      - test_deployed_acme_api:
+          context: acme
+          requires:
+            - deploy_acme_api

@@ -27,12 +27,15 @@ class ErrorReporter {
   /// timeout to fetch for Build complete status
   /// PIPELINE_COMPLETION_TIMEOUT=360s
   private pipeline_completion_timeout: string;
-  /// The Gihub.com Organization where all the git repos live.
-  private gh_org: string;
   /// The time interval, in milliseconds, between 2 "Watch rounds", of the {@link PipelineExecSetStatusWatcher}
   private exec_status_watch_interval: string;
+  /// The Gihub.com Organization where all the git repos live.
+  private gh_org: string;
+  /// secrethub org and repo from which cicd secrets are going to be fetched
+  private secrethub_org: string;
+  private secrethub_repo: string;
 
-  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_completion_timeout: string, gh_org: string, exec_status_watch_interval: string) {
+  constructor(product: string, release_manifest_path: string, retries_before_failure: string, ssh_release_git_repo: string, http_release_git_repo: string, release_branches: string, secrets_file_path: string, trigger_timeout: string, pipeline_completion_timeout: string, gh_org: string, exec_status_watch_interval: string, secrethub_org: string, secrethub_repo: string) {
 
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
@@ -47,11 +50,18 @@ class ErrorReporter {
     if (release_branches === undefined || release_branches === "") {
       throw new Error("{[.DOTENV]} - [RELEASE_BRANCHES] is undefined, and is required. Its value should be a string, with comma-separated version tags. E.g. : \"master, 3.1.x, 3.0.x, 1.30.x, 1.29.x, 1.25.x, 1.20.x\"");
     }
-
+    if (secrethub_org === undefined || secrethub_org === "") {
+      throw new Error("{[.DOTENV]} - [SECRETHUB_ORG] is undefined, and is required. Its value should be set to the name of the secrethub org from which cicd secrets are going to be fetched.");
+    }
+    if (secrethub_repo === undefined || secrethub_repo === "") {
+      throw new Error("{[.DOTENV]} - [SECRETHUB_REPO] is undefined, and is required. Its value should be set to the name of the secrethub repo from which cicd secrets are going to be fetched.");
+    }
     this.release_manifest_path = release_manifest_path;
     this.ssh_release_git_repo = ssh_release_git_repo;
     this.http_release_git_repo = http_release_git_repo;
     this.release_branches = release_branches;
+    this.secrethub_org = secrethub_org;
+    this.secrethub_repo = secrethub_repo;
 
     if (secrets_file_path === undefined || secrets_file_path === "") {
       console.warn("{[.DOTENV]} - [SECRETS_FILE_PATH] is undefined, defaulting value to './.secrets.json'")
@@ -117,4 +127,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETION_TIMEOUT, process.env.GH_ORG, process.env.EXEC_STATUS_WATCH_INTERVAL);
+export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETION_TIMEOUT, process.env.GH_ORG, process.env.EXEC_STATUS_WATCH_INTERVAL, process.env.SECRETHUB_ORG, process.env.SECRETHUB_REPO);

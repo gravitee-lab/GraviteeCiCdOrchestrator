@@ -41,8 +41,7 @@ To deploy the Circle CI Pipeline defintion on all Gravitee.io dev repos, you mus
   * and create a Github Deploy Key for each Gravitee.io dev repos Circle CI Project :  these deploy Keys are used in Circle CI Pipeline to `git clone` over ssh.
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-lab
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
@@ -50,7 +49,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
@@ -80,6 +79,8 @@ export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
 # (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config "
+export GIT_COMMIT_MESSAGE="Updating Gravitee.io dev repos Circle CI Pipeline config with new secrethub org and repo paramters"
+
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 
@@ -89,7 +90,8 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # the https://github.com/${GITHUB_ORG}/release
 # list must be comma-separated, white spaces are trimmed
 # --- #
-export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 ./deploy.sh
 
 ```
@@ -320,34 +322,9 @@ This is useful because those deploy keys often become invalid, or are deleted.
 
 
 
-* First, go to the Circle CI Web UI, create a Token from the User Settings Menu, and save it as a secret to secrethub like this :
+* First, go to the Circle CI Web UI, create a Token from the User Settings Menu, and save it as a secret to secrethub [like specified here](../../../secrets)
 
-```bash
-# --
-# ENV. VARS
-SECRETHUB_ORG=gravitee-lab
-# SECRETHUB_ORG=gravitee-io
-SECRETHUB_REPO=cicd
-
-secrethub org init ${SECRETHUB_ORG}
-secrethub repo init ${SECRETHUB_ORG}/${SECRETHUB_REPO}
-
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-#   Circle CI Token to auth to the Circle CI API v2   #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-export HUMAN_NAME=jblasselle
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci"
-
-export MY_CCI_USER_TOKEN=<YOUR TOKEN VALUE>
-echo "${MY_CCI_USER_TOKEN}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token"
-
-```
-
-* Then you will use your Circle CI User Token, and your secrethub user token, to setup the SSH Key for all git repositories listed in the generated `consolidated-git-repos-uris.list` file :
+* Then you will use your Circle CI User Token, and your secrethub user token, to setup a Github Deploy Key for all git repositories listed in the generated `consolidated-git-repos-uris.list` file :
 
 ```bash
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
@@ -362,7 +339,7 @@ cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
 
 export GITHUB_ORG="gravitee-lab"
-export RELEASE_BRANCHES=' 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 # Generate the [consolidated-git-repos-uris.list]
 ./shell/consolidate-dev-repos-inventory.sh
 
