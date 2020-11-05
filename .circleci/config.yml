@@ -55,6 +55,8 @@ jobs:
                     export DESIRED_DOCKER_TAG="${DESIRED_DOCKER_TAG}-$(git rev-parse --short HEAD)"
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
                     docker tag "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
+                    echo "checking [date time] (sometimes data time in Circle CI pipelines is wrong, so that Container registry rejects the [docker push]...)"
+                    echo "date time in Circle CI Pipeline is [$(date)] "
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
 
