@@ -51,16 +51,13 @@ jobs:
           command: |
                     echo "Checking pipeline env. : "
                     ls -allh
-                    export GITHUB_ORG=gravitee-io
                     echo "GRVT33_GH_ORG=${GRVT33_GH_ORG}"
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
-                    export SECRETHUB_ORG=graviteeio
-                    export SECRETHUB_REPO=cicd
                     CCI_SECRET_FILE=$PWD/.secrets.json
-                    secrethub read --out-file ${CCI_SECRET_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/.secret.json"
+                    secrethub read --out-file ${CCI_SECRET_FILE} gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json
                     ls -allh ${CCI_SECRET_FILE}
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
@@ -92,16 +89,13 @@ jobs:
           command: |
                     echo "Checking pipeline env. : "
                     ls -allh
-                    export GITHUB_ORG=gravitee-io
                     echo "GRVT33_GH_ORG=${GRVT33_GH_ORG}"
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
-                    export SECRETHUB_ORG=graviteeio
-                    export SECRETHUB_REPO=cicd
                     CCI_SECRET_FILE=$PWD/.secrets.json
-                    secrethub read --out-file ${CCI_SECRET_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/.secret.json"
+                    secrethub read --out-file ${CCI_SECRET_FILE} gravitee-lab/cicd-orchestrator/dev/cci/botuser/.secret.json
                     ls -allh ${CCI_SECRET_FILE}
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
