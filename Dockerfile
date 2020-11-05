@@ -94,6 +94,16 @@ ENV SECRETS_FILE_PATH=${SECRETS_FILE_PATH}
 # GH_ORG=gravitee-lab
 ENV GH_ORG=${GH_ORG}
 
+# +++ SECRETHUB
+# The secrethub org and repo from which to featch all CI CD Secrets
+# GH_ORG=gravitee-lab
+ARG SECRETHUB_ORG
+ENV SECRETHUB_ORG=${SECRETHUB_ORG}
+
+ARG SECRETHUB_REPO
+ENV SECRETHUB_REPO=${SECRETHUB_REPO}
+
+
 # --- copy production node_modules
 COPY --from=dependencies /graviteeio/cicd/prod_node_modules ./node_modules
 # --- Copy built TypeScript app
