@@ -38,6 +38,7 @@ jobs:
       - run: # print the name of the branch we're on
           name: "Docker push"
           command: |
+                    set -x
                     # checking docker image built in previous step is there
                     docker images
                     # [gravitee-lab/cicd-orchestrator/staging/docker/quay/botuser/username]
@@ -57,6 +58,7 @@ jobs:
                     docker tag "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}" "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
                     echo "checking [date time] (sometimes data time in Circle CI pipelines is wrong, so that Container registry rejects the [docker push]...)"
                     echo "date time in Circle CI Pipeline is [$(date)] "
+                    date
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
 
