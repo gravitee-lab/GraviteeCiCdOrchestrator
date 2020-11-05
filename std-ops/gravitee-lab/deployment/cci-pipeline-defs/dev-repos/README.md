@@ -91,6 +91,7 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # list must be comma-separated, white spaces are trimmed
 # --- #
 export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 ./deploy.sh
 
 ```
