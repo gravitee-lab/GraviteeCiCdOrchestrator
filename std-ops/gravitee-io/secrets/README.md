@@ -28,9 +28,9 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
     * `graviteeio/cicd/graviteebot/git/user/email` : [Gravitee bot](https://github.com/graviteeio) git user email
     * `graviteeio/cicd/graviteebot/git/ssh/private_key` : [Gravitee bot](https://github.com/graviteeio) git ssh private key
     * `graviteeio/cicd/graviteebot/git/ssh/public_key` :  [Gravitee bot](https://github.com/graviteeio) git ssh public key
-  * Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
-    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/graviteeio) username to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
-    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/token` :  [Gravitee bot](https://github.com/graviteeio) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
+  * [ ] **THOSE HAVE NOT BEEN CREATED YET MUST BE DONE WITH @NicolasGeraud** Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
+    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/graviteeio) username to authenticate to Quay.io in https://quay.io/repository/gravitee_io/cicd-orchestrator repository
+    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/token` :  [Gravitee bot](https://github.com/graviteeio) token to authenticate to Quay.io in https://quay.io/repository/gravitee_io/cicd-orchestrator repository
 
 
 #### Install Secrethub CLI
@@ -241,8 +241,10 @@ export SECRETHUB_REPO=cicd
 
 secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser"
 
-export QUAY_BOT_USERNAME="username to authenticate to quay.io"
+# Credentials to authenticate to quay.io
+export QUAY_BOT_USERNAME="gravitee_io+graviteebot"
 export QUAY_BOT_SECRET="very long value of the quay.io authentication token"
+
 
 
 # [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in [gravitee-lab/cicd-orchestrator] repository
