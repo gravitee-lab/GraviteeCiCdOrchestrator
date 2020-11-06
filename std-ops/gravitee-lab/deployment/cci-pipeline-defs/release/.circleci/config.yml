@@ -54,7 +54,11 @@ jobs:
                     echo "Checking pipeline env. : "
                     ls -allh
                     export GITHUB_ORG=gravitee-lab
+                    export SECRETHUB_ORG=gravitee-lab
+                    export SECRETHUB_REPO=cicd
                     echo "GITHUB_ORG=${GITHUB_ORG}"
+                    echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
+                    echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
