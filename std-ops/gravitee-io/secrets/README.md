@@ -254,7 +254,7 @@ echo "${QUAY_BOT_SECRET}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/g
 
 * Jean-Baptiste Lasselle created the `gravitee-io` organization on Quay.io :
   * dots and dashes are not accepted in container registries GUNs (unique identifiers), so underscored `gravitee_io` was best option :
-![creation of the `gravitee-io` organization on Quay.io 1](https://raw.githubusercontent.com/gravitee-lab/GraviteeCiCdOrchestrator/0.0.4-alpha/std-ops/gravitee-io/secrets/images/GRAVITEE-IO-ORG_CREATION_ON_QUAY.IO_2_2020-11-06T00-16-16.313Z.png)
+![creation of the `gravitee-io` organization on Quay.io 1](https://raw.githubusercontent.com/gravitee-lab/GraviteeCiCdOrchestrator/0.0.4-alpha/std-ops/gravitee-io/secrets/images/GRAVITEE-IO-ORG_CREATION_ON_QUAY.IO_1_2020-11-06T00-05-45.887Z.png)
   * finally created `gravitee_io` organization on quay.io :
 ![creation of the `gravitee-io` organization on Quay.io 2](https://raw.githubusercontent.com/gravitee-lab/GraviteeCiCdOrchestrator/0.0.4-alpha/std-ops/gravitee-io/secrets/images/GRAVITEE-IO-ORG_CREATION_ON_QUAY.IO_2_2020-11-06T00-16-16.313Z.png)
   * Jean-Baptiste Lasselle had to create an email address to associate to the `gravitee_io` organization on quay.io :
