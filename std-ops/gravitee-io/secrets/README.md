@@ -28,6 +28,9 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
     * `graviteeio/cicd/graviteebot/git/user/email` : [Gravitee bot](https://github.com/graviteeio) git user email
     * `graviteeio/cicd/graviteebot/git/ssh/private_key` : [Gravitee bot](https://github.com/graviteeio) git ssh private key
     * `graviteeio/cicd/graviteebot/git/ssh/public_key` :  [Gravitee bot](https://github.com/graviteeio) git ssh public key
+  * Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
+    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/graviteeio) username to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
+    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/token` :  [Gravitee bot](https://github.com/graviteeio) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
 
 
 #### Install Secrethub CLI
@@ -229,3 +232,30 @@ secrethub account inspect
 
 # --- #
 ```
+
+* Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
+
+```bash
+export SECRETHUB_ORG=graviteeio
+export SECRETHUB_REPO=cicd
+
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser"
+
+export QUAY_BOT_USERNAME="username to authenticate to quay.io"
+export QUAY_BOT_SECRET="very long value of the quay.io authentication token"
+
+
+# [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in [gravitee-lab/cicd-orchestrator] repository
+echo "${QUAY_BOT_USERNAME}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/username
+# [Gravitee bot](https://github.com/gravitee-lab) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
+echo "${QUAY_BOT_SECRET}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/token
+
+```
+
+* Jean-Baptiste Lasselle created the `gravitee-io` organization on Quay.io :
+  * dots and dashes are not accepted in container registries GUNs (unique identifiers), so underscored `gravitee_io` was best option :
+![creation of the `gravitee-io` organization on Quay.io 1](https://raw.githubusercontent.com/gravitee-lab/GraviteeCiCdOrchestrator/0.0.4-alpha/std-ops/gravitee-io/secrets/images/GRAVITEE-IO-ORG_CREATION_ON_QUAY.IO_2_2020-11-06T00-16-16.313Z.png)
+  * finally created `gravitee_io` organization on quay.io :
+![creation of the `gravitee-io` organization on Quay.io 2](https://raw.githubusercontent.com/gravitee-lab/GraviteeCiCdOrchestrator/0.0.4-alpha/std-ops/gravitee-io/secrets/images/GRAVITEE-IO-ORG_CREATION_ON_QUAY.IO_2_2020-11-06T00-16-16.313Z.png)
+  * Jean-Baptiste Lasselle had to create an email address to associate to the `gravitee_io` organization on quay.io :
+![creation of the `gravitee-io` organization on Quay.io 3 - email account](https://raw.githubusercontent.com/gravitee-lab/GraviteeCiCdOrchestrator/0.0.4-alpha/std-ops/gravitee-io/secrets/images/compte_gmail_associe_2020-11-06T00-13-51.885Z.png)
