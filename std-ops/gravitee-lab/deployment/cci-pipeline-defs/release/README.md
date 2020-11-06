@@ -5,7 +5,7 @@
 
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-lab
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION=develop
@@ -13,7 +13,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
@@ -110,7 +110,7 @@ echo "${MY_CCI_USER_TOKEN}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO
 * Then you will use your Circle CI User Token, and your secrethub user token, to setup the SSH Key for all git repositories listed in the generated `consolidated-git-repos-uris.list` file :
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-lab
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION=develop
@@ -118,7 +118,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 
 export GITHUB_ORG="gravitee-lab"
