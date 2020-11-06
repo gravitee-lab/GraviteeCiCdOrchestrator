@@ -1,6 +1,8 @@
 #!/bin/sh
 
 # ---
+sed -i "s#SECRETHUB_ORG=.*#SECRETHUB_ORG=${SECRETHUB_ORG}#g" ./.env
+sed -i "s#SECRETHUB_REPO=.*#SECRETHUB_REPO=${SECRETHUB_REPO}#g" ./.env
 echo ''
 echo 'Content of DOTENV [./.env] file'
 echo ''
