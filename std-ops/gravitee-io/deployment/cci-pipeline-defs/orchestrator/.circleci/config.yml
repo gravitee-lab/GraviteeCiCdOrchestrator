@@ -9,8 +9,8 @@ jobs:
       # resource_class: medium
       # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
     environment:
-      SECRETHUB_ORG: graviteeio
-      SECRETHUB_REPO: cicd
+      SECRETHUB_ORG: ${SECRETHUB_ORG}
+      SECRETHUB_REPO: ${SECRETHUB_REPO}
     steps:
       - checkout
       - secrethub/install
