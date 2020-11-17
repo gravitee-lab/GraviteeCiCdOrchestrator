@@ -186,3 +186,30 @@ while read REPO_URL; do
   echo "---"
   setupCircleCIConfig ${REPO_URL}
 done <${OPS_HOME}/${BARE_FILENAME}.ssh
+
+
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+#      Deploy Keys for Github SSH Service     #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+
+
+export JSON_PAYLOAD="{
+    \"type\": \"deploy-key\"
+}"
+
+
+while read REPO_URL; do
+  # echo "${REPO_URL}" | awk -F '/' '{print $4}'
+  echo "# ------------------------------------------------------------ #"
+  echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
+  echo "# ------------------------------------------------------------ #"
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
+  # curl -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  echo "# ------------------------------------------------------------ #"
+  # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+done <${REPOS_URL_LIST_FILE}

@@ -138,6 +138,8 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # provided-arbitratry-repos.list : must be a UTF-8 text file
 # provided-arbitratry-repos.list : each line must be the HTTP URI of a github repo
 # --- #
+./shell/deploy-repo-pipeline-def.sh ./shell/consolidation-diff.list
+
 ./shell/deploy-repo-pipeline-def.sh ./shell/provided-arbitratry-repos.list
 ```
 
