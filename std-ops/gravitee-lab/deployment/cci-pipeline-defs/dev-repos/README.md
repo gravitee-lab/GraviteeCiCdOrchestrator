@@ -103,7 +103,7 @@ export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.2
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real-diff
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
-export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
+export GIO_ORCHESTRATOR_VERSION="develop"
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
