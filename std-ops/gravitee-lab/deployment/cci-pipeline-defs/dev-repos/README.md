@@ -110,6 +110,12 @@ cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
 
+
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
 export GITHUB_ORG="gravitee-io"
 export GITHUB_ORG="gravitee-lab"
 
