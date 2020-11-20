@@ -627,7 +627,7 @@ export class PipelineExecSetStatusWatcher {
     // console.log(JSON.stringify({progressMatrix: this.progressMatrix}, null, " "));
     console.log({progressMatrix: this.progressMatrix});
     console.log('')
-    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + { progressMatrix: this.progressMatrix } + ']')
+    throw new Error('[{PipelineExecSetStatusWatcher}] - [errorHandlerInspectPipelineExecState] CICD PROCESS INTERRUPTED BECAUSE INSPECTING PIPELINE EXEC STATE FAILED with error : [' + error + '] '+ '. Note that When failure happened, progress matrix was [' + JSON.stringify({ progressMatrix: this.progressMatrix }) + ']')
   }
 
   private getIndexInProgressMatrixOfPipeline(ofGuid: string): number {
