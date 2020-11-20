@@ -37,8 +37,11 @@ export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): re-implementation of automation 
 export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): automation of pipelines defintion, adding optimization avoiding repository redundancy,  working on https://github.com/gravitee-io/release/issues/155"
 export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): automation of pipelines defintion, finishing docuementation and SSH key setup automation, working on https://github.com/gravitee-io/release/issues/155"
 
+export FEATURE_ALIAS="std-ops-gravitee-lab"
+export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): updated deployment of pipeline defintion for all dev repos, to use [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb"
 
 # git add --all && git commit -m "${COMMIT_MESSAGE}" && git push -u origin HEAD
+
 atom .
 
 ```

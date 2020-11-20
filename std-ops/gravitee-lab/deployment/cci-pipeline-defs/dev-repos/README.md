@@ -45,6 +45,7 @@ export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-lab
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
+export GIO_ORCHESTRATOR_VERSION="develop"
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
@@ -102,12 +103,18 @@ export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.2
 export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real-diff
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
-export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
+export GIO_ORCHESTRATOR_VERSION="develop"
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/deployment/cci-pipeline-defs/dev-repos
+
+
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 
 export GITHUB_ORG="gravitee-io"
 export GITHUB_ORG="gravitee-lab"
@@ -137,6 +144,8 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # provided-arbitratry-repos.list : must be a UTF-8 text file
 # provided-arbitratry-repos.list : each line must be the HTTP URI of a github repo
 # --- #
+./shell/deploy-repo-pipeline-def.sh ./shell/consolidation-diff.list
+
 ./shell/deploy-repo-pipeline-def.sh ./shell/provided-arbitratry-repos.list
 ```
 
