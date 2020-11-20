@@ -235,6 +235,7 @@ while read REPO_URL; do
   echo "debugging  REPO_URL=[${REPO_URL}]"
   export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $2}' | awk -F '.git' '{print $1}')
   echo "invoking [cancelPipelines ${REPO_NAME}]"
+  sleep 3s
   cancelPipelines "${REPO_NAME}"
   exit 0
 done <${OPS_HOME}/${BARE_FILENAME}.ssh
