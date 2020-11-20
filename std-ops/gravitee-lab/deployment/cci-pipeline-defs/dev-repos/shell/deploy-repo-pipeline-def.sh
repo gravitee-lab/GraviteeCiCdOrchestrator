@@ -116,7 +116,7 @@ setupSSHGithubUser () {
 
 setupCircleCIConfig () {
   export THIS_REPO_URL=$1
-  export THIS_REPO_NAME=$(echo ${THIS_REPO_URL} | awk -F '/' '{print $NF}')
+  export THIS_REPO_NAME=$(echo ${THIS_REPO_URL} | awk -F '/' '{print $NF}' | awk -F '.git' '{print $1}')
   cd ${OPS_HOME}/gitops/
   echo "[setupCircleCIConfig => ] processing THIS_REPO_URL=[${THIS_REPO_URL}]"
   echo "[setupCircleCIConfig => ] processing THIS_REPO_NAME=[${THIS_REPO_NAME}]"
