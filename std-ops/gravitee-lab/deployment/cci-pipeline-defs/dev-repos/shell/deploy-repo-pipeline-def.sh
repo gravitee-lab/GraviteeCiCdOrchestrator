@@ -180,12 +180,60 @@ setupSSHGithubUser
 
 rm -fr ${OPS_HOME}/gitops/
 mkdir -p ${OPS_HOME}/gitops/
-
+# --- #
+# --- # --- # --- # --- #
 # - Then deploy Circle CI Pipeline defintion to each git repo
+# --- # --- # --- # --- #
+# --- #
+
+# --- # CANCEL PIPELINES FUNCTION
+# The deploymentofthe CircleCI Pipeline defintion might trigger pipelines.
+# This function allows cancelling all triggered pipeline executions asap, to spare CircleCI service
+
+# ---> Cancel all pipelines for a given repo
+cancelPipelines () {
+  export THIS_REPO_NAME=$1
+  if [ "x${THIS_REPO_NAME}" == "x" ]; then
+    echo "[cancelPipelines ()] - you must provide an argument, the name of the git repo in the [${GITHUB_ORG}] Github Org, for which Pipeline executionshave tobe cancelled."
+    exit 7
+  fi;
+  if ! [ -f ${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list ]; then
+    echo "[cancelPipelines ()] - the [${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list] containing the list of all git branches of the [${GITHUB_ORG}/[${THIS_REPO_NAME}]] github repo,forwhich Pipelie execution havetobe cancelled, doesnot exists."
+    exit 8
+  fi;
+  # First, we collect all pipeline GUIDs in [${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list]
+  while read THIS_GIT_BRANCH; do
+    echo "--- Collect GUIDs of the 3 last Pipeline executions for repo [${GITHUB_ORG}/${THIS_REPO_NAME}] on BRANCH [${THIS_GIT_BRANCH}] "
+    curl -X GET "https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${THIS_REPO_NAME}/pipeline?branch=${THIS_GIT_BRANCH}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+    curl -X GET "https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${THIS_REPO_NAME}/pipeline?branch=${THIS_GIT_BRANCH}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .items | jq .[] | jq .id | awk -F '"' '{print $2}' | head -n 3 | tee -a ${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list
+  done <${OPS_HOME}/gitops/${THIS_REPO_NAME}.branches.list
+
+  # --- then, using pipeline GUIDs, we collect GUIDs of all workflows we need to cancel in ${OPS_HOME}/gitops/${THIS_REPO_NAME}.workflows-guid.list
+  #
+  while read PIPELINE_GUID; do
+    echo "--- Collect GUIDs of the 7 first workflows of Pipeline execution of GUID [${PIPELINE_GUID}] for repo [${GITHUB_ORG}/${THIS_REPO_NAME}]]. None of the [${GITHUB_ORG}] Github Org's Circle CI Pipelines, by convention, is allowed to have more than 7 workflows."
+    curl -X GET "https://circleci.com/api/v2/pipeline/${PIPELINE_GUID}/workflow" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .items[] | jq .id | awk -F '"' '{print $2}' | head -n 7 | tee -a ${OPS_HOME}/gitops/${THIS_REPO_NAME}.workflows-guid.list
+  done <${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list
+  # cat ${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list
+  cat ${OPS_HOME}/gitops/${THIS_REPO_NAME}.workflows-guid.list
+
+  while read WORKFLOW_GUID; do
+    echo "--- Cancelling the workflows of GUID [${WORKFLOW_GUID}] for repo [${GITHUB_ORG}/${THIS_REPO_NAME}]]."
+    curl -X POST "https://circleci.com/api/v2/workflow/${WORKFLOW_GUID}/cancel" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  done <${OPS_HOME}/gitops/${THIS_REPO_NAME}.workflows-guid.list
+
+  # --- then, using pipeline GUIDs, we cancel all workflows for each pipeline ID in ${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list
+  #
+}
+
 while read REPO_URL; do
   echo "---"
   setupCircleCIConfig ${REPO_URL}
+  # here now you cancel all repo pipelines on all its git branches
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
+  cancelPipelines ${REPO_NAME}
 done <${OPS_HOME}/${BARE_FILENAME}.ssh
+
 
 
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
