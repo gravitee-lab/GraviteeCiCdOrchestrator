@@ -233,7 +233,8 @@ while read REPO_URL; do
   setupCircleCIConfig ${REPO_URL}
   # here now you cancel all repo pipelines on all its git branches
   export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
-  cancelPipelines ${REPO_NAME}
+  "invoking [cancelPipelines ${REPO_NAME}]"
+  cancelPipelines "${REPO_NAME}"
 done <${OPS_HOME}/${BARE_FILENAME}.ssh
 
 
