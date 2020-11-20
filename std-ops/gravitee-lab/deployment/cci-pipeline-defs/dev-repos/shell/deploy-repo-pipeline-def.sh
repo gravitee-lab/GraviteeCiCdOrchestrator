@@ -224,6 +224,9 @@ cancelPipelines () {
     curl -X POST "https://circleci.com/api/v2/workflow/${WORKFLOW_GUID}/cancel" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   done <${OPS_HOME}/gitops/${THIS_REPO_NAME}.workflows-guid.list
 
+  rm -f ${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list
+  rm -f ${OPS_HOME}/gitops/${THIS_REPO_NAME}.workflows-guid.list
+
   # --- then, using pipeline GUIDs, we cancel all workflows for each pipeline ID in ${OPS_HOME}/gitops/${THIS_REPO_NAME}.pipelines-guid.list
   #
 }
@@ -231,15 +234,23 @@ cancelPipelines () {
 while read REPO_URL; do
   echo "---"
   setupCircleCIConfig ${REPO_URL}
-  # here now you cancel all repo pipelines on all its git branches
-  echo "debugging  REPO_URL=[${REPO_URL}]"
+  # here now we cancel all repo pipelines executions triggered on all its git branches
+  # echo "debugging  REPO_URL=[${REPO_URL}]"
   export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $2}' | awk -F '.git' '{print $1}')
   echo "invoking [cancelPipelines ${REPO_NAME}]"
   sleep 3s
   cancelPipelines "${REPO_NAME}"
-  exit 0
 done <${OPS_HOME}/${BARE_FILENAME}.ssh
 
+# --
+# Cancelling again for the few Pipeline executions which have escaped
+while read REPO_URL; do
+  echo "# ---"
+  # here now you cancel all repo pipelines on all its git branches
+  echo "Cancelling again for the few Pipeline executions which have escaped  REPO_URL=[${REPO_URL}]"
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $2}' | awk -F '.git' '{print $1}')
+  cancelPipelines "${REPO_NAME}"
+done <${OPS_HOME}/${BARE_FILENAME}.ssh
 
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
