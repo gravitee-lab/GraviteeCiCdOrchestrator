@@ -214,7 +214,7 @@ while read REPO_URL; do
   while read FINGERPRINT; do
     curl -d "${JSON_PAYLOAD}" -X DELETE https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key/${FINGERPRINT} -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   done <./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
-  # --FInally we re-create a  new deploy key
+  # -- Finally we re-create a  new deploy key
   curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   echo "# ------------------------------------------------------------ #"
   # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
