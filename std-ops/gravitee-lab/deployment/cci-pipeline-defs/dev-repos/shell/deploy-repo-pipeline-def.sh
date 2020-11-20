@@ -9,6 +9,8 @@ export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
 export OPS_HOME=$(pwd)
 export REPOS_URL_LIST_FILE=$1
 
+mkdir -p ${OPS_HOME}/gitops
+
 if [ "x${REPOS_URL_LIST_FILE}" == "x" ]; then
   echo "You did not provide a first argument to [$0] as the <REPOS_URL_LIST_FILE>"
   Usage
