@@ -27,7 +27,8 @@ ENV NON_ROOT_USER_GRP=$NON_ROOT_USER_GRP
 
 LABEL oci.image.nonroot.user.name=$NON_ROOT_USER_NAME
 LABEL oci.image.nonroot.user.group=$NON_ROOT_USER_GRP
-
+LABEL oci.image.nonroot.user.uid=$NON_ROOT_USER_UID
+LABEL oci.image.nonroot.user.gid=$NON_ROOT_USER_GID
 
 
 RUN groupadd -g $NON_ROOT_USER_GID $NON_ROOT_USER_GRP
