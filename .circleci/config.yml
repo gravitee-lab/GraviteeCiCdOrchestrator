@@ -94,6 +94,19 @@ jobs:
                     cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos/lib-docker/
                     ./build.sh
       - run: # print the name of the branch we're on
+          name: "Container CI CD library : Testing the Docker image before pushing it"
+          command: |
+                    pwd
+                    ls -allh
+                    echo "MAVEN_VERSION={MAVEN_VERSION}"
+                    echo "OPENJDK_VERSION={OPENJDK_VERSION}"
+                    echo "OCI_REPOSITORY_ORG={OCI_REPOSITORY_ORG}"
+                    echo "OCI_REPOSITORY_NAME={OCI_REPOSITORY_NAME}"
+                    echo "SECRETHUB_ORG={SECRETHUB_ORG}"
+                    echo "SECRETHUB_REPO={SECRETHUB_REPO}"
+                    cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos/lib-docker/
+                    ./test.sh
+      - run: # print the name of the branch we're on
           name: "Container CI CD library : Docker push"
           command: |
                     pwd
