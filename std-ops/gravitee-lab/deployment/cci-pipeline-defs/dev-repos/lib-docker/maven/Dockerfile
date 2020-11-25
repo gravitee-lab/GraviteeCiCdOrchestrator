@@ -41,6 +41,6 @@ RUN echo "whoami = [$(whoami)]"
 
 WORKDIR /home
 
-COPY run.sh /home
+COPY test /home
 
-# CMD ["/home/test.sh"]
+# CMD ["/home/test"]
