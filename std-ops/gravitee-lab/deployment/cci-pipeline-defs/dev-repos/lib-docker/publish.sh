@@ -76,8 +76,10 @@ git clone https://github.com/gravitee-lab/gravitee-repository ./let_say_here
 docker run -it --name testofimage2 --entrypoint="" --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" mvn clean install
 # Test no.5
 echo "# Test no.5"
-git clone https://github.com/gravitee-lab/gravitee-repository ./let_say_here
 docker run -it --name testofimage2 --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" mvn clean install
+# Test no.6
+echo "# Test no.6"
+docker run -it --name testofimage2 --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ clean install
 
 
 
