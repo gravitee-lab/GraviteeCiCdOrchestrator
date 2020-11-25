@@ -106,7 +106,6 @@ jobs:
                     echo "SECRETHUB_REPO={SECRETHUB_REPO}"
                     cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos/lib-docker/
                     ./publish.sh
-
 workflows:
   version: 2.1
   docker_build_and_push:
