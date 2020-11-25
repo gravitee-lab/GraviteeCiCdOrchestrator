@@ -41,10 +41,17 @@ export JSON_PAYLOAD="{
 
 while read REPO_URL; do
   # echo "${REPO_URL}" | awk -F '/' '{print $4}'
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
   echo "# ------------------------------------------------------------ #"
   echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
   echo "# ------------------------------------------------------------ #"
-  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
+  # --- First let's delete all previous deploy keys
+  curl -d "${JSON_PAYLOAD}" -X GET https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq '.[]' | jq '.[].fingerprint' | awk -F '"' '{print $2}' | tee -a ./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+
+  while read FINGERPRINT; do
+    curl -d "${JSON_PAYLOAD}" -X DELETE https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key/${FINGERPRINT} -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  done <./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+  # -- Finally we re-create a  new deploy key
   # curl -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   echo "# ------------------------------------------------------------ #"

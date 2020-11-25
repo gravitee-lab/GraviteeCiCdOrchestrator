@@ -50,6 +50,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
+rm -fr ./.git/
 cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=gravitee-lab
@@ -100,7 +101,7 @@ export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.2
 * To run the same `.circleci/config.yml` Pipeline definition deployment on a provided, arbitratry, list of Github git repos :
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-real-diff
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-lab-diff
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="develop"
@@ -108,7 +109,8 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+rm -fr ./.git/
+cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 
 SECRETHUB_ORG=gravitee-lab
@@ -192,7 +194,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos
 
 export GITHUB_ORG="gravitee-io"
 export GITHUB_ORG="gravitee-lab"

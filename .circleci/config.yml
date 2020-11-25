@@ -64,11 +64,72 @@ jobs:
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:${DESIRED_DOCKER_TAG}"
                     docker push "quay.io/gravitee-lab/cicd-orchestrator:stable-latest"
 
+  orb_container_library_publish:
+    machine:
+      image: 'ubuntu-1604:201903-01'    # recommended linux image - includes Ubuntu 16.04, docker 18.09.3, docker-compose 1.23.1
+      # resource_class: medium
+      # docker_layer_caching: true    # default - false # requires a Circle CI plan that includes [Docker layer caching feature]
+    environment:
+      MAVEN_VERSION: 3.6.3
+      OPENJDK_VERSION: 11
+      OCI_REPOSITORY_ORG: "quay.io/gravitee-lab"
+      OCI_REPOSITORY_NAME: "cicd-maven"
+      SECRETHUB_ORG: "gravitee-lab"
+      SECRETHUB_REPO: "cicd"
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Testing local docker installation"
+          command: docker version
+      - run: # print the name of the branch we're on
+          name: "Container CI CD library : Docker build"
+          command: |
+                    pwd
+                    ls -allh
+                    echo "MAVEN_VERSION={MAVEN_VERSION}"
+                    echo "OPENJDK_VERSION={OPENJDK_VERSION}"
+                    echo "OCI_REPOSITORY_ORG={OCI_REPOSITORY_ORG}"
+                    echo "OCI_REPOSITORY_NAME={OCI_REPOSITORY_NAME}"
+                    cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos/lib-docker/
+                    ./build.sh
+      - run: # print the name of the branch we're on
+          name: "Container CI CD library : Docker push"
+          command: |
+                    pwd
+                    ls -allh
+                    echo "MAVEN_VERSION={MAVEN_VERSION}"
+                    echo "OPENJDK_VERSION={OPENJDK_VERSION}"
+                    echo "OCI_REPOSITORY_ORG={OCI_REPOSITORY_ORG}"
+                    echo "OCI_REPOSITORY_NAME={OCI_REPOSITORY_NAME}"
+                    echo "SECRETHUB_ORG={SECRETHUB_ORG}"
+                    echo "SECRETHUB_REPO={SECRETHUB_REPO}"
+                    cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos/lib-docker/
+                    ./publish.sh
 workflows:
   version: 2.1
   docker_build_and_push:
     jobs:
       - docker_build_and_push:
+          context: cicd-orchestrator
+          filters:
+            branches:
+              ignore:
+                - master
+                - develop
+                - /^feature\/*/
+                - /^support\/*/
+                - /^bugfix\/*/
+                - /^hotfix\/*/
+                - /^release\/*/
+            tags:
+              # only: /^v.*/
+              only:
+                - /^[0-999].[0-999].[0-999]/
+                - /^[0-999].[0-999].[0-999]-alpha/
+                - /^[0-999].[0-999].[0-999]-beta/
+
+      - orb_container_library_publish:
           context: cicd-orchestrator
           filters:
             branches:
