@@ -63,7 +63,7 @@ echo " GH_ORG_LABEL=[${GH_ORG_LABEL}]"
 echo " NON_ROOT_USER_NAME_LABEL=[${NON_ROOT_USER_NAME_LABEL}]"
 echo " NON_ROOT_USER_GRP_LABEL=[${NON_ROOT_USER_GRP_LABEL}]"
 
-docker run -it --name testofimage -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
+docker run -it --name testofimage -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" test.sh
 
 
 
