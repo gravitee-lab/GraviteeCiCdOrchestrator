@@ -85,4 +85,28 @@ export MAVEN_COMMAND="mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./se
 docker run -it --name testofimage2 --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ${MAVEN_COMMAND}
 
 
-# docker build -t "${GITHUB_ORG}" maven/
+# Test no.9 :
+# Absolutely exactly what is executed with the [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb
+echo "# Test no.9"
+echo "# Absolutely exactly what is executed with the [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb"
+export MAVEN_PROFILE_ID=gravitee-dry-run
+# secrethub read --out-file ./let_say_here/settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
+
+
+
+mkdir -p ./let_say_here/.circleci
+cat <<EOF>>./let_say_here/.circleci/mvn.run.tests.sh
+#!/bin/bash
+mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean test
+export MVN_EXIT_CODE=\$?
+echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean test] maven command is [\${MVN_EXIT_CODE}] "
+if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
+  echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean test] maven command is [\${MVN_EXIT_CODE}], so not zero "
+  exit \${MVN_EXIT_CODE}
+fi;
+EOF
+
+echo "Now running tests"
+chmod +x ./let_say_here/.circleci/mvn.run.tests.sh
+docker run -it --name testofimage2 --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./circleci/mvn.run.tests.sh
+# runMavenShellScript ./let_say_here/.circleci/mvn.run.tests.sh
