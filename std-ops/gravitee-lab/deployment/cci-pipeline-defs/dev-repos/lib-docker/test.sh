@@ -108,5 +108,5 @@ EOF
 
 echo "Now running tests"
 chmod +x ./let_say_here/.circleci/mvn.run.tests.sh
-docker run -it --name testofimage2 --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./circleci/mvn.run.tests.sh
+docker run -it --name testofimage2 --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/mvn.run.tests.sh
 # runMavenShellScript ./let_say_here/.circleci/mvn.run.tests.sh
