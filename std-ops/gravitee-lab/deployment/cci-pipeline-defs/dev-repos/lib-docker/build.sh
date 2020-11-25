@@ -3,10 +3,11 @@
 set -x
 
 # --
-export MAVEN_VERSION=3.6.3
-export OPENJDK_VERSION=11
-export OCI_REPOSITORY_ORG="quay.io/gravitee-lab"
-export OCI_REPOSITORY_NAME="cicd-maven"
+export MAVEN_VERSION=${MAVEN_VERSION:-"3.6.3"}
+export OPENJDK_VERSION=${OPENJDK_VERSION:-"11"}
+export OCI_REPOSITORY_ORG=${OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export OCI_REPOSITORY_NAME=${OCI_REPOSITORY_NAME:-"cicd-maven"}
+
 
 export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
 export OCI_VENDOR=gravitee.io

@@ -3,10 +3,11 @@
 set -x
 
 # --
-export MAVEN_VERSION=3.6.3
-export OPENJDK_VERSION=11
-export OCI_REPOSITORY_ORG="quay.io/gravitee-lab"
-export OCI_REPOSITORY_NAME="cicd-maven"
+export MAVEN_VERSION=${MAVEN_VERSION:-"3.6.3"}
+export OPENJDK_VERSION=${OPENJDK_VERSION:-"11"}
+export OCI_REPOSITORY_ORG=${OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export OCI_REPOSITORY_NAME=${OCI_REPOSITORY_NAME:-"cicd-maven"}
+
 
 export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
 export OCI_VENDOR=gravitee.io
@@ -37,8 +38,8 @@ export DESIRED_DOCKER_TAG="${MAVEN_VERSION}-openjdk-${OPENJDK_VERSION}"
 # [gravitee-lab/cicd-maven/staging/docker/quay/botoken/token]
 # --> are to be set with secrethub cli, and 2 Circle CI Env. Var. have to
 # be set for [Secrethub CLI Auth], at project, or context level
-export SECRETHUB_ORG=gravitee-lab
-export SECRETHUB_REPO=cicd
+export SECRETHUB_ORG=${SECRETHUB_ORG:-"gravitee-lab"}
+export SECRETHUB_REPO=${SECRETHUB_REPO:-"cicd"}
 export QUAY_BOT_USERNAME=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/username)
 export QUAY_BOT_SECRET=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/token)
 echo "QUAY_BOT_USERNAME=[${QUAY_BOT_USERNAME}]"
