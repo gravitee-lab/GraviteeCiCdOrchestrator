@@ -74,6 +74,8 @@ jobs:
       OPENJDK_VERSION: 11
       OCI_REPOSITORY_ORG: "quay.io/gravitee-lab"
       OCI_REPOSITORY_NAME: "cicd-maven"
+      SECRETHUB_ORG: "gravitee-lab"
+      SECRETHUB_REPO: "cicd"
     steps:
       - checkout
       - secrethub/install
@@ -100,6 +102,8 @@ jobs:
                     echo "OPENJDK_VERSION={OPENJDK_VERSION}"
                     echo "OCI_REPOSITORY_ORG={OCI_REPOSITORY_ORG}"
                     echo "OCI_REPOSITORY_NAME={OCI_REPOSITORY_NAME}"
+                    echo "SECRETHUB_ORG={SECRETHUB_ORG}"
+                    echo "SECRETHUB_REPO={SECRETHUB_REPO}"
                     cd std-ops/gravitee-lab/deployment/cci-pipeline-defs/dev-repos/lib-docker/
                     ./publish.sh
 
