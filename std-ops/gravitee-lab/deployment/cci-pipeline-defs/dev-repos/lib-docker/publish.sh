@@ -50,8 +50,6 @@ docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
 docker tag "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}" "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
 echo "checking [date time] (sometimes data time in Circle CI pipelines is wrong, so that Container registry rejects the [docker push]...)"
 date
-docker push "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}"
-docker push "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
 
 export IMAGE_TAG_LABEL=$(docker inspect --format '{{ index .Config.Labels "oci.image.tag"}}' "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}")
 export GH_ORG_LABEL=$(docker inspect --format '{{ index .Config.Labels "cicd.github.org"}}' "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}")
@@ -63,7 +61,10 @@ echo " GH_ORG_LABEL=[${GH_ORG_LABEL}]"
 echo " NON_ROOT_USER_NAME_LABEL=[${NON_ROOT_USER_NAME_LABEL}]"
 echo " NON_ROOT_USER_GRP_LABEL=[${NON_ROOT_USER_GRP_LABEL}]"
 
-docker run -it --name testofimage -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" test.sh
+docker run -it --name testofimage --entrypoint="" -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./test
+
+docker push "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}"
+docker push "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
 
 
 
