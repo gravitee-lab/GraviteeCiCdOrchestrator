@@ -35,15 +35,15 @@ RUN groupadd -g $NON_ROOT_USER_GID $NON_ROOT_USER_GRP
 RUN useradd -g $NON_ROOT_USER_GRP -u $NON_ROOT_USER_UID -m $NON_ROOT_USER_NAME
 
 RUN ls -allh /home/$NON_ROOT_USER_NAME
+# --
+# workaround old known issue of docker for non-root users https://github.com/moby/moby/issues/2259#issuecomment-26564115
+RUN mkdir -p /home/$NON_ROOT_USER_NAME/.m2
+RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP /home/$NON_ROOT_USER_NAME/.m2
 
 RUN echo "whoami = [$(whoami)]"
 USER $NON_ROOT_USER_NAME
 RUN echo "whoami = [$(whoami)]"
 
-# --
-# workaround old known issue of docker for non-root users https://github.com/moby/moby/issues/2259#issuecomment-26564115
-RUN mkdir -p /home/$NON_ROOT_USER_NAME/.m2
-RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP /home/$NON_ROOT_USER_NAME/.m2
 
 WORKDIR /home
 
