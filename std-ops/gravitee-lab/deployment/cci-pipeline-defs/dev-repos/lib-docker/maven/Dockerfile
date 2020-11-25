@@ -43,4 +43,4 @@ WORKDIR /home
 
 COPY run.sh /home
 
-CMD ["/home/run.sh"]
+# CMD ["/home/test.sh"]
