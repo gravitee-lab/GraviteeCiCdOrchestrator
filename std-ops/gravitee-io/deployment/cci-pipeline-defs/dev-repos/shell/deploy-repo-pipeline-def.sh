@@ -5,9 +5,11 @@
 # ------
 # Circle Ci Pipeline definition is by default, NOT deployed
 # to the "real" Gravitee.io Github Org.!!!
-export GITHUB_ORG=${GITHUB_ORG:-'gravitee-lab'}
+export GITHUB_ORG=${GITHUB_ORG:-'gravitee-io'}
 export OPS_HOME=$(pwd)
 export REPOS_URL_LIST_FILE=$1
+
+mkdir -p ${OPS_HOME}/gitops
 
 if [ "x${REPOS_URL_LIST_FILE}" == "x" ]; then
   echo "You did not provide a first argument to [$0] as the <REPOS_URL_LIST_FILE>"
@@ -114,7 +116,7 @@ setupSSHGithubUser () {
 
 setupCircleCIConfig () {
   export THIS_REPO_URL=$1
-  export THIS_REPO_NAME=$(echo ${THIS_REPO_URL} | awk -F '/' '{print $NF}')
+  export THIS_REPO_NAME=$(echo ${THIS_REPO_URL} | awk -F '/' '{print $NF}' | awk -F '.git' '{print $1}')
   cd ${OPS_HOME}/gitops/
   echo "[setupCircleCIConfig => ] processing THIS_REPO_URL=[${THIS_REPO_URL}]"
   echo "[setupCircleCIConfig => ] processing THIS_REPO_NAME=[${THIS_REPO_NAME}]"
@@ -146,7 +148,7 @@ cp ${REPOS_URL_LIST_FILE} ${OPS_HOME}/${BARE_FILENAME}.ssh
 # WORKING TESTS ON GRAVITEE-LAB , NOT GRAVITEE-IO !!! BEWARE !!! => never the less,there is a local backup made locally, just in case
 ls -allh ${OPS_HOME}/${BARE_FILENAME}.ssh
 sed -i "s#https://github.com/gravitee-io#git@github.com:${GITHUB_ORG}#g" ${OPS_HOME}/${BARE_FILENAME}.ssh
-sed -i "s#https://github.com/gravitee-lab#git@github.com:${GITHUB_ORG}#g" ${OPS_HOME}/${BARE_FILENAME}.ssh
+sed -i "s#https://github.com/gravitee-io#git@github.com:${GITHUB_ORG}#g" ${OPS_HOME}/${BARE_FILENAME}.ssh
 echo "---"
 echo "-- Circle CI Pipeline defintion will be deployed to the following git repos : "
 # echo "SECURITY CHECK NO GRAVITEE-IO in \${OPS_HOME}/\${BARE_FILENAME}.ssh=[${OPS_HOME}/${BARE_FILENAME}.ssh] : "
@@ -180,7 +182,6 @@ setupSSHGithubUser
 
 rm -fr ${OPS_HOME}/gitops/
 mkdir -p ${OPS_HOME}/gitops/
-
 # --- #
 # --- # --- # --- # --- #
 # - Then deploy Circle CI Pipeline defintion to each git repo
@@ -250,3 +251,35 @@ while read REPO_URL; do
   export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $2}' | awk -F '.git' '{print $1}')
   cancelPipelines "${REPO_NAME}"
 done <${OPS_HOME}/${BARE_FILENAME}.ssh
+
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+#      Deploy Keys for Github SSH Service     #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+
+
+export JSON_PAYLOAD="{
+    \"type\": \"deploy-key\"
+}"
+
+
+while read REPO_URL; do
+  # echo "${REPO_URL}" | awk -F '/' '{print $4}'
+  export REPO_NAME=$(echo "${REPO_URL}" | awk -F '/' '{print $5}')
+  echo "# ------------------------------------------------------------ #"
+  echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
+  echo "# ------------------------------------------------------------ #"
+  # --- First let's delete all previous deploy keys
+  curl -d "${JSON_PAYLOAD}" -X GET https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq '.[]' | jq '.[].fingerprint' | awk -F '"' '{print $2}' | tee -a ./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+
+  while read FINGERPRINT; do
+    curl -d "${JSON_PAYLOAD}" -X DELETE https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key/${FINGERPRINT} -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  done <./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+  # -- Finally we re-create a  new deploy key
+  curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+  echo "# ------------------------------------------------------------ #"
+  # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+done <${OPS_HOME}/${REPOS_URL_LIST_FILE}
