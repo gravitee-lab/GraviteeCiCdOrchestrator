@@ -47,7 +47,6 @@ echo "QUAY_BOT_USERNAME=[${QUAY_BOT_USERNAME}]"
 docker login -u="${QUAY_BOT_USERNAME}" -p="${QUAY_BOT_SECRET}" quay.io
 # export DESIRED_DOCKER_TAG=$(git describe --match "[0-999].[0-999].[0-999]" --abbrev=0 --tags)
 
-docker tag "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}" "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
 echo "checking [date time] (sometimes data time in Circle CI pipelines is wrong, so that Container registry rejects the [docker push]...)"
 date
 

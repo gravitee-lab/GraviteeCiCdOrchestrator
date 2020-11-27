@@ -90,6 +90,9 @@ cat ./.the-created.service.token | secrethub write "${SECRETHUB_ORG}/${SECRETHUB
 # test retrieving secret
 secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account/token"
 ```
+* finally, in Circle CI, you created a 'cicd-orchestrator' context in the [gravitee-lab] organization:
+  * dedicated to the Gravitee Ci CD Orchestrator application
+  * and in that 'cicd-orchestrator' Circle CI context, you set the 'SECRETHUB_CREDENTIAL' env. var. with value the token of the service account you just created
 
 * Circle CI Token and secret file used by the Gravitee CI CD Orchestrator :
 
@@ -121,7 +124,7 @@ secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token
 
 ```
 
-* SSH Key Pair used by the Gravitee.io Lab Bot to git commit n push to `gravitee-lab` repos :
+* Gravitee.io Lab Bot git config, including SSH Key Pair used by the Gravitee.io Lab Bot to git commit n push to `gravitee-lab` repos :
 
 ```bash
 # --
@@ -233,8 +236,6 @@ echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRET
 echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/user_email"
 echo "${GPG_SIGNING_KEY}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/signing_key"
 
-
-
 secrethub account inspect
 
 # --- #
@@ -263,7 +264,7 @@ echo "${QUAY_BOT_SECRET}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/g
 ```
 
 
-## Secrets Management for the artifactory and the Bot GPG key
+* init / rotate the Gravitee.io Lab Bot artifactory credentials
 
 ```bash
 export SECRETHUB_ORG="gravitee-lab"
@@ -382,7 +383,12 @@ cat ./test.retrievieving.settings.xml
 rm ./test.retrievieving.settings.xml
 
 exit 0
+```
 
+
+* Init / Rotate the Gravitee.io Lab Bot GPG key
+
+```bash
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
@@ -627,12 +633,3 @@ gpg --verify ./some-file-to-sign.txt.sig some-file-to-sign.txt
 
 
 ```
-
-
-* creating secrethub service account with permissions to access secrets in `gravitee-lab/cicd-infra` repo :
-
-```bash
-export NAME_OF_REPO_IN_ORG="gravitee-lab/cicd-infra"
-secrethub service init "${NAME_OF_REPO_IN_ORG}" --description "Circle CI Service for Gravitee CI CD Orchestrator" --permission read | tee ./.the-created.service.token
-```
-* Then created a Circle CI Org context `cicd-infra`, and in that context, the `SECRETHUB_CREDENTIAL` env. var. with value, the token in output of the `service init` command
