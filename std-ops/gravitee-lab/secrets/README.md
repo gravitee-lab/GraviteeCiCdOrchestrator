@@ -45,6 +45,7 @@ export SECRETHUB_CLI_VERSION=0.41.0
 # Use [export SECRETHUB_OS=linux] instead of [export SECRETHUB_OS=darwin] for
 # most of GNU/Linux Distribution that is not Mac OS.
 export SECRETHUB_OS=darwin
+export SECRETHUB_OS=linux
 export SECRETHUB_CPU_ARCH=amd64
 
 
@@ -282,6 +283,15 @@ secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/
 # the Gravitee CI CD Orchestrator
 export ARTIFACTORY_BOT_USER_NAME="graviteebot"
 export ARTIFACTORY_BOT_USER_PWD="inyourdreams;)"
+
+echo "${ARTIFACTORY_BOT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-name"
+echo "${ARTIFACTORY_BOT_USER_PWD}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-pwd"
+
+```
+
+* init / rotate the Gravitee.io Lab Bot `settings.xml` files used in all CI CD Processes :
+
+```bash
 export ARTIFACTORY_REPO_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/"
 export ARTIFACTORY_REPO_SNAPSHOTS_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-snapshots/"
 
@@ -289,12 +299,8 @@ echo "ARTIFACTORY_REPO_SNAPSHOTS_URL=[${ARTIFACTORY_REPO_SNAPSHOTS_URL}]"
 echo "ARTIFACTORY_REPO_RELEASE_URL=[${ARTIFACTORY_REPO_RELEASE_URL}]"
 
 
-echo "${ARTIFACTORY_BOT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-name"
-echo "${ARTIFACTORY_BOT_USER_PWD}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-pwd"
 echo "${ARTIFACTORY_REPO_SNAPSHOTS_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url"
 echo "${ARTIFACTORY_REPO_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url"
-
-
 # From the latest secrets, create the secret settings.xml file
 export SECRETHUB_ORG="gravitee-lab"
 export SECRETHUB_REPO="cicd"
@@ -386,7 +392,7 @@ exit 0
 ```
 
 
-* Init / Rotate the Gravitee.io Lab Bot GPG key
+* Init / Rotate the Gravitee.io Lab Bot GPG key :
 
 ```bash
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
@@ -411,8 +417,13 @@ export GRAVITEEBOT_GPG_USER_NAME_COMMENT="Gravitee CI CD Bot in the https://gith
 export GRAVITEEBOT_GPG_USER_EMAIL="contact@gravitee-lab.io"
 export GRAVITEEBOT_GPG_PASSPHRASE="th3gr@vit331sdab@s3"
 
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# ------------------------------------------------------------------------------------------------ #
+# -- CREATE THE GPG KEY PAIR for the Gravitee.io bot --                               -- SECRET -- #
+# ------------------------------------------------------------------------------------------------ #
+echo "# ---------------------------------------------------------------------- "
 echo "Creating a GPG KEY Pair for the Gravitee.io bot"
-echo "# ----------------------------------- "
+echo "# ---------------------------------------------------------------------- "
 # https://www.gnupg.org/documentation/manuals/gnupg-devel/Unattended-GPG-key-generation.html
 export GNUPGHOME="$(mktemp -d)"
 cat >./gravitee-lab-cicd-bot.gpg <<EOF
@@ -430,6 +441,7 @@ Passphrase: ${GRAVITEEBOT_GPG_PASSPHRASE}
 %commit
 %echo done
 EOF
+
 gpg --batch --generate-key ./gravitee-lab-cicd-bot.gpg
 echo "GNUPGHOME=[${GNUPGHOME}] remove that directory when finished initializing secrets"
 ls -allh ${GNUPGHOME}
@@ -495,9 +507,24 @@ gpg --list-keys
 secrethub read --out-file ${RESTORED_GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/pub_key"
 secrethub read --out-file ${RESTORED_GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/private_key"
 
-gpg --import ${RESTORED_GPG_PRIVATE_KEY_FILE}
-gpg --import ${RESTORED_GPG_PRIVATE_KEY_FILE}
+# ---
+# - > to import the private key file, the
+# - > passphrase of the private key will
+# - > interactively be asked to the user.
+# ---
+# gpg --import ${RESTORED_GPG_PRIVATE_KEY_FILE}
 
+# ---
+# - > to import the private key file, but
+# - > wthout interactive input required
+# - > that's how you do it
+# ---
+gpg --batch --import ${RESTORED_GPG_PRIVATE_KEY_FILE}
+
+# ---
+# --- non-interactive
+gpg --import ${RESTORED_GPG_PUB_KEY_FILE}
+# ---
 # now we trust ultimately the Public Key in the Ephemeral Context,
 export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id")
 echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
@@ -529,8 +556,6 @@ I am in a file which is going to be signed to proove my integrity
 EOF
 
 export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase")
-
-
 
 # echo "${GRAVITEEBOT_GPG_PASSPHRASE}" | gpg --pinentry-mode loopback --passphrase-fd 0 --sign ./some-file-to-sign.txt
 
