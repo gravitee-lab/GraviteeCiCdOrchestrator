@@ -115,11 +115,11 @@ docker run -it --name test9ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -
 
 # Test no.10 :
 # Test GPG Signature with the [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb
-export SECRETS_VOLUME=$(pwd)/graviteebot/.secrets/
-mkdir -p ${SECRETS_VOLUME}/.gungpg
+export OUTSIDE_CONTAINER_SECRETS_VOLUME=$(pwd)/graviteebot/.secrets/
+mkdir -p ${OUTSIDE_CONTAINER_SECRETS_VOLUME}/.gungpg
 
-export RESTORED_GPG_PUB_KEY_FILE="${SECRETS_VOLUME}/.gungpg/graviteebot.gpg.pub.key"
-export RESTORED_GPG_PRIVATE_KEY_FILE="${SECRETS_VOLUME}/.gungpg/graviteebot.gpg.priv.key"
+export RESTORED_GPG_PUB_KEY_FILE="${OUTSIDE_CONTAINER_SECRETS_VOLUME}/.gungpg/graviteebot.gpg.pub.key"
+export RESTORED_GPG_PRIVATE_KEY_FILE="${OUTSIDE_CONTAINER_SECRETS_VOLUME}/.gungpg/graviteebot.gpg.priv.key"
 
 secrethub read --out-file ${RESTORED_GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/pub_key"
 secrethub read --out-file ${RESTORED_GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/private_key"
@@ -127,6 +127,7 @@ secrethub read --out-file ${RESTORED_GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${S
 mkdir -p ./let_say_here/.circleci
 cat <<EOF>>./let_say_here/.circleci/gpg.run.tests.sh
 #!/bin/bash
+# The [/home/$NON_ROOT_USER_NAME/.secrets] is engraved into the container image
 export SECRETS_HOME=/home/$NON_ROOT_USER_NAME/.secrets
 export RESTORED_GPG_PUB_KEY_FILE="\${SECRETS_HOME}/.gungpg/graviteebot.gpg.pub.key"
 export RESTORED_GPG_PRIVATE_KEY_FILE="\${SECRETS_HOME}/.gungpg/graviteebot.gpg.priv.key"
@@ -153,7 +154,8 @@ echo "  GPG version is :"
 echo "# --------------------- #"
 gpg --version
 echo "# --------------------- #"
-
+echo "# --- OK READY TO SIGN"
+echo "# --------------------- #"
 EOF
 echo "Content of the [./let_say_here/.circleci/gpg.run.tests.sh] script : "
 cat ./let_say_here/.circleci/gpg.run.tests.sh
@@ -161,4 +163,5 @@ echo "Now running GPG tests"
 chmod +x ./let_say_here/.circleci/gpg.run.tests.sh
 
 export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2"
-docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
+# docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
+docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
