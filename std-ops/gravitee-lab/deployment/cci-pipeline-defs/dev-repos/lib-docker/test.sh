@@ -124,6 +124,8 @@ export RESTORED_GPG_PRIVATE_KEY_FILE="${OUTSIDE_CONTAINER_SECRETS_VOLUME}/.gungp
 secrethub read --out-file ${RESTORED_GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/pub_key"
 secrethub read --out-file ${RESTORED_GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/private_key"
 
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id")
+
 mkdir -p ./let_say_here/.circleci
 cat <<EOF>>./let_say_here/.circleci/gpg.run.tests.sh
 #!/bin/bash
@@ -153,6 +155,15 @@ echo "# --------------------- #"
 echo "  GPG version is :"
 echo "# --------------------- #"
 gpg --version
+echo "# --------------------- #"
+
+# ---
+# now we trust ultimately the Public Key in the Ephemeral Context,
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=${GRAVITEEBOT_GPG_SIGNING_KEY_ID}
+echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[\${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
+
+echo -e "5\\ny\\n" |  gpg --command-fd 0 --expert --edit-key \${GRAVITEEBOT_GPG_SIGNING_KEY_ID} trust
+
 echo "# --------------------- #"
 echo "# --- OK READY TO SIGN"
 echo "# --------------------- #"
