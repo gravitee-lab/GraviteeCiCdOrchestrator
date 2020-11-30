@@ -161,4 +161,4 @@ echo "Now running GPG tests"
 chmod +x ./let_say_here/.circleci/gpg.run.tests.sh
 
 export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2"
-docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} "${C_VOLUMES}" -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./let_say_here/.circleci/gpg.run.tests.sh
+docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
