@@ -40,6 +40,9 @@ export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): automation of pipelines defintio
 export FEATURE_ALIAS="std-ops-gravitee-lab"
 export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): updated deployment of pipeline defintion for all dev repos, to use [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb"
 
+export FEATURE_ALIAS="std-ops-gravitee-lab"
+export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): working on installing GPG Bot identity, to use for signing GRavitee java artifacts with [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb"
+
 # git add --all && git commit -m "${COMMIT_MESSAGE}" && git push -u origin HEAD
 
 atom .

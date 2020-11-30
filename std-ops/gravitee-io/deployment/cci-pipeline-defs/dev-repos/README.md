@@ -45,6 +45,8 @@ export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-gravitee-io
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION="feature/std_ops_deployment"
+export GIO_ORCHESTRATOR_VERSION="develop"
+
 mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
@@ -56,7 +58,8 @@ SECRETHUB_ORG=graviteeio
 SECRETHUB_REPO=cicd
 
 export HUMAN_NAME=jblasselle
-export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+# export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export CCI_TOKEN=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token)
 export GITHUB_ORG="gravitee-io"
 
 
@@ -103,9 +106,13 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 export GITHUB_ORG="gravitee-io"
+SECRETHUB_ORG=gravitee-io
+SECRETHUB_REPO=cicd
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 
 # --- #
 # Opional :
@@ -132,7 +139,9 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # provided-arbitratry-repos.list : must be a UTF-8 text file
 # provided-arbitratry-repos.list : each line must be the HTTP URI of a github repo
 # --- #
-./shell/deploy-repo-pipeline-def.sh ./shell/provided-arbitratry-repos.list
+./shell/deploy-repo-pipeline-def.sh ./shell/consolidation-diff.list
+
+# ./shell/deploy-repo-pipeline-def.sh ./shell/provided-arbitratry-repos.list
 ```
 
 
@@ -178,9 +187,13 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 export GITHUB_ORG="gravitee-io"
+SECRETHUB_ORG=graviteeio
+SECRETHUB_REPO=cicd
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 
 # --- #
 # Opional :
@@ -203,7 +216,12 @@ export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline co
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 
+# --- #
+# provided-arbitratry-repos.list : must be a UTF-8 text file
+# provided-arbitratry-repos.list : each line must be the HTTP URI of a github repo
+# --- #
 ./shell/deploy-repo-pipeline-def.sh ./shell/consolidation-diff.list
+
 ```
 
 ### The provided hard list
@@ -327,21 +345,21 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
-cd std-ops/deployment/cci-pipeline-defs/dev-repos
+cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 
-export GITHUB_ORG="gravitee-lab"
+export GITHUB_ORG="gravitee-io"
 export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 # Generate the [consolidated-git-repos-uris.list]
 ./shell/consolidate-dev-repos-inventory.sh
 
-SECRETHUB_ORG=gravitee-lab
+SECRETHUB_ORG=gravitee-io
 # SECRETHUB_ORG=gravitee-io
 SECRETHUB_REPO=cicd
 
 export HUMAN_NAME=jblasselle
 export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
-export GITHUB_ORG="gravitee-lab"
+export GITHUB_ORG="gravitee-io"
 
 
 export JSON_PAYLOAD="{
@@ -467,11 +485,6 @@ secrethub account inspect
 
 
 
--->
-
-
-
-
 * Test Retrieving the RSA Key Pair on another machine, with another secrethub user :
 
 ```bash
@@ -479,6 +492,11 @@ export PATH_ONMY_MACHINE=${HOME}/.ssh.cicd.graviteebot
 secrethub read --out-file "${PATH_ONMY_MACHINE}/id_rsa.pub" "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/public_key"
 secrethub read --out-file "${PATH_ONMY_MACHINE}/id_rsa" "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/github.com/ssh/private_key"
 ```
+
+
+-->
+
+
 
 
 

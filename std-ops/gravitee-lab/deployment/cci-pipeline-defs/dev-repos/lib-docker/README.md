@@ -1,5 +1,9 @@
 # The CI CD System Container images
 
+### Running local
+
+To test to buld recipe of the container images, I used :
+
 ```bash
 
 git config --global commit.gpgsign true

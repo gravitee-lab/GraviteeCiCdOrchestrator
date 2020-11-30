@@ -2,7 +2,7 @@ ARG MAVEN_VERSION=3.6.3
 ARG OPENJDK_VERSION=11
 FROM maven:$MAVEN_VERSION-openjdk-$OPENJDK_VERSION
 
-
+RUN apt-get update -y && apt-get install -y gnupg
 ARG MAVEN_VERSION=3.6.3
 ARG OPENJDK_VERSION=11
 ARG GITHUB_ORG=unspecified
@@ -44,6 +44,12 @@ RUN echo "whoami = [$(whoami)]"
 USER $NON_ROOT_USER_NAME
 RUN echo "whoami = [$(whoami)]"
 
+# --- #
+# /home/$NON_ROOT_USER_NAME/.secrets will be mapped as a
+# volume for secrets from outside(no secretsin a container image)
+#
+RUN mkdir -p /home/$NON_ROOT_USER_NAME/.secrets
+RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP /home/$NON_ROOT_USER_NAME/.secrets
 
 WORKDIR /home
 
