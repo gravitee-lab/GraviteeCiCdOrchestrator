@@ -262,7 +262,7 @@ ${GPG_SETUP_SCRIPT_SNIPPET}
   # echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean install] maven command is [\${MVN_EXIT_CODE}], so not zero "
   # exit \${MVN_EXIT_CODE}
 # fi;
-export JAVA_PROPERTIES="-Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -Dgpg.passphrase=${GRAVITEEBOT_GPG_PASSPHRASE}"
+export JAVA_PROPERTIES="-Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -Dgpg.passphrase=${GRAVITEEBOT_GPG_PASSPHRASE} -Darguments='--pinentry-mode loopback'"
 mvn -X ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package gpg:sign
 export MVN_EXIT_CODE=\$?
 echo "[\$0] The exit code of the [mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package gpg:sign] maven command is [\${MVN_EXIT_CODE}] "
