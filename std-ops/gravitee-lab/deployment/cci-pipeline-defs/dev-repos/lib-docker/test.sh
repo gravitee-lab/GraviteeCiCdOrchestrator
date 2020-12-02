@@ -239,14 +239,15 @@ cat <<EOF>>./let_say_here/.circleci/gpg.signature.run.tests.sh
 ${GPG_SETUP_SCRIPT_SNIPPET}
 # ---
 # [enforce-no-snapshots] => [maven-enforcer-plugin], goal enforce
+# Skipped, to just test the other maven goals 
 # ---
-mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce
-export MVN_EXIT_CODE=\$?
-echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}] "
-if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
-  echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}], so not zero "
-  exit \${MVN_EXIT_CODE}
-fi;
+# mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce
+# export MVN_EXIT_CODE=\$?
+# echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}] "
+# if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
+  # echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}], so not zero "
+  # exit \${MVN_EXIT_CODE}
+# fi;
 #
 # ---
 # stripped out [sonatype-nexus-staging] => no publishing at all to nexus
@@ -254,10 +255,21 @@ fi;
 # ---
 # package and gpg sign
 # ---
-mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package install
+mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean install
+export MVN_EXIT_CODE=\$?
+echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean install] maven command is [\${MVN_EXIT_CODE}] "
+if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
+  echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean install] maven command is [\${MVN_EXIT_CODE}], so not zero "
+  exit \${MVN_EXIT_CODE}
+fi;
 export JAVA_PROPERTIES="-Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -Dgpg.passphrase=${GRAVITEEBOT_GPG_PASSPHRASE}"
 mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} gpg:sign
-
+export MVN_EXIT_CODE=\$?
+echo "[\$0] The exit code of the [mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} gpg:sign] maven command is [\${MVN_EXIT_CODE}] "
+if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
+  echo "[\$0] The exit code of the [mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} gpg:sign] maven command is [\${MVN_EXIT_CODE}], so not zero "
+  exit \${MVN_EXIT_CODE}
+fi;
 # ---
 # [attach-sources] => [maven-source-plugin], goal [jar-no-fork]
 # ---
