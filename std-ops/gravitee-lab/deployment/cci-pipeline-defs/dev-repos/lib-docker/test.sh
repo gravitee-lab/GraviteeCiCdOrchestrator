@@ -239,14 +239,15 @@ cat <<EOF>>./let_say_here/.circleci/gpg.signature.run.tests.sh
 ${GPG_SETUP_SCRIPT_SNIPPET}
 # ---
 # [enforce-no-snapshots] => [maven-enforcer-plugin], goal enforce
+# Skipped, to just test the other maven goals 
 # ---
-mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce
-export MVN_EXIT_CODE=\$?
-echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}] "
-if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
-  echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}], so not zero "
-  exit \${MVN_EXIT_CODE}
-fi;
+# mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce
+# export MVN_EXIT_CODE=\$?
+# echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}] "
+# if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
+  # echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}], so not zero "
+  # exit \${MVN_EXIT_CODE}
+# fi;
 #
 # ---
 # stripped out [sonatype-nexus-staging] => no publishing at all to nexus
