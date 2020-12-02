@@ -263,7 +263,7 @@ ${GPG_SETUP_SCRIPT_SNIPPET}
   # exit \${MVN_EXIT_CODE}
 # fi;
 export JAVA_PROPERTIES="-Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -Dgpg.passphrase=${GRAVITEEBOT_GPG_PASSPHRASE}"
-mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package gpg:sign
+mvn -X ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package gpg:sign
 export MVN_EXIT_CODE=\$?
 echo "[\$0] The exit code of the [mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package gpg:sign] maven command is [\${MVN_EXIT_CODE}] "
 if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
