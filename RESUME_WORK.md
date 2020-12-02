@@ -48,3 +48,46 @@ export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): working on installing GPG Bot id
 atom .
 
 ```
+
+* trigger a dry run :
+
+```bash
+export CCI_TOKEN="<token value>"
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="release"
+export BRANCH="3.1.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"dry_release\"
+    }
+
+}"
+
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline
+```
+
+* trigger a release :
+
+```bash
+export CCI_TOKEN="<token value>"
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="release"
+export BRANCH="3.1.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\"
+    }
+
+}"
+
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline
+
+```

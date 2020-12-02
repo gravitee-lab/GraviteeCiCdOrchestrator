@@ -139,7 +139,7 @@ docker run -it --name test9ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -
 # ------------------------------------------------------------------------------------
 # Test no.10 :
 # ------------------------------------------------------------------------------------
-# Test GPG Signature Setup with the [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb
+# Test GPG Signature with the [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb
 export OUTSIDE_CONTAINER_SECRETS_VOLUME=$(pwd)/graviteebot/.secrets/
 mkdir -p ${OUTSIDE_CONTAINER_SECRETS_VOLUME}/.gungpg
 
@@ -155,7 +155,7 @@ mkdir -p ./let_say_here/.circleci
 
 # ---
 # The GnuPG SNIPPET
-cat <<EOF>>./let_say_here/.circleci/gpg.setup.script.snippet.sh
+cat <<EOF>>./let_say_here/.circleci/gpg.script.snippet.sh
 echo "# --------------------- #"
 # The [/home/$NON_ROOT_USER_NAME/.secrets] is engraved into the container image
 export SECRETS_HOME=/home/$NON_ROOT_USER_NAME/.secrets
@@ -197,22 +197,61 @@ echo "# --- OK READY TO SIGN"
 echo "# --------------------- #"
 EOF
 
-export GPG_SETUP_SCRIPT_SNIPPET=$(cat ./let_say_here/.circleci/gpg.setup.script.snippet.sh)
-rm ./let_say_here/.circleci/gpg.setup.script.snippet.sh
+export GPG_SCRIPT_SNIPPET=$(cat ./let_say_here/.circleci/gpg.script.snippet.sh)
+rm ./let_say_here/.circleci/gpg.script.snippet.sh
 
 
-cat <<EOF>>./let_say_here/.circleci/gpg.setup.run.tests.sh
+
+cat <<EOF>>./let_say_here/.circleci/gpg.run.tests.sh
 #!/bin/bash
-${GPG_SETUP_SCRIPT_SNIPPET}
+# ------------------------------------------------------------------------------------
+# The [/home/$NON_ROOT_USER_NAME/.secrets] is engraved into the container image
+export SECRETS_HOME=/home/$NON_ROOT_USER_NAME/.secrets
+export RESTORED_GPG_PUB_KEY_FILE="\${SECRETS_HOME}/.gungpg/graviteebot.gpg.pub.key"
+export RESTORED_GPG_PRIVATE_KEY_FILE="\${SECRETS_HOME}/.gungpg/graviteebot.gpg.priv.key"
+echo "# --------------------- #"
+echo "Content of [\\\${SECRETS_HOME}/.gungpg]=[\${SECRETS_HOME}/.gungpg] (are the keys there in the container ?)" :
+ls -allh \${SECRETS_HOME}/.gungpg
+echo "# --------------------- #"
+
+export EPHEMERAL_KEYRING_FOLDER_ZERO=\$(mktemp -d)
+chmod 700 \${EPHEMERAL_KEYRING_FOLDER_ZERO}
+export GNUPGHOME=\${EPHEMERAL_KEYRING_FOLDER_ZERO}
+echo "GPG Keys before import : "
+gpg --list-keys
+
+# ---
+# Importing GPG KeyPair
+gpg --batch --import \${RESTORED_GPG_PRIVATE_KEY_FILE}
+gpg --import \${RESTORED_GPG_PUB_KEY_FILE}
+echo "# --------------------- #"
+echo "GPG Keys after import : "
+gpg --list-keys
+echo "# --------------------- #"
+echo "  GPG version is :"
+echo "# --------------------- #"
+gpg --version
+echo "# --------------------- #"
+
+# ---
+# now we trust ultimately the Public Key in the Ephemeral Context,
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=${GRAVITEEBOT_GPG_SIGNING_KEY_ID}
+echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[\${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
+
+echo -e "5\\ny\\n" |  gpg --command-fd 0 --expert --edit-key \${GRAVITEEBOT_GPG_SIGNING_KEY_ID} trust
+
+echo "# --------------------- #"
+echo "# --- OK READY TO SIGN"
+echo "# --------------------- #"
 EOF
-echo "Content of the [./let_say_here/.circleci/gpg.setup.run.tests.sh] script : "
-cat ./let_say_here/.circleci/gpg.setup.run.tests.sh
+echo "Content of the [./let_say_here/.circleci/gpg.run.tests.sh] script : "
+cat ./let_say_here/.circleci/gpg.run.tests.sh
 echo "Now running GPG tests"
-chmod +x ./let_say_here/.circleci/gpg.setup.run.tests.sh
+chmod +x ./let_say_here/.circleci/gpg.run.tests.sh
 
 export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2"
-# docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
-docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
+# docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
+docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
 
 
 # ------------------------------------------------------------------------------------
@@ -232,57 +271,37 @@ docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} 
 
 # mkdir -p ./let_say_here/.circleci
 
-export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase")
 
-cat <<EOF>>./let_say_here/.circleci/gpg.signature.run.tests.sh
+
+cat <<EOF>>./let_say_here/.circleci/gpg.run.tests.sh
 #!/bin/bash
-${GPG_SETUP_SCRIPT_SNIPPET}
+${GPG_SCRIPT_SNIPPET}
 # ---
-# [enforce-no-snapshots] => [maven-enforcer-plugin], goal enforce
+# enforce-no-snapshots
 # ---
-mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce
+mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce
 export MVN_EXIT_CODE=\$?
 echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}] "
 if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
   echo "[\$0] The exit code of the [mvn -s ./settings.xml -P ${MAVEN_PROFILE_ID} enforcer:enforce] maven command is [\${MVN_EXIT_CODE}], so not zero "
   exit \${MVN_EXIT_CODE}
 fi;
-#
-# ---
-# stripped out [sonatype-nexus-staging] => no publishing at all to nexus
-# ---
-# ---
-# package and gpg sign
-# ---
-mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -P ${MAVEN_PROFILE_ID} clean package install
-export JAVA_PROPERTIES="-Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -Dgpg.passphrase=${GRAVITEEBOT_GPG_PASSPHRASE}"
-mvn ${JAVA_PROPERTIES} -s ./settings.xml -P ${MAVEN_PROFILE_ID} gpg:sign
-
-# ---
-# [attach-sources] => [maven-source-plugin], goal [jar-no-fork]
-# ---
-# ---
-# [attach-javadocs] => [maven-javadoc-plugin], goal [jar] ([<additionalparam>-Xdoclint:none</additionalparam>])
-# ---
-#
-# ---
-# maven deploy
-# ---
-# mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean deploy -DskipTests=true
-# export MVN_EXIT_CODE=\$?
-# echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean deploy -DskipTests=true] maven command is [\${MVN_EXIT_CODE}] "
-# if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
-  # echo "[\$0] The exit code of the [mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean deploy -DskipTests=true] maven command is [\${MVN_EXIT_CODE}], so not zero "
-  # exit \${MVN_EXIT_CODE}
-# fi;
+mvn -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean deploy -DskipTests=true
+export MVN_EXIT_CODE=\$?
+echo "[\$0] The exit code of the [mvn -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean deploy -DskipTests=true] maven command is [\${MVN_EXIT_CODE}] "
+if ! [ "\${MVN_EXIT_CODE}" == "0" ]; then
+  echo "[\$0] The exit code of the [mvn -s ./settings.xml -B -U -P ${MAVEN_PROFILE_ID} clean deploy -DskipTests=true] maven command is [\${MVN_EXIT_CODE}], so not zero "
+  exit \${MVN_EXIT_CODE}
+fi;
 EOF
 
 
-echo "Content of the [./let_say_here/.circleci/gpg.setup.run.tests.sh] script : "
-cat ./let_say_here/.circleci/gpg.signature.run.tests.sh
+
+echo "Content of the [./let_say_here/.circleci/gpg.run.tests.sh] script : "
+cat ./let_say_here/.circleci/gpg.run.tests.sh
 echo "Now running GPG tests"
-chmod +x ./let_say_here/.circleci/gpg.signature.run.tests.sh
+chmod +x ./let_say_here/.circleci/gpg.run.tests.sh
 
 export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2"
-# docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
-docker run -it --name test11ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.signature.run.tests.sh
+# docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
+docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.run.tests.sh
