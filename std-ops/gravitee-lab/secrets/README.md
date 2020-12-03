@@ -12,7 +12,7 @@ The Glocal CI CD system, will run into two isolated worlds :
 
 With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore have to extensively document those two taxonomy trees.
 
-### CICD Secrets taxonomy tree for https://github.com/gravitee-lab (Tests)
+## CICD Secrets taxonomy tree for https://github.com/gravitee-lab (Tests)
 
 
 * Secrethub orgs:
@@ -36,7 +36,7 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
   * [Gravitee Lab bot](https://github.com/gravitee-lab) artifactory credentials and the multiple `settings.xml` (maven) files used in all CI CD Processes :
 
 
-#### Install Secrethub CLI
+## Install Secrethub CLI
 
 * To install Secrethub CLI on Windows, go to https://secrethub.io/docs/reference/cli/install/#windows
 * To install Secrethub CLI on any GNU/Linux or Mac OS:
@@ -62,7 +62,9 @@ sudo ln -s /usr/local/secrethub/${SECRETHUB_CLI_VERSION}/bin/secrethub /usr/loca
 secrethub --version
 ```
 
-#### Init/Rotate secrets
+### Init/Rotate secrets
+
+#### `Secrethub` Service Account (Robot user) for `Circle CI` Pipelines
 
 * Secrethub Service Account (Robot user) for Circle CI Pipelines (Secrethub / Circle CI integration) :
 
@@ -93,9 +95,12 @@ cat ./.the-created.service.token | secrethub write "${SECRETHUB_ORG}/${SECRETHUB
 # test retrieving secret
 secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account/token"
 ```
+
 * finally, in Circle CI, you created a 'cicd-orchestrator' context in the [gravitee-lab] organization:
   * dedicated to the Gravitee Ci CD Orchestrator application
   * and in that 'cicd-orchestrator' Circle CI context, you set the 'SECRETHUB_CREDENTIAL' env. var. with value the token of the service account you just created
+
+#### `Circle CI` Token used by the Gravitee CI CD Orchestrator
 
 * Circle CI Token and secret file used by the Gravitee CI CD Orchestrator :
 
@@ -126,6 +131,103 @@ secrethub read --out-file ./test.retrievieving.secret.json "${SECRETHUB_ORG}/${S
 secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token
 
 ```
+
+#### Gravitee.io Lab Bot GPG identity
+
+* Init / Rotate the Gravitee.io Lab Bot GPG identity :
+
+```bash
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+#        GPG Key Pair of the Gravitee Lab Bot         #
+#                for Github SSH Service               #
+#                to GPG sign maven artifacts          #
+#        >>> GPG version 2.x ONLY!!!                  #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# --- # --- # --- # --- # --- # --- # --- # --- # --- #
+# -------------------------------------------------------------- #
+# -------------------------------------------------------------- #
+# for the Gravitee CI CD Bot in
+# the https://github.com/gravitee-lab Github Org
+# -------------------------------------------------------------- #
+# -------------------------------------------------------------- #
+# https://www.gnupg.org/documentation/manuals/gnupg-devel/Unattended-GPG-key-generation.html
+export GRAVITEEBOT_GPG_USER_NAME="Gravitee.io Lab Bot"
+export GRAVITEEBOT_GPG_USER_NAME_COMMENT="Gravitee CI CD Bot in the https://github.com/gravitee-lab Github Org"
+export GRAVITEEBOT_GPG_USER_EMAIL="contact@gravitee-lab.io"
+export GRAVITEEBOT_GPG_PASSPHRASE="th3gr@vit331sd${RANDOM}ab@s3${RANDOM}"
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# ------------------------------------------------------------------------------------------------ #
+# -- CREATE THE GPG KEY PAIR for the Gravitee.io bot --                               -- SECRET -- #
+# ------------------------------------------------------------------------------------------------ #
+echo "# ---------------------------------------------------------------------- "
+echo "Creating a GPG KEY Pair for the Gravitee.io bot"
+echo "# ---------------------------------------------------------------------- "
+# https://www.gnupg.org/documentation/manuals/gnupg-devel/Unattended-GPG-key-generation.html
+export GNUPGHOME="$(mktemp -d)"
+cat >./gravitee-lab-cicd-bot.gpg <<EOF
+%echo Generating a basic OpenPGP key
+Key-Type: RSA
+Key-Length: 4096
+Subkey-Type: RSA
+Subkey-Length: 4096
+Name-Real: ${GRAVITEEBOT_GPG_USER_NAME}
+Name-Comment: ${GRAVITEEBOT_GPG_USER_NAME_COMMENT}
+Name-Email: ${GRAVITEEBOT_GPG_USER_EMAIL}
+Expire-Date: 0
+Passphrase: ${GRAVITEEBOT_GPG_PASSPHRASE}
+# Do a commit here, so that we can later print "done" :-)
+%commit
+%echo done
+EOF
+
+gpg --batch --generate-key ./gravitee-lab-cicd-bot.gpg
+echo "GNUPGHOME=[${GNUPGHOME}] remove that directory when finished initializing secrets"
+ls -allh ${GNUPGHOME}
+gpg --list-secret-keys
+gpg --list-keys
+
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+echo "GRAVITEEBOT - GPG_SIGNING_KEY=[${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+# ------------------------------------------------------------------------------------------------ #
+# -- SAVING SECRETS TO SECRETHUB --                                                   -- SECRET -- #
+# ------------------------------------------------------------------------------------------------ #
+echo "To verify the GPG signature \"Somewhere else\" we will also need the GPG Public key"
+export GPG_PUB_KEY_FILE="$(pwd)/graviteebot.gpg.pub.key"
+export GPG_PRIVATE_KEY_FILE="$(pwd)/graviteebot.gpg.priv.key"
+
+# --- #
+# saving public and private GPG Keys to files
+gpg --export -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PUB_KEY_FILE}
+# gpg --export -a "Jean-Baptiste Lasselle <jean.baptiste.lasselle.pegasus@gmail.com>" | tee ${GPG_PUB_KEY_FILE}
+# -- #
+# Will be interactive for private key : you
+# will have to type your GPG password
+gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PRIVATE_KEY_FILE}
+# gpg --export-secret-key -a "Jean-Baptiste Lasselle <jean.baptiste.lasselle.pegasus@gmail.com>" | tee ${GPG_PRIVATE_KEY_FILE}
+
+
+
+export SECRETHUB_ORG="gravitee-lab"
+export SECRETHUB_REPO="cicd"
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg"
+
+echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_name"
+echo "${GRAVITEEBOT_GPG_USER_NAME_COMMENT}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_name_comment"
+echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_email"
+echo "${GRAVITEEBOT_GPG_PASSPHRASE}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase"
+echo "${GRAVITEEBOT_GPG_SIGNING_KEY_ID}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id"
+secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/pub_key"
+secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/private_key"
+
+```
+
+#### Gravitee.io Lab Bot git config
 
 * Gravitee.io Lab Bot git config, including SSH Key Pair used by the Gravitee.io Lab Bot to git commit n push to `gravitee-lab` repos :
 
@@ -208,28 +310,7 @@ secrethub account inspect
 # --- #
 ```
 
-* Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
-
-```bash
-export SECRETHUB_ORG=gravitee-lab
-export SECRETHUB_REPO=cicd
-
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser"
-
-export QUAY_BOT_USERNAME="username to authenticate to quay.io"
-export QUAY_BOT_SECRET="very long value of the quay.io authentication token"
-
-export QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/dev/docker/quay/botuser/username)
-export QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/dev/docker/quay/botuser/token)
-
-
-# [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in [gravitee-lab/cicd-orchestrator] repository
-echo "${QUAY_BOT_USERNAME}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/username
-# [Gravitee bot](https://github.com/gravitee-lab) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
-echo "${QUAY_BOT_SECRET}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/token
-
-```
-
+#### Gravitee.io Bot artifactory credentials
 
 * init / rotate the Gravitee.io Lab Bot artifactory credentials
 
@@ -254,6 +335,8 @@ echo "${ARTIFACTORY_BOT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRET
 echo "${ARTIFACTORY_BOT_USER_PWD}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-pwd"
 
 ```
+
+#### Gravitee.io CI CD `settings.xml` files in https://github.com/gravitee-lab
 
 * init / rotate the Gravitee.io Lab Bot `settings.xml` files used in all CI CD Processes :
 
@@ -357,108 +440,45 @@ rm ./test.retrievieving.settings.xml
 exit 0
 ```
 
+#### Gravitee.io CI CD System Container library : Quay.io credentials
 
-* Init / Rotate the Gravitee.io Lab Bot GPG identity :
+* Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
 
 ```bash
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-#        GPG Key Pair of the Gravitee Lab Bot         #
-#                for Github SSH Service               #
-#                to GPG sign maven artifacts          #
-#        >>> GPG version 2.x ONLY!!!                  #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# -------------------------------------------------------------- #
-# -------------------------------------------------------------- #
-# for the Gravitee CI CD Bot in
-# the https://github.com/gravitee-lab Github Org
-# -------------------------------------------------------------- #
-# -------------------------------------------------------------- #
-# https://www.gnupg.org/documentation/manuals/gnupg-devel/Unattended-GPG-key-generation.html
-export GRAVITEEBOT_GPG_USER_NAME="Gravitee.io Lab Bot"
-export GRAVITEEBOT_GPG_USER_NAME_COMMENT="Gravitee CI CD Bot in the https://github.com/gravitee-lab Github Org"
-export GRAVITEEBOT_GPG_USER_EMAIL="contact@gravitee-lab.io"
-export GRAVITEEBOT_GPG_PASSPHRASE="th3gr@vit331sdab@s3"
+export SECRETHUB_ORG=gravitee-lab
+export SECRETHUB_REPO=cicd
 
+secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser"
+
+export QUAY_BOT_USERNAME="username to authenticate to quay.io"
+export QUAY_BOT_SECRET="very long value of the quay.io authentication token"
+
+export QUAY_BOT_USERNAME=$(secrethub read gravitee-lab/cicd-orchestrator/dev/docker/quay/botuser/username)
+export QUAY_BOT_SECRET=$(secrethub read gravitee-lab/cicd-orchestrator/dev/docker/quay/botuser/token)
+
+
+# [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in [gravitee-lab/cicd-orchestrator] repository
+echo "${QUAY_BOT_USERNAME}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/username
+# [Gravitee bot](https://github.com/gravitee-lab) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
+echo "${QUAY_BOT_SECRET}" | secrethub write ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/meta-cicd/orchestrator/docker/quay/botuser/token
+
+```
+
+
+## ANNEX A : Testing the GPG Signature
+
+
+* Test on any machine, using the `GnuPG` Bot Identity to sign files (replace `export SECRETHUB_ORG="graviteeio"` by `export SECRETHUB_ORG="gravitee-lab"` to test the GnuPG Identity in the https://github.com/gravitee-lab Github Organization) :
+
+```bash
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 # ------------------------------------------------------------------------------------------------ #
-# -- CREATE THE GPG KEY PAIR for the Gravitee.io bot --                               -- SECRET -- #
-# ------------------------------------------------------------------------------------------------ #
-echo "# ---------------------------------------------------------------------- "
-echo "Creating a GPG KEY Pair for the Gravitee.io bot"
-echo "# ---------------------------------------------------------------------- "
-# https://www.gnupg.org/documentation/manuals/gnupg-devel/Unattended-GPG-key-generation.html
-export GNUPGHOME="$(mktemp -d)"
-cat >./gravitee-lab-cicd-bot.gpg <<EOF
-%echo Generating a basic OpenPGP key
-Key-Type: RSA
-Key-Length: 4096
-Subkey-Type: RSA
-Subkey-Length: 4096
-Name-Real: ${GRAVITEEBOT_GPG_USER_NAME}
-Name-Comment: ${GRAVITEEBOT_GPG_USER_NAME_COMMENT}
-Name-Email: ${GRAVITEEBOT_GPG_USER_EMAIL}
-Expire-Date: 0
-Passphrase: ${GRAVITEEBOT_GPG_PASSPHRASE}
-# Do a commit here, so that we can later print "done" :-)
-%commit
-%echo done
-EOF
-
-gpg --batch --generate-key ./gravitee-lab-cicd-bot.gpg
-echo "GNUPGHOME=[${GNUPGHOME}] remove that directory when finished initializing secrets"
-ls -allh ${GNUPGHOME}
-gpg --list-secret-keys
-gpg --list-keys
-
-export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
-echo "GRAVITEEBOT - GPG_SIGNING_KEY=[${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
-
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
-# ------------------------------------------------------------------------------------------------ #
-# -- SAVING SECRETS TO SECRETHUB --                                                   -- SECRET -- #
-# ------------------------------------------------------------------------------------------------ #
-echo "To verify the GPG signature \"Somewhere else\" we will also need the GPG Public key"
-export GPG_PUB_KEY_FILE="$(pwd)/graviteebot.gpg.pub.key"
-export GPG_PRIVATE_KEY_FILE="$(pwd)/graviteebot.gpg.priv.key"
-
-# --- #
-# saving public and private GPG Keys to files
-gpg --export -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PUB_KEY_FILE}
-# gpg --export -a "Jean-Baptiste Lasselle <jean.baptiste.lasselle.pegasus@gmail.com>" | tee ${GPG_PUB_KEY_FILE}
-# -- #
-# Will be interactive for private key : you
-# will have to type your GPG password
-gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PRIVATE_KEY_FILE}
-# gpg --export-secret-key -a "Jean-Baptiste Lasselle <jean.baptiste.lasselle.pegasus@gmail.com>" | tee ${GPG_PRIVATE_KEY_FILE}
-
-
-
-export SECRETHUB_ORG="gravitee-lab"
-export SECRETHUB_REPO="cicd"
-secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg"
-
-export GRAVITEEBOT_GPG_USER_NAME="Gravitee.io Lab Bot"
-export GRAVITEEBOT_GPG_USER_NAME_COMMENT="Gravitee CI CD Bot in the https://github.com/gravitee-lab Github Org"
-export GRAVITEEBOT_GPG_USER_EMAIL="contact@gravitee-lab.io"
-export GRAVITEEBOT_GPG_PASSPHRASE="th3gr@vit331sdab@s3"
-
-
-echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_name"
-echo "${GRAVITEEBOT_GPG_USER_NAME_COMMENT}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_name_comment"
-echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_email"
-echo "${GRAVITEEBOT_GPG_PASSPHRASE}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase"
-echo "${GRAVITEEBOT_GPG_SIGNING_KEY_ID}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id"
-secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/pub_key"
-secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/private_key"
-
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
-# ------------------------------------------------------------------------------------------------ #
-# -- MISSING !!!!! -- Restore GPG Private and Public Keys to be able to sign Files AGAIN  !!!!! -- #
+# ---         Restore GPG Private and Public Keys to be able to sign Files AGAIN  !!!!!        --- #
 # -------------------------------------------------------------------------------------------------#
+# (replace `export SECRETHUB_ORG="graviteeio"` by `export SECRETHUB_ORG="gravitee-lab"` to test the GnuPG Identity in the https://github.com/gravitee-lab Github Organization)
+export SECRETHUB_ORG="graviteeio"
+export SECRETHUB_REPO="cicd"
+
 export EPHEMERAL_KEYRING_FOLDER_ZERO=$(mktemp -d)
 export RESTORE_GPG_TMP_DIR=$(mktemp -d)
 export RESTORED_GPG_PUB_KEY_FILE="$(pwd)/graviteebot.gpg.pub.key"
@@ -527,10 +547,11 @@ export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB
 
 # ---
 # That's Jean-Baptiste Lasselle's GPG SIGNING KEY ID for signing git commits n tags (used as example)
-export GPG_SIGNING_KEY_ID=7B19A8E1574C2883
+# export GPG_SIGNING_KEY_ID=7B19A8E1574C2883
 # ---
-# That's the GPG_SIGNING_KEY used buy the "Gravitee.io Lab Bot" for git and signing any file
-export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+# That's the GPG_SIGNING_KEY used buy the "Gravitee.io Bot" for git and signing any file
+# export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id")
 echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
 
 gpg --keyid-format LONG -k "0x${GRAVITEEBOT_GPG_SIGNING_KEY}"
@@ -608,7 +629,8 @@ gpg --verify ./some-file-to-sign.txt.sig some-file-to-sign.txt
 # now we import the Public Key in the Ephemeral Context, trust it ultimately, and verify the file signature again
 gpg --import "${GPG_PUB_KEY_FILE}"
 # now we trust ultimately the Public Key in the Ephemeral Context,
-export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+# export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} (${GRAVITEEBOT_GPG_USER_NAME_COMMENT}) <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id")
 echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
 
 echo -e "5\ny\n" |  gpg --command-fd 0 --expert --edit-key ${GPG_SIGNING_KEY_ID} trust
@@ -621,6 +643,4 @@ echo -e "5\ny\n" |  gpg --command-fd 0 --expert --edit-key ${GPG_SIGNING_KEY_ID}
 # ++
 # And finally verify the file signature again
 gpg --verify ./some-file-to-sign.txt.sig some-file-to-sign.txt
-
-
 ```
