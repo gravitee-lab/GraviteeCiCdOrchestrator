@@ -19,19 +19,33 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
 * Secrethub repos:
   * `graviteeio/cicd`
 
+
 * secrets :
   * `graviteeio/cicd/graviteebot/circleci/secrethub-svc-account/token`: Secrethub Service Account (Robot user) for Circle CI Pipelines (Secrethub / Circle CI integration)
   * `graviteeio/cicd/graviteebot/circleci/api/token` : Circle CI Token used by the Gravitee CI CD Orchestrator
   * `graviteeio/cicd/graviteebot/circleci/api/.secrets.json` : Circle CI secret file used by the Gravitee CI CD Orchestrator
-  * [Gravitee bot](https://github.com/graviteeio) git config in all Git Service providers (Github, Gitlab, Bitbucket etc...) :
-    * `graviteeio/cicd/graviteebot/git/user/name` : [Gravitee bot](https://github.com/graviteeio) git user name
-    * `graviteeio/cicd/graviteebot/git/user/email` : [Gravitee bot](https://github.com/graviteeio) git user email
-    * `graviteeio/cicd/graviteebot/git/ssh/private_key` : [Gravitee bot](https://github.com/graviteeio) git ssh private key
-    * `graviteeio/cicd/graviteebot/git/ssh/public_key` :  [Gravitee bot](https://github.com/graviteeio) git ssh public key
-  * [ ] **THOSE HAVE NOT BEEN CREATED YET MUST BE DONE WITH @NicolasGeraud** Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
-    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/graviteeio) username to authenticate to Quay.io in https://quay.io/repository/gravitee_io/cicd-orchestrator repository
-    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/token` :  [Gravitee bot](https://github.com/graviteeio) token to authenticate to Quay.io in https://quay.io/repository/gravitee_io/cicd-orchestrator repository
-
+  * [Gravitee Lab bot](https://github.com/gravitee-lab) `GnuPG` identity :
+    * `graviteeio/cicd/graviteebot/gpg/user_name`
+    * `graviteeio/cicd/graviteebot/gpg/user_name_comment`
+    * `graviteeio/cicd/graviteebot/gpg/user_email`
+    * `graviteeio/cicd/graviteebot/gpg/passphrase`
+    * `graviteeio/cicd/graviteebot/gpg/key_id`
+    * (file) `graviteeio/cicd/graviteebot/gpg/pub_key`
+    * (file) `graviteeio/cicd/graviteebot/gpg/private_key`
+  * [Gravitee Lab bot](https://github.com/gravitee-lab) git config in all Git Service providers (Github, Gitlab, Bitbucket etc...) :
+    * `graviteeio/cicd/graviteebot/git/user/name` : [Gravitee bot](https://github.com/gravitee-lab) git user name
+    * `graviteeio/cicd/graviteebot/git/user/email` : [Gravitee bot](https://github.com/gravitee-lab) git user email
+    * `graviteeio/cicd/graviteebot/git/ssh/private_key` : [Gravitee bot](https://github.com/gravitee-lab) git ssh private key
+    * `graviteeio/cicd/graviteebot/git/ssh/public_key` :  [Gravitee bot](https://github.com/gravitee-lab) git ssh public key
+  * [Gravitee Lab bot](https://github.com/gravitee-lab) artifactory credentials and the multiple `settings.xml` (maven) files used in all CI CD Processes :
+    * `graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/user-name`
+    * `graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/user-pwd`
+    * `graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url`
+    * `graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/release-repo-url`
+    * `graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/settings.xml`
+  * Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
+    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
+    * `graviteeio/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/token` :  [Gravitee bot](https://github.com/gravitee-lab) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
 
 ## Install Secrethub CLI
 
