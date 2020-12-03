@@ -24,7 +24,7 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
   * `gravitee-lab/cicd/graviteebot/circleci/secrethub-svc-account/token`: Secrethub Service Account (Robot user) for Circle CI Pipelines (Secrethub / Circle CI integration)
   * `gravitee-lab/cicd/graviteebot/circleci/api/token` : Circle CI Token used by the Gravitee CI CD Orchestrator
   * `gravitee-lab/cicd/graviteebot/circleci/api/.secrets.json` : Circle CI secret file used by the Gravitee CI CD Orchestrator
-  * [Gravitee bot](https://github.com/gravitee-lab) git config in all Git Service providers (Github, Gitlab, Bitbucket etc...) :
+  * [Gravitee Lab bot](https://github.com/gravitee-lab) git config in all Git Service providers (Github, Gitlab, Bitbucket etc...) :
     * `gravitee-lab/cicd/graviteebot/git/user/name` : [Gravitee bot](https://github.com/gravitee-lab) git user name
     * `gravitee-lab/cicd/graviteebot/git/user/email` : [Gravitee bot](https://github.com/gravitee-lab) git user email
     * `gravitee-lab/cicd/graviteebot/git/ssh/private_key` : [Gravitee bot](https://github.com/gravitee-lab) git ssh private key
@@ -32,6 +32,8 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
   * Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
     * `gravitee-lab/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
     * `gravitee-lab/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/token` :  [Gravitee bot](https://github.com/gravitee-lab) token to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
+  * [Gravitee Lab bot](https://github.com/gravitee-lab) `GnuPG` identity :
+  * [Gravitee Lab bot](https://github.com/gravitee-lab) artifactory credentials and the multiple `settings.xml` (maven) files used in all CI CD Processes :
 
 
 #### Install Secrethub CLI
@@ -201,42 +203,6 @@ cat .retrieved.ssh.cicd.graviteebot.id_rsa.pub
 echo ''
 read -p "Add the above PUBLIC Rsa Key to the SSH Keys of https://github.com/gravitee-lab, the Github User of the , then hit the enter Key to proceed secrets initalization"
 
-
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-#        GPG Key Pair of the           #
-#                for Github SSH Service               #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-# --- # --- # --- # --- # --- # --- # --- # --- # --- #
-
-export GRAVITEEBOT_GPG_USER_NAME=""
-export GRAVITEEBOT_GPG_USER_EMAIL="contact@gravitee-lab.io"
-
-read -p "Create a GPG KEY for the Gravitee.io bot with username [${GRAVITEEBOT_GPG_USER_NAME}] and email [${GRAVITEEBOT_GPG_USER_EMAIL}], then hit the enter Key to proceed secrets initalization"
-
-export GPG_SIGNING_KEY=$(gpg --list-signatures -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | grep 'sig' | tail -n 1 | awk '{print $2}')
-echo "GPG_SIGNING_KEY=${GPG_SIGNING_KEY}"
-
-export GPG_PUB_KEY_FILE="./graviteebot.gpg.pub.key"
-export GPG_PRIVATE_KEY_FILE="./graviteebot.gpg.priv.key"
-
-# --- #
-# saving
-gpg --export -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PUB_KEY_FILE}
-# -- #
-# Will be interactive for private key : you
-# will have to type your GPG password
-gpg --export-secret-key -a "${GRAVITEEBOT_GPG_USER_NAME} <${GRAVITEEBOT_GPG_USER_EMAIL}>" | tee ${GPG_PRIVATE_KEY_FILE}
-
-secrethub write --in-file ${GPG_PUB_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/pub_key"
-secrethub write --in-file ${GPG_PRIVATE_KEY_FILE} "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/private_key"
-
-echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/user_name"
-echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/user_email"
-echo "${GPG_SIGNING_KEY}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/git/gpg/signing_key"
-
 secrethub account inspect
 
 # --- #
@@ -392,7 +358,7 @@ exit 0
 ```
 
 
-* Init / Rotate the Gravitee.io Lab Bot GPG key :
+* Init / Rotate the Gravitee.io Lab Bot GPG identity :
 
 ```bash
 # --- # --- # --- # --- # --- # --- # --- # --- # --- #
