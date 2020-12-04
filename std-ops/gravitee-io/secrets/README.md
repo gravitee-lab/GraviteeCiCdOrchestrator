@@ -168,7 +168,7 @@ echo "Creating a GPG KEY Pair for the Gravitee.io bot"
 echo "# ---------------------------------------------------------------------- "
 # https://www.gnupg.org/documentation/manuals/gnupg-devel/Unattended-GPG-key-generation.html
 export GNUPGHOME="$(mktemp -d)"
-cat >./gravitee-lab-cicd-bot.gpg <<EOF
+cat >./gravitee-io-cicd-bot.gpg <<EOF
 %echo Generating a basic OpenPGP key
 Key-Type: RSA
 Key-Length: 4096
@@ -184,7 +184,7 @@ Passphrase: ${GRAVITEEBOT_GPG_PASSPHRASE}
 %echo done
 EOF
 
-gpg --batch --generate-key ./gravitee-lab-cicd-bot.gpg
+gpg --batch --generate-key ./gravitee-io-cicd-bot.gpg
 echo "GNUPGHOME=[${GNUPGHOME}] remove that directory when finished initializing secrets"
 ls -allh ${GNUPGHOME}
 gpg --list-secret-keys
