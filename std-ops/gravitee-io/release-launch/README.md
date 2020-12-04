@@ -3,7 +3,12 @@
 * Trigger a dry run :
 
 ```bash
-export CCI_TOKEN="<token value>"
+SECRETHUB_ORG=graviteeio
+SECRETHUB_REPO=cicd
+
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
 export ORG_NAME="gravitee-io"
 export REPO_NAME="release"
 export BRANCH="3.0.x"
@@ -25,7 +30,12 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
 * Trigger a release :
 
 ```bash
-export CCI_TOKEN="<token value>"
+SECRETHUB_ORG=graviteeio
+SECRETHUB_REPO=cicd
+
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
 export ORG_NAME="gravitee-io"
 export REPO_NAME="release"
 export BRANCH="3.0.x"

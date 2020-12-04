@@ -3,7 +3,13 @@
 * Trigger a dry run :
 
 ```bash
-export CCI_TOKEN="<token value>"
+SECRETHUB_ORG=gravitee-lab
+# SECRETHUB_ORG=gravitee-io
+SECRETHUB_REPO=cicd
+
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
 export ORG_NAME="gravitee-lab"
 export REPO_NAME="release"
 export BRANCH="3.1.x"
