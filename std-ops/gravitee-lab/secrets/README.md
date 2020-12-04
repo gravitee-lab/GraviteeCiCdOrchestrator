@@ -396,8 +396,30 @@ cat <<EOF >>./.secret.settings.xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <pluginGroups></pluginGroups>
   <proxies></proxies>
-
+  <mirrors>
+    <mirror>
+      <!--This sends everything else to /public -->
+      <id>artifactory-nexus-mirror</id>
+      <mirrorOf>external:*</mirrorOf>
+      <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/nexus-and-dry-run-releases/</url>
+    </mirror>
+  </mirrors>
   <servers>
+    <server>
+      <id>artifactory-nexus-mirror</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-plugin-repository-remote-nexus</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-repository-dry-run-releases</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
     <server>
       <id>clever-cloud-artifactory-dry-run-releases</id>
       <username>${ARTIFACTORY_BOT_USER_NAME}</username>
@@ -421,11 +443,63 @@ cat <<EOF >>./.secret.settings.xml
                 <value>true</value>
             </property>
         </activation>
+        <repositories>
+          <repository>
+            <id>artifactory-repository-remote-nexus</id>
+            <name>Artifactory Repository Remote Nexus</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-repository-dry-run-releases</id>
+            <name>Artifactory Repository Dry Run Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/</url>
+            <layout>default</layout>
+          </repository>
+        </repositories>
+        <pluginRepositories>
+          <pluginRepository>
+            <id>artifactory-plugin-repository-remote-nexus</id>
+            <name>Artifactory Proxy Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </pluginRepository>
+        </pluginRepositories>
     </profile>
     <profile>
       <id>gravitee-release</id>
         <properties>
-          <altDeploymentRepository>clever-cloud-artifactory-dry-run-releases::default::${ARTIFACTORY_REPO_RELEASE_URL}</altDeploymentRepository>
+          <altDeploymentRepository>clever-cloud-artifactory-releases::default::${ARTIFACTORY_REPO_RELEASE_URL}</altDeploymentRepository>
         </properties>
         <activation>
             <property>
@@ -440,6 +514,10 @@ cat <<EOF >>./.secret.settings.xml
   </activeProfiles>
 </settings>
 EOF
+
+
+
+
 
 # secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
 secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
