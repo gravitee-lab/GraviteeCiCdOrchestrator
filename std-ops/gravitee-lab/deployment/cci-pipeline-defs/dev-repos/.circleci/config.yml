@@ -36,8 +36,6 @@ workflows:
   release:
     # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
     when:
-      equal: [ release, << pipeline.parameters.gio_action >> ]
-    when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]
         - not: << pipeline.parameters.dry_run >>
@@ -51,8 +49,6 @@ workflows:
           maven_profile_id: << pipeline.parameters.maven_profile_id >>
   release_dry_run:
     # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
-    when:
-      equal: [ release, << pipeline.parameters.gio_action >> ]
     when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]
