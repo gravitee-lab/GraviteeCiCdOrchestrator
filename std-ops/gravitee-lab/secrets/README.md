@@ -42,6 +42,7 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/user-pwd`
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url`
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url`
+    * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/release-repo-url`
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/settings.xml`
   * Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
     * `gravitee-lab/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
@@ -595,8 +596,6 @@ cat <<EOF >>./.secret.settings.xml
   </activeProfiles>
 </settings>
 EOF
-
-
 
 
 
