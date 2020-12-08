@@ -354,6 +354,8 @@ echo "${ARTIFACTORY_BOT_USER_PWD}" | secrethub write "${SECRETHUB_ORG}/${SECRETH
 * init / rotate the Gravitee.io Lab Bot `settings.xml` files used in all CI CD Processes :
 
 ```bash
+export SECRETHUB_ORG="gravitee-lab"
+export SECRETHUB_REPO="cicd"
 export ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/"
 export ARTIFACTORY_REPO_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/"
 export ARTIFACTORY_REPO_SNAPSHOTS_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-snapshots/"
@@ -366,7 +368,7 @@ echo "ARTIFACTORY_REPO_RELEASE_URL=[${ARTIFACTORY_REPO_RELEASE_URL}]"
 echo "${ARTIFACTORY_REPO_SNAPSHOTS_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url"
 
 echo "${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url"
-echo "${ARTIFACTORY_REPO_RELEASE_URL}" | secrethub rm "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url"
+echo "${ARTIFACTORY_REPO_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url"
 
 # From the latest secrets, create the secret settings.xml file
 export SECRETHUB_ORG="gravitee-lab"
