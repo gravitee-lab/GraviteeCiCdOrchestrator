@@ -3,6 +3,7 @@
 * Trigger a dry run :
 
 ```bash
+SECRETHUB_ORG=gravitee-lab
 SECRETHUB_ORG=graviteeio
 SECRETHUB_REPO=cicd
 # Nevertheless, I today think :
@@ -16,7 +17,8 @@ export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${H
 
 export ORG_NAME="gravitee-io"
 export REPO_NAME="release"
-export BRANCH="3.0.x"
+export BRANCH="3.0.0-beta"
+export BRANCH="3.4.x"
 export JSON_PAYLOAD="{
 
     \"branch\": \"${BRANCH}\",

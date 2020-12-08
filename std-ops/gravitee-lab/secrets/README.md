@@ -41,7 +41,7 @@ With this point of view, the _**The Gravitee Secrets Inventory**_ will therefore
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/user-name`
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/user-pwd`
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url`
-    * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/release-repo-url`
+    * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url`
     * `gravitee-lab/cicd/graviteebot/infra/maven/dry-run/artifactory/settings.xml`
   * Quay.io credentials to manage `Gravitee CI CD Orchestrator` Container image (and all container images of all "meta-CI/CD" components - the components of the CICD of the CICD System ) :
     * `gravitee-lab/cicd/graviteebot/meta-cicd/orchestrator/docker/quay/username` : [Gravitee bot](https://github.com/gravitee-lab) username to authenticate to Quay.io in `gravitee-lab/cicd-orchestrator` repository
@@ -353,21 +353,27 @@ echo "${ARTIFACTORY_BOT_USER_PWD}" | secrethub write "${SECRETHUB_ORG}/${SECRETH
 * init / rotate the Gravitee.io Lab Bot `settings.xml` files used in all CI CD Processes :
 
 ```bash
-export ARTIFACTORY_REPO_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/"
+export ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/"
+export ARTIFACTORY_REPO_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/"
 export ARTIFACTORY_REPO_SNAPSHOTS_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-snapshots/"
 
 echo "ARTIFACTORY_REPO_SNAPSHOTS_URL=[${ARTIFACTORY_REPO_SNAPSHOTS_URL}]"
+echo "ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL=[${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}]"
 echo "ARTIFACTORY_REPO_RELEASE_URL=[${ARTIFACTORY_REPO_RELEASE_URL}]"
 
 
 echo "${ARTIFACTORY_REPO_SNAPSHOTS_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url"
-echo "${ARTIFACTORY_REPO_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url"
+
+echo "${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url"
+echo "${ARTIFACTORY_REPO_RELEASE_URL}" | secrethub rm "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url"
+
 # From the latest secrets, create the secret settings.xml file
 export SECRETHUB_ORG="gravitee-lab"
 export SECRETHUB_REPO="cicd"
 export ARTIFACTORY_BOT_USER_NAME=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-name")
 export ARTIFACTORY_BOT_USER_PWD=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-pwd")
 export ARTIFACTORY_REPO_SNAPSHOTS_URL=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url")
+export ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url")
 export ARTIFACTORY_REPO_RELEASE_URL=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url")
 
 if [ -f ./.secret.settings.xml ]; then
@@ -398,15 +404,26 @@ cat <<EOF >>./.secret.settings.xml
   <proxies></proxies>
   <mirrors>
     <mirror>
-      <!--This sends everything else to /public -->
-      <id>artifactory-nexus-mirror</id>
+      <!--The maven referential for all CI CD Processes in  Dry Run Mode -->
+      <id>artifactory-gravitee-dry-run</id>
       <mirrorOf>external:*</mirrorOf>
       <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/nexus-and-dry-run-releases/</url>
+    </mirror>
+    <mirror>
+      <!--The maven referential for all CI CD Processes in NON Dry Run Mode -->
+      <id>artifactory-gravitee-non-dry-run</id>
+      <mirrorOf>external:*</mirrorOf>
+      <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/nexus-and-non-dry-run-releases/</url>
     </mirror>
   </mirrors>
   <servers>
     <server>
-      <id>artifactory-nexus-mirror</id>
+      <id>artifactory-gravitee-dry-run</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-gravitee-non-dry-run</id>
       <username>${ARTIFACTORY_BOT_USER_NAME}</username>
       <password>${ARTIFACTORY_BOT_USER_PWD}</password>
     </server>
@@ -434,6 +451,70 @@ cat <<EOF >>./.secret.settings.xml
   <profiles>
     <profile>
       <id>gravitee-dry-run</id>
+        <properties>
+          <altDeploymentRepository>clever-cloud-artifactory-dry-run-releases::default::${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}</altDeploymentRepository>
+        </properties>
+        <activation>
+            <property>
+                <name>performRelease</name>
+                <value>true</value>
+            </property>
+        </activation>
+        <repositories>
+          <repository>
+            <id>artifactory-repository-remote-nexus</id>
+            <name>Artifactory Repository Remote Nexus</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-repository-dry-run-releases</id>
+            <name>Artifactory Repository Dry Run Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/</url>
+            <layout>default</layout>
+          </repository>
+        </repositories>
+        <pluginRepositories>
+          <pluginRepository>
+            <id>artifactory-plugin-repository-remote-nexus</id>
+            <name>Artifactory Proxy Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </pluginRepository>
+        </pluginRepositories>
+    </profile>
+    <profile>
+      <id>gio-release</id>
         <properties>
           <altDeploymentRepository>clever-cloud-artifactory-dry-run-releases::default::${ARTIFACTORY_REPO_RELEASE_URL}</altDeploymentRepository>
         </properties>
@@ -529,6 +610,14 @@ rm ./test.retrievieving.settings.xml
 
 exit 0
 ```
+
+* Configuration of the `artifactory-gravitee-dry-run` and `artifactory-gravitee-non-dry-run` artifactory virutal repositories referenced in the `settings.xml` above   :
+
+![artifactory-gravitee-dry-run virtual artifactory repo](./images/nexus-and-dry-run-releases.png)
+
+![artifactory-gravitee-non-dry-run virtual artifactory repo](./images/nexus-and-non-dry-run-releases.png)
+
+
 
 #### Gravitee.io CI CD System Container library : Quay.io credentials
 
