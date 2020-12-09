@@ -32,7 +32,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 import * as rxjs from 'rxjs';
 import { CircleCIClient, WorkflowsData, WorkflowJobsData, WfPaginationRef, JobPaginationRef } from '../../../modules/circleci/CircleCIClient';
 import * as reporting from '../../../modules/circleci/status/PipelineExecSetReport';
-import * as shelljs from 'shelljs';
+import {ReleaseProcessStatePersistenceManager} from '../../../modules/resume-release/ReleaseProcessStatePersistenceManager';
 
 export interface PipeExecSetStatusNotification {
   is_errored: boolean
@@ -74,7 +74,7 @@ export class PipelineExecSetStatusWatcher {
    * is notified when all Pipelines have reached a final execution state, with or without errors.
    **/
   public readonly finalStateNotifier: rxjs.Subject<PipeExecSetStatusNotification>;
-
+  public readonly releaseStatePersistenceMngr: ReleaseProcessStatePersistenceManager;
   /**
    * This is the progress matrix for all pipeline executions
    * in one {ParallelExecutionSet}, built by a <code>src/modules/circleci/PipelineExecSetStatusWatcher.ts</code>, not
@@ -123,6 +123,7 @@ export class PipelineExecSetStatusWatcher {
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [constructor] - I am the constructor, I actually am called`);
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
+    this.releaseStatePersistenceMngr = new ReleaseProcessStatePersistenceManager();
     this.workflowPaginationNotifier = new rxjs.Subject<WfPaginationRef>();
     this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
     this.circleci_client = circleci_client;
@@ -437,6 +438,7 @@ export class PipelineExecSetStatusWatcher {
     /// cumulatively add all Workflow States in
     let occuredProblem = null;
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}]`)
+    this.releaseStatePersistenceMngr.whereAmI();
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
 
@@ -479,6 +481,7 @@ export class PipelineExecSetStatusWatcher {
       if (!(occuredProblem === null)) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
         /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
+        this.releaseStatePersistenceMngr.whereAmI();
         throw occuredProblem;
         /// for the time being, [PipelineExecSetReportLogger] is too complex a feature to bring it in for now.We'll seein future releases. And It just occured to me, that consolidating an errorreport, is responsiblity of the log aggregation system.
         ///let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);

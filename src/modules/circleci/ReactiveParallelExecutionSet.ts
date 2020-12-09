@@ -133,7 +133,7 @@ export class ReactiveParallelExecutionSet {
          console.log("[-----------------------------------------------]");
 
          this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
-         this.pipeExecStatusWatcher.finalStateNotifier.subscribe({
+         this.pipeExecStatusWatcher.finalStateNotifier.subscribe({ // Subsciption to An RxJS Subject, so this subscription doesnot trigger anything.
            next: this.notifyExecCompleted.bind(this),
            complete: () => {
              console.log('[{ReactiveParallelExecutionSet}] - Just Completed Watching Pipeline Execution Status!');
@@ -141,6 +141,7 @@ export class ReactiveParallelExecutionSet {
          });
          try {
            this.pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
+           /// I tested it, this does not catch anything at all
          } catch (error) {
            console.log(`# ----------------------------------------------------`)
            console.log(`Catched pipeExecStatusWatcher error : `)
