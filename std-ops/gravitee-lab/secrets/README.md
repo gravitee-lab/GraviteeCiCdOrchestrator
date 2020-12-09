@@ -379,6 +379,8 @@ export ARTIFACTORY_REPO_SNAPSHOTS_URL=$(secrethub read "${SECRETHUB_ORG}/${SECRE
 export ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url")
 export ARTIFACTORY_REPO_RELEASE_URL=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url")
 
+export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase")
+
 if [ -f ./.secret.settings.xml ]; then
   rm ./.secret.settings.xml
 fi;
@@ -449,6 +451,11 @@ cat <<EOF >>./.secret.settings.xml
       <id>clever-cloud-artifactory-releases</id>
       <username>${ARTIFACTORY_BOT_USER_NAME}</username>
       <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <!-- as of https://maven.apache.org/plugins/maven-gpg-plugin/usage.html -->
+      <id>gpg.passphrase</id>
+      <passphrase>${GRAVITEEBOT_GPG_PASSPHRASE}</passphrase>
     </server>
   </servers>
   <profiles>
