@@ -95,7 +95,17 @@ if (process.argv["cicd-stage"] === 'pull_req') {
   /// then, using the execution plan, we are going to
   /// process parallel executions one after the other
   let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
-  orchestrator.start();
+
+  try {
+    orchestrator.start();
+  } catch (error) {
+    console.log(`# ----------------------------------------------------`)
+    console.log(`Catched orchestrator error : `)
+    console.log(error)
+    console.log(`# ----------------------------------------------------`)
+    throw new Error(`Stopping Orchestrator because an error occured during the execution ofthe CI CD Process`)
+  }
+
 
 }
 

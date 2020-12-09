@@ -34,25 +34,8 @@ workflows:
       - gravitee/pr-build:
           context: cicd-orchestrator
   release:
-    # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
     when:
-      and:
-        - equal: [ release, << pipeline.parameters.gio_action >> ]
-        - not: << pipeline.parameters.dry_run >>
-    jobs:
-      # return to simple definition :
-      - gravitee/release:
-          context: cicd-orchestrator
-          dry_run: << pipeline.parameters.dry_run >>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-          maven_profile_id: << pipeline.parameters.maven_profile_id >>
-  release_dry_run:
-    # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
-    when:
-      and:
-        - equal: [ release, << pipeline.parameters.gio_action >> ]
-        - << pipeline.parameters.dry_run >>
+      equal: [ release, << pipeline.parameters.gio_action >> ]
     jobs:
       # return to simple definition :
       - gravitee/release:

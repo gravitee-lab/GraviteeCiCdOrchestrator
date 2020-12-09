@@ -77,7 +77,7 @@ export GIT_SSH_COMMAND='ssh -i ~/.ssh.perso.backed/id_rsa'
 # (Optional), defaults to "[$0] automatic CICD test setup : adding circleci git config"
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config version [${GIO_ORCHESTRATOR_VERSION}] "
 export GIT_COMMIT_MESSAGE="Deploying Gravitee.io dev repos Circle CI Pipeline config "
-export GIT_COMMIT_MESSAGE="Updating Gravitee.io dev repos Circle CI Pipeline config with new secrethub org and repo paramters"
+export GIT_COMMIT_MESSAGE="Updating Gravitee.io dev repos Circle CI Pipeline config with new secrethub org and repo parameters"
 
 # (Optional) The GPG public Key to use, to sign commits. Has no default value, and if not set, then git is configured with [git config --global commit.gpgsign false]
 export GIT_USER_SIGNING_KEY=7B19A8E1574C2883

@@ -43,6 +43,8 @@ export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): updated deployment of pipeline d
 export FEATURE_ALIAS="std-ops-gravitee-lab"
 export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): working on installing GPG Bot identity, to use for signing GRavitee java artifacts with [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb"
 
+export FEATURE_ALIAS="resume_release"
+export COMMIT_MESSAGE="feat.(${FEATURE_ALIAS}): implementing resume feature in dry run mode to ease testability as of https://github.com/gravitee-io/release/issues/130#issuecomment-740240754"
 # git add --all && git commit -m "${COMMIT_MESSAGE}" && git push -u origin HEAD
 
 atom .
