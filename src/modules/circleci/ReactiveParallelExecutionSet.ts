@@ -263,7 +263,8 @@ export class ReactiveParallelExecutionSet {
          gio_action: `release`, // should be releated to cicd_stage...? mvn_release ?
          dry_run: process.argv["dry-run"],
          secrethub_org: process.env.SECRETHUB_ORG,
-         secrethub_repo: process.env.SECRETHUB_REPO
+         secrethub_repo: process.env.SECRETHUB_REPO,
+         maven_profile_id: process.env.MAVEN_PROFILE_ID
         },
         branch: `${pipelineTargetBranch}`
       }
