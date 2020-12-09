@@ -438,7 +438,7 @@ export class PipelineExecSetStatusWatcher {
     /// cumulatively add all Workflow States in
     let occuredProblem = null;
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}]`)
-    this.releaseStatePersistenceMngr.whereAmI();
+    //this.releaseStatePersistenceMngr.whereAmI();
     for (let k:number= 0; k < observedResponse.cci_json_response.items.length; k++) {
       let wflowstate = observedResponse.cci_json_response.items[k];
 
@@ -481,7 +481,7 @@ export class PipelineExecSetStatusWatcher {
       if (!(occuredProblem === null)) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
         /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
-        this.releaseStatePersistenceMngr.whereAmI();
+        // this.releaseStatePersistenceMngr.whereAmI();
         throw occuredProblem;
         /// for the time being, [PipelineExecSetReportLogger] is too complex a feature to bring it in for now.We'll seein future releases. And It just occured to me, that consolidating an errorreport, is responsiblity of the log aggregation system.
         ///let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
