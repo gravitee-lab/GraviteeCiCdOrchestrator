@@ -49,6 +49,43 @@ export class ReleaseProcessStatePersistenceManager {
 
 
     /**
+     * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
+     *
+     * @argument component_name  {@type string} Blablabla
+     * -----
+     * -----
+     *
+     *
+     * @returns void
+     **/
+    /// The git branch of the release repo is un-necessary, it is assumed to
+    /// already be (git) checked out in the PWD where the Orchestrator runs.
+    /// ---
+    /// persistSuccessState(component_name: string, git_branch: string): void {
+    persistSuccessState(component_name: string): void {
+      /// -
+      let shellCommandResult = shelljs.exec("pwd && ls -allh");
+      if (shellCommandResult.code !== 0) {
+        throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+      } else {
+        // shellCommandStdOUT = shellCommandResult.stdout;
+      }
+      /// -
+      let gitCommandResult = shelljs.exec("git remote -v && git status");
+      if (gitCommandResult.code !== 0) {
+        throw new Error("An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitCommandResult.stdout;
+      }
+
+      let gitCOMMIT_AND_PUSHCommandResult = shelljs.exec("git remote -v");
+      if (gitCOMMIT_AND_PUSHCommandResult.code !== 0) {
+        throw new Error("An Error occurred executing the [git remote -v] shell command. Shell error was [" + gitCOMMIT_AND_PUSHCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+      }
+    }
+    /**
      * Triggers a Circle CI Pipeline, for a repo on Github
      *
      * @argument arg_one  {@type string} Blablabla
@@ -59,7 +96,37 @@ export class ReleaseProcessStatePersistenceManager {
      *
      * @returns any Something
      **/
-    someMethod(arg_one: string, arg_two: string): any {
+
+     /**
+      * This method runs shell and git commands just to check everyhting is there (the  [release.json], the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo etc..)
+      *
+      * -----
+      * -----
+      *
+      *
+      * @returns void
+      **/
+     whereAmI(): void {
+       console.log(`# ------------------------------------------------------`)
+       console.log(`# --- [{ReleaseProcessStatePersistenceManager}]  WHERE AM I ?`)
+       console.log(`# ------------------------------------------------------`)
+       /// -
+       let shellCommandResult = shelljs.exec("pwd && ls -allh");
+       if (shellCommandResult.code !== 0) {
+         throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+       } else {
+         // shellCommandStdOUT = shellCommandResult.stdout;
+       }
+       /// -
+       let gitCommandResult = shelljs.exec("git remote -v && git status");
+       if (gitCommandResult.code !== 0) {
+         throw new Error("An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+       } else {
+         // gitCommandStdOUT = gitCommandResult.stdout;
+       }
+
+     }
+    someMethod(component_name: string, arg_two: string): any {
 
 
       return null;
