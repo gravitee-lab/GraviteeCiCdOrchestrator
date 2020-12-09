@@ -139,7 +139,17 @@ export class ReactiveParallelExecutionSet {
              console.log('[{ReactiveParallelExecutionSet}] - Just Completed Watching Pipeline Execution Status!');
            }
          });
-         this.pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
+         try {
+           this.pipeExecStatusWatcher.start(); // will invoke next() method on subject only after start() is invoked
+         } catch (error) {
+           console.log(`# ----------------------------------------------------`)
+           console.log(`Catched pipeExecStatusWatcher error : `)
+           console.log(error)
+           console.log(`# ----------------------------------------------------`)
+           throw error;
+           // throw new Error(`Stopping Orchestrator because an error occured during the execution ofthe CI CD Process`)
+         }
+
 
          console.log(`[{ReactiveParallelExecutionSet}] Now verifying that If I do not invoke [this.orchestratorNotifier.next(${this.parallelExecutionSetIndex});] then nothing happens at all`)
          /*
