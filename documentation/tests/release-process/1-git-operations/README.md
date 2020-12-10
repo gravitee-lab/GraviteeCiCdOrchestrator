@@ -95,6 +95,15 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H
 curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
 ```
 
+Bon, fin des travaux pour ce soir pour moi :
+* j'y suis presque : test sur gravitee-lab, je confirme, la `GPG` signature passe, et cette fois-ci testée avec le maven profile `gio-release`
+* j'utilise le maven profile `gio-release`, après avoir fait une release 19.99.1 du gravitee-parent, dans le artifactory private :
+* j'ai mis version `19.99.1`  pour version du pom parent pour les 3 repos gravitee-repository-test,  gravitee-repository-mongodb, et  gravitee-repository-jdbc exemple : https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1/blob/a33c440bada25ec6540b8aa31556d7639debce87/pom.xml#L26
+* la version `19.99.1` définit un maven profile gio-release sans nexus staging : https://github.com/gravitee-lab/gravitee-parent-redefinition/blob/72a708f1d23eb1b7836b67d6b02398a9bc86890c/pom.xml#L416
+* [cette exécution](https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-test-release-3-4-1/7/workflows/79b4a7b7-5cfa-4b1f-b727-cd308e9887bd/jobs/7) de pipeline est celle qui utilise tout ça, et fait la signature GPG avec succès
+* et au passage on a maintenant deux settings.xml séparés : un pour le dry-run, et un pour la "vraie release" , ce qui m'aamené à faire un nouveau commit sur ma pull request de l'orb, poru leprochain patch 1.0.4
+
+
 ## Issue : SSH Key Access rights for Gravitee Lab Bot
 
 Bon , ok j'ai une petite issue là dessus :
