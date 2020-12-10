@@ -51,6 +51,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
+rm -fr ./.git/
 cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=graviteeio
@@ -92,7 +93,7 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # the https://github.com/${GITHUB_ORG}/release
 # list must be comma-separated, white spaces are trimmed
 # --- #
-export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+export RELEASE_BRANCHES=' 3.4.x, 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 ./deploy.sh
 
 ```
