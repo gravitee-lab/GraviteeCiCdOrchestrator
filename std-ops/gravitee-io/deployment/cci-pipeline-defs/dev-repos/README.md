@@ -54,6 +54,7 @@ git checkout ${GIO_ORCHESTRATOR_VERSION}
 cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=graviteeio
+SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
 SECRETHUB_REPO=cicd
 
