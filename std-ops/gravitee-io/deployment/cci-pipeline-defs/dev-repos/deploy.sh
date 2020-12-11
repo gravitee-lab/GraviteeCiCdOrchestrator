@@ -13,7 +13,7 @@ export GITHUB_ORG=${GITHUB_ORG:-"gravitee-io"}
 # export GITHUB_ORG="gravitee-lab"
 
 ./shell/consolidate-dev-repos-inventory.sh
-
+exit 0
 # Once execution has completed, all inventory files will be in
 # the "./inventory" folder.
 # that is, the "std-ops/deployment/cci-pipeline-defs/dev-repos/inventory" folder.
