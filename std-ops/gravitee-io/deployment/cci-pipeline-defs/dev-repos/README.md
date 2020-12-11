@@ -382,6 +382,7 @@ while read REPO_URL; do
   curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   echo "# ------------------------------------------------------------ #"
   # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+# done <./shell/consolidation-diff.list
 done <./shell/repair-checkout-keys.list
 
 ```
