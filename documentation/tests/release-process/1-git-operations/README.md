@@ -1,8 +1,7 @@
-# Tests of the release process
+# Tests of the release process ( git operations)
 
 
-## Test suite : git operations
-
+# Test suite : testing the 3.4.1  Release in https://github.com/gravitee-lab
 
 In the https://github.com/gravitee-lab Github Org :
 * the https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x github repo was forked from the https://github.com/gravitee-io/release just before making the `3.4.1` maintenance release
@@ -104,6 +103,44 @@ Bon, fin des travaux pour ce soir pour moi :
 * et au passage on a maintenant deux settings.xml séparés : un pour le dry-run, et un pour la "vraie release" , ce qui m'aamené à faire un nouveau commit sur ma pull request de l'orb, poru leprochain patch 1.0.4
 
 
+* Testing the dry run release for the `3.5.0` release in `gravitee-io` :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-io"
+export REPO_NAME="release"
+export BRANCH="3.0.0-beta"
+export BRANCH="3.4.x"
+# testing 3.5.0
+export BRANCH="master"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"dry_release\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
+
 ## Issue : SSH Key Access rights for Gravitee Lab Bot
 
 Bon , ok j'ai une petite issue là dessus :
@@ -111,3 +148,92 @@ Bon , ok j'ai une petite issue là dessus :
 * J'ai changé els droits en WRITE permissions, et ai retiré puis ajouté de nouveau le gravitee lab bot dans les membres de l'organisations, avec l'otions "start fresh" : rien à faire la clef SSH est toujours marquée comme étant en READ Only.
 * Bref, je vais devoir faire une rotation du secret "parie de clefs SSH du Gavitee Lab Bot" pour que la git release puisse faire des git push sur le repo
 * référence de pipeline en erreur pour cette raison : https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-test-release-3-4-1/4/workflows/1e55d217-f4e1-42db-97d7-77b73bcd284b/jobs/4
+
+
+
+# Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
+
+* I launched a dry run release on master of the release repo in the gravitee-io Github Org. This allows me to retrieve the Execution plan, listing all Gravitee Components
+* Here are lthe "selected components" used to build the executio plan, on December 11 2020 :
+  * https://github.com/gravitee-io/gravitee-policy-ssl-enforcement
+  * https://github.com/gravitee-io/XXXX
+  * https://github.com/gravitee-lab/XXXX-rel-3-5-0
+  * https://github.com/gravitee-lab/XXXX-rel-3-5-0-test_1
+```bash
+"components": [
+  {
+    "name": "gravitee-gateway",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-management-rest-api",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-management-webui",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-portal-webui",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-policy-ratelimit",
+    "version": "1.11.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-policy-jwt",
+    "version": "1.16.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-repository",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-repository-test",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-repository-mongodb",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-elasticsearch",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-repository-jdbc",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-repository-gateway-bridge-http",
+    "version": "3.5.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-policy-json-validation",
+    "version": "1.6.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-policy-xml-validation",
+    "version": "1.1.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-notifier-api",
+    "version": "1.4.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-alert-api",
+    "version": "1.6.0-SNAPSHOT"
+  },
+  {
+    "name": "gravitee-policy-ssl-enforcement",
+    "version": "1.2.0-SNAPSHOT"
+  }
+]
+}]
+```
+* I also, at he sametime fork the release repo https://github.com/gravitee-io/release => https://github.com/gravitee-lab/release-rel-3-5-0
+
+* For each Repo named `XXXXX` I will :
+  * Fork it a first time, with same name, but adding `XXXXX-rel-3-5-0` :
+  * When I will fork `XXXXX-release-3-5-0` in gavitee-lab and name it `XXXXX-release-3-5-0-test-${TEST_NUMBER}`

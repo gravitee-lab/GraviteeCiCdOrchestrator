@@ -341,7 +341,7 @@ This is useful because those deploy keys often become invalid, or are deleted.
 * Then you will use your Circle CI User Token, and your secrethub user token, to setup a Github Deploy Key for all git repositories listed in the generated `consolidated-git-repos-uris.list` file :
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-deploy-keys
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION=develop
@@ -355,14 +355,15 @@ cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 export GITHUB_ORG="gravitee-io"
 export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 # Generate the [consolidated-git-repos-uris.list]
-./shell/consolidate-dev-repos-inventory.sh
+# ./shell/consolidate-dev-repos-inventory.sh
 
-SECRETHUB_ORG=gravitee-io
+SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
 SECRETHUB_REPO=cicd
 
 export HUMAN_NAME=jblasselle
 export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
 export GITHUB_ORG="gravitee-io"
 
 
@@ -381,7 +382,7 @@ while read REPO_URL; do
   curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   echo "# ------------------------------------------------------------ #"
   # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
-done <./consolidated-git-repos-uris.list
+done <./shell/consolidation-diff.list
 
 ```
 
