@@ -57,9 +57,9 @@ atom .
 # git add --all && git commit -m "update pipeline definition to create new version of the gravitee parent, in private artifactory" && git push -u origin HEAD
 ```
 
-* From version `17`, I created a `17.99.x` git branch, and released to artifactory a `17.99.1` gravitee parent pom
-* From version `18`, I created a `18.99.x` git branch, and released to artifactory a `18.99.1` gravitee parent pom
-* From version `19`, I created a `19.99.x` git branch, and released to artifactory a `19.99.1` gravitee parent pom
+* From version `17`, I created a `17.99.x` git branch, and released to artifactory a `17.99.1` gravitee parent pom (this one failed)
+* From version `18`, I created a `18.99.x` git branch, and released to artifactory a `18.99.1` gravitee parent pom (this one failed)
+* From version `19`, I created a `19.99.x` git branch, and released to artifactory a `19.99.1` gravitee parent pom (this one succedded)
 
 And finally trigger the orchestrator in the release pipeline :
 
@@ -95,6 +95,7 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
 ```
 
 Bon, fin des travaux pour ce soir pour moi :
+
 * j'y suis presque : test sur gravitee-lab, je confirme, la `GPG` signature passe, et cette fois-ci testée avec le maven profile `gio-release`
 * j'utilise le maven profile `gio-release`, après avoir fait une release 19.99.1 du gravitee-parent, dans le artifactory private :
 * j'ai mis version `19.99.1`  pour version du pom parent pour les 3 repos gravitee-repository-test,  gravitee-repository-mongodb, et  gravitee-repository-jdbc exemple : https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1/blob/a33c440bada25ec6540b8aa31556d7639debce87/pom.xml#L26
@@ -103,48 +104,10 @@ Bon, fin des travaux pour ce soir pour moi :
 * et au passage on a maintenant deux settings.xml séparés : un pour le dry-run, et un pour la "vraie release" , ce qui m'aamené à faire un nouveau commit sur ma pull request de l'orb, poru leprochain patch 1.0.4
 
 
-* Testing the dry run release for the `3.5.0` release in `gravitee-io` :
-
-```bash
-# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
-# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
-# ---
-SECRETHUB_ORG=gravitee-lab
-SECRETHUB_REPO=cicd
-# Nevertheless, I today think :
-# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
-# like this :
-# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
-# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
-# ---
-export HUMAN_NAME=jblasselle
-export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
-
-export ORG_NAME="gravitee-io"
-export REPO_NAME="release"
-export BRANCH="3.0.0-beta"
-export BRANCH="3.4.x"
-# testing 3.5.0
-export BRANCH="master"
-export JSON_PAYLOAD="{
-
-    \"branch\": \"${BRANCH}\",
-    \"parameters\":
-
-    {
-        \"gio_action\": \"dry_release\"
-    }
-
-}"
-
-curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
-curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
-```
-
 ## Issue : SSH Key Access rights for Gravitee Lab Bot
 
-Bon , ok j'ai une petite issue là dessus :
-* le gravitee-bots était en read only, etj'avais en létat ajouté saclef SSH
+Bon , ok j'ai une petite issue là-dessus :
+* le gravitee-bots était en read only, et j'avais en l'état ajouté sa clef SSH
 * J'ai changé els droits en WRITE permissions, et ai retiré puis ajouté de nouveau le gravitee lab bot dans les membres de l'organisations, avec l'otions "start fresh" : rien à faire la clef SSH est toujours marquée comme étant en READ Only.
 * Bref, je vais devoir faire une rotation du secret "parie de clefs SSH du Gavitee Lab Bot" pour que la git release puisse faire des git push sur le repo
 * référence de pipeline en erreur pour cette raison : https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-test-release-3-4-1/4/workflows/1e55d217-f4e1-42db-97d7-77b73bcd284b/jobs/4
@@ -159,6 +122,7 @@ Bon , ok j'ai une petite issue là dessus :
   * https://github.com/gravitee-io/XXXX
   * https://github.com/gravitee-lab/XXXX-rel-3-5-0
   * https://github.com/gravitee-lab/XXXX-rel-3-5-0-test_1
+
 ```bash
 "components": [
   {
@@ -237,3 +201,42 @@ Bon , ok j'ai une petite issue là dessus :
 * For each Repo named `XXXXX` I will :
   * Fork it a first time, with same name, but adding `XXXXX-rel-3-5-0` :
   * When I will fork `XXXXX-release-3-5-0` in gavitee-lab and name it `XXXXX-release-3-5-0-test-${TEST_NUMBER}`
+
+
+# Testing the dry run release for the `3.5.0` release in `gravitee-io`
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-io"
+export REPO_NAME="release"
+export BRANCH="3.0.0-beta"
+export BRANCH="3.4.x"
+# testing 3.5.0
+export BRANCH="master"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"dry_release\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```

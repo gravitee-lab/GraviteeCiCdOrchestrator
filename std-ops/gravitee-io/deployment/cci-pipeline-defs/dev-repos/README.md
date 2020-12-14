@@ -357,12 +357,8 @@ export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.2
 # Generate the [consolidated-git-repos-uris.list]
 # ./shell/consolidate-dev-repos-inventory.sh
 
-SECRETHUB_ORG=gravitee-lab
-# SECRETHUB_ORG=gravitee-io
-SECRETHUB_REPO=cicd
 
-export HUMAN_NAME=jblasselle
-export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export CCI_TOKEN=e862a91ec73058de1154375b2f7302dc210eed00
 curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
 export GITHUB_ORG="gravitee-io"
 
