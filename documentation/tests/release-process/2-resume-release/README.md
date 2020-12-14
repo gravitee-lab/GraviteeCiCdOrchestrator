@@ -184,6 +184,23 @@ workflows:
 
 ```
 
+Ok, another thing to prepare :
+* N repos :
+  * all with the same source code,the simple java maven project,
+  * all repos having no dependencies (we are testing resume release feature, not dependency management)
+  * on each repo, several git branches as mentioned in the `.cricleci/config.yml` above
+  * in the `pom.xml` :
+    * on the `4.1.x` git branch, the pom version is `4.1.23-SNAPSHOT`, and same in `release.json`
+* one repo with no pom.xml file in there (wich will for sure trigger a amven error, and therefore a build failure)
+* a release repo with a `release.json` :
+  * I fork the existing release repo.
+  * I create, from the `master` git branch, the git branches `4.0.x`, `4.1.x`, `4.2.x`, `4.3.x`,
+  * on branch `4.0.x`, the "top" version is `4.0.5-SNAPSHOT` (next release will be the `4.0.5` release)
+  * on branch `4.1.x`, the "top" version is `4.1.22-SNAPSHOT` (next release will be the `4.1.22` release)
+  * on branch `4.2.x`, the "top" version is `4.2.7-SNAPSHOT` (next release will be the `4.2.7` release)
+  * on branch `4.3.x`, the "top" version is `4.3.35-SNAPSHOT` (next release will be the `4.3.35` release)
+
+TODO : finish the design of the test, simplifying it (I will run the test only on branch `4.3.x` of the release repo)
 
 
 
