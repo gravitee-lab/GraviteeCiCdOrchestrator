@@ -77,9 +77,32 @@ workflows:
     jobs:
       - empty_job:
           context: cicd-orchestrator
-  release_process:
+  release:
     when:
-      equal: [ release, << pipeline.parameters.gio_action >> ]
+      and:
+        - equal: [ release, << pipeline.parameters.gio_action >> ]
+        - not: << pipeline.parameters.dry_run >>
+    jobs:
+      - release_job:
+          context: cicd-orchestrator
+          filters:
+            branches:
+              only:
+                - 1.0.x
+                - 2.0.x
+                - 3.2.x
+                - 3.3.x
+                - 3.4.x
+                - 3.5.x
+                - 4.0.x
+                - 4.1.x
+                - 4.2.x
+                - 4.3.x
+  dry_run_release:
+    when:
+      and:
+        - equal: [ release, << pipeline.parameters.gio_action >> ]
+        - << pipeline.parameters.dry_run >>
     jobs:
       - release_job:
           context: cicd-orchestrator
