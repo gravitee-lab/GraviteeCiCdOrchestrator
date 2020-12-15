@@ -168,7 +168,7 @@ Ok, now I am executing again the same test, but :
   * [ ] https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1-test1
   * [ ] https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-4-1-test1
   * [ ] https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-4-1-test1
-* I update to latest version the `.circleci/config.yml` of the 3 created git repos 
+* I update to latest version the `.circleci/config.yml` of the 3 created git repos
 * Last, before triggering the release, In Circle CI Web UI, setup to start building all 4 new repos, with "use existing config" option.
 
 And finally the trigger the test-1 release :
@@ -207,8 +207,11 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H
 curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
 ```
 
-
-
+Ok, so with this new test,I could successfully reproduce the issue aboutthe maven versions plugin 's `update-dependencies` goal :
+* The [pipeline execution reproducing the issue](https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-mongodb-release-3-4-1-test-1/4/workflows/fc4f2e26-1944-4062-8211-566853670d66/jobs/4)
+* Never the less, I this time noticed a warning message, caused by a mistake in my `settings.xml`: `[WARNING] The requested profile "****************" could not be activated because it does not exist.` :
+  * The `<activeProfiles>` tag is there where the mistake is.
+  * The involved `settings.xml` is the one defined for the release process in secrethub `"${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"` 
 
 
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab

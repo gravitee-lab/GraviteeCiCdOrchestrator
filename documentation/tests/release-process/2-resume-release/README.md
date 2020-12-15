@@ -79,7 +79,7 @@ They will be invoked like this :
         secrethub_repo: << pipeline.parameters.secrethub_repo >>
 ```
 
-The Full Pipeline of the simple Java maven project usedfor this tst, will look like this :
+The Full Pipeline of the simple Java maven project used for this test, will look like this :
 
 ```Yaml
 version: '2.1'
@@ -170,12 +170,6 @@ workflows:
           filters:
             branches:
               only:
-                - 1.0.x
-                - 2.0.x
-                - 3.2.x
-                - 3.3.x
-                - 3.4.x
-                - 3.5.x
                 - 4.0.x
                 - 4.1.x
                 - 4.2.x
@@ -184,11 +178,14 @@ workflows:
 
 ```
 
+* https://github.com/gravitee-lab/graviteek-cicd-test-maven-project :
+  * has 5 git branches : `master`, `4.0.x`, `4.1.x`, `4.2.x`, `4.3.x`
+
 Ok, another thing to prepare :
 * N repos :
-  * all with the same source code,the simple java maven project,
-  * all repos having no dependencies (we are testing resume release feature, not dependency management)
-  * on each repo, several git branches as mentioned in the `.cricleci/config.yml` above
+  * all with the same source code,the simple java maven project, forked from https://github.com/gravitee-lab/graviteek-cicd-test-maven-project
+  * all repos having no dependencies (we are testing resume release feature, not dependency management) in the "gravitee universe" :no dependency on any maven artifact built from a repo in the https://github.com/gravitee-lab or https://github.com/gravitee-io Github Organizations
+  * on each repo, several git branches as mentioned in the `.circleci/config.yml` above
   * in the `pom.xml` :
     * on the `4.1.x` git branch, the pom version is `4.1.23-SNAPSHOT`, and same in `release.json`
 * one repo with no pom.xml file in there (wich will for sure trigger a amven error, and therefore a build failure)

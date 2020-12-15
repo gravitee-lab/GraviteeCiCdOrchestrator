@@ -531,7 +531,7 @@ cat <<EOF >>./.secret.settings.xml
     </profile>
   </profiles>
   <activeProfiles>
-  <activeProfile>gravitee-dry-run</activeProfile>
+  <activeProfile>gio-release</activeProfile>
   </activeProfiles>
 </settings>
 EOF
