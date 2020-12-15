@@ -161,13 +161,14 @@ Ok, now I am executing again the same test, but :
 * I then pushed one more commit on the `3.4.x` git branch of the https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1 repo, to reset the pom version from `3.4.2-SNAPSHOT`, to `3.4.1-SNAPSHOT`
 * after that, I fork all involved repos to keep the initial state unchanged :
   * [ ] https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x is forked in a new repo https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x-test-1 :
-    * on the `3.4.x` git branch of the new https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x-test1 git repo, I modifiy the `release.json` to replace :
-      * `gravitee-repository-test-release-3-4-1` by `gravitee-repository-test-release-3-4-1-test-1`
-      * `gravitee-repository-mongodb-release-3-4-1` `gravitee-repository-mongodb-release-3-4-1-test-1`
-      * `gravitee-repository-jdbc-release-3-4-1` `gravitee-repository-jdbc-release-3-4-1-test-1`
+    * on the `3.4.x` git branch of the new https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x-test1 git repo, I modifiy the `release.json` to replace, both in `components` and `buildDependencies` :
+      * `gravitee-repository-test-release-3-4-1`, by `gravitee-repository-test-release-3-4-1-test-1`
+      * `gravitee-repository-mongodb-release-3-4-1`, by `gravitee-repository-mongodb-release-3-4-1-test-1`
+      * `gravitee-repository-jdbc-release-3-4-1`, by `gravitee-repository-jdbc-release-3-4-1-test-1`
   * [ ] https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1-test1
   * [ ] https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-4-1-test1
   * [ ] https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-4-1-test1
+* I update to latest version the `.circleci/config.yml` of the 3 created git repos 
 * Last, before triggering the release, In Circle CI Web UI, setup to start building all 4 new repos, with "use existing config" option.
 
 And finally the trigger the test-1 release :

@@ -204,6 +204,18 @@ TODO : finish the design of the test, simplifying it (I will run the test only o
 
 
 
+Note the base simple java project I will use will be based on https://github.com/gravitee-lab/jfrog-activation-guardian/
+
+
+
+
+
+
+
+
+
+
+
 * in the release process, here are a few things that are important :
   * Using the same `settings.xml` and maven profile than all repos on https://github.com/gravitee-io :
     * The `gio-release` maven profile,
