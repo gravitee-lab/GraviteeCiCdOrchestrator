@@ -151,12 +151,62 @@ mvn -Duser.home=/home/${NON_ROOT_USER_NAME_LABEL}/ -s ./settings.xml -B -U versi
 * The Documentation of the maven plugin goal is at https://www.mojohaus.org/versions-maven-plugin/update-properties-mojo.html
 
 
-
-
 Enfin :
 
 * [cette exécution](https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-test-release-3-4-1/7/workflows/79b4a7b7-5cfa-4b1f-b727-cd308e9887bd/jobs/7) de pipeline est celle qui utilise tout ça, et fait la signature GPG avec succès
 * et au passage on a maintenant deux settings.xml séparés : un pour le dry-run, et un pour la "vraie release" , ce qui m'aamené à faire un nouveau commit sur ma pull request de l'orb, poru leprochain patch 1.0.4
+
+Ok, now I am executing again the same test, but :
+* I first manually removed the `3.4.1` tag in the https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1
+* I then pushed one more commit on the `3.4.x` git branch of the https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1 repo, to reset the pom version from `3.4.2-SNAPSHOT`, to `3.4.1-SNAPSHOT`
+* after that, I fork all involved repos to keep the initial state unchanged :
+  * [ ] https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x is forked in a new repo https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x-test-1 :
+    * on the `3.4.x` git branch of the new https://github.com/gravitee-lab/release-state-maintenance-rel-3.4.x-test1 git repo, I modifiy the `release.json` to replace :
+      * `gravitee-repository-test-release-3-4-1` by `gravitee-repository-test-release-3-4-1-test-1`
+      * `gravitee-repository-mongodb-release-3-4-1` `gravitee-repository-mongodb-release-3-4-1-test-1`
+      * `gravitee-repository-jdbc-release-3-4-1` `gravitee-repository-jdbc-release-3-4-1-test-1`
+  * [ ] https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-test-release-3-4-1-test1
+  * [ ] https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-4-1-test1
+  * [ ] https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-4-1 is forked in a new repo https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-4-1-test1
+* Last, before triggering the release, In Circle CI Web UI, setup to start building all 4 new repos, with "use existing config" option.
+
+And finally the trigger the test-1 release :
+
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="release-state-maintenance-rel-3.4.x-test-1"
+export BRANCH="3.4.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
+
+
 
 
 
