@@ -505,12 +505,12 @@ cat <<EOF >>./.secret.settings.xml
             <name>Artifactory Repository Dry Run Releases</name>
             <releases>
               <enabled>true</enabled>
-              <updatePolicy>never</updatePolicy>
+              <updatePolicy>always</updatePolicy>
               <checksumPolicy>warn</checksumPolicy>
             </releases>
             <snapshots>
               <enabled>true</enabled>
-              <updatePolicy>never</updatePolicy>
+              <updatePolicy>always</updatePolicy>
               <checksumPolicy>warn</checksumPolicy>
             </snapshots>
             <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/</url>
@@ -551,7 +551,7 @@ cat <<EOF >>./.secret.settings.xml
     </profile>
   </profiles>
   <activeProfiles>
-  <activeProfile>gio-release</activeProfile>
+  <activeProfile>gravitee-dry-run</activeProfile>
   </activeProfiles>
 </settings>
 EOF
@@ -633,6 +633,22 @@ cat <<EOF >>./.secret.settings.non.dry.run.xml
         </activation>
         <repositories>
           <repository>
+            <id>artifactory-gravitee-releases</id>
+            <name>Artifactory Repository Dry Run Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
             <id>artifactory-repository-remote-nexus</id>
             <name>Artifactory Repository Remote Nexus</name>
             <releases>
@@ -698,7 +714,7 @@ cat <<EOF >>./.secret.settings.non.dry.run.xml
     </profile>
   </profiles>
   <activeProfiles>
-  <activeProfile>gravitee-dry-run</activeProfile>
+  <activeProfile>gio-release</activeProfile>
   </activeProfiles>
 </settings>
 EOF
@@ -707,7 +723,7 @@ EOF
 # secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
 secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
 secrethub write --in-file ./.secret.settings.non.dry.run.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.non.dry.run.xml"
-secrethub read --out-file ./test.retrievieving.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
+secrethub read --out-file ./test.retrievieving.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.non.dry.run.xml"
 
 cat ./test.retrievieving.settings.xml
 

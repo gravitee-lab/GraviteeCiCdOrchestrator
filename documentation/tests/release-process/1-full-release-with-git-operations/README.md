@@ -229,6 +229,66 @@ I think changing maven goalis dangerous, but feaseable, since I know exactly whg
 I found :
 * https://www.mojohaus.org/versions-maven-plugin/examples/use-releases.html : this looks likle the most obvious goalto use for our purpose !!
 
+I just understood something else :
+* the goal `versions:update-properties` was used instead of the `versions:use-releases` goal
+* because dependencies versions are configured via java properties in most `pom.xml` files
+
+When I execute the `mvn versions:update-properties` goal, in debug mode (`-X` option), I get the following details :
+
+```bash
+[ ===>>>>>>>>> SKIPPED A LOT OF STDOUT]
+[DEBUG] Configuring mojo 'org.codehaus.mojo:versions-maven-plugin:2.7:update-properties' with basic configurator -->
+[DEBUG]   (f) allowDowngrade = false
+[DEBUG]   (f) allowIncrementalUpdates = true
+[DEBUG]   (f) allowMajorUpdates = false
+[DEBUG]   (f) allowMinorUpdates = false
+[DEBUG]   (f) allowSnapshots = false
+[DEBUG]   (f) autoLinkItems = true
+[DEBUG]   (f) excludeReactor = true
+[DEBUG]   (f) generateBackupPoms = false
+[DEBUG]   (f) includesList = io.gravitee.*:*
+[DEBUG]   (f) localRepository =       id: local
+      url: file:///home/circleci/.m2/repository/
+   layout: default
+snapshots: [enabled => true, update => always]
+ releases: [enabled => true, update => always]
+
+[DEBUG]   (f) processDependencies = true
+[DEBUG]   (f) processDependencyManagement = true
+[DEBUG]   (f) processParent = false
+[DEBUG]   (s) project = MavenProject: io.gravitee.repository:gravitee-repository-jdbc:3.4.1-SNAPSHOT @ /usr/src/giomaven_project/pom.xml
+[DEBUG]   (f) reactorProjects = [MavenProject: io.gravitee.repository:gravitee-repository-jdbc:3.4.1-SNAPSHOT @ /usr/src/giomaven_project/pom.xml]
+[DEBUG]   (f) remoteArtifactRepositories = [      id: artifactory-gravitee-non-dry-run
+      url: http://odbxikk7vo-artifactory.services.clever-cloud.com/nexus-and-non-dry-run-releases/
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => daily]
+]
+[DEBUG]   (f) remotePluginRepositories = [      id: artifactory-gravitee-non-dry-run
+      url: http://odbxikk7vo-artifactory.services.clever-cloud.com/nexus-and-non-dry-run-releases/
+   layout: default
+snapshots: [enabled => false, update => daily]
+ releases: [enabled => true, update => never]
+]
+[DEBUG]   (f) serverId = serverId
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@e7b265e
+[DEBUG]   (f) settings = org.apache.maven.execution.SettingsAdapter@51da32e5
+[DEBUG] -- end configuration --
+[ ===>>>>>>>>> SKIPPED A LOT OF STDOUT]
+[INFO] Incremental version changes allowed
+[DEBUG] getNewestVersion(): includeSnapshots='false'
+[DEBUG] Property ${gravitee-repository-test.version}: Set of valid available versions is []
+[DEBUG] Property ${gravitee-repository-test.version}: Restricting results to null
+[DEBUG] lowerBoundArtifactVersion: 3.4.1-SNAPSHOT
+[DEBUG] Property ${gravitee-repository-test.version}: upperBound is: 3.5.0-SNAPSHOT
+[DEBUG] Property ${gravitee-repository-test.version}: Current winner is: null
+[DEBUG] Property ${gravitee-repository-test.version}: Searching reactor for a valid version...
+[DEBUG] Property ${gravitee-repository-test.version}: Set of valid available versions from the reactor is []
+[INFO] Property ${gravitee-repository-test.version}: Leaving unchanged as 3.4.1-SNAPSHOT
+```
+
+* SAme test than before, but this time, in the `settings.xml`, I changed `<updatePolicy>never</updatePolicy>` to `<updatePolicy>always</updatePolicy>` for the gravitee-release repo in
+
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
 
 * I launched a dry run release on master of the release repo in the gravitee-io Github Org. This allows me to retrieve the Execution plan, listing all Gravitee Components
