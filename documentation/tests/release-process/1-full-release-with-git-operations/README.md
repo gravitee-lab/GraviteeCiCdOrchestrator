@@ -207,12 +207,24 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H
 curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
 ```
 
-Ok, so with this new test,I could successfully reproduce the issue aboutthe maven versions plugin 's `update-dependencies` goal :
+Ok, so with this new test,I could successfully reproduce the issue about the maven versions plugin 's `update-properties` goal :
 * The [pipeline execution reproducing the issue](https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-mongodb-release-3-4-1-test-1/4/workflows/fc4f2e26-1944-4062-8211-566853670d66/jobs/4)
 * Never the less, I this time noticed a warning message, caused by a mistake in my `settings.xml`: `[WARNING] The requested profile "****************" could not be activated because it does not exist.` :
   * The `<activeProfiles>` tag is there where the mistake is.
-  * The involved `settings.xml` is the one defined for the release process in secrethub `"${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"` 
+  * The involved `settings.xml` is the one defined for the release process in secrethub `"${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"`
 
+I ran again the exact same test, but this time, I :
+* fixed the acitveProfile issue in `settings.xml`
+* added a `<repository>` entry in the `settings.xml`, with `serverId` `artifactory-gravitee-releases`, associated to the URL of the artifactory repo dedicated to mvn deploy (instead of the artifactory virtual repository) : http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/
+* added the ` -D maven.version.rules.serverId=artifactory-gravitee-releases` option, in the Maven Prepare Release shell script of the Orb
+* And this new test did not change anything in the result. The exact same error occurs.
+
+
+Now I will try and use another maven goal, this one : https://www.mojohaus.org/versions-maven-plugin/use-next-versions-mojo.html
+
+I think changing maven goalis dangerous, but feaseable, since I know exactly whgat result I want.  Never the less, I will also consider using a different plugin, and :
+* I will keep using the `versions:update-properties`, to make sure I do not removeanything from the release process, which is needed in special cases,and for ascendant compatibility.
+* So Whatever new maven goal or plugin I use, I will execute it AFTER executing the legacy `versions:update-properties`
 
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
 

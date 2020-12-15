@@ -367,7 +367,6 @@ echo "ARTIFACTORY_REPO_RELEASE_URL=[${ARTIFACTORY_REPO_RELEASE_URL}]"
 
 
 echo "${ARTIFACTORY_REPO_SNAPSHOTS_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/snaphots-repo-url"
-
 echo "${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/dry-run-release-repo-url"
 echo "${ARTIFACTORY_REPO_RELEASE_URL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/release-repo-url"
 
@@ -420,6 +419,11 @@ cat <<EOF >>./.secret.settings.xml
     </mirror>
   </mirrors>
   <servers>
+    <server>
+      <id>artifactory-gravitee-releases</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
     <server>
       <id>artifactory-gravitee-dry-run</id>
       <username>${ARTIFACTORY_BOT_USER_NAME}</username>
@@ -494,6 +498,22 @@ cat <<EOF >>./.secret.settings.xml
               <checksumPolicy>warn</checksumPolicy>
             </snapshots>
             <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-gravitee-releases</id>
+            <name>Artifactory Repository Dry Run Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/</url>
             <layout>default</layout>
           </repository>
         </repositories>
