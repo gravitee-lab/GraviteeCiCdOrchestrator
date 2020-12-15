@@ -217,14 +217,14 @@ I ran again the exact same test, but this time, I :
 * fixed the acitveProfile issue in `settings.xml`
 * added a `<repository>` entry in the `settings.xml`, with `serverId` `artifactory-gravitee-releases`, associated to the URL of the artifactory repo dedicated to mvn deploy (instead of the artifactory virtual repository) : http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/
 * added the ` -D maven.version.rules.serverId=artifactory-gravitee-releases` option, in the Maven Prepare Release shell script of the Orb
-* And this new test did not change anything in the result. The exact same error occurs.
+* And this new test did not change anything in the result. The exact [same error occurs](https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-repository-mongodb-release-3-4-1-test-1/7/workflows/964efa18-0ee9-45e1-825a-ab4156085899/jobs/7)
 
 
 Now I will try and use another maven goal, this one : https://www.mojohaus.org/versions-maven-plugin/use-next-versions-mojo.html
 
 I think changing maven goalis dangerous, but feaseable, since I know exactly whgat result I want.  Never the less, I will also consider using a different plugin, and :
 * I will keep using the `versions:update-properties`, to make sure I do not removeanything from the release process, which is needed in special cases,and for ascendant compatibility.
-* So Whatever new maven goal or plugin I use, I will execute it AFTER executing the legacy `versions:update-properties`
+* So Whatever new maven goal or plugin I use, I will execute it AFTER executing the legacy `versions:update-properties`.
 
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
 
