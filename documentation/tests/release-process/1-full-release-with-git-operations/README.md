@@ -226,6 +226,9 @@ I think changing maven goalis dangerous, but feaseable, since I know exactly whg
 * I will keep using the `versions:update-properties`, to make sure I do not removeanything from the release process, which is needed in special cases,and for ascendant compatibility.
 * So Whatever new maven goal or plugin I use, I will execute it AFTER executing the legacy `versions:update-properties`.
 
+I found :
+* https://www.mojohaus.org/versions-maven-plugin/examples/use-releases.html : this looks likle the most obvious goalto use for our purpose !!
+
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
 
 * I launched a dry run release on master of the release repo in the gravitee-io Github Org. This allows me to retrieve the Execution plan, listing all Gravitee Components
