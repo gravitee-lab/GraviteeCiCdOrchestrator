@@ -287,7 +287,7 @@ snapshots: [enabled => false, update => daily]
 [INFO] Property ${gravitee-repository-test.version}: Leaving unchanged as 3.4.1-SNAPSHOT
 ```
 
-* SAme test than before, but this time, in the `settings.xml`, I changed `<updatePolicy>never</updatePolicy>` to `<updatePolicy>always</updatePolicy>` for the gravitee-release repo in
+* Same test than before, but this time, in the `settings.xml`, I changed `<updatePolicy>never</updatePolicy>` to `<updatePolicy>always</updatePolicy>` for the gravitee-release repo (target) in
 
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
 

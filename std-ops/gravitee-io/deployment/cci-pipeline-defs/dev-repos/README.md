@@ -358,7 +358,7 @@ export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.2
 # ./shell/consolidate-dev-repos-inventory.sh
 
 
-export CCI_TOKEN=e862a91ec73058de1154375b2f7302dc210eed00
+export CCI_TOKEN=<your circle ci token>
 curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
 export GITHUB_ORG="gravitee-io"
 
@@ -383,6 +383,31 @@ done <./shell/repair-checkout-keys.list
 
 ```
 
+* reset the checkout key for only one repo (here the release repo) :
+
+```bash
+export CCI_TOKEN=<your circle ci token>
+export GITHUB_ORG=gravitee-io
+export JSON_PAYLOAD="{
+    \"type\": \"deploy-key\"
+}"
+# echo "${REPO_URL}" | awk -F '/' '{print $4}'
+export REPO_NAME=release
+echo "# ------------------------------------------------------------ #"
+echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
+echo "# ------------------------------------------------------------ #"
+# --- First let's delete all previous deploy keys
+curl -d "${JSON_PAYLOAD}" -X GET https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq '.[]' | jq '.[].fingerprint' | awk -F '"' '{print $2}' | tee -a ./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+
+while read FINGERPRINT; do
+  curl -d "${JSON_PAYLOAD}" -X DELETE https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key/${FINGERPRINT} -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+done <./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+# -- Finally we re-create a  new deploy key
+# curl -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+echo "# ------------------------------------------------------------ #"
+# cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+```
 
 ## Secret Management for Circle CI Pipelines
 
