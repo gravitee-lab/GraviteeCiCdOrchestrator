@@ -291,91 +291,131 @@ snapshots: [enabled => false, update => daily]
 
 # Test suite : testing the 3.5.0 Release in https://github.com/gravitee-lab
 
-* I launched a dry run release on master of the release repo in the gravitee-io Github Org. This allows me to retrieve the Execution plan, listing all Gravitee Components
-* Here are lthe "selected components" used to build the executio plan, on December 11 2020 :
-  * https://github.com/gravitee-io/gravitee-policy-ssl-enforcement
-  * https://github.com/gravitee-io/XXXX
-  * https://github.com/gravitee-lab/XXXX-rel-3-5-0
-  * https://github.com/gravitee-lab/XXXX-rel-3-5-0-test_1
+I forked all the repos involved in the `3.5.0`, to use them as reference initial state for testing the release process :
+
+* [x] https://github.com/gravitee-lab/release-state-release-3-5-0    : Fork of https://github.com/gravitee-io/release when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-portal-webui-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-portal-webui when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-management-webui-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-management-webui when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-management-rest-api-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-management-rest-api when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-policy-ssl-enforcement-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-policy-ssl-enforcement when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-policy-xml-validation-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-policy-xml-validation when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-policy-json-validation-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-policy-json-validation when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-elasticsearch-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-elasticsearch when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-policy-jwt-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-policy-jwt when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-policy-ratelimit-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-policy-ratelimit when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-gateway-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-gateway when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-alert-api-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-alert-api when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-repository-gateway-bridge-http-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-repository-gateway-bridge-http when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-repository-jdbc-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-repository-jdbc when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-repository-mongodb-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-repository-mongodb when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-definition-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-definition when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-repository-test-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-repository-test when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-notifier-api-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-notifier-api when release 3.5.0 was made
+* [x] https://github.com/gravitee-lab/gravitee-repository-release-3-5-0    : Fork of https://github.com/gravitee-io/gravitee-repository when release 3.5.0 was made
+
+
+* Here is the execution plan for the `3.5.0` release :
 
 ```bash
-"components": [
-  {
-    "name": "gravitee-gateway",
-    "version": "3.5.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-management-rest-api",
-    "version": "3.5.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-management-webui",
-    "version": "3.5.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-portal-webui",
-    "version": "3.5.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-policy-ratelimit",
-    "version": "1.11.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-policy-jwt",
-    "version": "1.16.0-SNAPSHOT"
-  },
-  {
+{
+ "execution_plan_is": [
+  [],
+  [
+   {
     "name": "gravitee-repository",
     "version": "3.5.0-SNAPSHOT"
-  },
-  {
+   },
+   {
+    "name": "gravitee-notifier-api",fff
+    "version": "1.4.0-SNAPSHOT"
+   }
+  ],
+  [
+   {
     "name": "gravitee-repository-test",
     "version": "3.5.0-SNAPSHOT"
-  },
-  {
+   }
+  ],
+  [
+   {
+    "name": "gravitee-definition",
+    "version": "1.25.0-SNAPSHOT"
+   },
+   {
     "name": "gravitee-repository-mongodb",
     "version": "3.5.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-elasticsearch",
-    "version": "3.5.0-SNAPSHOT"
-  },
-  {
+   },
+   {
     "name": "gravitee-repository-jdbc",
     "version": "3.5.0-SNAPSHOT"
-  },
-  {
+   },
+   {
     "name": "gravitee-repository-gateway-bridge-http",
     "version": "3.5.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-policy-json-validation",
-    "version": "1.6.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-policy-xml-validation",
-    "version": "1.1.0-SNAPSHOT"
-  },
-  {
-    "name": "gravitee-notifier-api",
-    "version": "1.4.0-SNAPSHOT"
-  },
-  {
+   },
+   {
     "name": "gravitee-alert-api",
     "version": "1.6.0-SNAPSHOT"
-  },
-  {
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [
+   {
+    "name": "gravitee-gateway",
+    "version": "3.5.0-SNAPSHOT"
+   }
+  ],
+  [],
+  [
+   {
+    "name": "gravitee-policy-ratelimit",
+    "version": "1.11.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-jwt",
+    "version": "1.16.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-elasticsearch",
+    "version": "3.5.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-json-validation",
+    "version": "1.6.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-policy-xml-validation",
+    "version": "1.1.0-SNAPSHOT"
+   },
+   {
     "name": "gravitee-policy-ssl-enforcement",
     "version": "1.2.0-SNAPSHOT"
-  }
-]
-}]
+   }
+  ],
+  [
+   {
+    "name": "gravitee-management-rest-api",
+    "version": "3.5.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-management-webui",
+    "version": "3.5.0-SNAPSHOT"
+   },
+   {
+    "name": "gravitee-portal-webui",
+    "version": "3.5.0-SNAPSHOT"
+   }
+  ]
+ ]
+}
+ ---
++x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x
 ```
-* I also, at he sametime fork the release repo https://github.com/gravitee-io/release => https://github.com/gravitee-lab/release-rel-3-5-0
 
-* For each Repo named `XXXXX` I will :
-  * Fork it a first time, with same name, but adding `XXXXX-rel-3-5-0` :
-  * When I will fork `XXXXX-release-3-5-0` in gavitee-lab and name it `XXXXX-release-3-5-0-test-${TEST_NUMBER}`
+I will use the same protocol than the one used to test the `3.4.1` maintenance release
 
 
 # Testing the dry run release for the `3.5.0` release in `gravitee-io`
