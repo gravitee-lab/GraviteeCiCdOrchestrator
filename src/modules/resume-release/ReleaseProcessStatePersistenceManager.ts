@@ -100,8 +100,8 @@ export class ReleaseProcessStatePersistenceManager {
       ///
 
       this.getComponentIndex(component_name);
-      this.releaseManifest.components[0].version
-
+      this.releaseManifest.components[0].version = this.removeSnapshotSuffix(this.releaseManifest.components[0].version);
+      /// and write the modified JSON to file
       fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
         if (err) return console.log(err);
         console.log(JSON.stringify(this.releaseManifest));
@@ -130,6 +130,15 @@ export class ReleaseProcessStatePersistenceManager {
         throw new Error(`{[ReleaseProcessStatePersistenceManager]} - Component of name [${component_name}] was not found in the [release.json] file at [${manifestPath}]`);
       }
       return indexToReturn;
+    }
+    removeSnapshotSuffix(maven_version_number: string): string {
+      let toReturn: string = null;
+      if (maven_version_number.endsWith('-SNAPSHOT')) {
+        toReturn = maven_version_number.substr(0, maven_version_number.length - 9 );
+      } else {
+        throw new Error(`{[ReleaseProcessStatePersistenceManager]} - Provided maven version number does not end wiht the [-SNAPSHOT] suffix, but was expected to`);
+      }
+      return toReturn;
     }
     /**
      * Triggers a Circle CI Pipeline, for a repo on Github
