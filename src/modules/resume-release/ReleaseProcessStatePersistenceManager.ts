@@ -141,7 +141,7 @@ export class ReleaseProcessStatePersistenceManager {
       return toReturn;
     }
     /**
-     * Triggers a Circle CI Pipeline, for a repo on Github
+     * This method just runs the [git remote -v] and [git status] shell commands to check the git context
      *
      * @argument arg_one  {@type string} Blablabla
      * @argument arg_two {@type string} Blablabla
@@ -151,7 +151,21 @@ export class ReleaseProcessStatePersistenceManager {
      *
      * @returns any Something
      **/
-
+     gitTest(): void {
+       /// -
+       let shellCommandResult = shelljs.exec("pwd && ls -allh");
+       if (shellCommandResult.code !== 0) {
+         throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+       } else {
+         // shellCommandStdOUT = shellCommandResult.stdout;
+       }
+       let gitTestCommandResult = shelljs.exec("git remote -v && git status");
+       if (gitTestCommandResult.code !== 0) {
+         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitTestCommandResult.stderr + "] ")
+       } else {
+         // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+       }
+     }
      /**
       * This method runs shell and git commands just to check everyhting is there (the  [release.json], the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo etc..)
       *
@@ -181,11 +195,6 @@ export class ReleaseProcessStatePersistenceManager {
        }
 
      }
-    someMethod(component_name: string, arg_two: string): any {
 
-
-      return null;
-
-    }
 
 }
