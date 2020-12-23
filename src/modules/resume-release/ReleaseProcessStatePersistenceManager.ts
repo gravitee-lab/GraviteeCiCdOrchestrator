@@ -65,6 +65,70 @@ export class ReleaseProcessStatePersistenceManager {
     this.releaseManifest = JSON.parse(manifestAsString);
   }
 
+  /**
+   * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
+   *
+   * @argument component_name  {@type string} Blablabla
+   * -----
+   * -----
+   *
+   *
+   * @returns void
+   **/
+  /// The git branch of the release repo is un-necessary, it is assumed to
+  /// already be (git) checked out in the PWD where the Orchestrator runs.
+  /// ---
+  persistSuccessStateOf(component_names: string[]): void {
+    /// -
+    let shellCommandResult = shelljs.exec("pwd && ls -allh");
+    if (shellCommandResult.code !== 0) {
+      throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+    } else {
+      // shellCommandStdOUT = shellCommandResult.stdout;
+    }
+    /// -
+    let gitCommandResult = shelljs.exec("git remote -v && git status");
+    if (gitCommandResult.code !== 0) {
+      throw new Error("An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitCommandResult.stdout;
+    }
+
+    /// ---- Now here is how to EDIT THE [release.json] JSON FILE
+    /// https://stackoverflow.com/questions/10685998/how-to-update-a-value-in-a-json-file-and-save-it-through-node-js
+    ///
+    for (let i = 0; i < component_names.length; i++) {
+      let currCompoenentIndex = this.getComponentIndex(component_names[i]);
+      this.releaseManifest.components[currCompoenentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currCompoenentIndex].version);
+      fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
+        if (err) return console.log(err);
+        console.log(JSON.stringify(this.releaseManifest));
+        console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
+      });
+
+    }
+    /// and write the modified JSON to file
+
+    let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
+    let gitCOMMITCommandResult = shelljs.exec(`git add --all && git commit -m '${commit_message}' && git push -u origin HEAD`);
+    if (gitCOMMITCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+    }
+
+    /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
+
+    if (!process.env.DRY_RUN) {
+      let gitPUSHCommandResult = shelljs.exec(`git push -u origin HEAD`);
+      if (gitPUSHCommandResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+      }
+
+    }
+  }
     /**
      * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
      *
