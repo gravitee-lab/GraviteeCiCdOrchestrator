@@ -88,6 +88,11 @@ The Full Pipeline of the simple Java maven project used for this test, will [loo
   * on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`
   * on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`
   * on branch `4.4.x`, the last commit has a `pom.xml` with pom project version `4.4.12-SNAPSHOT`
+  * On the 5 git branches `master`, `4.1.x`, `4.2.x`, `4.3.x`, and `4.4.x`, the parent maven module, has itself a parent pom defined as being the `gravitee-parent`, in version `19.99.1` :
+    * Purpose is to use the same parent pom as all gravitee-io components
+    * As defined in https://github.com/gravitee-lab/gravitee-parent-redefinition , on `19.99.x` git branch
+    * This exact `gravitee-parent` parent pom is deployed in the 2 artifactory repositories used for releases and dry-run releases
+
 
 Ok, another thing to prepare :
 
@@ -378,9 +383,9 @@ On branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release relea
 ```
 
 
-So that the initial state of the test
+So that the initial state of the test :
 
-* will be defined by 5 repos, andcan be re-generated from 2 repos :
+* will be defined by 6 repos, and can be re-generated from 2 repos :
   * 3 forks of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will succeed :
     * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1, on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
     * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2, on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
@@ -388,6 +393,7 @@ So that the initial state of the test
   * 1 fork of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will fail :
     * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail, on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
   * 1 fork of the https://github.com/gravitee-lab/release git repo, which will be the https://github.com/gravitee-lab/graviteek-release
+  * The https://github.com/gravitee-lab/gravitee-parent-redefinition repo defining the `gravitee-parent` parent pom version `19.99.1` used in this  test suite.
 * and can be re-generated anytime from 2 repos :
   * the https://github.com/gravitee-lab/release git repo, the so called _"release repo"_
   * the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project , a maven java project, used as the proptotype of a Product Component (of a Gravitee Component)
@@ -396,9 +402,130 @@ So that the initial state of the test
 
 
 
+#### Testing the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project Circle CI Pipeline
+
+
+* Trigger the blank job (to test that the `.circleci/config.yml` has no syntax or runtime error) :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="graviteek-cicd-test-maven-project"
+export BRANCH="master"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\",
+        \"dry_run\": false,
+        \"maven_profile_id\": \"dry-run-release\",
+        \"secrethub_org\": \"gravitee-lab\",
+        \"secrethub_repo\": \"cicd\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
+
+
+* Trigger the release job, with dry run mode on or off, (to test that the `.circleci/config.yml` can perform a full release process) :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="graviteek-cicd-test-maven-project"
+export BRANCH="master"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\",
+        \"dry_run\": false,
+        \"maven_profile_id\": \"dry-run-release\",
+        \"secrethub_org\": \"gravitee-lab\",
+        \"secrethub_repo\": \"cicd\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
 
 
 
+#### Redifining the `gravitee-parent` version `19.99.1` in artifatory
+
+
+  * To release the `gravitee-parent` version `19.99.1` in the dry run releases artifatory repository :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="gravitee-parent-redefinition"
+export BRANCH="19.99.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\",
+        \"dry_run\": true,
+        \"maven_profile_id\": \"blank\",
+        \"secrethub_org\": \"gravitee-lab\",
+        \"secrethub_repo\": \"cicd\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
+
+* Exact same recipe to release the `gravitee-parent` version `19.99.1` in the "non dry run" releases artifatory repository, only difference is set `dry_run` Pïpeline Parameter to `false`.
 
 
 # DRAFTS

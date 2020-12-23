@@ -50,7 +50,6 @@ export class ReleaseManifestFilter {
     executionPlan : any [][];
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
-        this.validateJSon();
         this.loadParallelizationContraints();
         // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
