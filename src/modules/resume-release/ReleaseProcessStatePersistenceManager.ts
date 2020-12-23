@@ -80,7 +80,7 @@ export class ReleaseProcessStatePersistenceManager {
   /// already be (git) checked out in the PWD where the Orchestrator runs.
   /// ---
   persistSuccessStateOf(component_names: string[]): void {
-    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
+
     /// -
     let shellCommandResult = shelljs.exec("pwd && ls -allh");
     if (shellCommandResult.code !== 0) {
@@ -97,19 +97,19 @@ export class ReleaseProcessStatePersistenceManager {
     }
 
     /// ---- Now here is how to EDIT THE [release.json] JSON FILE
-    /// https://stackoverflow.com/questions/10685998/how-to-update-a-value-in-a-json-file-and-save-it-through-node-js
-    ///
+
+    /// modify loaded JSON  for each component (remove the -SNAPSHOT suffix for
+    /// version property of each of those components)
     for (let i = 0; i < component_names.length; i++) {
       let currCompoenentIndex = this.getComponentIndex(component_names[i]);
       this.releaseManifest.components[currCompoenentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currCompoenentIndex].version);
-      fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
-        if (err) return console.log(err);
-        console.log(JSON.stringify(this.releaseManifest));
-        console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
-      });
-
     }
-    /// and write the modified JSON to file
+    /// and write the modified JSON back to the file
+    fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
+      if (err) return console.log(err);
+      console.log(JSON.stringify(this.releaseManifest));
+      console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
+    });
 
     let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
     let gitCOMMITCommandResult = shelljs.exec(`git add --all && git commit -m '${commit_message}' && git push -u origin HEAD`);
@@ -128,7 +128,7 @@ export class ReleaseProcessStatePersistenceManager {
         // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
       }
     }
-
+    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
   }
     /**
      * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
