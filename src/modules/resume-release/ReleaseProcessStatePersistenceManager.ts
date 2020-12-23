@@ -67,8 +67,9 @@ export class ReleaseProcessStatePersistenceManager {
 
   /**
    * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
+   * TODO : Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]
    *
-   * @argument component_name  {@type string} Blablabla
+   * @argument component_names  {@type string[]} Anarray of strings, each string being the name of one component which release has sucessfully completed
    * -----
    * -----
    *
@@ -79,17 +80,18 @@ export class ReleaseProcessStatePersistenceManager {
   /// already be (git) checked out in the PWD where the Orchestrator runs.
   /// ---
   persistSuccessStateOf(component_names: string[]): void {
+    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
     /// -
     let shellCommandResult = shelljs.exec("pwd && ls -allh");
     if (shellCommandResult.code !== 0) {
-      throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
     } else {
       // shellCommandStdOUT = shellCommandResult.stdout;
     }
     /// -
     let gitCommandResult = shelljs.exec("git remote -v && git status");
     if (gitCommandResult.code !== 0) {
-      throw new Error("An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
     } else {
       // gitCommandStdOUT = gitCommandResult.stdout;
     }
