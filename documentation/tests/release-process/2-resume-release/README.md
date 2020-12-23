@@ -153,10 +153,6 @@ On branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release relea
       {
           "name": "graviteek-cicd-test-maven-project-g3",
           "version": "4.3.4-SNAPSHOT"
-      },
-      {
-          "name": "graviteek-cicd-test-maven-project-fail",
-          "version": "4.4.12-SNAPSHOT"
       }
   ]
 }
