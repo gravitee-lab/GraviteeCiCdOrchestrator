@@ -4,8 +4,8 @@
 
 ## Specs : resume release feature
 
-* reprise sur erreur : on persiste chque succès de pipeline en enlevant un suffixe `-SNAPSHOT`
-* Quand la release est terminée, entiètrement avec succès :
+* reprise sur erreur : on persiste chaque succès de pipeline en enlevant un suffixe `-SNAPSHOT`
+* Quand la release est terminée, entièrement avec succès :
   * on tag avec le numéro de release, sur la branche du repo https://github.com/${GITHUB_ORG}/release
   * on fait un autre commit pour le "prepare next `-SNAPSHOT` version" sur la branche release pour la "top version" dans le `release.json`
 
@@ -33,7 +33,7 @@ The test is simple :
 
 Note the Orb commands will be invoked with the exact same parameters as they are invoked in the `release` Orb job, but directly valued from the Circle CI Pipeline parameters, instead of Orb Job parameters :
 
-So instead of invoking the Orb commands like this :
+So instead of invoking the `Orb` commands like this :
 
 ```Yaml
     - mvn_prepare_release:
@@ -79,129 +79,320 @@ They will be invoked like this :
         secrethub_repo: << pipeline.parameters.secrethub_repo >>
 ```
 
-The Full Pipeline of the simple Java maven project used for this test, will look like this :
-
-```Yaml
-version: '2.1'
-
-parameters:
-  gio_action:
-    type: enum
-    enum: [release, blank]
-    default: blank
-  dry_run:
-    type: boolean
-    default: false
-    description: "Run in dry run mode?"
-  maven_profile_id:
-    type: string
-    default: "gio-release"
-    description: "Maven ID of the Maven profile to use for a dry run ?"
-  secrethub_org:
-    type: string
-    default: "gravitee-lab"
-    description: "SecretHub Org to use to fetch secrets ?"
-  secrethub_repo:
-    type: string
-    default: "cicd"
-    description: "SecretHub Repo to use to fetch secrets ?"
-
-orbs:
-  docker: circleci/docker@1.5
-  # gravitee: 'gravitee-io/gravitee@dev:1.0.2'
-  gravitee: gravitee-io/gravitee@dev:1.0.2
-  secrethub: secrethub/cli@1.0.0
-jobs:
-  empty_job:
-    docker:
-     - image: alpine
-    resource_class: small
-    working_directory: /mnt/ramdisk
-    steps:
-      - run:
-          name: "This is a dummy empty job (isn't it ?)"
-          command: echo "No task is executed."
-  release_job:
-    machine:
-      image: 'ubuntu-1604:201903-01'
-      resource_class: medium
-    steps:
-      - checkout
-      - secrethub/install
-      - docker/install-docker-compose
-      - gravitee/mvn_prepare_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - gravitee/mvn_test_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - gravitee/mvn_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      # - gravitee/git_release:
-          # dry_run: << parameters.dry_run >>
-          # maven_container_image_tag: << pipeline.parameters.maven_container_image_tag >>
-          # maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          # secrethub_org: << pipeline.parameters.secrethub_org >>
-          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-workflows:
-  # Blank process invoked when the test dev repo has a commit event, or pull request event
-  blank:
-    when:
-      equal: [ blank, << pipeline.parameters.gio_action >> ]
-    jobs:
-      - empty_job:
-          context: cicd-orchestrator
-  release_process:
-    when:
-      equal: [ release, << pipeline.parameters.gio_action >> ]
-    jobs:
-      - release_job:
-          context: cicd-orchestrator
-          filters:
-            branches:
-              only:
-                - 4.0.x
-                - 4.1.x
-                - 4.2.x
-                - 4.3.x
-  version: 2.1
-
-```
+The Full Pipeline of the simple Java maven project used for this test, will [look like this](https://github.com/gravitee-lab/graviteek-cicd-test-maven-project/blob/master/.circleci/config.yml)
 
 * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project :
-  * has 5 git branches : `master`, `4.0.x`, `4.1.x`, `4.2.x`, `4.3.x`
+  * has 5 git branches : `master`, `4.1.x`, `4.2.x`, `4.3.x`, `4.4.x`
+  * on branch `master`, the last commit has a `pom.xml` with pom project version `4.5.0-SNAPSHOT` (next minor version)
+  * on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`
+  * on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`
+  * on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`
+  * on branch `4.4.x`, the last commit has a `pom.xml` with pom project version `4.4.12-SNAPSHOT`
 
 Ok, another thing to prepare :
-* N repos :
-  * all with the same source code,the simple java maven project, forked from https://github.com/gravitee-lab/graviteek-cicd-test-maven-project
+
+* 4 repos :
+  * all with the same source code, the simple java maven project, forked from https://github.com/gravitee-lab/graviteek-cicd-test-maven-project
   * all repos having no dependencies (we are testing resume release feature, not dependency management) in the "gravitee universe" :no dependency on any maven artifact built from a repo in the https://github.com/gravitee-lab or https://github.com/gravitee-io Github Organizations
   * on each repo, several git branches as mentioned in the `.circleci/config.yml` above
   * in the `pom.xml` :
-    * on the `4.1.x` git branch, the pom version is `4.1.23-SNAPSHOT`, and same in `release.json`
-* one repo with no pom.xml file in there (wich will for sure trigger a amven error, and therefore a build failure)
+    * for first repo https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1, on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
+    * for second repo https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2, on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
+    * for third repo https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3, on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
+    * for fourth repo https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail, on branch `4.4.x`, the last commit has no `pom.xml`,whileit should have had one, with pom project version `4.4.12-SNAPSHOT`, and same in `release.json` (which will for sure trigger a maven error, and therefore a build failure)
 * a release repo with a `release.json` :
-  * I fork the existing release repo.
-  * I create, from the `master` git branch, the git branches `4.0.x`, `4.1.x`, `4.2.x`, `4.3.x`,
-  * on branch `4.0.x`, the "top" version is `4.0.5-SNAPSHOT` (next release will be the `4.0.5` release)
-  * on branch `4.1.x`, the "top" version is `4.1.22-SNAPSHOT` (next release will be the `4.1.22` release)
-  * on branch `4.2.x`, the "top" version is `4.2.7-SNAPSHOT` (next release will be the `4.2.7` release)
-  * on branch `4.3.x`, the "top" version is `4.3.35-SNAPSHOT` (next release will be the `4.3.35` release)
+  * https://github.com/gravitee-lab/graviteek-release : I fork the existing https://github.com/gravitee-lab/release repo, does not matter its age, just less than 3 month.
+  * I create, from the `master` git branch, the git branches  `4.2.x`, `4.3.x`, `4.4.x`, which will alow me to run 3 different release tests, to testthe resume release feature.
+  * on branch `4.1.x`, the "top" version is `4.1.3-SNAPSHOT` (next release will be the `4.1.3` release)
+  * on branch `4.2.x`, the "top" version is `4.2.78-SNAPSHOT` (next release will be the `4.2.78` release)
+  * on branch `4.3.x`, the "top" version is `4.3.79-SNAPSHOT` (next release will be the `4.3.79` release)
+  * on branch `4.4.x`, the "top" version is `4.4.80-SNAPSHOT` (next release will be the `4.4.80` release)
 
-TODO : finish the design of the test, simplifying it (I will run the test only on branch `4.3.x` of the release repo)
+I will run 4 tests in parallel :
+
+* test 1 on branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release release repo :
+  * in this test, the release will succeed and the 2 git tags will be added :
+    * the git tag marking the version where the release is defined, with the `release.json`. This tag will be `RELEASE_${RELEASE_VERSION}_START`
+    * the release `git` tag, marking the released version of the product
+* test 2 on branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release release repo :
+  * in this test, the release will fail, and 1 git tag will be added :
+    * the git tag marking the version where the release is defined, with the `release.json`
+* test 3 on branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release release repo :
+  * in this test, the release will fail, and 1 git tag will be added :
+    * the git tag marking the version where the release is defined, with the `release.json`
+* test 4 on branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release release repo :
+  * in this test, the release will fail, and 1 git tag will be added :
+    * the git tag marking the version where the release is defined, with the `release.json`
+
+
+#### Test 1: on branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release
+
+
+On branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
+
+*  in the `components` :
+
+```JSon
+
+{
+  "name": "Gravitee.io",
+  "version": "4.1.3-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "components": [
+
+      {
+          "name": "graviteek-cicd-test-maven-project-g1",
+          "version": "4.1.3-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g2",
+          "version": "4.2.51-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g3",
+          "version": "4.3.4-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-fail",
+          "version": "4.4.12-SNAPSHOT"
+      }
+  ]
+}
+```
+
+*  in the `buildDependencies` :
+
+```JSon
+{
+  "name": "Gravitee.io",
+  "version": "4.1.3-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "buildDependencies": [
+      [
+          "graviteek-cicd-test-maven-project-g1"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g2"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g3"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-fail"
+      ]
+   ]
+}
+
+```
+
+
+#### Test 2: on branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release
+
+
+On branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
+
+*  in the `components` :
+
+```JSon
+
+{
+  "name": "Gravitee.io",
+  "version": "4.2.78-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "components": [
+
+      {
+          "name": "graviteek-cicd-test-maven-project-g1",
+          "version": "4.1.3-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g2",
+          "version": "4.2.51-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g3",
+          "version": "4.3.4-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-fail",
+          "version": "4.4.12-SNAPSHOT"
+      }
+  ]
+}
+```
+
+*  in the `buildDependencies` :
+
+```JSon
+{
+  "name": "Gravitee.io",
+  "version": "4.2.78-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "buildDependencies": [
+      [
+          "graviteek-cicd-test-maven-project-g1"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g2"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g3"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-fail"
+      ]
+   ]
+}
+
+```
+
+
+#### Test 3: on branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release
+
+On branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
+
+*  in the `components` :
+
+```JSon
+
+{
+  "name": "Gravitee.io",
+  "version": "4.3.79-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "components": [
+
+      {
+          "name": "graviteek-cicd-test-maven-project-g1",
+          "version": "4.1.3-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g2",
+          "version": "4.2.51-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g3",
+          "version": "4.3.4-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-fail",
+          "version": "4.4.12-SNAPSHOT"
+      }
+  ]
+}
+```
+
+*  in the `buildDependencies` :
+
+```JSon
+{
+  "name": "Gravitee.io",
+  "version": "4.3.79-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "buildDependencies": [
+      [
+          "graviteek-cicd-test-maven-project-g1"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g2"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-fail"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g3"
+      ]
+   ]
+}
+
+```
+
+#### Test 4: on branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release
+
+On branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
+
+*  in the `components` :
+
+```JSon
+
+{
+  "name": "Gravitee.io",
+  "version": "4.4.80-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "components": [
+
+      {
+          "name": "graviteek-cicd-test-maven-project-g1",
+          "version": "4.1.3-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g2",
+          "version": "4.2.51-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-g3",
+          "version": "4.3.4-SNAPSHOT"
+      },
+      {
+          "name": "graviteek-cicd-test-maven-project-fail",
+          "version": "4.4.12-SNAPSHOT"
+      }
+  ]
+}
+```
+
+*  in the `buildDependencies` :
+
+```JSon
+{
+  "name": "Gravitee.io",
+  "version": "4.4.80-SNAPSHOT",
+  "buildTimestamp": "2020-12-13T14:34:16+0000",
+  "scmSshUrl": "git@github.com:gravitee-io",
+  "scmHttpUrl": "https://github.com/gravitee-io/",
+  "buildDependencies": [
+      [
+          "graviteek-cicd-test-maven-project-g1"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-fail"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g2"
+      ],
+      [
+          "graviteek-cicd-test-maven-project-g3"
+      ]
+   ]
+}
+
+```
+
+
+So that the initial state of the test will be defined by :
+
+* 3 forks of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will succeed :
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1, on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2, on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3, on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
+* 1 fork of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will fail :
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail, on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
 
 
 
-Note the base simple java project I will use will be based on https://github.com/gravitee-lab/jfrog-activation-guardian/
 
 
 
