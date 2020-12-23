@@ -378,16 +378,19 @@ On branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release relea
 ```
 
 
-So that the initial state of the test will be defined by :
+So that the initial state of the test
 
-* 3 forks of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will succeed :
-  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1, on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
-  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2, on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
-  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3, on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
-* 1 fork of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will fail :
-  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail, on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
-
-
+* will be defined by 5 repos, andcan be re-generated from 2 repos :
+  * 3 forks of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will succeed :
+    * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1, on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
+    * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2, on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
+    * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3, on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
+  * 1 fork of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will fail :
+    * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail, on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
+  * 1 fork of the https://github.com/gravitee-lab/release git repo, which will be the https://github.com/gravitee-lab/graviteek-release
+* and can be re-generated anytime from 2 repos :
+  * the https://github.com/gravitee-lab/release git repo, the so called _"release repo"_
+  * the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project , a maven java project, used as the proptotype of a Product Component (of a Gravitee Component)
 
 
 
