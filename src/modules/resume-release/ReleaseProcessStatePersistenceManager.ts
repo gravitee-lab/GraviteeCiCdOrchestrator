@@ -118,16 +118,15 @@ export class ReleaseProcessStatePersistenceManager {
     }
 
     /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
-
-    if (!process.env.DRY_RUN) {
+    if (process.argv["dry-run"] === 'false') {
       let gitPUSHCommandResult = shelljs.exec(`git push -u origin HEAD`);
       if (gitPUSHCommandResult.code !== 0) {
         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
       }
-
     }
+
   }
     /**
      * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
