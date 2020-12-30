@@ -23,7 +23,7 @@ parameters:
     description: "SecretHub Repo to use to fetch secrets ?"
 
 orbs:
-  gravitee: gravitee-io/gravitee@dev:1.0.2
+  gravitee: gravitee-io/gravitee@dev:1.0.4
 
 workflows:
   version: 2.1

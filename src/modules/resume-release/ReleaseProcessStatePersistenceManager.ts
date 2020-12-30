@@ -33,8 +33,7 @@ import * as shelljs from 'shelljs';
 import axios from 'axios';
 /// import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import * as fs from 'fs';
-
-
+export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
 /**
  *
  * Responsible to persist the state of the Release CI CD Process
@@ -43,11 +42,94 @@ import * as fs from 'fs';
 export class ReleaseProcessStatePersistenceManager {
 
   private someClassAttribute: any;
-
+  releaseManifest: any;
   constructor() {
+    this.loadReleaseJSon();
   }
 
+  /**
+   * Checks :
+   * => if the file exists,
+   * => if it contains a valid JSON,
+   *
+   **/
+  loadReleaseJSon()  : void {
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [" + `${manifestPath}` + "] does not exists, stopping release process");
+    } else {
+      console.log("{[ReleaseProcessStatePersistenceManager]} - found release.json release manifest located at [" + manifestPath + "]");
+    }
+    // console.info("{[ReleaseProcessStatePersistenceManager]} - Parsing release.json Release Manifest file located at [" + manifestPath + "]");
+    // console.debug("{[ReleaseProcessStatePersistenceManager]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
+    let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
+    this.releaseManifest = JSON.parse(manifestAsString);
+  }
 
+  /**
+   * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
+   * TODO : Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]
+   *
+   * @argument component_names  {@type string[]} Anarray of strings, each string being the name of one component which release has sucessfully completed
+   * -----
+   * -----
+   *
+   *
+   * @returns void
+   **/
+  /// The git branch of the release repo is un-necessary, it is assumed to
+  /// already be (git) checked out in the PWD where the Orchestrator runs.
+  /// ---
+  persistSuccessStateOf(component_names: string[]): void {
+
+    /// -
+    let shellCommandResult = shelljs.exec("pwd && ls -allh");
+    if (shellCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+    } else {
+      // shellCommandStdOUT = shellCommandResult.stdout;
+    }
+    /// -
+    let gitCommandResult = shelljs.exec("git remote -v && git status");
+    if (gitCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitCommandResult.stdout;
+    }
+
+    /// ---- Now here is how to EDIT THE [release.json] JSON FILE
+
+    /// modify loaded JSON  for each component (remove the -SNAPSHOT suffix for
+    /// version property of each of those components)
+    for (let i = 0; i < component_names.length; i++) {
+      let currCompoenentIndex = this.getComponentIndex(component_names[i]);
+      this.releaseManifest.components[currCompoenentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currCompoenentIndex].version);
+    }
+    /// and write the modified JSON back to the file
+    fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
+      if (err) return console.log(err);
+      console.log(JSON.stringify(this.releaseManifest));
+      console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
+    });
+
+    let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
+    let gitCOMMITCommandResult = shelljs.exec(`git add --all && git commit -m '${commit_message}' && git push -u origin HEAD`);
+    if (gitCOMMITCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+    }
+
+    /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
+    if (process.argv["dry-run"] === 'false') {
+      let gitPUSHCommandResult = shelljs.exec(`git push -u origin HEAD`);
+      if (gitPUSHCommandResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+      }
+    }
+    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
+  }
     /**
      * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
      *
@@ -78,15 +160,53 @@ export class ReleaseProcessStatePersistenceManager {
         // gitCommandStdOUT = gitCommandResult.stdout;
       }
 
+      /// ---- Now here is how to EDIT THE [release.json] JSON FILE
+      /// https://stackoverflow.com/questions/10685998/how-to-update-a-value-in-a-json-file-and-save-it-through-node-js
+      ///
+
+      this.getComponentIndex(component_name);
+      this.releaseManifest.components[0].version = this.removeSnapshotSuffix(this.releaseManifest.components[0].version);
+      /// and write the modified JSON to file
+      fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
+        if (err) return console.log(err);
+        console.log(JSON.stringify(this.releaseManifest));
+        console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
+      });
+
       let gitCOMMIT_AND_PUSHCommandResult = shelljs.exec("git remote -v");
       if (gitCOMMIT_AND_PUSHCommandResult.code !== 0) {
-        throw new Error("An Error occurred executing the [git remote -v] shell command. Shell error was [" + gitCOMMIT_AND_PUSHCommandResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v] shell command. Shell error was [" + gitCOMMIT_AND_PUSHCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
       }
     }
     /**
-     * Triggers a Circle CI Pipeline, for a repo on Github
+     * Returns the index, in the components array in the release.json, of the component of name
+     **/
+    getComponentIndex(component_name: string): number {
+      let indexToReturn: number = -1;
+      for (let i = 0; i < this.releaseManifest.components.length; i++) {
+        if ( this.releaseManifest.components[i] == component_name ) {
+          indexToReturn = i;
+          break;
+        }
+      }
+      if (indexToReturn == -1) {
+        throw new Error(`{[ReleaseProcessStatePersistenceManager]} - Component of name [${component_name}] was not found in the [release.json] file at [${manifestPath}]`);
+      }
+      return indexToReturn;
+    }
+    removeSnapshotSuffix(maven_version_number: string): string {
+      let toReturn: string = null;
+      if (maven_version_number.endsWith('-SNAPSHOT')) {
+        toReturn = maven_version_number.substr(0, maven_version_number.length - 9 );
+      } else {
+        throw new Error(`{[ReleaseProcessStatePersistenceManager]} - Provided maven version number does not end wiht the [-SNAPSHOT] suffix, but was expected to`);
+      }
+      return toReturn;
+    }
+    /**
+     * This method just runs the [git remote -v] and [git status] shell commands to check the git context
      *
      * @argument arg_one  {@type string} Blablabla
      * @argument arg_two {@type string} Blablabla
@@ -96,7 +216,21 @@ export class ReleaseProcessStatePersistenceManager {
      *
      * @returns any Something
      **/
-
+     gitTest(): void {
+       /// -
+       let shellCommandResult = shelljs.exec("pwd && ls -allh");
+       if (shellCommandResult.code !== 0) {
+         throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+       } else {
+         // shellCommandStdOUT = shellCommandResult.stdout;
+       }
+       let gitTestCommandResult = shelljs.exec("git remote -v && git status");
+       if (gitTestCommandResult.code !== 0) {
+         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitTestCommandResult.stderr + "] ")
+       } else {
+         // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+       }
+     }
      /**
       * This method runs shell and git commands just to check everyhting is there (the  [release.json], the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo etc..)
       *
@@ -113,24 +247,19 @@ export class ReleaseProcessStatePersistenceManager {
        /// -
        let shellCommandResult = shelljs.exec("pwd && ls -allh");
        if (shellCommandResult.code !== 0) {
-         throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
        } else {
          // shellCommandStdOUT = shellCommandResult.stdout;
        }
        /// -
        let gitCommandResult = shelljs.exec("git remote -v && git status");
        if (gitCommandResult.code !== 0) {
-         throw new Error("An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
        } else {
          // gitCommandStdOUT = gitCommandResult.stdout;
        }
 
      }
-    someMethod(component_name: string, arg_two: string): any {
 
-
-      return null;
-
-    }
 
 }

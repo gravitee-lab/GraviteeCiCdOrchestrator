@@ -26,6 +26,8 @@ if [ "${BCKUP_EXIT_CODE}" == "0" ]; then
   # testing error handling
   # ${OPS_HOME}/deploy-repo-pipeline-def.sh
   ${OPS_HOME}/shell/deploy-repo-pipeline-def.sh ${OPS_HOME}/consolidated-git-repos-uris.list
+  # hard list provided by nicolas with a python script
+  ${OPS_HOME}/shell/deploy-repo-pipeline-def.sh ${OPS_HOME}/shell/consolidation-diff.list
   echo "---"
 else
   echo "There has been a problem backing up one of the reposlisted in  [${OPS_HOME}/consolidated-git-repos-uris.list] "

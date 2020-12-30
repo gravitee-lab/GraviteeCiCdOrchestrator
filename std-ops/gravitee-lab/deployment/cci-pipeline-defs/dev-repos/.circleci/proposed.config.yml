@@ -23,7 +23,7 @@ parameters:
     description: "SecretHub Repo to use to fetch secrets ?"
 
 orbs:
-  gravitee: gravitee-io/gravitee@dev:1.0.2
+  gravitee: gravitee-io/gravitee@dev:1.0.4
 
 workflows:
   version: 2.1
@@ -35,8 +35,6 @@ workflows:
           context: cicd-orchestrator
   release:
     # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
-    when:
-      equal: [ release, << pipeline.parameters.gio_action >> ]
     when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]
@@ -51,8 +49,6 @@ workflows:
           maven_profile_id: << pipeline.parameters.maven_profile_id >>
   release_dry_run:
     # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
-    when:
-      equal: [ release, << pipeline.parameters.gio_action >> ]
     when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]

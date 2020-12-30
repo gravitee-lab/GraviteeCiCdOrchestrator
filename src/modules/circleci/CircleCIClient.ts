@@ -411,7 +411,76 @@ export class CircleCIClient {
    }
 
 
+   /**
+    * Asynchronous method to retrieve a Pipeline project name (github repo) :
+    *
+    * This method returns the "Project Slug" as defined by The Cirlce CI API
+    * For example : "project_slug": "gh/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+    **/
+    async getGithubRepoNameFrom(pipeline_guid: string) {
 
+      let projectSlug: string = "";
+      //const githubApiAccessToken = jsonifiedSession.passport.user.github_access_token;
+      let config = {
+        headers: {
+          "Circle-Token": this.secrets.circleci.auth.token,
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      };
+      const axiosService = axios.create({
+        baseURL: 'https://circleci.com/api/v2/',
+        timeout: 5000,
+        headers: config.headers
+      });
+
+      ///
+      try {
+        const [circleciApiRespone] = await axios.all([
+          axiosService.get(`/pipeline/${pipeline_guid}`)
+        ]);
+        console.log(`---------------------------------------`)
+        console.log(` >>>>>>>>>>>>>>> Circle CI API RESPONSE (FOR PIPELINE OF GUID ${pipeline_guid} ) PROJECT SLUG IS : [${circleciApiRespone.data.project_slug}] `)
+        console.log(`---------------------------------------`)
+        console.log(` >>>>>>>>>>>>>>> Circle CI API RESPONSE (FOR PIPELINE OF GUID ${pipeline_guid} ) IS : `)
+        console.log(circleciApiRespone.data);
+        projectSlug = circleciApiRespone.data.project_slug
+        /** example response:
+            {
+              "id": "628d5730-e084-4122-a0c8-b6720fbf3716",
+              "errors": [],
+              "project_slug": "gh/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+              "updated_at": "2020-12-30T04:53:42.687Z",
+              "number": 2,
+              "state": "created",
+              "created_at": "2020-12-30T04:53:42.687Z",
+              "trigger": {
+                "received_at": "2020-12-30T04:53:42.230Z",
+                "type": "api",
+                "actor": {
+                  "login": "Jean-Baptiste-Lasselle",
+                  "avatar_url": "https://avatars2.githubusercontent.com/u/35227860?v=4"
+                }
+              },
+              "vcs": {
+                "origin_repository_url": "https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+                "target_repository_url": "https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+                "revision": "57571e24ca6d2f75d7dbeb87ae50efd5d41bf87c",
+                "provider_name": "GitHub",
+                "branch": "4.1.x"
+              }
+            }
+         **/
+        console.log(`---------------------------------------`)
+      } catch (error) {
+        console.log(`---------------------------------------`)
+        console.log(` >>>>>>>>>>>>>>> GITHUB API ERROR (FOR AUTHENTICATED USER) IS : `)
+        console.log(error);
+        console.log(`---------------------------------------`)
+        throw error;
+      }
+      return projectSlug;
+    }
 
     /**
      * Hits the Circle CI API and return an {@see ObservableStream<any>} emitting the Circle CI JSON answer for the https://circleci.com/api/v2/me Endpoint
@@ -439,7 +508,12 @@ export class CircleCIClient {
 }
 
 /**
- * we need this type, because the CircleCI API JSON Response about Jobs Execution State does
+ *
+ **/
+
+
+/**
+ * We need this type, because the CircleCI API JSON Response about Jobs Execution State does
  * not include enough information to retrieve the workflow execution,toxhich a JobExecution belongs to.
  * Now the Observable Stream emiting CircleCI API JSON Response about Jobs Execution, willalso mention workflow_guid
  **/

@@ -50,7 +50,6 @@ export class ReleaseManifestFilter {
     executionPlan : any [][];
     constructor(release_version: string, release_branch: string) {
         this.validateJSon();
-        this.validateJSon();
         this.loadParallelizationContraints();
         // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
@@ -264,7 +263,7 @@ export class ReleaseManifestFilter {
       /// Index must not be out of bounds of the [parallelizationConstraintsMatrix]
       /// Index must not be negative
       if (parallelExecutionSetIndexToReturn < 0) {
-        let errMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component : ";
+        let errMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component (do they appear in the [buildDependencies] in the [release.json] ? ) : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += " ";
         throw new Error(errMsg)

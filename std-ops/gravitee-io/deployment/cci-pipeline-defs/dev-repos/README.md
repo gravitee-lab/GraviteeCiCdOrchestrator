@@ -51,15 +51,18 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
+rm -fr ./.git/
 cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 SECRETHUB_ORG=graviteeio
+SECRETHUB_ORG=gravitee-lab
 # SECRETHUB_ORG=gravitee-io
 SECRETHUB_REPO=cicd
 
 export HUMAN_NAME=jblasselle
 # export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 export CCI_TOKEN=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/token)
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
 export GITHUB_ORG="gravitee-io"
 
 
@@ -90,7 +93,7 @@ export GIT_USER_SIGNING_KEY=7B19A8E1574C2883
 # the https://github.com/${GITHUB_ORG}/release
 # list must be comma-separated, white spaces are trimmed
 # --- #
-export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
+export RELEASE_BRANCHES=' 3.4.x, 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 ./deploy.sh
 
 ```
@@ -106,6 +109,7 @@ mkdir -p ${A_FOLDER_OF_UR_CHOICE}
 git clone git@github.com:gravitee-lab/GraviteeCiCdOrchestrator.git ${A_FOLDER_OF_UR_CHOICE}
 cd ${A_FOLDER_OF_UR_CHOICE}
 git checkout ${GIO_ORCHESTRATOR_VERSION}
+rm -fr ./.git/
 cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 
 export GITHUB_ORG="gravitee-io"
@@ -337,7 +341,7 @@ This is useful because those deploy keys often become invalid, or are deleted.
 * Then you will use your Circle CI User Token, and your secrethub user token, to setup a Github Deploy Key for all git repositories listed in the generated `consolidated-git-repos-uris.list` file :
 
 ```bash
-export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops
+export A_FOLDER_OF_UR_CHOICE=~/gravitee-orchestra-std-ops-deploy-keys
 export GIO_ORCHESTRATOR_VERSION=0.0.4
 # latest commit on develop branch is used to test the automation
 export GIO_ORCHESTRATOR_VERSION=develop
@@ -351,14 +355,11 @@ cd std-ops/gravitee-io/deployment/cci-pipeline-defs/dev-repos
 export GITHUB_ORG="gravitee-io"
 export RELEASE_BRANCHES=' 3.3.x , 3.2.x , 3.1.x ,   3.0.x, 1.30.x,   1.29.x ,1.25.x , 1.20.x   '
 # Generate the [consolidated-git-repos-uris.list]
-./shell/consolidate-dev-repos-inventory.sh
+# ./shell/consolidate-dev-repos-inventory.sh
 
-SECRETHUB_ORG=gravitee-io
-# SECRETHUB_ORG=gravitee-io
-SECRETHUB_REPO=cicd
 
-export HUMAN_NAME=jblasselle
-export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export CCI_TOKEN=<your circle ci token>
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
 export GITHUB_ORG="gravitee-io"
 
 
@@ -377,10 +378,36 @@ while read REPO_URL; do
   curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
   echo "# ------------------------------------------------------------ #"
   # cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
-done <./consolidated-git-repos-uris.list
+# done <./shell/consolidation-diff.list
+done <./shell/repair-checkout-keys.list
 
 ```
 
+* reset the checkout key for only one repo (here the release repo) :
+
+```bash
+export CCI_TOKEN=<your circle ci token>
+export GITHUB_ORG=gravitee-io
+export JSON_PAYLOAD="{
+    \"type\": \"deploy-key\"
+}"
+# echo "${REPO_URL}" | awk -F '/' '{print $4}'
+export REPO_NAME=release
+echo "# ------------------------------------------------------------ #"
+echo "creating checkout key for [${GITHUB_ORG}/${REPO_NAME}]"
+echo "# ------------------------------------------------------------ #"
+# --- First let's delete all previous deploy keys
+curl -d "${JSON_PAYLOAD}" -X GET https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq '.[]' | jq '.[].fingerprint' | awk -F '"' '{print $2}' | tee -a ./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+
+while read FINGERPRINT; do
+  curl -d "${JSON_PAYLOAD}" -X DELETE https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key/${FINGERPRINT} -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+done <./${GITHUB_ORG}.${REPO_NAME}.fingerprints.list
+# -- Finally we re-create a  new deploy key
+# curl -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+curl -d "${JSON_PAYLOAD}" -X POST https://circleci.com/api/v2/project/gh/${GITHUB_ORG}/${REPO_NAME}/checkout-key -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" | jq .
+echo "# ------------------------------------------------------------ #"
+# cat consolidated-git-repos-uris.list | awk -F '/' '{print $4}'
+```
 
 ## Secret Management for Circle CI Pipelines
 
