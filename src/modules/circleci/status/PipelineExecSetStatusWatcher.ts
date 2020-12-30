@@ -84,12 +84,14 @@ export class PipelineExecSetStatusWatcher {
    * --
    * Each entry in this array is of the following form :
    *
-   *
    * {
-   *   pipeline_exec_number: '2',
-   *   id: 'ef4264c2-f6f4-4cc4-a928-e7f89f3aff90',
-   *   created_at: '2020-09-30T10:59:27.610Z',
-   *   exec_state: 'pending'
+   *    pipeline_exec_number: '5',
+   *    id: '6080676d-7816-4533-a270-7760d30a9872',
+   *    created_at: '2020-12-30T06:39:53.833Z',
+   *    exec_state: 'pending',
+   *    project_slug: 'gh/gravitee-lab/graviteek-cicd-test-maven-project-g1',
+   *    watch_round: 0,
+   *    workflows_exec_state: []
    * }
    *
    *
@@ -220,6 +222,18 @@ export class PipelineExecSetStatusWatcher {
               /// console.log({progressMatrix: this.progressMatrix});
               console.log(`----`);
               console.log(`----`)
+
+              /// RESUME RELEASE FEATURE SEWPOINT
+              let componentNamesArray = []
+
+              for(let j: number = 0; j < this.progressMatrix.length; j++) {
+                componentNamesArray[j] === ""
+              }
+              for (let k: number = 0; k < this.progressMatrix.length; k++) {
+                let compName = this.progressMatrix[k].project_slug.split('/')[2]
+                componentNamesArray[k] === compName
+              }
+              this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray);
 
               this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
                 is_errored: false
@@ -355,7 +369,7 @@ export class PipelineExecSetStatusWatcher {
         allPipeSuccess = allPipeSuccess && (wfArray[j].status === 'success')
       }
     }
-    this.releaseStatePersistenceMngr.whereAmI();
+    // this.releaseStatePersistenceMngr.whereAmI();
     return allPipeSuccess;
     /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
@@ -426,8 +440,8 @@ export class PipelineExecSetStatusWatcher {
    *    }
    *
    **/
-  /// private handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) : void {
-  private async handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) {
+  private handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) : void {
+  /// private async handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) {
     console.log('[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', observedResponse.cci_json_response  /* circleCiJsonResponse.data // when retryWhen is used*/ )
     /// if the pipeline has zero workflows, then we have a problem here : so we stop all operations
     if (observedResponse.cci_json_response.items.length == 0) {
@@ -435,8 +449,10 @@ export class PipelineExecSetStatusWatcher {
     }
 
     let pipelineIndexInProgressMatrix = this.getIndexInProgressMatrixOfPipeline(observedResponse.parent_pipeline_guid);
-    let project_slug = await this.circleci_client.getGithubRepoNameFrom(observedResponse.parent_pipeline_guid)
-    console.log(`The Pipeline of GUID ${observedResponse.parent_pipeline_guid} has for project slug : [${project_slug}] `);
+
+    /// Don't ever try and use an [await] inside here : this completely Breaks the RxJS machinery...
+    // let project_slug = await this.circleci_client.getGithubRepoNameFrom(observedResponse.parent_pipeline_guid)
+    // console.log(`The Pipeline of GUID ${observedResponse.parent_pipeline_guid} has for project slug : [${project_slug}] `);
     /// ---
     /// Here looping and pushing each entries, one after the other, to be able to
     /// cumulatively add all Workflow States in
