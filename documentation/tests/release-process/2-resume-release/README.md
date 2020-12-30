@@ -431,7 +431,7 @@ export JSON_PAYLOAD="{
 
     {
         \"gio_action\": \"release\",
-        \"dry_run\": false,
+        \"dry_run\": true,
         \"maven_profile_id\": \"dry-run-release\",
         \"secrethub_org\": \"gravitee-lab\",
         \"secrethub_repo\": \"cicd\"
@@ -528,8 +528,23 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
 * Exact same recipe to release the `gravitee-parent` version `19.99.1` in the "non dry run" releases artifatory repository, only difference is set `dry_run` Pïpeline Parameter to `false`.
 
 
-# DRAFTS
+## Execution 1 of the Resume Release Feature Test Suite
 
+* I use https://github.com/gravitee-lab/graviteek-release-test-suite-1, forked from https://github.com/gravitee-lab/graviteek-release, torun the Gravitee `GraviteeCiCdOrchestrator`
+* I use :
+  * https://github.com/gravitee-lab/graviteek-g1-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1
+  * https://github.com/gravitee-lab/graviteek-g2-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2
+  * https://github.com/gravitee-lab/graviteek-g3-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3
+  * https://github.com/gravitee-lab/graviteek-fail-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail
+
+* Note that  :
+  * https://github.com/gravitee-lab/graviteek-g1-testsuite1, the release will happen on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-g2-testsuite1, the release will happen on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-g3-testsuite1, the release will happen on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-fail-testsuite1, the release will happen on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
+
+
+# DRAFTS
 
 * in the release process, here are a few things that are important :
   * Using the same `settings.xml` and maven profile than all repos on https://github.com/gravitee-io :
@@ -539,8 +554,6 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
   * The `gravitee-parent` parent pom defined and released in the private artifactory, with version number `19.99.1` :
     * see https://github.com/gravitee-lab/gravitee-parent-redefinition/blob/19.99.1/.circleci/config.yml
     * note that this gravitee parent pom defines a build process which does not execute any nexus staging , and that's the only difference with the old `gravitee-release` profile.
-
-
 
 
 ## Production Test suite 1 (on `3.4.1` maintenance release)
