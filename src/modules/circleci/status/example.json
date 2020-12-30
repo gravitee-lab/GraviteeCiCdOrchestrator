@@ -1,0 +1,25 @@
+{
+ "finalProgressMatrix": [
+  {
+   "pipeline_exec_number": "8",
+   "id": "fc061eda-f4d3-4d30-b8f9-a6102a3df371",
+   "created_at": "2020-12-30T07:15:30.063Z",
+   "exec_state": "pending",
+   "project_slug": "gh/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+   "watch_round": 57,
+   "workflows_exec_state": [
+    {
+     "pipeline_id": "fc061eda-f4d3-4d30-b8f9-a6102a3df371",
+     "id": "bbfd25f2-fc8d-4731-9aeb-4fe059b9cddb",
+     "name": "release",
+     "project_slug": "gh/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+     "status": "success",
+     "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+     "pipeline_number": 8,
+     "created_at": "2020-12-30T07:15:30Z",
+     "stopped_at": "2020-12-30T07:22:23Z"
+    }
+   ]
+  }
+ ]
+}

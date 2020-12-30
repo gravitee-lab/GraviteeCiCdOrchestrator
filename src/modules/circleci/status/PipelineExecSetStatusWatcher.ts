@@ -224,6 +224,7 @@ export class PipelineExecSetStatusWatcher {
               console.log(`----`)
 
               /// RESUME RELEASE FEATURE SEWPOINT
+              /*
               let componentNamesArray = []
 
               for (let k: number = 0; k < this.progressMatrix.length; k++) {
@@ -234,6 +235,8 @@ export class PipelineExecSetStatusWatcher {
                 componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
               }
               this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray);
+              */
+              this.finalizeReleaseRepoPersistence(); // this is a synchronous method call
 
               this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
                 is_errored: false
@@ -369,7 +372,7 @@ export class PipelineExecSetStatusWatcher {
         allPipeSuccess = allPipeSuccess && (wfArray[j].status === 'success')
       }
     }
-    // this.releaseStatePersistenceMngr.whereAmI();
+    // this.releaseStatePersistenceMngr.whereAmI(); finalizeReleaseRepoPersistence
     return allPipeSuccess;
     /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
@@ -500,6 +503,7 @@ export class PipelineExecSetStatusWatcher {
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
+        this.finalizeReleaseRepoPersistence();
         /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
         // this.releaseStatePersistenceMngr.whereAmI();
         throw occuredProblem;
@@ -555,7 +559,62 @@ export class PipelineExecSetStatusWatcher {
     /// console.log({progressMatrix: this.progressMatrix});
     console.log(`----`);
   }
+  /**
+   * As soon as an execution error is detected, all pipeline which have completed successfully, have their corresponding github repos updated in the release.json ,and the git push happens
+   **/
+  private finalizeReleaseRepoPersistence(): void { // this method is synchronous
+    let componentNamesArray = []
 
+    for (let k: number = 0; k < this.progressMatrix.length; k++) {
+      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, progress matrix entry is :`);
+      console.log(this.progressMatrix[k]);
+      let allWorkFlowsSuccessful: boolean = this.areAllWorkflowsSuccessful(this.progressMatrix[k]);
+      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - are all workflows successful ? [${allWorkFlowsSuccessful}]`);
+      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, component split : [${this.progressMatrix[k].project_slug.split('/')[2]}]`);
+      if(allWorkFlowsSuccessful) { // keeping only repos which pipelines have fully completed succesfullys
+        componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
+      }
+    }
+    this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
+    // and finally commit and push it all
+    this.releaseStatePersistenceMngr.commitAndPush(); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+  }
+  /**
+   *
+   * Give this method an object of the form (a progressMatrix entry):
+   {
+    "pipeline_exec_number": "8",
+    "id": "fc061eda-f4d3-4d30-b8f9-a6102a3df371",
+    "created_at": "2020-12-30T07:15:30.063Z",
+    "exec_state": "pending",
+    "project_slug": "gh/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+    "watch_round": 57,
+    "workflows_exec_state": [
+     {
+      "pipeline_id": "fc061eda-f4d3-4d30-b8f9-a6102a3df371",
+      "id": "bbfd25f2-fc8d-4731-9aeb-4fe059b9cddb",
+      "name": "release",
+      "project_slug": "gh/gravitee-lab/graviteek-cicd-test-maven-project-g1",
+      "status": "success",
+      "started_by": "a159e94e-3763-474d-8c51-d1ea6ed602d4",
+      "pipeline_number": 8,
+      "created_at": "2020-12-30T07:15:30Z",
+      "stopped_at": "2020-12-30T07:22:23Z"
+     }
+    ]
+   }
+   *
+   * And it will return true if all workflows have successfully completed
+   **/
+  private areAllWorkflowsSuccessful(progressMatrixEntry: any): boolean {
+    let answer = true;
+
+    for (let k: number = 0; k < progressMatrixEntry.workflows_exec_state.length; k++) {
+      answer = answer && (progressMatrixEntry.workflows_exec_state[k].status === "success");
+    }
+
+    return answer;
+  }
   /**
    * For each entry (Circle CI Pipeline) in <code>this.progressMatrix</code>, a JSON Property named [workflows_exec_state]
    * holds the Circle CI Pipeline 's Workflows execution states :
