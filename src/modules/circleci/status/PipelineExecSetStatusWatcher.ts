@@ -219,6 +219,7 @@ export class PipelineExecSetStatusWatcher {
               console.log(`${JSON.stringify({ finalProgressMatrix : this.progressMatrix }, null, " ")}`);
               /// console.log({progressMatrix: this.progressMatrix});
               console.log(`----`);
+              console.log(`----`)
 
               this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
                 is_errored: false
@@ -354,6 +355,7 @@ export class PipelineExecSetStatusWatcher {
         allPipeSuccess = allPipeSuccess && (wfArray[j].status === 'success')
       }
     }
+    this.releaseStatePersistenceMngr.whereAmI();
     return allPipeSuccess;
     /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
@@ -424,7 +426,8 @@ export class PipelineExecSetStatusWatcher {
    *    }
    *
    **/
-  private handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) : void {
+  /// private handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) : void {
+  private async handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData) {
     console.log('[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] Processing Circle CI API Response [data] is : ', observedResponse.cci_json_response  /* circleCiJsonResponse.data // when retryWhen is used*/ )
     /// if the pipeline has zero workflows, then we have a problem here : so we stop all operations
     if (observedResponse.cci_json_response.items.length == 0) {
@@ -432,7 +435,8 @@ export class PipelineExecSetStatusWatcher {
     }
 
     let pipelineIndexInProgressMatrix = this.getIndexInProgressMatrixOfPipeline(observedResponse.parent_pipeline_guid);
-
+    let project_slug = await this.circleci_client.getGithubRepoNameFrom(observedResponse.parent_pipeline_guid)
+    console.log(`The Pipeline of GUID ${observedResponse.parent_pipeline_guid} has for project slug : [${project_slug}] `);
     /// ---
     /// Here looping and pushing each entries, one after the other, to be able to
     /// cumulatively add all Workflow States in

@@ -527,21 +527,83 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
 
 * Exact same recipe to release the `gravitee-parent` version `19.99.1` in the "non dry run" releases artifatory repository, only difference is set `dry_run` Pïpeline Parameter to `false`.
 
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+export PIPELINE_ID=628d5730-e084-4122-a0c8-b6720fbf3716
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/pipeline/${PIPELINE_ID} | jq .
+```
+
+
 
 ## Execution 1 of the Resume Release Feature Test Suite
 
-* I use https://github.com/gravitee-lab/graviteek-release-test-suite-1, forked from https://github.com/gravitee-lab/graviteek-release, torun the Gravitee `GraviteeCiCdOrchestrator`
-* I use :
-  * https://github.com/gravitee-lab/graviteek-g1-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1
-  * https://github.com/gravitee-lab/graviteek-g2-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2
-  * https://github.com/gravitee-lab/graviteek-g3-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3
-  * https://github.com/gravitee-lab/graviteek-fail-testsuite1 forked from initial state https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail
+I use :
+* https://github.com/gravitee-lab/graviteek-release-test-suite-1, forked from https://github.com/gravitee-lab/graviteek-release, torun the Gravitee `GraviteeCiCdOrchestrator`
+* 3 forks of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will succeed :
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g1, on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g2, on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-g3, on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
+* 1 fork of the https://github.com/gravitee-lab/graviteek-cicd-test-maven-project repo, for which the pipeline execution will fail :
+  * https://github.com/gravitee-lab/graviteek-cicd-test-maven-project-fail, on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
 
-* Note that  :
-  * https://github.com/gravitee-lab/graviteek-g1-testsuite1, the release will happen on branch `4.1.x`, the last commit has a `pom.xml` with pom project version `4.1.3-SNAPSHOT`, and same in `release.json`
-  * https://github.com/gravitee-lab/graviteek-g2-testsuite1, the release will happen on branch `4.2.x`, the last commit has a `pom.xml` with pom project version `4.2.51-SNAPSHOT`, and same in `release.json`
-  * https://github.com/gravitee-lab/graviteek-g3-testsuite1, the release will happen on branch `4.3.x`, the last commit has a `pom.xml` with pom project version `4.3.4-SNAPSHOT`, and same in `release.json`
-  * https://github.com/gravitee-lab/graviteek-fail-testsuite1, the release will happen on branch `4.4.x`, the last commit has no `pom.xml` wchi is why the pipeline execution will fail.
+<!--
+
+
+Fork of https://github.com/gravitee-lab/graviteek-cicd-test-maven-project defining initial state for resume release test suites
+
+https://github.com/gravitee-lab/graviteek-cicd-test-maven-project
+
+-->
+
+Now, to run the tests, I execute :
+
+* Test 1, on branch `4.1.x` of the release repo :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="graviteek-release-test-suite-1"
+export BRANCH="4.1.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
 
 
 # DRAFTS
