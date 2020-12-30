@@ -90,11 +90,13 @@ export class ReleaseProcessStatePersistenceManager {
       // shellCommandStdOUT = shellCommandResult.stdout;
     }
     /// -
-    let gitCommandResult = shelljs.exec("git remote -v && git status");
+    let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
     if (gitCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
     } else {
-      // gitCommandStdOUT = gitCommandResult.stdout;
+      let gitCommandStdOUT: string = gitCommandResult.stdout;
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
+      console.log(gitCommandStdOUT);
     }
 
     /// ---- Now here is how to EDIT THE [release.json] JSON FILE
@@ -113,7 +115,7 @@ export class ReleaseProcessStatePersistenceManager {
     });
 
     let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
-    let gitCOMMITCommandResult = shelljs.exec(`git add --all && git commit -m '${commit_message}' && git push -u origin HEAD`);
+    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m '${commit_message}' && git push -u origin HEAD`);
     if (gitCOMMITCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
     } else {
@@ -122,14 +124,15 @@ export class ReleaseProcessStatePersistenceManager {
 
     /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
     if (process.argv["dry-run"] === 'false') {
-      let gitPUSHCommandResult = shelljs.exec(`git push -u origin HEAD`);
+      let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
       if (gitPUSHCommandResult.code !== 0) {
         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
       } else {
-        // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+        let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
+        console.log(gitPUSHCommandStdOUT);
       }
     }
-    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
+    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer : ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
   }
     /**
      * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo

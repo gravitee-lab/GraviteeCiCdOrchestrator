@@ -226,12 +226,12 @@ export class PipelineExecSetStatusWatcher {
               /// RESUME RELEASE FEATURE SEWPOINT
               let componentNamesArray = []
 
-              for(let j: number = 0; j < this.progressMatrix.length; j++) {
-                componentNamesArray[j] === ""
-              }
               for (let k: number = 0; k < this.progressMatrix.length; k++) {
-                let compName = this.progressMatrix[k].project_slug.split('/')[2]
-                componentNamesArray[k] === compName
+                console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - RESUME RELEASE FEATURE SEWUP, progress matrix entry is :`);
+                console.log(this.progressMatrix[k]);
+                console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - RESUME RELEASE FEATURE SEWUP, adding component [${this.progressMatrix[k].project_slug}]`);
+                console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - RESUME RELEASE FEATURE SEWUP, component split : [${this.progressMatrix[k].project_slug.split('/')[2]}]`);
+                componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
               }
               this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray);
 
