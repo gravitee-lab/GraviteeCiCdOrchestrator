@@ -41,10 +41,12 @@ export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
  **/
 export class ReleaseProcessStatePersistenceManager {
 
-  private someClassAttribute: any;
+  private successfullyReleasedComponents: string[];
+
   releaseManifest: any;
   constructor() {
     this.loadReleaseJSon();
+    this.successfullyReleasedComponents = []
   }
 
   /**
@@ -82,6 +84,9 @@ export class ReleaseProcessStatePersistenceManager {
   persistSuccessStateOf(component_names: string[]): void {
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] components array passed is: `)
     console.log(component_names);
+    for(let i=0; i < component_names.length; i++) {
+      this.successfullyReleasedComponents.push(component_names[i])
+    }
     /// -
     let shellCommandResult = shelljs.exec("pwd && ls -allh");
     if (shellCommandResult.code !== 0) {
@@ -89,15 +94,7 @@ export class ReleaseProcessStatePersistenceManager {
     } else {
       // shellCommandStdOUT = shellCommandResult.stdout;
     }
-    /// -
-    let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
-    if (gitCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
-    } else {
-      let gitCommandStdOUT: string = gitCommandResult.stdout;
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
-      console.log(gitCommandStdOUT);
-    }
+
 
     /// ---- Now here is how to EDIT THE [release.json] JSON FILE
 
@@ -115,7 +112,47 @@ export class ReleaseProcessStatePersistenceManager {
     });
 
     let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
-    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m '${commit_message}' && git push -u origin HEAD`);
+    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+    if (gitCOMMITCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+    }
+    /// -
+    let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
+    if (gitCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+    } else {
+      let gitCommandStdOUT: string = gitCommandResult.stdout;
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
+      console.log(gitCommandStdOUT);
+    }
+  }
+  /**
+   * call this method, to commit all added changes to the release repo (to the release.json), and git push
+   **/
+  commitAndPush(): void {
+
+    /// -
+    let shellCommandResult = shelljs.exec("pwd && ls -allh");
+    if (shellCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+    } else {
+      // shellCommandStdOUT = shellCommandResult.stdout;
+    }
+    /// -
+    let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
+    if (gitCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+    } else {
+      let gitCommandStdOUT: string = gitCommandResult.stdout;
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
+      console.log(gitCommandStdOUT);
+    }
+
+
+    let commit_message: string = `CI CD Orchestrator Release process state update of successfullly released components`
+    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m '${commit_message}'`);
     if (gitCOMMITCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
     } else {
@@ -130,9 +167,11 @@ export class ReleaseProcessStatePersistenceManager {
       } else {
         let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
         console.log(gitPUSHCommandStdOUT);
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] ${commit_message}: `)
+        console.log(this.successfullyReleasedComponents);
       }
     }
-    throw new Error("{[ReleaseProcessStatePersistenceManager]} - Implementation à terminer : ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]")
+
   }
     /**
      * This method removes the `-SNAPSHOT` suffix for the <code>component_name</code>, in the [release.json], on the <code>git_branch</code> git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
@@ -144,53 +183,14 @@ export class ReleaseProcessStatePersistenceManager {
      *
      * @returns void
      **/
-    /// The git branch of the release repo is un-necessary, it is assumed to
-    /// already be (git) checked out in the PWD where the Orchestrator runs.
-    /// ---
-    /// persistSuccessState(component_name: string, git_branch: string): void {
-    persistSuccessState(component_name: string): void {
-      /// -
-      let shellCommandResult = shelljs.exec("pwd && ls -allh");
-      if (shellCommandResult.code !== 0) {
-        throw new Error("An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
-      } else {
-        // shellCommandStdOUT = shellCommandResult.stdout;
-      }
-      /// -
-      let gitCommandResult = shelljs.exec("git remote -v && git status");
-      if (gitCommandResult.code !== 0) {
-        throw new Error("An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
-      } else {
-        // gitCommandStdOUT = gitCommandResult.stdout;
-      }
 
-      /// ---- Now here is how to EDIT THE [release.json] JSON FILE
-      /// https://stackoverflow.com/questions/10685998/how-to-update-a-value-in-a-json-file-and-save-it-through-node-js
-      ///
-
-      this.getComponentIndex(component_name);
-      this.releaseManifest.components[0].version = this.removeSnapshotSuffix(this.releaseManifest.components[0].version);
-      /// and write the modified JSON to file
-      fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
-        if (err) return console.log(err);
-        console.log(JSON.stringify(this.releaseManifest));
-        console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
-      });
-
-      let gitCOMMIT_AND_PUSHCommandResult = shelljs.exec("git remote -v");
-      if (gitCOMMIT_AND_PUSHCommandResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v] shell command. Shell error was [" + gitCOMMIT_AND_PUSHCommandResult.stderr + "] ")
-      } else {
-        // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
-      }
-    }
     /**
      * Returns the index, in the components array in the release.json, of the component of name
      **/
     getComponentIndex(component_name: string): number {
       let indexToReturn: number = -1;
       for (let i = 0; i < this.releaseManifest.components.length; i++) {
-        if ( this.releaseManifest.components[i] == component_name ) {
+        if ( this.releaseManifest.components[i].name == component_name ) {
           indexToReturn = i;
           break;
         }
