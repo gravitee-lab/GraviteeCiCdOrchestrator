@@ -80,7 +80,8 @@ export class ReleaseProcessStatePersistenceManager {
   /// already be (git) checked out in the PWD where the Orchestrator runs.
   /// ---
   persistSuccessStateOf(component_names: string[]): void {
-
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] components array passed is: `)
+    console.log(component_names);
     /// -
     let shellCommandResult = shelljs.exec("pwd && ls -allh");
     if (shellCommandResult.code !== 0) {
