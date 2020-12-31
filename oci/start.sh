@@ -14,6 +14,17 @@ cat ./.env
 source ./.env
 
 # ------------------------------------------- #
+#           SECRETHUB CREDENTIAL              #
+# ------------------------------------------- #
+#
+# export SECRETHUB_CREDENTIAL=${SECRETHUB_CREDENTIAL}
+# export SECRETHUB_CREDENTIAL=$(cat ./.secrethub.credential)
+mkdir -p ${HOME}/.secrethub
+cp ./.secrethub.credential ${HOME}/.secrethub
+echo "Secrethub CLI installed :"
+secrethub --version
+
+# ------------------------------------------- #
 #               GIT CONFIG                    #
 # ------------------------------------------- #
 
@@ -37,16 +48,6 @@ echo '------------------------------------------'
 echo ''
 cd ${CONTAINER_OPS_HOME}
 
-# ------------------------------------------- #
-#           SECRETHUB CREDENTIAL              #
-# ------------------------------------------- #
-#
-# export SECRETHUB_CREDENTIAL=${SECRETHUB_CREDENTIAL}
-# export SECRETHUB_CREDENTIAL=$(cat ./.secrethub.credential)
-mkdir -p ${HOME}/.secrethub
-cp ./.secrethub.credential ${HOME}/.secrethub
-echo "Secrethub CLI installed :"
-secrethub --version
 
 echo ''
 echo ''
