@@ -13,7 +13,10 @@ ls -allh ./.env
 cat ./.env
 source ./.env
 
-# GIT CONTG
+# ------------------------------------------- #
+#               GIT CONFIG                    #
+# ------------------------------------------- #
+
 ./git_config.sh
 # Git ignore the files which should not be commit pushed to the release git repo
 echo '.circleci/gpg.script.snippet.sh' >> ./pipeline/.gitignore
@@ -33,6 +36,17 @@ git config --list
 echo '------------------------------------------'
 echo ''
 cd ${CONTAINER_OPS_HOME}
+
+# ------------------------------------------- #
+#           SECRETHUB CREDENTIAL              #
+# ------------------------------------------- #
+#
+# export SECRETHUB_CREDENTIAL=${SECRETHUB_CREDENTIAL}
+# export SECRETHUB_CREDENTIAL=$(cat ./.secrethub.credential)
+mkdir -p ${HOME}/.secrethub
+cp ./.secrethub.credential ${HOME}/.secrethub
+echo "Secrethub CLI installed :"
+secrethub --version
 
 echo ''
 echo ''
