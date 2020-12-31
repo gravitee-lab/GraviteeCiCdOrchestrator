@@ -161,7 +161,6 @@ else
   git config --global user.signingkey ${GIT_USER_SIGNING_KEY}
 fi;
 
-echo "[$0 - setupSSHGithubUser] skipped almost everything else, and stripped out function "
 # export SSH_PRIVATE_KEY=$(echo "$GIT_SSH_COMMAND" | awk '{print $3}' | sed "s#~#${HOME}#g")
 git config --global user.name "${GIT_USER_NAME}"
 git config --global user.email "${GIT_USER_EMAIL}"
