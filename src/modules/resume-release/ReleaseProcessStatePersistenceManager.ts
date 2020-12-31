@@ -66,7 +66,32 @@ export class ReleaseProcessStatePersistenceManager {
     let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
     this.releaseManifest = JSON.parse(manifestAsString);
   }
+  
+  tagReleaseStart(tag_message: string): void {
+    let tag_id = `RELEASE_${this.removeSnapshotSuffix(this.releaseManifest.version)}_START`
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] Marking Release start with tag [${tag_id}] - [tag_message="${tag_message}"] `)
+    /// -
+    let gitCommandResult = shelljs.exec(`cd pipeline/ && git remote -v && git tag ${tag_id} -m "${tag_message}"`);
+    if (gitCommandResult.code !== 0) {
+      throw new Error(`{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + gitCommandResult.stderr + "] ")
+    } else {
+      let gitCommandStdOUT: string = gitCommandResult.stdout;
+      console.log(gitCommandStdOUT);
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] Sucessfully tagged [${tag_id}] with [tag_message="${tag_message}"] `);
+    }
 
+    /// pushing tags to git repo if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
+    if (process.argv["dry-run"] === 'false') {
+      let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin --tags`);
+      if (gitPUSHCommandResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git push -u origin --tags] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+      } else {
+        let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
+        console.log(gitPUSHCommandStdOUT);
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] Sucessfully pushed Release start tag [${tag_id}] - [tag_message="${tag_message}"] `)
+      }
+    }
+  }
   /**
    * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
    * TODO : Implementation à terminer :ajouter les execptions pour lecas oùlesnoms de components ne soient pas retrouvés dans le [release.json]
@@ -139,7 +164,7 @@ export class ReleaseProcessStatePersistenceManager {
   /**
    * call this method, to commit all added changes to the release repo (to the release.json), and git push
    **/
-  commitAndPush(): void {
+  commitAndPush(commit_message: string): void {
 
     /// -
     let shellCommandResult = shelljs.exec("pwd && ls -allh");
@@ -159,7 +184,8 @@ export class ReleaseProcessStatePersistenceManager {
     }
 
 
-    let commit_message: string = `CI CD Orchestrator Release process state update of successfullly released components`
+    // let commit_message: string = `CI CD Orchestrator Release process state update of successfullly released components`
+
     let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m '${commit_message}'`);
     if (gitCOMMITCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
