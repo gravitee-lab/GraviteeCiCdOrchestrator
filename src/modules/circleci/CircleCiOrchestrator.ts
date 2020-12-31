@@ -42,6 +42,7 @@ import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSe
 import { CircleCIClient } from '../../modules/circleci/CircleCIClient'
 import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactiveParallelExecutionSet'
+import {ReleaseProcessStatePersistenceManager} from '../../modules/resume-release/ReleaseProcessStatePersistenceManager';
 
 /**
  *
@@ -55,7 +56,7 @@ import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactivePar
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
 export class CircleCiOrchestrator {
-
+    private releaseStatePersistenceMngr: ReleaseProcessStatePersistenceManager;
     /**
     * <p>
     * The Execution plan listing all the components that should be included in the release :
@@ -188,7 +189,7 @@ export class CircleCiOrchestrator {
 
       this.retries = retries;
       this.circleci_client = new CircleCIClient();
-
+      this.releaseStatePersistenceMngr = new ReleaseProcessStatePersistenceManager();
       this.initializeNotifiers();
 
       this.parallelExecutionSetsNotifier.subscribe({
@@ -259,7 +260,7 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-
+      this.releaseStatePersistenceMngr.tagReleaseStart("CICD Orchestrator starts here The Release")
 
       /* WORKING TEST
       let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
