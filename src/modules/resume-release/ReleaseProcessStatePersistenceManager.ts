@@ -102,15 +102,22 @@ export class ReleaseProcessStatePersistenceManager {
     /// version property of each of those components)
     for (let i = 0; i < component_names.length; i++) {
       let currCompoenentIndex = this.getComponentIndex(component_names[i]);
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] removing [-SNAPSHOT] suffix for component [${this.releaseManifest.components[currCompoenentIndex]}] `)
       this.releaseManifest.components[currCompoenentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currCompoenentIndex].version);
     }
     /// and write the modified JSON back to the file
+    /*
     fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
       if (err) return console.log(err);
       console.log(JSON.stringify(this.releaseManifest));
       console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
-    });
-
+    });*/
+    fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), ((err) => {
+      if (err) return console.log(err);
+      console.log(JSON.stringify(this.releaseManifest));
+      console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
+    }).bind(this));
+    
     let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
     let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
     if (gitCOMMITCommandResult.code !== 0) {
