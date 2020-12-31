@@ -157,13 +157,14 @@ ssh-keygen -R github.com,${GITHUB_IP_ADDR}
 ssh-keyscan -H github.com,${GITHUB_IP_ADDR} >> ${HOME}/.ssh/known_hosts
 ssh-keyscan -H ${GITHUB_IP_ADDR} >> ${HOME}/.ssh/known_hosts
 ssh-keyscan -H github.com >> ${HOME}/.ssh/known_hosts
-chmod 644 "${HOME}/.ssh/known_hosts"
+# chmod 644 "${HOME}/.ssh/known_hosts"
 ssh-keyscan -H github.com,${GITHUB_IP_ADDR} >> ${HOME}/.ssh.gravitee.io/known_hosts
 ssh-keyscan -H ${GITHUB_IP_ADDR} >> ${HOME}/.ssh.gravitee.io/known_hosts
 ssh-keyscan -H github.com >> ${HOME}/.ssh.gravitee.io/known_hosts
 chmod 700 "${HOME}/.ssh.gravitee.io/"
-chmod 644 "${HOME}/.ssh.gravitee.io/known_hosts"
-
+# chmod 644 "${HOME}/.ssh.gravitee.io/known_hosts"
+echo "Testing SSH to Github : "
+ssh -Ti ~/.ssh.gravitee.io/id_rsa git@github.com
 
 # export GIT_USER_NAME=${GIT_USER_NAME:-'Jean-Baptiste-Lasselle'}
 if [ "x${GIT_USER_NAME}" == "x" ]; then
