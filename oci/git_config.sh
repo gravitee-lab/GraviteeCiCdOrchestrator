@@ -13,6 +13,13 @@ echo " [------------------------------------------------------------------------
 # ---
 # ---
 # +++ ++++++++++++++++ +++ #
+# +++ SSH KNOWN HOST   +++ #
+# +++ ++++++++++++++++ +++ #
+ssh-keygen -R github.com
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+# ---
+# ---
+# +++ ++++++++++++++++ +++ #
 # +++ The GPG Identity +++ #
 # +++ ++++++++++++++++ +++ #
 export GPG_BOT_SECRETS_RESTORED=$(pwd)/graviteebot/.secrets/
