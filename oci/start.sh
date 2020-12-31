@@ -23,6 +23,7 @@ mkdir -p ${HOME}/.secrethub
 cp ./.secrethub.credential ${HOME}/.secrethub/
 cp ${HOME}/.secrethub/.secrethub.credential ${HOME}/.secrethub/credential
 rm ${HOME}/.secrethub/.secrethub.credential
+rm ./.secrethub.credential
 
 echo "Secrethub CLI installed :"
 secrethub --version
@@ -33,7 +34,7 @@ secrethub --version
 
 ./git_config.sh
 # Git ignore the files which should not be commit pushed to the release git repo
-echo '.circleci/gpg.script.snippet.sh' >> ./pipeline/.gitignore
+echo 'gpg.script.snippet.sh' >> ./pipeline/.gitignore
 echo 'graviteebot/.secrets/.gungpg/graviteebot.gpg.priv.key' >> ./pipeline/.gitignore
 echo 'graviteebot/.secrets/.gungpg/graviteebot.gpg.pub.key' >> ./pipeline/.gitignore
 echo '.secrets.json' >> ./pipeline/.gitignore
