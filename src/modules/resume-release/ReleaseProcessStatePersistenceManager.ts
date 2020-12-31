@@ -150,7 +150,7 @@ export class ReleaseProcessStatePersistenceManager {
       console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
     }).bind(this));
 
-    let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
+    
     let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
     if (gitADDCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
