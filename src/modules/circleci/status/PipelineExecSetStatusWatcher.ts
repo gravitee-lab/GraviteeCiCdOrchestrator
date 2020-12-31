@@ -377,6 +377,24 @@ export class PipelineExecSetStatusWatcher {
     /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
   }
   /**
+   * Returns yes if there is no workflow, in any pipeline, which remains in one of the following states :
+   * 'pending'
+   * 'running'
+   * 'on_hold'
+   **/
+  private haveAllPipelinesStopped(): boolean {
+    let allPipeStopped: boolean = true;
+    for (let k: number = 0; k < this.progressMatrix.length; k++) {
+      let wfArray = this.progressMatrix[k].workflows_exec_state
+      for(let j: number = 0; j < wfArray.length; j++) {
+        allPipeStopped = allPipeStopped && !(wfArray[j].status === 'pending' || wfArray[j].status === 'running' || wfArray[j].status === 'on_hold' )
+      }
+    }
+    // this.releaseStatePersistenceMngr.whereAmI(); finalizeReleaseRepoPersistence
+    return allPipeStopped;
+    /// throw new Error(`[PipelineExecSetStatusWatcher] - [haveAllPipelinesSuccessfullyCompleted] not implemented yet`);
+  }
+  /**
    * returns true if the current watch round is over
    **/
   private isWatchRoundOver(): boolean {

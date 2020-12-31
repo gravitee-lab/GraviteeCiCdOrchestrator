@@ -4,7 +4,7 @@ FROM node:14.9.0-alpine3.10 AS base
 # -- add a few utils:
 # the [PullRequestBot], among other
 # CICD Stages, need the git
-RUN apk update && apk add tree git
+RUN apk update && apk add tree git bash
 # --- Install TypeScript
 RUN npm install -g typescript @types/node
 # --- create and set working directory
@@ -12,6 +12,8 @@ RUN mkdir -p /graviteeio/cicd
 WORKDIR /graviteeio/cicd
 # --- add entrypoint
 COPY oci/start.sh /graviteeio/cicd
+COPY oci/git_config.sh /graviteeio/cicd
+
 # COPY oci/generate-dotenv.sh /graviteeio/cicd
 RUN chmod +x /graviteeio/cicd/*.sh
 
