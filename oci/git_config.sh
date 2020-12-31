@@ -10,13 +10,7 @@ echo "   Running [$0] with Secret Hub Repo name [${SECRETHUB_REPO}] "
 cat check.secretconf
 rm  check.secretconf
 echo " [--------------------------------------------------------------------------------] "
-# ---
-# ---
-# +++ ++++++++++++++++ +++ #
-# +++ SSH KNOWN HOST   +++ #
-# +++ ++++++++++++++++ +++ #
-ssh-keygen -R github.com
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
 # ---
 # ---
 # +++ ++++++++++++++++ +++ #
@@ -146,6 +140,30 @@ ssh-add "${LOCAL_SSH_PRVIKEY}"
 echo "[$0 - setupSSHGithubUser] [GIT_USER_NAME=[${GIT_USER_NAME}]] "
 echo "[$0 - setupSSHGithubUser] [GIT_USER_EMAIL=[${GIT_USER_EMAIL}]] "
 echo "[$0 - setupSSHGithubUser] [GIT_SSH_COMMAND=[${GIT_SSH_COMMAND}]] "
+
+# ---
+# ---
+# +++ ++++++++++++++++ +++ #
+# +++ SSH KNOWN HOST   +++ #
+# +++ ++++++++++++++++ +++ #
+export GITHUB_IP_ADDR=$(ping -c 1 github.com | awk '{print $3}' | awk -F '(' '{print $2}' | awk -F ')' '{print $1}')
+
+mkdir -p "${HOME}/.ssh/"
+chmod 700 "${HOME}/.ssh/"
+
+ssh-keygen -R github.com
+ssh-keygen -R ${GITHUB_IP_ADDR}
+ssh-keygen -R github.com,${GITHUB_IP_ADDR}
+ssh-keyscan -H github.com,${GITHUB_IP_ADDR} >> ${HOME}/.ssh/known_hosts
+ssh-keyscan -H ${GITHUB_IP_ADDR} >> ${HOME}/.ssh/known_hosts
+ssh-keyscan -H github.com >> ${HOME}/.ssh/known_hosts
+chmod 644 "${HOME}/.ssh/known_hosts"
+ssh-keyscan -H github.com,${GITHUB_IP_ADDR} >> ${HOME}/.ssh.gravitee.io/known_hosts
+ssh-keyscan -H ${GITHUB_IP_ADDR} >> ${HOME}/.ssh.gravitee.io/known_hosts
+ssh-keyscan -H github.com >> ${HOME}/.ssh.gravitee.io/known_hosts
+chmod 700 "${HOME}/.ssh.gravitee.io/"
+chmod 644 "${HOME}/.ssh.gravitee.io/known_hosts"
+
 
 # export GIT_USER_NAME=${GIT_USER_NAME:-'Jean-Baptiste-Lasselle'}
 if [ "x${GIT_USER_NAME}" == "x" ]; then
