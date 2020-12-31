@@ -4,6 +4,7 @@
 echo " [--------------------------------------------------------------------------------] "
 echo "   Running [$0] with Secret Hub Org name [${SECRETHUB_ORG}] " >> check.secretconf
 echo "   Running [$0] with Secret Hub Repo name [${SECRETHUB_REPO}] " >> check.secretconf
+echo "   Running [$0] with Linux user [$(whoami)] "
 echo "   Running [$0] with Secret Hub Org name [${SECRETHUB_ORG}] "
 echo "   Running [$0] with Secret Hub Repo name [${SECRETHUB_REPO}] "
 cat check.secretconf
@@ -30,7 +31,7 @@ export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(secrethub read "${SECRETHUB_ORG}/${SECRE
 export NON_ROOT_USER_NAME=$(whoami)
 # ---
 # The GnuPG SNIPPET
-cat <<EOF>>./.circleci/gpg.script.snippet.sh
+cat <<EOF>>./gpg.script.snippet.sh
 #!/bin/bash
 echo "# --------------------- #"
 export RESTORED_GPG_PUB_KEY_FILE="${GPG_BOT_SECRETS_RESTORED}/.gungpg/graviteebot.gpg.pub.key"
@@ -99,8 +100,8 @@ Info() {
 # -                        GPG CONFIG FOR THE GRAVITEE BOT                       - #
 # -------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------- #
-chmod +x ./.circleci/gpg.script.snippet.sh
-# ./.circleci/gpg.script.snippet.sh
+chmod +x ./gpg.script.snippet.sh
+# ./gpg.script.snippet.sh
 
 # -------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------- #
