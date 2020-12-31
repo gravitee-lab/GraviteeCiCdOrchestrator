@@ -38,6 +38,8 @@ export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
  *
  * Responsible to persist the state of the Release CI CD Process
  * by commit and push to the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
+ *
+ * Idea : I might rename this guy "GitOperator", it would have an interface an a different implementation for each Cicd Process : a Cicd release, or any other Cicd Process....
  **/
 export class ReleaseProcessStatePersistenceManager {
 
@@ -66,7 +68,7 @@ export class ReleaseProcessStatePersistenceManager {
     let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
     this.releaseManifest = JSON.parse(manifestAsString);
   }
-  
+
   tagReleaseStart(tag_message: string): void {
     let tag_id = `RELEASE_${this.removeSnapshotSuffix(this.releaseManifest.version)}_START`
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] Marking Release start with tag [${tag_id}] - [tag_message="${tag_message}"] `)
@@ -81,7 +83,7 @@ export class ReleaseProcessStatePersistenceManager {
     }
 
     /// pushing tags to git repo if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
-    if (process.argv["dry-run"] === 'false') {
+    if (`${process.argv["dry-run"]}` === 'false') {
       let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin --tags`);
       if (gitPUSHCommandResult.code !== 0) {
         throw new Error("{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git push -u origin --tags] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
@@ -90,6 +92,8 @@ export class ReleaseProcessStatePersistenceManager {
         console.log(gitPUSHCommandStdOUT);
         console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] Sucessfully pushed Release start tag [${tag_id}] - [tag_message="${tag_message}"] `)
       }
+    } else {
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] dry run is TRUE`);
     }
   }
   /**
