@@ -4,7 +4,7 @@ FROM node:14.9.0-alpine3.10 AS base
 # -- add a few utils:
 # the [PullRequestBot], among other
 # CICD Stages, need the git
-RUN apk update && apk add tree git bash curl tar && apk --update add openssh-client
+RUN apk update && apk add tree git bash curl tar iputils && apk --update add openssh-client
 # --- Install TypeScript
 RUN npm install -g typescript @types/node
 # --- create and set working directory
