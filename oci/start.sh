@@ -31,7 +31,7 @@ secrethub --version
 # ------------------------------------------- #
 #               GIT CONFIG                    #
 # ------------------------------------------- #
-
+export GIT_SSH_COMMAND='ssh -i ~/.ssh.gravitee.io/id_rsa'
 ./git_config.sh
 # Git ignore the files which should not be commit pushed to the release git repo
 echo 'gpg.script.snippet.sh' >> ./pipeline/.gitignore
