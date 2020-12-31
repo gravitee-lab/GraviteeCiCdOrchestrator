@@ -4,7 +4,7 @@ FROM node:14.9.0-alpine3.10 AS base
 # -- add a few utils:
 # the [PullRequestBot], among other
 # CICD Stages, need the git
-RUN apk update && apk add tree git bash
+RUN apk update && apk add tree git bash curl tar
 # --- Install TypeScript
 RUN npm install -g typescript @types/node
 # --- create and set working directory
@@ -13,10 +13,10 @@ WORKDIR /graviteeio/cicd
 # --- add entrypoint
 COPY oci/start.sh /graviteeio/cicd
 COPY oci/git_config.sh /graviteeio/cicd
-
+COPY oci/install-secrethub-cli.sh /graviteeio/cicd
 # COPY oci/generate-dotenv.sh /graviteeio/cicd
 RUN chmod +x /graviteeio/cicd/*.sh
-
+RUN /graviteeio/cicd/install-secrethub-cli.sh
 # Set [start.sh] as entrypoint
 ENTRYPOINT ["/graviteeio/cicd/start.sh", "--"]
 # Copy project file
