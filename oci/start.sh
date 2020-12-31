@@ -20,7 +20,9 @@ source ./.env
 # export SECRETHUB_CREDENTIAL=${SECRETHUB_CREDENTIAL}
 # export SECRETHUB_CREDENTIAL=$(cat ./.secrethub.credential)
 mkdir -p ${HOME}/.secrethub
-cp ./.secrethub.credential ${HOME}/.secrethub
+cp ./.secrethub.credential ${HOME}/.secrethub/
+cp ${HOME}/.secrethub/.secrethub.credential ${HOME}/.secrethub/credential
+
 echo "Secrethub CLI installed :"
 secrethub --version
 
