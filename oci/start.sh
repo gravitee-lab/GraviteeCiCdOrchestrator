@@ -22,6 +22,7 @@ source ./.env
 mkdir -p ${HOME}/.secrethub
 cp ./.secrethub.credential ${HOME}/.secrethub/
 cp ${HOME}/.secrethub/.secrethub.credential ${HOME}/.secrethub/credential
+rm ${HOME}/.secrethub/.secrethub.credential
 
 echo "Secrethub CLI installed :"
 secrethub --version
