@@ -142,23 +142,25 @@ export class ReleaseProcessStatePersistenceManager {
       console.log(JSON.stringify(this.releaseManifest));
       console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
     });*/
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
+    console.log(this.releaseManifest);
     fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), ((err) => {
       if (err) return console.log(err);
       console.log(JSON.stringify(this.releaseManifest));
       console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
     }).bind(this));
 
-    let commit_message: string = `CI CD Orchestrator Release process state update of [${component_names.length}] successfullly released`
-    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
-    if (gitCOMMITCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+    
+    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+    if (gitADDCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
     } else {
       // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
     }
     /// -
     let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
     if (gitCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
     } else {
       let gitCommandStdOUT: string = gitCommandResult.stdout;
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
