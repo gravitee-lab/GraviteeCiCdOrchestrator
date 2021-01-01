@@ -90,19 +90,20 @@ export class ReactiveParallelExecutionSet {
   private circleci_client: CircleCIClient;
   private pipelines_nb: number;
   private pipeExecStatusWatcher: PipelineExecSetStatusWatcher;
+  private isLast: boolean; // true if and only if the Parallel execution set of index [parallelExecutionSetIndex] is the last non empty [ParallelExecutionSet] in [execution_plan]
 
   /**
    * Instantiate a new {@link ReactiveParallelExecutionSet}
-   *
+   * [isLast] : msut be set to true, if this is the last non empty Parallel Execution Set
    **/
-  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, orchestratorNotifier: rxjs.Subject<number>) {
+  constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, orchestratorNotifier: rxjs.Subject<number>, isLast: boolean) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
     this.parallelExecutionSet = parallelExecutionSet;
     this.circleci_client = circleci_client;
     this.pipelines_nb = this.parallelExecutionSet.length;
     this.progressMatrix = [];
     this.orchestratorNotifier = orchestratorNotifier;
-
+    this.isLast = isLast;
   }
 
   /**
@@ -132,7 +133,7 @@ export class ReactiveParallelExecutionSet {
          console.log(`[ --- [{ReactiveParallelExecutionSet}] - All Pipelines have been triggered !   `);
          console.log("[-----------------------------------------------]");
 
-         this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client);
+         this.pipeExecStatusWatcher = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client, this.isLast);
          this.pipeExecStatusWatcher.finalStateNotifier.subscribe({ // Subsciption to An RxJS Subject, so this subscription doesnot trigger anything.
            next: this.notifyExecCompleted.bind(this),
            complete: () => {

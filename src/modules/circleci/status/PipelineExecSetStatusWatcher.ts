@@ -120,8 +120,9 @@ export class PipelineExecSetStatusWatcher {
    * the [finalStateNotifier] : to be able to unsubscribe when desired
    **/
   private rxSubscriptions: rxjs.Subscription[];
+  private isLast: boolean; // true if and only if the Parallel execution set of index [parallelExecutionSetIndex] is the last non empty [ParallelExecutionSet] in [execution_plan]
 
-  constructor(progressMatrix: any[], circleci_client: CircleCIClient) {
+  constructor(progressMatrix: any[], circleci_client: CircleCIClient, isLast: boolean) {
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [constructor] - I am the constructor, I actually am called`);
     this.progressMatrix = progressMatrix;
     this.finalStateNotifier = new rxjs.Subject<PipeExecSetStatusNotification>();
@@ -129,6 +130,7 @@ export class PipelineExecSetStatusWatcher {
     this.workflowPaginationNotifier = new rxjs.Subject<WfPaginationRef>();
     this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
     this.circleci_client = circleci_client;
+    this.isLast = isLast;
     this.initPrivateNotifersSubscriptions();
     /// --- INIT WATCH ROUND
 
@@ -188,7 +190,7 @@ export class PipelineExecSetStatusWatcher {
     });
 
     let progressMatrixUpdatesSubscription = this.progressMatrixUpdatesNotifier.subscribe({
-        next: (progressMatrix) => {
+        next: ((progressMatrixParam) => {
           // here we have to check if, for all entries of the [progressMatrix], the
           // [watch_round] JSON Property are equal to [this.watch_round]
           // If yes, then we have to :
@@ -224,7 +226,6 @@ export class PipelineExecSetStatusWatcher {
               console.log(`----`)
 
               /// RESUME RELEASE FEATURE SEWPOINT
-              /*
               let componentNamesArray = []
 
               for (let k: number = 0; k < this.progressMatrix.length; k++) {
@@ -235,8 +236,12 @@ export class PipelineExecSetStatusWatcher {
                 componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
               }
               this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray);
-              */
-              this.finalizeReleaseRepoPersistence(); // this is a synchronous method call
+
+              if (this.isLast) {
+                console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because all pipelines have successfully completed for the last non empty [Parallel Execution Set]`)
+                this.finalizeReleaseRepoPersistence(false); // this is a synchronous method call
+              }
+
 
               this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
                 is_errored: false
@@ -261,7 +266,7 @@ export class PipelineExecSetStatusWatcher {
           }
           /// throw new Error("That's where I am working now");
 
-        },
+        }).bind(this),
         complete: () => {
           console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - COMPLETE`);
         },
@@ -521,7 +526,11 @@ export class PipelineExecSetStatusWatcher {
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
-        this.finalizeReleaseRepoPersistence();
+        if (this.isLast) {
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
+          this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
+        }
+
         /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
         // this.releaseStatePersistenceMngr.whereAmI();
         throw occuredProblem;
@@ -538,7 +547,7 @@ export class PipelineExecSetStatusWatcher {
     ///     | `running`                                          |  execution is running                                                                           |
     ///     | `not_run`                                          |  execution is scheduled, but did not start yet                                                  |
     ///     | `failed`                                           |  execution completed with errors                                                                |
-    ///     | `error`                                            |  execution was canceled, because of `.circleci/config.yml` syntax errors                        |
+    ///     | `error`                                            |  execution was aborted, because of `.circleci/config.yml` syntax errors                        |
     ///     | `failing`                                          |  execution is still running, and at least one error already occured, without stopping execution. Actually at least one job failed, but not all job have completed execution |
     ///     | `on_hold`                                          |  waiting for approval (workflows was configured to require an approval, before being scheduled see [this forum entry](https://discuss.circleci.com/t/do-on-hold-jobs-count-against-time-quota/24136) and  [this Circle CI doc entry](https://circleci.com/docs/2.0/workflows/#holding-a-workflow-for-a-manual-approval) )                                                                   |
     ///     | `canceled`                                         |  someone canceled the execution                                                                 |
@@ -579,8 +588,10 @@ export class PipelineExecSetStatusWatcher {
   }
   /**
    * As soon as an execution error is detected, all pipeline which have completed successfully, have their corresponding github repos updated in the release.json ,and the git push happens
+   *
+   * <persistSuccessStateOfNonErrored> :  set this paramto <code>true</code>, if an error was detected in a pipeline execution. Then all compoenents for which pipeline was sucessful, will be persisted
    **/
-  private finalizeReleaseRepoPersistence(): void { // this method is synchronous
+  private finalizeReleaseRepoPersistence(persistSuccessStateOfNonErrored: boolean): void { // this method is synchronous
     let componentNamesArray = []
 
     for (let k: number = 0; k < this.progressMatrix.length; k++) {
@@ -591,12 +602,33 @@ export class PipelineExecSetStatusWatcher {
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, component split : [${this.progressMatrix[k].project_slug.split('/')[2]}]`);
       if(allWorkFlowsSuccessful) { // keeping only repos which pipelines have fully completed succesfullys
         componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
+      } else {
+        if (this.isStillRunningWithoutError(this.progressMatrix[k])) {
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - THE [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE IS STILL RUNNING ANd NOT ERRORED : `);
+          console.log(this.progressMatrix[k])
+          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - IF [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE  COMPLETES WITHOUT ERRORS, REMOVE THE [-SNAPSHOT] suffix in the [release.json] BEFORE RESUMING RELEASE`)
+          // Une solution : au démarrage del'rochestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
+        }
       }
     }
     this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
     // and finally commit and push it all
-    this.releaseStatePersistenceMngr.commitAndPush("Release finished"); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+    this.releaseStatePersistenceMngr.commitAndPush(`Release finished`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
   }
+  /// -------------
+  ///  All Workflow Execution Statuses
+  ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
+  ///     |----------------------------------------------------|-------------------------------------------------------------------------------------------------|
+  ///     | `success`                                          |  execution completed without any error                                                          |
+  ///     | `running`                                          |  execution is running                                                                           |
+  ///     | `not_run`                                          |  execution is scheduled, but did not start yet                                                  |
+  ///     | `failed`                                           |  execution completed with errors                                                                |
+  ///     | `error`                                            |  execution was aborted, because of `.circleci/config.yml` syntax errors                        |
+  ///     | `failing`                                          |  execution is still running, and at least one error already occured, without stopping execution. Actually at least one job failed, but not all job have completed execution |
+  ///     | `on_hold`                                          |  waiting for approval (workflows was configured to require an approval, before being scheduled see [this forum entry](https://discuss.circleci.com/t/do-on-hold-jobs-count-against-time-quota/24136) and  [this Circle CI doc entry](https://circleci.com/docs/2.0/workflows/#holding-a-workflow-for-a-manual-approval) )                                                                   |
+  ///     | `canceled`                                         |  someone canceled the execution                                                                 |
+  ///     | `unauthorized`                                     |  an unauthorized Circle CI user requested the execution, using `Circle CI` API, and it was therefore denied |
+
   /**
    *
    * Give this method an object of the form (a progressMatrix entry):
@@ -629,6 +661,33 @@ export class PipelineExecSetStatusWatcher {
 
     for (let k: number = 0; k < progressMatrixEntry.workflows_exec_state.length; k++) {
       answer = answer && (progressMatrixEntry.workflows_exec_state[k].status === "success");
+    }
+
+    return answer;
+  }
+  private isStillRunningWithoutError(progressMatrixEntry: any): boolean {
+    let answer = false;
+
+    for (let k: number = 0; k < progressMatrixEntry.workflows_exec_state.length; k++) {
+      // let hasAProblemOccured: boolean = false;
+      let wflowstate = progressMatrixEntry.workflows_exec_state[k];
+      if (wflowstate.status === 'failed') {
+        answer =  false;
+        break;
+      } else if (wflowstate.status === 'error') {
+        answer =  false;
+        break;
+      } else if (wflowstate.status === 'failing') {
+        answer =  false;
+        break;
+      } else if (wflowstate.status === 'canceled') {
+        answer =  false;
+        break;
+      } else if (wflowstate.status === 'unauthorized') {
+        answer =  false;
+        break;
+      }
+      answer = answer || (progressMatrixEntry.workflows_exec_state[k].status === "running");
     }
 
     return answer;

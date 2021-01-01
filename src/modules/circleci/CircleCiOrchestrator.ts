@@ -234,17 +234,7 @@ export class CircleCiOrchestrator {
 
     }
 
-    /**
-     * Queries Circle CI API ti check identity of the
-     * authenticated Circle CI user
-     * @returns the JSON Object returned by Circle CI API
-     **/
-    public whoami(): any {
-      let whoamiSubscription = this.circleci_client.whoami().subscribe({
-        next: data => console.log( '[Whomai data] => ', data ),
-        complete: data => console.log( '[complete]' )
-      });
-    }
+
     /**
      * returning an A 2-dimensional array
      **/
@@ -285,7 +275,10 @@ export class CircleCiOrchestrator {
           console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, do not proceed with next, cause this was last.");
         }
       } else {
-        let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+
+        let isLast:boolean = (this.getLastNonEmptyParallelExecutionSetIndex() == parallelExecutionsSetIndex);
+        console.log(`[{CircleCiOrchestrator}] - is [${parallelExecutionsSetIndex}] the last non empty parallel execution set ? Answer : [${isLast}]`)
+        let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex], isLast); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
         // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
         parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
         parallelExecSet1.triggerPipelines();
@@ -293,5 +286,15 @@ export class CircleCiOrchestrator {
 
     }
 
+    private getLastNonEmptyParallelExecutionSetIndex() : number {
+      let toReturn: number = -1;
+      console.info("[{CircleCiOrchestrator}] - ");
+      for (let k:number = 0; k < this.execution_plan.length; k++) {
+        if (this.execution_plan[k].length != 0) {
+          toReturn = k;
+        }
+      }
+      return toReturn;
+    }
 
 }

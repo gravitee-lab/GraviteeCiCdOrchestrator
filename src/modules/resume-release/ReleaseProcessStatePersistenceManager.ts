@@ -150,7 +150,7 @@ export class ReleaseProcessStatePersistenceManager {
       console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
     }).bind(this));
 
-    
+
     let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
     if (gitADDCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
@@ -171,9 +171,10 @@ export class ReleaseProcessStatePersistenceManager {
    * call this method, to commit all added changes to the release repo (to the release.json), and git push
    **/
   commitAndPush(commit_message: string): void {
-
     /// -
-    let shellCommandResult = shelljs.exec("pwd && ls -allh");
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] content of the release.json on filessytem is : `);
+    /// -
+    let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && ");
     if (shellCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
     } else {
@@ -185,14 +186,14 @@ export class ReleaseProcessStatePersistenceManager {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
     } else {
       let gitCommandStdOUT: string = gitCommandResult.stdout;
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] : `);
       console.log(gitCommandStdOUT);
     }
 
 
     // let commit_message: string = `CI CD Orchestrator Release process state update of successfullly released components`
 
-    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m '${commit_message}'`);
+    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"${commit_message}\"`);
     if (gitCOMMITCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
     } else {
