@@ -618,6 +618,7 @@ export class PipelineExecSetStatusWatcher {
       }
       this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
       // -- AND FINISH MODE -- AND FINISH MODE --- "NEAT FINISH" // TO TEST // THIS WILL HAVE TO BE tested
+      // OK HERE IS A NEW IDEA : MODIFY THE DESIGN OF THE WATCHER SHOULD STOP WHEN ALL PIPELINES ARE IN A FINAL STATE : NONE OF THEM IS RUNNING, AND THERE WAS AT LEAST ONE FAILURE, SO WE DO NOT PROCEED WITH NEXT [PARALLEL EXECUTION SET]. That way, at the very moment this event is detected,then we can persist all wuccessful pipeline execution in the [release.json]
       /// So idea is : for what is still running, we launch a new [PipelineExecSetStatusWatcher] instance
       let pipeExecStatusWatcherFinish = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client, this.isLast);
       pipeExecStatusWatcherFinish.finalStateNotifier.subscribe({ // Subsciption to An RxJS Subject, so this subscription doesnot trigger anything.

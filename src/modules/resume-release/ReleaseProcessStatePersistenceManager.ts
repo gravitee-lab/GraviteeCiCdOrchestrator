@@ -146,23 +146,14 @@ export class ReleaseProcessStatePersistenceManager {
     /// -
     /// semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'prerelease', 'beta')
     nextVersion = `${nextVersion}-SNAPSHOT`
-    // '1.2.4-beta.0'
+
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion] nextVersion is: [${nextVersion}]`);
     this.releaseManifest.version = nextVersion;
 
     /// and write the modified JSON back to the file
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
     console.log(JSON.stringify(this.releaseManifest, null, 4));
-    /*
-    fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, ((err) => {
-      if (err) return console.log(err);
-      console.log(JSON.stringify(this.releaseManifest, null, 4));
-      console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
-      throw err;
-    }).bind(this));
-    */
-    // Write synchronously
-    /*  */
+
     try {
       fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
     } catch(err) {
@@ -172,7 +163,7 @@ export class ReleaseProcessStatePersistenceManager {
       throw err;
     }
 
-    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m 'prepare next version'`);
     if (gitADDCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
     } else {
@@ -180,7 +171,21 @@ export class ReleaseProcessStatePersistenceManager {
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully git added : `);
       console.log(gitADDCommandResult.stdout);
     }
+    throw new Error(`Now I must finish by creating the new git branch, with another prepared next version`)
+    if ( `${currentBranch}` === 'master' ) { // if this is a minor release, and not a patch release, then we must prepare the support branch
 
+      let supportBranch = `${semver.major(nextVersion)}.${semver.minor(nextVersion)}.x`
+      let gitCreateBranchCommandResult = shelljs.exec(`cd pipeline/ && git checkout -b ${supportBranch}`);
+      let currentBranch = null;
+      if (gitBranchCommandResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+        currentBranch = `${gitCreateBranchCommandResult.stdout}`;
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] supportBranch created is : [${currentBranch}] `);
+        console.log(`${gitCreateBranchCommandResult.stdout}`);
+      }
+    }
   }
   /**
    * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
