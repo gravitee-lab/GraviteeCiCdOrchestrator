@@ -129,25 +129,25 @@ export class ReleaseProcessStatePersistenceManager {
     /// and write the modified JSON back to the file
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
     console.log(JSON.stringify(this.releaseManifest, null, 4));
-
+    /*
     fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, ((err) => {
       if (err) return console.log(err);
       console.log(JSON.stringify(this.releaseManifest, null, 4));
       console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
       throw err;
     }).bind(this));
-
+    */
     // Write synchronously
-    /*
+    /*  */
     try {
-      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest)}`, {}); // no options
+      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
     } catch(err) {
       // An error occurred
       console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
       console.error(err);
       throw err;
     }
-    */
+
     let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
     if (gitADDCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
