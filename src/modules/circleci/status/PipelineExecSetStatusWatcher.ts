@@ -632,6 +632,7 @@ export class PipelineExecSetStatusWatcher {
     }
     // and finally commit and push it all
     this.releaseStatePersistenceMngr.commitAndPush(`Release finished`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+    this.releaseStatePersistenceMngr.tagReleaseFinish(`Release`)
     // and prepare next version
     this.releaseStatePersistenceMngr.prepareNextVersion();
     this.releaseStatePersistenceMngr.commitAndPush(`Prepare next version`);
