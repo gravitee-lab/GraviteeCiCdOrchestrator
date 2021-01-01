@@ -242,10 +242,10 @@ export class PipelineExecSetStatusWatcher {
                 this.finalizeReleaseRepoPersistence(false); // this is a synchronous method call
               }
 
-
-              this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
-                is_errored: false
-              });
+              let execStatusNotification: PipeExecSetStatusNotification = {
+                is_errored: false //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
+              }
+              this.finalStateNotifier.next(execStatusNotification);
 
             } else { // we know there is no Workflow execution for which a problem occured, because
                      // the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] gurantees that.
@@ -617,17 +617,18 @@ export class PipelineExecSetStatusWatcher {
         }
       }
       this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
-      //
-      /* -- AND FINISH MODE -- AND FINISH MODE
+      // -- AND FINISH MODE -- AND FINISH MODE --- "NEAT FINISH" // TO TEST // THIS WILL HAVE TO BE tested
+      /// So idea is : for what is still running, we launch a new [PipelineExecSetStatusWatcher] instance
       let pipeExecStatusWatcherFinish = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client, this.isLast);
       pipeExecStatusWatcherFinish.finalStateNotifier.subscribe({ // Subsciption to An RxJS Subject, so this subscription doesnot trigger anything.
-        next: () => {
-          console.log('[{pipeExecStatusWatcherFinish}] - Just Finhed Watching Pipeline Execution Status!');
+        next: (execStatusNotification: PipeExecSetStatusNotification) => {
+          console.log('[{pipeExecStatusWatcherFinish}] - Just Completed Watching Pipeline Execution Status IN FINISH MODE FOR PARALLEL EXECUTION SET WHERE ERROR WAS DETECTED! [execStatusNotification] : ');
+          console.log(execStatusNotification);
         },
         complete: () => {
           console.log('[{pipeExecStatusWatcherFinish}] - Just Completed Watching Pipeline Execution Status!');
         }
-      }); */
+      });
     }
     // and finally commit and push it all
     this.releaseStatePersistenceMngr.commitAndPush(`Release finished`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
