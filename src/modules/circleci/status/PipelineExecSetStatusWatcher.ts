@@ -242,10 +242,10 @@ export class PipelineExecSetStatusWatcher {
                 this.finalizeReleaseRepoPersistence(false); // this is a synchronous method call
               }
 
-
-              this.finalStateNotifier.next({ //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
-                is_errored: false
-              });
+              let execStatusNotification: PipeExecSetStatusNotification = {
+                is_errored: false //this will notify the {@link ReactiveParallelExecutionSet}, and hence the {CircleCiOrchestrator} to proceed with next {@link ReactiveParallelExecutionSet}
+              }
+              this.finalStateNotifier.next(execStatusNotification);
 
             } else { // we know there is no Workflow execution for which a problem occured, because
                      // the [handleInspectPipelineExecStateResponseData (observedResponse: WorkflowsData)] gurantees that.
@@ -603,15 +603,32 @@ export class PipelineExecSetStatusWatcher {
         if(allWorkFlowsSuccessful) { // keeping only repos which pipelines have fully completed succesfullys
           componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
         } else {
+          let finishModeProgressMatrix: any[] = [];
+
           if (this.isStillRunningWithoutError(this.progressMatrix[k])) {
             console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - THE [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE IS STILL RUNNING ANd NOT ERRORED : `);
             console.log(this.progressMatrix[k])
             console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - IF [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE  COMPLETES WITHOUT ERRORS, REMOVE THE [-SNAPSHOT] suffix in the [release.json] BEFORE RESUMING RELEASE`)
             // Une solution : au démarrage del'rochestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
+            // FINISH MODE REBOOT :
+            /// Ok, mais donc le plus logqiue, et efficace, c'est de persister en JSON la `progressMatrix`, en lui retirant "tous les pipeliens sauf ceux qui sont en running". Et on reprend là dessus. Ouiiii voilà.
+            finishModeProgressMatrix.push(this.progressMatrix[k]);
           }
         }
       }
       this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
+      // -- AND FINISH MODE -- AND FINISH MODE --- "NEAT FINISH" // TO TEST // THIS WILL HAVE TO BE tested
+      /// So idea is : for what is still running, we launch a new [PipelineExecSetStatusWatcher] instance
+      let pipeExecStatusWatcherFinish = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client, this.isLast);
+      pipeExecStatusWatcherFinish.finalStateNotifier.subscribe({ // Subsciption to An RxJS Subject, so this subscription doesnot trigger anything.
+        next: (execStatusNotification: PipeExecSetStatusNotification) => {
+          console.log('[{pipeExecStatusWatcherFinish}] - Just Completed Watching Pipeline Execution Status IN FINISH MODE FOR PARALLEL EXECUTION SET WHERE ERROR WAS DETECTED! [execStatusNotification] : ');
+          console.log(execStatusNotification);
+        },
+        complete: () => {
+          console.log('[{pipeExecStatusWatcherFinish}] - Just Completed Watching Pipeline Execution Status!');
+        }
+      });
     }
     // and finally commit and push it all
     this.releaseStatePersistenceMngr.commitAndPush(`Release finished`); // is dry run sensible (in mode is on, won't push) // this method is synchronous

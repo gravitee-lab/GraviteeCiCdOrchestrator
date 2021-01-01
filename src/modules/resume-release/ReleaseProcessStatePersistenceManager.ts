@@ -174,16 +174,17 @@ export class ReleaseProcessStatePersistenceManager {
     /// -
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] content of the release.json on filessytem is : `);
     /// -
-    let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && ");
+    let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json ");
     if (shellCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
     } else {
-      // shellCommandStdOUT = shellCommandResult.stdout;
+      let shellCommandStdOUT = shellCommandResult.stdout;
+      console.log(shellCommandStdOUT);
     }
     /// -
     let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
     if (gitCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
     } else {
       let gitCommandStdOUT: string = gitCommandResult.stdout;
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] : `);
@@ -197,7 +198,9 @@ export class ReleaseProcessStatePersistenceManager {
     if (gitCOMMITCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
     } else {
-      // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+      // gitCOMMITCommandStdOUT = gitCOMMITCommandResult.stdout;
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
+      console.log(gitCOMMITCommandResult.stdout)
     }
 
     /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
@@ -208,7 +211,7 @@ export class ReleaseProcessStatePersistenceManager {
       } else {
         let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
         console.log(gitPUSHCommandStdOUT);
-        console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] ${commit_message}: `)
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully pushed to remote git repo with commit message [${commit_message}] : `);
         console.log(this.successfullyReleasedComponents);
       }
     }
@@ -247,7 +250,7 @@ export class ReleaseProcessStatePersistenceManager {
         toReturn = maven_version_number.substr(0, maven_version_number.length - 9 );
       } else {
         /// toReturn = maven_version_number;
-        let errMsg = `{[ReleaseProcessStatePersistenceManager]} - Provided maven version number does not end wiht the [-SNAPSHOT] suffix, but was expected to`;
+        let errMsg = `{[ReleaseProcessStatePersistenceManager]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
         console.log(errMsg);
         throw new Error(errMsg);
       }

@@ -618,6 +618,52 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
     * note that this gravitee parent pom defines a build process which does not execute any nexus staging , and that's the only difference with the old `gravitee-release` profile.
 
 
+## Resume Release Feature Test Suite 2 : massive parallelization
+
+Here I need to test one very important test case :
+* there is one parallel execution set with many components : 10 for example
+* one of the 10 components pipeline fails and, when it failed :
+  * 5 have succedded,
+  * 4 are still running without error
+  * what happens then ?
+
+To design this test, i will :
+* again fork 10 times the same prepared repo
+* i will prepare 10 git branches on the prepared repo
+* I will use the Pipeline Test Phase, to :
+  * make some pipeline execution last 3 minutes longer than the others
+  * and make one pipeline fail
+
+
+#### The `finish` mode (for each cicd process)
+
+Ok, and then, what will be the best impelmentation for the resume release feature ?
+
+I first designed it this way :
+
+* The Logs will tell the user which pieplines are still running, and that for thos who succeed, then he must remove the `-SNAPSHOT` suffix manually from the `release.json`
+
+Then, I will implement this :
+* The orchestrator must resume watching without triggering any pipeline
+* and then, he will modify the release.json accordignly
+* ok I know, the orchestrator needs a new option :
+  * `--finish`, avec en arguemnt le chemin d'un fichier qui contient les GUID des pipelines à "reprendre"
+  * l'orchestrateur doit être relancé, sur "la bonne branche git du release repo " : la même que l'exécution à reprendre.
+  * lemode finish commence par rechoper le nom des repo github, en déduit le nom des componsants, et avec le `release.json`, il déduit la version des `components`
+  * le mode finish vérifie bien que le `-SNAPSHOT` de chacun des components repris, n'a pas été retiré
+  * le mode finish  ensuite le watcher construit ne construit pas un `execution_plan` : quand il y a une erreur de cette sorte, c'est vraiment juste pour terminer **un seul `Parallel Execution Set`**, donc il construit une `progressMatrix`  , et on lance le watcher sur cette `progressMatrix`.
+  * Ok, mais donc le plus logqiue, et efficace, c'est de persister en JSON la `progressMatrix`, en lui retirant "tous les pipeliens sauf ceux qui sont en running". Et on reprend là dessus. Ouiiii voilà.
+  * Si un pipeline a terminé son execution avant même que le mode finish ait eut le temps de démarrer, alors le watcher va directement passer en mode "ok ça y est c'est fini suivant"
+  * et pour le reste, c'est exactment le même taff que pour la release initiale.
+  * et s'il y a encore une erreur, et qu'il reste encore des pipelines en running, qui ne sont pas en erreur, on recommence en finish mode : du coup, cette réccurrence pourrait consister à relancer la release en mode finish, en invoquant la Circle CI API depuis le process de relese initial....
+  * en tout cas, on relance le "finish mode", tant qu'il reste des pipelines qui ne sont pas arrivés en erreur, et pour lesquels le suffixe `-SNAPSHOT` n'a pas été retiré dans le `release.json`
+  * le temps de redémarrer le watch, il se peut que des pipelines aient terminé leur exécution: cela sera repéré dès le départ
+
+
+I will call this the `finish` mode, which can be implemented  for each cicd process
+
+
+
 ## Production Test suite 1 (on `3.4.1` maintenance release)
 
 The concept of this test, is to simply run a `3.4.1` maintenance release, cancel one pipeline execution and test if the release resumes from the canceled :
