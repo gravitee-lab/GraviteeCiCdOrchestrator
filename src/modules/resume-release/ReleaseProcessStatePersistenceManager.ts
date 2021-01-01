@@ -247,7 +247,7 @@ export class ReleaseProcessStatePersistenceManager {
         toReturn = maven_version_number.substr(0, maven_version_number.length - 9 );
       } else {
         /// toReturn = maven_version_number;
-        let errMsg = `{[ReleaseProcessStatePersistenceManager]} - Provided maven version number does not end wiht the [-SNAPSHOT] suffix, but was expected to`;
+        let errMsg = `{[ReleaseProcessStatePersistenceManager]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
         console.log(errMsg);
         throw new Error(errMsg);
       }
