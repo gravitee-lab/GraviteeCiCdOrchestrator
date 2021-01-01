@@ -126,8 +126,14 @@ export class ReleaseProcessStatePersistenceManager {
       console.log(this.releaseManifest.components[currComponentIndex]);
       this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currComponentIndex].version);
     }
+
+  }
+  /**
+   * call this method, to commit all added changes to the release repo (to the release.json), and git push
+   **/
+  commitAndPush(commit_message: string): void {
     /// and write the modified JSON back to the file
-    console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
     console.log(JSON.stringify(this.releaseManifest, null, 4));
     /*
     fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, ((err) => {
@@ -142,8 +148,8 @@ export class ReleaseProcessStatePersistenceManager {
     try {
       fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
     } catch(err) {
-      // An error occurred
-      console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
+      // An error occurred // former persistSuccessStateOf
+      console.log('{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath}`);
       console.error(err);
       throw err;
     }
@@ -152,24 +158,11 @@ export class ReleaseProcessStatePersistenceManager {
     if (gitADDCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
     } else {
-      // gitCommandStdOUT = gitADDCommandResult.stdout;
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] successfully git added : `);
+      // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git added : `);
       console.log(gitADDCommandResult.stdout);
     }
-    /// -
-    let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
-    if (gitCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
-    } else {
-      let gitCommandStdOUT: string = gitCommandResult.stdout;
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] : `);
-      console.log(gitCommandStdOUT);
-    }
-  }
-  /**
-   * call this method, to commit all added changes to the release repo (to the release.json), and git push
-   **/
-  commitAndPush(commit_message: string): void {
+
     /// -
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] content of the release.json on filessytem is : `);
     /// -
