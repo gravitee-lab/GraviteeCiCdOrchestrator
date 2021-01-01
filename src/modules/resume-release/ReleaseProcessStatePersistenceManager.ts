@@ -128,11 +128,11 @@ export class ReleaseProcessStatePersistenceManager {
     }
     /// and write the modified JSON back to the file
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
-    console.log(this.releaseManifest);
-    
-    fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest)}`, ((err) => {
+    console.log(JSON.stringify(this.releaseManifest, null, 4));
+
+    fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, ((err) => {
       if (err) return console.log(err);
-      console.log(JSON.stringify(this.releaseManifest));
+      console.log(JSON.stringify(this.releaseManifest, null, 4));
       console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
       throw err;
     }).bind(this));
