@@ -117,45 +117,43 @@ export class ReleaseProcessStatePersistenceManager {
       this.successfullyReleasedComponents.push(component_names[i])
     }
     /// -
-    let shellCommandResult = shelljs.exec("pwd && ls -allh");
-    if (shellCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
-    } else {
-      // shellCommandStdOUT = shellCommandResult.stdout;
-    }
-
-
-    /// ---- Now here is how to EDIT THE [release.json] JSON FILE
 
     /// modify loaded JSON  for each component (remove the -SNAPSHOT suffix for
     /// version property of each of those components)
     for (let i = 0; i < component_names.length; i++) {
-      let currCompoenentIndex = this.getComponentIndex(component_names[i]);
+      let currComponentIndex = this.getComponentIndex(component_names[i]);
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] removing [-SNAPSHOT] suffix for component :`)
-      console.log(this.releaseManifest.components[currCompoenentIndex]);
-      this.releaseManifest.components[currCompoenentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currCompoenentIndex].version);
+      console.log(this.releaseManifest.components[currComponentIndex]);
+      this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currComponentIndex].version);
     }
     /// and write the modified JSON back to the file
-    /*
-    fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), function writeJSON(err) {
-      if (err) return console.log(err);
-      console.log(JSON.stringify(this.releaseManifest));
-      console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
-    });*/
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
     console.log(this.releaseManifest);
-    fs.writeFile(`${manifestPath}`, JSON.stringify(this.releaseManifest), ((err) => {
+    fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest)}`, ((err) => {
       if (err) return console.log(err);
       console.log(JSON.stringify(this.releaseManifest));
-      console.log('{[ReleaseProcessStatePersistenceManager]} - writing to ' + `${manifestPath}`);
+      console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
+      throw err;
     }).bind(this));
 
-
+    // Write synchronously
+    /*
+    try {
+      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest)}`, {}); // no options
+    } catch(err) {
+      // An error occurred
+      console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
+      console.error(err);
+      throw err;
+    }
+    */
     let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
     if (gitADDCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
     } else {
-      // gitCommandStdOUT = gitCOMMIT_AND_PUSHCommandResult.stdout;
+      // gitCommandStdOUT = gitADDCommandResult.stdout;
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf] successfully git added : `);
+      console.log(gitADDCommandResult.stdout);
     }
     /// -
     let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
