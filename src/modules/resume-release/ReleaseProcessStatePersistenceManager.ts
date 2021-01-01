@@ -127,10 +127,24 @@ export class ReleaseProcessStatePersistenceManager {
 
   prepareNextVersion(): void {
 
-
+    let gitBranchCommandResult = shelljs.exec(`cd pipeline/ && git branch -a | grep '*' | awk '{print $2}'`);
+    let currentBranch = null;
+    if (gitBranchCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+      currentBranch = `${gitBranchCommandResult.stdout}`;
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] currentBranch is : [${currentBranch}] `);
+      console.log(currentBranch);
+    }
+    let nextVersion: string = ''
+    if ( `${currentBranch}` === 'master' ) {
+      nextVersion = semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'minor')
+    } else {
+      nextVersion = semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'patch')
+    }
     /// -
     /// semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'prerelease', 'beta')
-    let nextVersion: string = semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'patch')
     nextVersion = `${nextVersion}-SNAPSHOT`
     // '1.2.4-beta.0'
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion] nextVersion is: [${nextVersion}]`);
