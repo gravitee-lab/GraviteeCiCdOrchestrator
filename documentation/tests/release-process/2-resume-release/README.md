@@ -634,14 +634,16 @@ To design this test, i will :
   * make some pipeline execution last 3 minutes longer than the others
   * and make one pipeline fail
 
+> all other branches must have an updated `release.json` with same version for all 3 g1 g2 and g3 from tests
+
 * on the test repo definig test initial states :
 
-* `4.1.x` : all other branches must have an updated `release.json` with same version for all 3 g1 g2 and g3 from tests
+* `4.1.x` :
 * `4.2.x` :
 * `4.3.x` :
 * `4.4.x` :
 
-* `4.5.x` : don't touch this ne with tests ?
+* `4.5.x` : don't touch this one with tests ?
 
 * `4.6.x` : ccc
 * `4.7.x` : ccc
