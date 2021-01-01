@@ -204,7 +204,7 @@ export class ReleaseProcessStatePersistenceManager {
     }
 
     /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
-    if (process.argv["dry-run"] === 'false') {
+    if (`${process.argv["dry-run"]}` === 'false') {
       let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
       if (gitPUSHCommandResult.code !== 0) {
         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
