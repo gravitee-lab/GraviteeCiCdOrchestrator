@@ -593,25 +593,26 @@ export class PipelineExecSetStatusWatcher {
    **/
   private finalizeReleaseRepoPersistence(persistSuccessStateOfNonErrored: boolean): void { // this method is synchronous
     let componentNamesArray = []
-
-    for (let k: number = 0; k < this.progressMatrix.length; k++) {
-      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, progress matrix entry is :`);
-      console.log(this.progressMatrix[k]);
-      let allWorkFlowsSuccessful: boolean = this.areAllWorkflowsSuccessful(this.progressMatrix[k]);
-      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - are all workflows successful ? [${allWorkFlowsSuccessful}]`);
-      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, component split : [${this.progressMatrix[k].project_slug.split('/')[2]}]`);
-      if(allWorkFlowsSuccessful) { // keeping only repos which pipelines have fully completed succesfullys
-        componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
-      } else {
-        if (this.isStillRunningWithoutError(this.progressMatrix[k])) {
-          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - THE [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE IS STILL RUNNING ANd NOT ERRORED : `);
-          console.log(this.progressMatrix[k])
-          console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - IF [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE  COMPLETES WITHOUT ERRORS, REMOVE THE [-SNAPSHOT] suffix in the [release.json] BEFORE RESUMING RELEASE`)
-          // Une solution : au démarrage del'rochestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
+    if (persistSuccessStateOfNonErrored) {
+      for (let k: number = 0; k < this.progressMatrix.length; k++) {
+        console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, progress matrix entry is :`);
+        console.log(this.progressMatrix[k]);
+        let allWorkFlowsSuccessful: boolean = this.areAllWorkflowsSuccessful(this.progressMatrix[k]);
+        console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - are all workflows successful ? [${allWorkFlowsSuccessful}]`);
+        console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, component split : [${this.progressMatrix[k].project_slug.split('/')[2]}]`);
+        if(allWorkFlowsSuccessful) { // keeping only repos which pipelines have fully completed succesfullys
+          componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
+        } else {
+          if (this.isStillRunningWithoutError(this.progressMatrix[k])) {
+            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - THE [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE IS STILL RUNNING ANd NOT ERRORED : `);
+            console.log(this.progressMatrix[k])
+            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - IF [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE  COMPLETES WITHOUT ERRORS, REMOVE THE [-SNAPSHOT] suffix in the [release.json] BEFORE RESUMING RELEASE`)
+            // Une solution : au démarrage del'rochestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
+          }
         }
       }
+      this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
     }
-    this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
     // and finally commit and push it all
     this.releaseStatePersistenceMngr.commitAndPush(`Release finished`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
   }
