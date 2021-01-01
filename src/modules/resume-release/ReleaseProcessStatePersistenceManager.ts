@@ -34,6 +34,7 @@ import axios from 'axios';
 /// import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import * as fs from 'fs';
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
+const semver = require('semver');
 /**
  *
  * Responsible to persist the state of the Release CI CD Process
@@ -95,6 +96,77 @@ export class ReleaseProcessStatePersistenceManager {
     } else {
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] dry run is TRUE`);
     }
+  }
+  tagReleaseFinish(tag_message: string): void {
+    let tag_id = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseFinish(tag_message: string): void] Marking Release start with tag [${tag_id}] - [tag_message="${tag_message}"] `)
+    /// -
+    let gitCommandResult = shelljs.exec(`cd pipeline/ && git remote -v && git tag ${tag_id} -m "${tag_message}"`);
+    if (gitCommandResult.code !== 0) {
+      throw new Error(`{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + gitCommandResult.stderr + "] ")
+    } else {
+      let gitCommandStdOUT: string = gitCommandResult.stdout;
+      console.log(gitCommandStdOUT);
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseFinish(tag_message: string): void] Sucessfully tagged [${tag_id}] with [tag_message="${tag_message}"] `);
+    }
+
+    /// pushing tags to git repo if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
+    if (`${process.argv["dry-run"]}` === 'false') {
+      let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin --tags`);
+      if (gitPUSHCommandResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git push -u origin --tags] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+      } else {
+        let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
+        console.log(gitPUSHCommandStdOUT);
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseFinish(tag_message: string): void] Sucessfully pushed Release tag [${tag_id}] - [tag_message="${tag_message}"] `)
+      }
+    } else {
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseFinish(tag_message: string): void] dry run is TRUE`);
+    }
+  }
+
+  prepareNextVersion(): void {
+
+
+    /// -
+    /// semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'prerelease', 'beta')
+    let nextVersion: string = semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'patch')
+    nextVersion = `${nextVersion}-SNAPSHOT`
+    // '1.2.4-beta.0'
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion] nextVersion is: [${nextVersion}]`);
+    this.releaseManifest.version = nextVersion;
+
+    /// and write the modified JSON back to the file
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
+    console.log(JSON.stringify(this.releaseManifest, null, 4));
+    /*
+    fs.writeFile(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, ((err) => {
+      if (err) return console.log(err);
+      console.log(JSON.stringify(this.releaseManifest, null, 4));
+      console.log('{[ReleaseProcessStatePersistenceManager]} - An Error occurred writing to ' + `${manifestPath}`);
+      throw err;
+    }).bind(this));
+    */
+    // Write synchronously
+    /*  */
+    try {
+      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+    } catch(err) {
+      // An error occurred // former persistSuccessStateOf
+      console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred writing to ' + `${manifestPath}`);
+      console.error(err);
+      throw err;
+    }
+
+    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+    if (gitADDCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully git added : `);
+      console.log(gitADDCommandResult.stdout);
+    }
+
   }
   /**
    * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
