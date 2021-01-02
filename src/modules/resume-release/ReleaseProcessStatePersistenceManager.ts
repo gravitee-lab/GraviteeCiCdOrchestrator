@@ -78,11 +78,12 @@ export class ReleaseProcessStatePersistenceManager {
 
     let isThisAResumeReleaseCmdResult = shelljs.exec(`cd pipeline/ && git remote -v && git tag -l | grep ${tag_id}`);
     if (isThisAResumeReleaseCmdResult.code !== 0) {
-      throw new Error(`{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + isThisAResumeReleaseCmdResult.stderr + "] ")
+      throw new Error(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + isThisAResumeReleaseCmdResult.stderr + "] ")
     } else {
       let isThisAResumeReleaseCmdStdOUT: string = isThisAResumeReleaseCmdResult.stdout;
       isThisAResumeReleaseCmdStdOUT = isThisAResumeReleaseCmdStdOUT.trim();
       isThisAResumeRelease = ( tag_id === isThisAResumeReleaseCmdStdOUT);
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - QUICK DEBUG : [tag_id=[${tag_id}]] [isThisAResumeReleaseCmdStdOUT=[${isThisAResumeReleaseCmdStdOUT}]] and [isThisAResumeReleaseCmdResult.stdout=[${isThisAResumeReleaseCmdResult.stdout}]]`)
     }
     if (!isThisAResumeRelease) {
 
