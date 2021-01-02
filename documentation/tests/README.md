@@ -18,7 +18,7 @@ The release process is different, for a patch release, or for minor release :
 
 The screenshot below demonstratesallthe steps of the release process when it is a minor version :
 
-![minor release process on release repo](./images/RELEASE_REPO_MINOR_RELEASE.png)
+![minor release process on release repo](./release-process/images/RELEASE_REPO_MINOR_RELEASE.png)
 
 In the sceeennshot above :
 * The first pointed step, is a git push, of a commit which has the commit message `Prepare Release (7.9.0): Release finished`. This commit contains all the modifications to the `release.json`, which are done for any release: removing the `-SNAPSHOT` suffixes, for all successfully released components.
