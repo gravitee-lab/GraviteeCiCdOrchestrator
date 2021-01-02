@@ -144,6 +144,7 @@ export class ReleaseProcessStatePersistenceManager {
     } else {
       // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
       currentBranch = `${gitBranchCommandResult.stdout}`;
+      currentBranch = currentBranch.trim();
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] currentBranch is : [${currentBranch}] `);
     }
 
