@@ -619,9 +619,9 @@ export class PipelineExecSetStatusWatcher {
             console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - THE [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE IS STILL RUNNING ANd NOT ERRORED : `);
             console.log(this.progressMatrix[k])
             console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - IF [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE  COMPLETES WITHOUT ERRORS, REMOVE THE [-SNAPSHOT] suffix in the [release.json] BEFORE RESUMING RELEASE`)
-            // Une solution : au démarrage del'rochestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
+            // Une solution : au démarrage de l'orchestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
             // FINISH MODE REBOOT :
-            /// Ok, mais donc le plus logqiue, et efficace, c'est de persister en JSON la `progressMatrix`, en lui retirant "tous les pipeliens sauf ceux qui sont en running". Et on reprend là dessus. Ouiiii voilà.
+            /// Ok, mais donc le plus logique, et efficace, c'est de persister en JSON la `progressMatrix`, en lui retirant "tous les pipeliens sauf ceux qui sont en running". Et on reprend là dessus. Ouiiii voilà.
             finishModeProgressMatrix.push(this.progressMatrix[k]);
           }
         }
@@ -643,7 +643,7 @@ export class PipelineExecSetStatusWatcher {
     }
     // and finally commit and push it all
     if (hasThereBeenErrors) {
-      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some copmponents failed to be released, persistng successfully released components, `); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some components failed to be released, persistng successfully released components, `); // is dry run sensible (in mode is on, won't push) // this method is synchronous
     } else {
       this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Release finished completed without errors`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
     }
