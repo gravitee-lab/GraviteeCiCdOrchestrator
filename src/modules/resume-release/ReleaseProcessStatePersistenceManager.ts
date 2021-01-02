@@ -312,8 +312,6 @@ export class ReleaseProcessStatePersistenceManager {
    * <code>hasThereBeenErrors</code> : if there has been no errors in the release process, this method will also reset the top version of the release manifest, to remove the [-SNAPSHOT] suffix
    **/
   commitAndPushReleaseResult(hasThereBeenErrors: boolean, commit_message: string): void {
-
-
     /// ---                                                                 --- ///
     /// --- FIRST GIT ADD RELEASE VERSION (iff no errorsin release process) --- ///
     /// ---                                                                 --- ///

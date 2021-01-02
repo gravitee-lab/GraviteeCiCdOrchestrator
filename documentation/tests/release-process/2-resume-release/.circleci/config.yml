@@ -1,5 +1,7 @@
 version: '2.1'
-
+# This pipeline is designed to allow releasing the gravitee parent pom, independently from any release process, andtoprepare resume release test suites :
+# this is why no git release is performed, but just an mvn release, to release into our private artifactory, the deisred gravitee parent pom of all dev repos.
+# - In the end, nevertheless,the "gravitee parent pom" should be considered as any other dependency, so included in the [release.json]. Note that any dependency, such as the gravitee parent pom, can appear several times in the release.json : the gravitee parent pom might be used in several minor versions, by other gravitee dependencies might be released
 parameters:
   gio_action:
     type: enum
