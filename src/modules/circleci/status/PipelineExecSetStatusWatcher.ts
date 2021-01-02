@@ -526,11 +526,15 @@ export class PipelineExecSetStatusWatcher {
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
+        /*
         if (this.isLast) {
           console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
           this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
-        }
+        }*/
+        // no, we finalize the release process, even if this is not the last non-empty parallel execution set
 
+        console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
+        this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
         /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
         // this.releaseStatePersistenceMngr.whereAmI();
         throw occuredProblem;

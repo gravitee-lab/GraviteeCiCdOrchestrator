@@ -130,7 +130,7 @@ I will run 4 tests in parallel :
     * the git tag marking the version where the release is defined, with the `release.json`
 
 
-#### Test 1: on branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release
+#### Test case 1: on branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release
 
 
 On branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
@@ -191,7 +191,7 @@ On branch `4.1.x` of the https://github.com/gravitee-lab/graviteek-release relea
 ```
 
 
-#### Test 2: on branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release
+#### Test case 2: on branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release
 
 
 On branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
@@ -256,7 +256,7 @@ On branch `4.2.x` of the https://github.com/gravitee-lab/graviteek-release relea
 ```
 
 
-#### Test 3: on branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release
+#### Test case 3: on branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release
 
 On branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
 
@@ -319,7 +319,7 @@ On branch `4.3.x` of the https://github.com/gravitee-lab/graviteek-release relea
 
 ```
 
-#### Test 4: on branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release
+#### Test case 4: on branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release
 
 On branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release release repo, in the `release.json`, will be added :
 
@@ -382,6 +382,10 @@ On branch `4.4.x` of the https://github.com/gravitee-lab/graviteek-release relea
 
 ```
 
+
+
+
+#### Synthetical lookatthe initial state
 
 So that the initial state of the test :
 
@@ -605,6 +609,40 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H
 curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
 ```
 
+* Test 4, on branch `4.4.x` of the release repo :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="graviteek-release-test-suite-1"
+export BRANCH="4.4.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\"
+    }
+
+}"
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
 
 # DRAFTS
 
