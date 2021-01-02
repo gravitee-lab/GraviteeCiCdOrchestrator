@@ -540,6 +540,9 @@ export class PipelineExecSetStatusWatcher {
     }
 
     /// -------------
+    ///  https://circleci.com/docs/2.0/workflows/#states
+    ///  https://circleci.com/docs/api/v2/#operation/getWorkflowById
+    ///  
     ///  All Workflow Execution Statuses
     ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
     ///     |----------------------------------------------------|-------------------------------------------------------------------------------------------------|
@@ -638,6 +641,9 @@ export class PipelineExecSetStatusWatcher {
     this.releaseStatePersistenceMngr.prepareNextVersion();
   }
   /// -------------
+  ///  https://circleci.com/docs/2.0/workflows/#states
+  ///  https://circleci.com/docs/api/v2/#operation/getWorkflowById
+  ///
   ///  All Workflow Execution Statuses
   ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
   ///     |----------------------------------------------------|-------------------------------------------------------------------------------------------------|
