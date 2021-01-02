@@ -542,7 +542,7 @@ export class PipelineExecSetStatusWatcher {
     /// -------------
     ///  https://circleci.com/docs/2.0/workflows/#states
     ///  https://circleci.com/docs/api/v2/#operation/getWorkflowById
-    ///  
+    ///
     ///  All Workflow Execution Statuses
     ///     | CircleCI Pipeline Workflow Execution Status value  |  Description  of what happened                                                                  |
     ///     |----------------------------------------------------|-------------------------------------------------------------------------------------------------|
@@ -592,11 +592,14 @@ export class PipelineExecSetStatusWatcher {
   /**
    * As soon as an execution error is detected, all pipeline which have completed successfully, have their corresponding github repos updated in the release.json ,and the git push happens
    *
-   * <persistSuccessStateOfNonErrored> :  set this paramto <code>true</code>, if an error was detected in a pipeline execution. Then all compoenents for which pipeline was sucessful, will be persisted
+   * <hasThereBeenErrors> :  set this paramto <code>true</code>, if an error was detected in a pipeline execution. Then:
+   *                          => all components for which pipeline was sucessful, will be persisted to release.json,
+   *                          => the [-SNAPSHOT] suffix will not be removed from the top version property in the [release.json], so that resuming the release will no require any modification to the [release.json]
+   *                          => the prepareNextVersion() method will not be invoked : it will be done only when all desired components will have been released
    **/
-  private finalizeReleaseRepoPersistence(persistSuccessStateOfNonErrored: boolean): void { // this method is synchronous
+  private finalizeReleaseRepoPersistence(hasThereBeenErrors: boolean): void { // this method is synchronous
     let componentNamesArray = []
-    if (persistSuccessStateOfNonErrored) {
+    if (hasThereBeenErrors) {
       for (let k: number = 0; k < this.progressMatrix.length; k++) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, progress matrix entry is :`);
         console.log(this.progressMatrix[k]);
@@ -635,10 +638,16 @@ export class PipelineExecSetStatusWatcher {
       });
     }
     // and finally commit and push it all
-    this.releaseStatePersistenceMngr.commitAndPushRelease(`Release finished`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
-    this.releaseStatePersistenceMngr.tagReleaseFinish(`Release published`)
-    // and prepare next version
-    this.releaseStatePersistenceMngr.prepareNextVersion();
+    if (hasThereBeenErrors) {
+      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some copmponents failed to be released, persistng successfully released components, `); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+    } else {
+      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Release finished completed without errors`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+    }
+    if (!hasThereBeenErrors) { // tag release and prepare next version iff no errors
+      this.releaseStatePersistenceMngr.tagReleaseFinish(`Release published`)
+      // and prepare next version
+      this.releaseStatePersistenceMngr.prepareNextVersion();
+    }
   }
   /// -------------
   ///  https://circleci.com/docs/2.0/workflows/#states
