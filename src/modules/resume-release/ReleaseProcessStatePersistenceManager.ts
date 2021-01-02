@@ -76,7 +76,7 @@ export class ReleaseProcessStatePersistenceManager {
     /// In case oof a resume release, we first check if the tag already exists on the release repo
     let isThisAResumeRelease: boolean = false;
 
-    let isThisAResumeReleaseCmdResult = shelljs.exec(`cd pipeline/ && git remote -v && git tag -l | grep ${tag_id}`);
+    let isThisAResumeReleaseCmdResult = shelljs.exec(`cd pipeline/ && git tag -l | grep ${tag_id}`);
     if (isThisAResumeReleaseCmdResult.code !== 0) {
       throw new Error(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + isThisAResumeReleaseCmdResult.stderr + "] ")
     } else {
