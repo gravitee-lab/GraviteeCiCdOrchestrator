@@ -98,10 +98,10 @@ export class ReleaseProcessStatePersistenceManager {
     }
   }
   tagReleaseFinish(tag_message: string): void {
-    let tag_id = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
+    let tag_id = `${this.releaseManifest.version}`
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseFinish(tag_message: string): void] Marking Release start with tag [${tag_id}] - [tag_message="${tag_message}"] `)
     /// -
-    let gitCommandResult = shelljs.exec(`cd pipeline/ && git remote -v && git tag ${tag_id} -m "${tag_message}"`);
+    let gitCommandResult = shelljs.exec(`cd pipeline/ && git remote -v && git tag ${tag_id} -m "Release (${tag_id}): ${tag_message}"`);
     if (gitCommandResult.code !== 0) {
       throw new Error(`{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + gitCommandResult.stderr + "] ")
     } else {
@@ -125,7 +125,17 @@ export class ReleaseProcessStatePersistenceManager {
     }
   }
 
+  /**
+   * Invoke this method after you have invoked the following two methods :
+   * => commitAndPushRelease(`Release finished`) : to commit and push all changes to [release.json] file
+   * => tagReleaseFinish(`Release published`) : to tag the release
+   *
+   **/
   prepareNextVersion(): void {
+
+    /// ---                                                --- ///
+    /// --- FIRST DETERMINE WHAT IS THE CURRENT GIT BRANCH --- ///
+    /// ---                                                --- ///
 
     let gitBranchCommandResult = shelljs.exec(`cd pipeline/ && git branch -a | grep '*' | awk '{print $2}'`);
     let currentBranch = null;
@@ -135,57 +145,104 @@ export class ReleaseProcessStatePersistenceManager {
       // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
       currentBranch = `${gitBranchCommandResult.stdout}`;
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] currentBranch is : [${currentBranch}] `);
-      console.log(currentBranch);
-    }
-    let nextVersion: string = ''
-    if ( `${currentBranch}` === 'master' ) {
-      nextVersion = semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'minor')
-    } else {
-      nextVersion = semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'patch')
-    }
-    /// -
-    /// semver.inc(`${this.removeSnapshotSuffix(this.releaseManifest.version)}`, 'prerelease', 'beta')
-    nextVersion = `${nextVersion}-SNAPSHOT`
-
-    console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion] nextVersion is: [${nextVersion}]`);
-    this.releaseManifest.version = nextVersion;
-
-    /// and write the modified JSON back to the file
-    console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
-    console.log(JSON.stringify(this.releaseManifest, null, 4));
-
-    try {
-      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
-    } catch(err) {
-      // An error occurred // former persistSuccessStateOf
-      console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred writing to ' + `${manifestPath}`);
-      console.error(err);
-      throw err;
     }
 
-    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m 'prepare next version'`);
-    if (gitADDCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
-    } else {
-      // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully git added : `);
-      console.log(gitADDCommandResult.stdout);
-    }
-    throw new Error(`Now I must finish by creating the new git branch, with another prepared next version`)
-    if ( `${currentBranch}` === 'master' ) { // if this is a minor release, and not a patch release, then we must prepare the support branch
-
-      let supportBranch = `${semver.major(nextVersion)}.${semver.minor(nextVersion)}.x`
-      let gitCreateBranchCommandResult = shelljs.exec(`cd pipeline/ && git checkout -b ${supportBranch}`);
-      let currentBranch = null;
-      if (gitBranchCommandResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
+    /// --- --- --- --- --- --- --- --- --- --- --- --- --- --- ///
+    /// ---                                                 --- ///
+    /// --- + If this is a minor version :
+    /// ---   => on master branch, we create a new support branch, and we prepare the nextPatchVersion on support Branch
+    /// ---   => then, we go back to master branch, and prepare nextMinorVersion
+    /// --- + If this is a patch version :
+    /// ---   => then we already are on the support branch, and we prepare the nextPatchVersion on support Branch
+    /// ---                                                 --- ///
+    /// --- --- --- --- --- --- --- --- --- --- --- --- --- --- ///
+    // we reload the [release.json] which was modified, and git commited and pushed
+    this.loadReleaseJSon();
+    if ( `${currentBranch}` === 'master' ) { // then this is a minor release
+      // -- 1. create new support branch
+      let nextSupportBranch = `${semver.major(this.releaseManifest.version)}.${semver.minor(this.releaseManifest.version)}.x`;
+      let gitCreateSupportBranchCmdResult = shelljs.exec(`cd pipeline/ && git checkout -b ${nextSupportBranch} && git push -u origin --all`);
+      if (gitCreateSupportBranchCmdResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + gitCreateSupportBranchCmdResult.stderr + "] ")
       } else {
-        // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
-        currentBranch = `${gitCreateBranchCommandResult.stdout}`;
-        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] supportBranch created is : [${currentBranch}] `);
-        console.log(`${gitCreateBranchCommandResult.stdout}`);
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully created the nex support branch [${nextSupportBranch}] : `);
+        console.log(gitCreateSupportBranchCmdResult.stdout);
+      }
+      // git commit and push next Patch Version on the new support branch
+      let nextPatchVersion = `${semver.major(this.releaseManifest.version)}.${semver.minor(this.releaseManifest.version)}.1-SNAPSHOT`;
+      this.releaseManifest.version = nextPatchVersion;
+      try {
+        fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - Successfully wrote to ' + `[${manifestPath}] to prepare next patch version on [${nextSupportBranch}] new support branch  `);
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred writing to ' + `[${manifestPath}] to prepare next patch version on [${nextSupportBranch}] new support branch  `);
+        console.error(err);
+        throw err;
+      }
+      // git add, commit and push the next patch version
+      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m "prepare next patch version" && git push -u origin HEAD`);
+      if (prepareNextPatchVersionCmdResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
+      } else {
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next patch version on the new support branch [${nextSupportBranch}] : `);
+        console.log(prepareNextPatchVersionCmdResult.stdout);
+      }
+      // -- 2. go back to master branch to prepare next Minor Version
+      // go back to master branch
+      let goBackToMasterBranchCmdResult = shelljs.exec(`cd pipeline/ && git checkout master`);
+      if (prepareNextPatchVersionCmdResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + goBackToMasterBranchCmdResult.stderr + "] ")
+      } else {
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully switched backto master branch`);
+        console.log(goBackToMasterBranchCmdResult.stdout);
+      }
+      this.loadReleaseJSon(); // reload the [release.json], as it is on master
+      let nextMinorVersion = `${semver.inc(`${this.releaseManifest.version}`, 'minor')}-SNAPSHOT`;
+      this.releaseManifest.version = nextMinorVersion;
+      try {
+        fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - Successfully wrote to ' + `[${manifestPath}] to prepare next minor version [${nextMinorVersion}] on [master] branch`);
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred writing to ' + `[${manifestPath}] to prepare next minor version [${nextMinorVersion}] on [master] branch`);
+        console.error(err);
+        throw err;
+      }
+      // git add, commit and push the next minor version
+      let prepareNextMinorVersionCmdResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m "prepare next minor version" && git push -u origin HEAD`);
+      if (prepareNextMinorVersionCmdResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git add --all && git commit -m \"prepare next minor version\" && git push -u origin HEAD] shell command. Shell error was [" + prepareNextMinorVersionCmdResult.stderr + "] ")
+      } else {
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next minor version [${nextMinorVersion}] on the [master] branch : `);
+        console.log(prepareNextMinorVersionCmdResult.stdout);
+      }
+
+    } else { // then this is a patch release
+      // this.loadReleaseJSon(); // already reloaded the [release.json], as it was modified, git commit and pushed by the release process
+
+      // git commit and push next Patch Version on the new support branch
+      let nextPatchVersion = `${semver.inc(`${this.releaseManifest.version}`, 'patch')}-SNAPSHOT`;
+      this.releaseManifest.version = nextPatchVersion;
+      try {
+        fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - Successfully wrote to ' + `[${manifestPath}] to prepare next patch version [${nextPatchVersion}] on [${currentBranch}] new support branch  `);
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred writing to ' + `[${manifestPath}] to prepare next patch version [${nextPatchVersion}] on [${currentBranch}] new support branch  `);
+        console.error(err);
+        throw err;
+      }
+      // git add, commit and push the next patch version
+      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add --all && git commit -m "prepare next patch version" && git push -u origin HEAD`);
+      if (prepareNextPatchVersionCmdResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
+      } else {
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next patch version on the new support branch [${currentBranch}] : `);
+        console.log(prepareNextPatchVersionCmdResult.stdout);
       }
     }
+
   }
   /**
    * This method removes the `-SNAPSHOT` suffix for each of the <code>component_name</code>, in the  [release.json], for the component names array provided, on the current git branch, of the https://github.com/${GITHUB_ORG}/release.git Github Git Repo
@@ -251,33 +308,53 @@ export class ReleaseProcessStatePersistenceManager {
   }
   /**
    * call this method, to commit all added changes to the release repo (to the release.json), and git push
+   * this method will also reset the top version of the release manifest, to remove the [-SNAPSHOT] suffix
    **/
-  commitAndPush(commit_message: string): void {
+  commitAndPushRelease(commit_message: string): void {
 
+    /// ---                                                --- ///
+    /// --- FIRST GIT ADD RELEASE VERSION                  --- ///
+    /// ---                                                --- ///
+
+    /// and write the modified JSON back to the file
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] prepare release version by removing [-SNAPSHOT] suffix to the top version property in the release manifest`)
+
+    this.releaseManifest.version = this.removeSnapshotSuffix(this.releaseManifest.version);
+
+    try {
+      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+    } catch(err) {
+      // An error occurred // former persistSuccessStateOf
+      console.log('{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath} the prepared release version`);
+      console.error(err);
+      throw err;
+    }
+
+    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+    if (gitADDCommandResult.code !== 0) {
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+    } else {
+      // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git added : `);
+      console.log(gitADDCommandResult.stdout);
+    }
+    /// ---                                                --- ///
+    /// --- NOW COMMIT AND PUSH                            --- ///
+    /// ---                                                --- ///
     /// -
-    console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] content of the release.json on filessytem is : `);
+    console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] Before commit and push, content of the [release.json] on filessytem, and git status are : `);
     /// -
-    let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json ");
+    let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json && git status && git remote -v && git status");
     if (shellCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
     } else {
       let shellCommandStdOUT = shellCommandResult.stdout;
       console.log(shellCommandStdOUT);
     }
-    /// -
-    let gitCommandResult = shelljs.exec("cd pipeline/ && git remote -v && git status");
-    if (gitCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git remote -v && git status] shell command. Shell error was [" + gitCommandResult.stderr + "] ")
-    } else {
-      let gitCommandStdOUT: string = gitCommandResult.stdout;
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] : `);
-      console.log(gitCommandStdOUT);
-    }
-
 
     // let commit_message: string = `CI CD Orchestrator Release process state update of successfullly released components`
 
-    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"${commit_message}\"`);
+    let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"Prepare Release (${this.releaseManifest.version}): ${commit_message}\"`);
     if (gitCOMMITCommandResult.code !== 0) {
       throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
     } else {
