@@ -309,35 +309,38 @@ export class ReleaseProcessStatePersistenceManager {
   }
   /**
    * call this method, to commit all added changes to the release repo (to the release.json), and git push
-   * this method will also reset the top version of the release manifest, to remove the [-SNAPSHOT] suffix
+   * <code>hasThereBeenErrors</code> : if there has been no errors in the release process, this method will also reset the top version of the release manifest, to remove the [-SNAPSHOT] suffix
    **/
-  commitAndPushRelease(commit_message: string): void {
+  commitAndPushReleaseResult(hasThereBeenErrors: boolean, commit_message: string): void {
 
-    /// ---                                                --- ///
-    /// --- FIRST GIT ADD RELEASE VERSION                  --- ///
-    /// ---                                                --- ///
 
-    /// and write the modified JSON back to the file
-    console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] prepare release version by removing [-SNAPSHOT] suffix to the top version property in the release manifest`)
+    /// ---                                                                 --- ///
+    /// --- FIRST GIT ADD RELEASE VERSION (iff no errorsin release process) --- ///
+    /// ---                                                                 --- ///
 
-    this.releaseManifest.version = this.removeSnapshotSuffix(this.releaseManifest.version);
+    if (!hasThereBeenErrors) {
+      /// ---
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] prepare release version by removing [-SNAPSHOT] suffix to the top version property in the release manifest`)
 
-    try {
-      fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
-    } catch(err) {
-      // An error occurred // former persistSuccessStateOf
-      console.log('{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath} the prepared release version`);
-      console.error(err);
-      throw err;
-    }
+      this.releaseManifest.version = this.removeSnapshotSuffix(this.releaseManifest.version);
 
-    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
-    if (gitADDCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
-    } else {
-      // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
-      console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git added : `);
-      console.log(gitADDCommandResult.stdout);
+      try {
+        fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath} the prepared release version`);
+        console.error(err);
+        throw err;
+      }
+
+      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+      if (gitADDCommandResult.code !== 0) {
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git added : `);
+        console.log(gitADDCommandResult.stdout);
+      }
     }
     /// ---                                                --- ///
     /// --- NOW COMMIT AND PUSH                            --- ///
