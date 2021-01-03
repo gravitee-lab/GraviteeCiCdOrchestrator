@@ -37,6 +37,8 @@ export GIT_SSH_COMMAND='ssh -i ~/.ssh.gravitee.io/id_rsa'
 echo 'gpg.script.snippet.sh' >> ./pipeline/.gitignore
 echo 'graviteebot/.secrets/.gungpg/graviteebot.gpg.priv.key' >> ./pipeline/.gitignore
 echo 'graviteebot/.secrets/.gungpg/graviteebot.gpg.pub.key' >> ./pipeline/.gitignore
+echo 'graviteebot.gpg.priv.key' >> ./pipeline/.gitignore
+echo 'graviteebot.gpg.pub.key' >> ./pipeline/.gitignore
 echo '.secrets.json' >> ./pipeline/.gitignore
 echo ''
 echo '------------------------------------------'
