@@ -262,7 +262,7 @@ export class PipelineExecSetStatusWatcher {
             }
 
           } else {
-            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - The watch round is not over, So not launching a new watch just now, let the {for loop} in the current watch round complete ({for loop} tha tis inthe [this.launchExecStatusInspectionRound] method) `);
+            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - The watch round is not over, So not launching a new watch just now, in the [this.launchExecStatusInspectionRound] method) `);
           }
           /// throw new Error("That's where I am working now");
 
@@ -655,13 +655,22 @@ export class PipelineExecSetStatusWatcher {
       this.releaseStatePersistenceMngr.prepareNextVersion();
     }
     if (hasThereBeenErrors) {
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|--------------------------    STOPPING THE RELEASE PROCESS    -----------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The Release process is now stopping because some pipelines were detected as failing.`);
       if (finishProgressMatrix.length != 0) {
         console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The following Components have their pipelines still running while Release is stopping (if they successfully complete, remove the '-SNAPSHOT' suffix for them in the [release.json]) : `);
-        console.log(finishProgressMatrix);
+        console.log(JSON.stringify(finishProgressMatrix, null, 4));
       } else {
         console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - No Components have their pipelines still running while Release is stopping.`);
       }
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
     }
   }
   /// -------------
@@ -717,6 +726,17 @@ export class PipelineExecSetStatusWatcher {
 
     return answer;
   }
+  /**
+   * Returns <code>true</code> iff all workflowsof the providedprogressMatrix Entry, are in either of the following states :
+   * * <code>success</code> the workflow completed successfully
+   * * <code>running</code> the workflow is running, and has no errors yet.
+   * * <code>not_run</code> the workflow has not started yet (but will)
+   *
+   * As of :
+   * ///  https://circleci.com/docs/2.0/workflows/#states
+   * ///  https://circleci.com/docs/api/v2/#operation/getWorkflowById
+   *
+   **/
   private isStillRunningWithoutError(progressMatrixEntry: any): boolean {
     let answer = false;
 
@@ -738,8 +758,8 @@ export class PipelineExecSetStatusWatcher {
       } else if (wflowstate.status === 'unauthorized') {
         answer =  false;
         break;
-      }
-      answer = answer || (progressMatrixEntry.workflows_exec_state[k].status === "running");
+      } // if a
+      answer = answer || (progressMatrixEntry.workflows_exec_state[k].status === "running") || (progressMatrixEntry.workflows_exec_state[k].status === "not_run");
     }
 
     return answer;
