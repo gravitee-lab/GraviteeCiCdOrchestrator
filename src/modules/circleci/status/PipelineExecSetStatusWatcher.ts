@@ -657,6 +657,8 @@ export class PipelineExecSetStatusWatcher {
     if (hasThereBeenErrors) {
       console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`|-------------------------------------------------------------------------------------------------|`);
+      console.log(`|--------------------------    STOPPING THE RELEASE PROCESS    -----------------------------------|`);
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The Release process is now stopping because some pipelines were detected as failing.`);
       if (finishProgressMatrix.length != 0) {
@@ -665,6 +667,7 @@ export class PipelineExecSetStatusWatcher {
       } else {
         console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - No Components have their pipelines still running while Release is stopping.`);
       }
+      console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`|-------------------------------------------------------------------------------------------------|`);
       console.log(`|-------------------------------------------------------------------------------------------------|`);
