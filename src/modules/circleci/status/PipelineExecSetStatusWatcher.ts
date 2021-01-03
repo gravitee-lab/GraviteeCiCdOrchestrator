@@ -655,8 +655,13 @@ export class PipelineExecSetStatusWatcher {
       this.releaseStatePersistenceMngr.prepareNextVersion();
     }
     if (hasThereBeenErrors) {
-      console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The following Components have their pipelines still running while Release is stopping (if they successfully complete, remove the '-SNAPSHOT' suffix for them in the [release.json]) : `);
-      console.log(finishProgressMatrix);
+      console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The Release process is now stopping because some pipelines were detected as failing.`);
+      if (finishProgressMatrix.length != 0) {
+        console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The following Components have their pipelines still running while Release is stopping (if they successfully complete, remove the '-SNAPSHOT' suffix for them in the [release.json]) : `);
+        console.log(finishProgressMatrix);
+      } else {
+        console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - No Components have their pipelines still running while Release is stopping.`);
+      }
     }
   }
   /// -------------
