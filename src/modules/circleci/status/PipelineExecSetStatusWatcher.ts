@@ -603,6 +603,7 @@ export class PipelineExecSetStatusWatcher {
    **/
   private finalizeReleaseRepoPersistence(hasThereBeenErrors: boolean): void { // this method is synchronous
     let componentNamesArray = []
+    let finishProgressMatrix: any[] = [];
     if (hasThereBeenErrors) {
       for (let k: number = 0; k < this.progressMatrix.length; k++) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - RESUME RELEASE FEATURE SEWUP, progress matrix entry is :`);
@@ -613,7 +614,6 @@ export class PipelineExecSetStatusWatcher {
         if(allWorkFlowsSuccessful) { // keeping only repos which pipelines have fully completed succesfullys
           componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
         } else {
-          let finishModeProgressMatrix: any[] = [];
 
           if (this.isStillRunningWithoutError(this.progressMatrix[k])) {
             console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - THE [${this.progressMatrix[k].project_slug.split('/')[2]}] component PIPELINE IS STILL RUNNING ANd NOT ERRORED : `);
@@ -622,14 +622,16 @@ export class PipelineExecSetStatusWatcher {
             // Une solution : au démarrage de l'orchestreateur, celui-ci vérifie d'abord pour cahque composant, si un peipline de release est toujorus en cours d'exécution , et vérifies aussi si le tag [git] a déjà été créé ou non ...)
             // FINISH MODE REBOOT :
             /// Ok, mais donc le plus logique, et efficace, c'est de persister en JSON la `progressMatrix`, en lui retirant "tous les pipeliens sauf ceux qui sont en running". Et on reprend là dessus. Ouiiii voilà.
-            finishModeProgressMatrix.push(this.progressMatrix[k]);
+            finishProgressMatrix.push(this.progressMatrix[k]);
           }
         }
       }
       this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
+
       // -- AND FINISH MODE -- AND FINISH MODE --- "NEAT FINISH" // TO TEST // THIS WILL HAVE TO BE tested
       // OK HERE IS A NEW IDEA : MODIFY THE DESIGN OF THE WATCHER SHOULD STOP WHEN ALL PIPELINES ARE IN A FINAL STATE : NONE OF THEM IS RUNNING, AND THERE WAS AT LEAST ONE FAILURE, SO WE DO NOT PROCEED WITH NEXT [PARALLEL EXECUTION SET]. That way, at the very moment this event is detected,then we can persist all wuccessful pipeline execution in the [release.json]
       /// So idea is : for what is still running, we launch a new [PipelineExecSetStatusWatcher] instance
+      /*
       let pipeExecStatusWatcherFinish = new PipelineExecSetStatusWatcher(this.progressMatrix, this.circleci_client, this.isLast);
       pipeExecStatusWatcherFinish.finalStateNotifier.subscribe({ // Subsciption to An RxJS Subject, so this subscription doesnot trigger anything.
         next: (execStatusNotification: PipeExecSetStatusNotification) => {
@@ -639,11 +641,11 @@ export class PipelineExecSetStatusWatcher {
         complete: () => {
           console.log('[{pipeExecStatusWatcherFinish}] - Just Completed Watching Pipeline Execution Status!');
         }
-      });
+      });*/
     }
     // and finally commit and push it all
     if (hasThereBeenErrors) {
-      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some components failed to be released, persistng successfully released components, `); // is dry run sensible (in mode is on, won't push) // this method is synchronous
+      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some components failed to be released, persisting successfully released components`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
     } else {
       this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Release finished completed without errors`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
     }
@@ -651,6 +653,10 @@ export class PipelineExecSetStatusWatcher {
       this.releaseStatePersistenceMngr.tagReleaseFinish(`Release published`)
       // and prepare next version
       this.releaseStatePersistenceMngr.prepareNextVersion();
+    }
+    if (hasThereBeenErrors) {
+      console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The following Components have their pipelines still running while Release is stopping (if they successfully complete, remove the '-SNAPSHOT' suffix for them in the [release.json]) : `);
+      console.log(finishProgressMatrix);
     }
   }
   /// -------------
