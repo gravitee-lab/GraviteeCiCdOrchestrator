@@ -40,6 +40,7 @@ echo 'graviteebot/.secrets/.gungpg/graviteebot.gpg.pub.key' >> ./pipeline/.gitig
 echo 'graviteebot.gpg.priv.key' >> ./pipeline/.gitignore
 echo 'graviteebot.gpg.pub.key' >> ./pipeline/.gitignore
 echo '.secrets.json' >> ./pipeline/.gitignore
+echo '.secrethub.credential' >> ./pipeline/.gitignore
 echo ''
 echo '------------------------------------------'
 echo 'Checking the git global configuration :'
