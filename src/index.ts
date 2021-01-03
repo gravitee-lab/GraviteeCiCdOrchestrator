@@ -103,7 +103,7 @@ if (process.argv["cicd-stage"] === 'pull_req') {
     console.log(`Catched orchestrator error : `)
     console.log(error)
     console.log(`# ----------------------------------------------------`)
-    throw new Error(`Stopping Orchestrator because an error occured during the execution ofthe CI CD Process`)
+    throw new Error(`Stopping Orchestrator because an error occured during the execution of the CI CD Process`)
   }
 
 

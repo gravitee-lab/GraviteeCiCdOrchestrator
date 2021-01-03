@@ -78,7 +78,8 @@ export class ReleaseProcessStatePersistenceManager {
 
     let isThisAResumeReleaseCmdResult = shelljs.exec(`cd pipeline/ && git tag -l | grep ${tag_id}`);
     if (isThisAResumeReleaseCmdResult.code !== 0) {
-      throw new Error(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git remote -v && git tag -m "${tag_message}"] shell command. Shell error was [` + isThisAResumeReleaseCmdResult.stderr + "] ")
+      // throw new Error(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - An Error occurred executing the [git tag -l | grep ${tag_id}] shell command. Shell error was [` + isThisAResumeReleaseCmdResult.stderr + "] ")
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - [tagReleaseStart(tag_message: string): void] - the [${tag_id}] git tag does not exists, so this is not a resume release`)
     } else {
       let isThisAResumeReleaseCmdStdOUT: string = isThisAResumeReleaseCmdResult.stdout;
       isThisAResumeReleaseCmdStdOUT = isThisAResumeReleaseCmdStdOUT.trim();
