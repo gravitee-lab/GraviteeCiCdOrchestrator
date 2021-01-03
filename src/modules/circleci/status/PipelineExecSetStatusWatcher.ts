@@ -254,16 +254,30 @@ export class PipelineExecSetStatusWatcher {
                      // So we can launch a new watch_round, by calling (again) the [launchExecStatusInspectionRound()] method (which
                      // will query again Circle CI to update workflows execution status' )
 
-               console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - laucnching a new watch round in [${parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL)}] milliseconds.`);
-               /// setTimeout(this.launchExecStatusInspectionRound, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+              if (this.isThereOnePipelineStillRunningWithoutError()) { // we do not care todetect if there has been a problem or not
+                                                                       // we relaunch a new watch as long as there is still one pipeline running, or waiting to run
+                console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - laucnching a new watch round in [${parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL)}] milliseconds.`);
+                /// setTimeout(this.launchExecStatusInspectionRound, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
 
-               setTimeout(() => {
-                 this.launchExecStatusInspectionRound()
-               }, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+                setTimeout(() => {
+                  this.launchExecStatusInspectionRound()
+                }, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+              }
 
             }
 
           } else {
+            if(!this.haveAllPipelinesSuccessfullyCompleted()) {
+              if (this.isThereOnePipelineStillRunningWithoutError()) { // we do not care to detect if there has been a problem or not
+                                                                       // we relaunch a new watch as long as there is still one pipeline running, or waiting to run
+                console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - laucnching a new watch round in [${parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL)}] milliseconds.`);
+                /// setTimeout(this.launchExecStatusInspectionRound, 2 * parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+
+                setTimeout(() => {
+                  this.launchExecStatusInspectionRound()
+                }, parseInt(process.env.EXEC_STATUS_WATCH_INTERVAL));
+              }
+            }
             console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - The watch round is not over, So not launching a new watch just now, in the [this.launchExecStatusInspectionRound] method) `);
           }
           /// throw new Error("That's where I am working now");
