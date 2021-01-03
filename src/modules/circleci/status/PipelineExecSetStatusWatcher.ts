@@ -105,6 +105,7 @@ export class PipelineExecSetStatusWatcher {
    * Will be updated for every {progressMatrix} entries, until allmatch <code>this.watch_round</code>
    **/
   private watch_round: number;
+  private hasAPipelineProblemBeenDetected: boolean;
   /**
    * This RxJS Subject is there to detect when the [progressMatrix] has been updated
    **/
@@ -131,6 +132,7 @@ export class PipelineExecSetStatusWatcher {
     this.progressMatrixUpdatesNotifier = new rxjs.Subject<any[]>();
     this.circleci_client = circleci_client;
     this.isLast = isLast;
+    this.hasAPipelineProblemBeenDetected = false;
     this.initPrivateNotifersSubscriptions();
     /// --- INIT WATCH ROUND
 
@@ -525,23 +527,38 @@ export class PipelineExecSetStatusWatcher {
       }
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] inside wfstate loop`)
       if (!(occuredProblem === null)) {
-        console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - inside if where [PipelineExecSetReportLogger] is instantitated, passing to constructor the Error : [occuredProblem = ${occuredProblem}] `)
+        if (!this.hasAPipelineProblemBeenDetected) {
+          this.hasAPipelineProblemBeenDetected = true;
+        }
         /*
         if (this.isLast) {
           console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
           this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
         }*/
         // no, we finalize the release process, even if this is not the last non-empty parallel execution set
+        /// WAS HERE BEFORE /// console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
+        /// WAS HERE BEFORE /// this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
+        /// WAS HERE BEFORE /// throw occuredProblem;
 
+      }
+
+    }
+    /// Every time workflowstates are checked, at every watch round, if a
+    /// Pipeline problem has been detected, and no pipeline is still running without error, or
+    /// waiting to run, then we finalize
+    if (this.hasAPipelineProblemBeenDetected && !this.isThereOnePipelineStillRunningWithoutError()) {
+      /*
+      if (this.isLast) {
         console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
         this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
-        /// the [PipelineExecSetReportLogger] will throw the Error, stopping all CI CD Operations
-        // this.releaseStatePersistenceMngr.whereAmI();
-        throw occuredProblem;
-        /// for the time being, [PipelineExecSetReportLogger] is too complex a feature to bring it in for now.We'll seein future releases. And It just occured to me, that consolidating an errorreport, is responsiblity of the log aggregation system.
-        ///let reactiveReporter = new reporting.PipelineExecSetReportLogger(this.progressMatrix, this.circleci_client, occuredProblem);
-      }
+      }*/
+      // no, we finalize the release process, even if this is not the last non-empty parallel execution set
+      console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
+      this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
+      throw occuredProblem;
     }
+
+
 
     /// -------------
     ///  https://circleci.com/docs/2.0/workflows/#states
@@ -762,6 +779,19 @@ export class PipelineExecSetStatusWatcher {
       answer = answer || (progressMatrixEntry.workflows_exec_state[k].status === "running") || (progressMatrixEntry.workflows_exec_state[k].status === "not_run");
     }
 
+    return answer;
+  }
+  /**
+   * Returns true if and only if at least one pipeline is still running, to will run, without error
+   **/
+  private isThereOnePipelineStillRunningWithoutError(): boolean {
+    let answer: boolean = false;
+    for (let k: number = 0; k < this.progressMatrix.length; k++) {
+      if (this.isStillRunningWithoutError(this.progressMatrix[k])) {
+        answer = true;
+        break;
+      }
+    }
     return answer;
   }
   /**
