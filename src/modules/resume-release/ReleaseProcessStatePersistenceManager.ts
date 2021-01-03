@@ -71,7 +71,8 @@ export class ReleaseProcessStatePersistenceManager {
   }
 
   tagReleaseStart(tag_message: string): void {
-    let tag_id = `RELEASE_${this.removeSnapshotSuffix(this.releaseManifest.version)}_START`
+    /// let tag_id = `RELEASE_${this.removeSnapshotSuffix(this.releaseManifest.version)}_START`
+    let tag_id = `${this.removeSnapshotSuffix(this.releaseManifest.version)}_START` /// when sorting tags, the start tag and its associated release tag, will be next to each other.
 
     /// In case oof a resume release, we first check if the tag already exists on the release repo
     let isThisAResumeRelease: boolean = false;
