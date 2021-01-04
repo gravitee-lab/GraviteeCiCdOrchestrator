@@ -272,7 +272,7 @@ export class PipelineExecSetStatusWatcher {
             }
 
           } else {
-            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - The watch round is not over, So not launching a new watch,justwait untilthe watch is over.`);
+            console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - The watch round is not over, So not launching a new watch, just wait untilthe watch is over.`);
           }
           /// throw new Error("That's where I am working now");
 
@@ -415,10 +415,10 @@ export class PipelineExecSetStatusWatcher {
   private isWatchRoundOver(): boolean {
     let isWatchRoundOver: boolean = true;
 
-    console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [isWatchRoundOver] Current Watch Round is [this.watch_round = ${this.watch_round}]`)
     for (let k:number= 0; k < this.progressMatrix.length; k++) {
       isWatchRoundOver = isWatchRoundOver && (this.progressMatrix[k].watch_round == this.watch_round);
     }
+    console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [isWatchRoundOver] Current Watch Round is [this.watch_round = ${this.watch_round}], and [isWatchRoundOver=[${isWatchRoundOver}]] `)
     return isWatchRoundOver;
   }
 
@@ -547,7 +547,6 @@ export class PipelineExecSetStatusWatcher {
         /// WAS HERE BEFORE /// console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because this is the las non empty [Parallel Execution Set], and an error occured  all pipelines have successfully completed `)
         /// WAS HERE BEFORE /// this.finalizeReleaseRepoPersistence(true); // this is a synchronous method call
         /// WAS HERE BEFORE /// throw occuredProblem;
-
       }
 
     }
@@ -566,7 +565,18 @@ export class PipelineExecSetStatusWatcher {
       throw occuredProblem;
     }
 
+    if (observedResponse.cci_json_response.next_page_token === null) {
+      console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] OCCURED PROBLEMOR NOT - finished workflow pagination to update [progressMatrix], so now incrementing [watch_round]`)
+      console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] OCCURED PROBLEMOR NOT - before incrementing [ this.progressMatrix[${pipelineIndexInProgressMatrix}].watch_round = [${this.progressMatrix[pipelineIndexInProgressMatrix].watch_round}] ]`);
+      this.progressMatrix[pipelineIndexInProgressMatrix].watch_round++;
 
+    } else {
+      let paginator: WfPaginationRef = {
+         next_page_token: observedResponse.cci_json_response.next_page_token,
+         pipeline_guid: observedResponse.parent_pipeline_guid
+      }
+      this.workflowPaginationNotifier.next(paginator);
+    }
 
     /// -------------
     ///  https://circleci.com/docs/2.0/workflows/#states
@@ -593,6 +603,7 @@ export class PipelineExecSetStatusWatcher {
     /// method with Circle CI [next_page_token], if necessary.
     /// We'll do that until last "page"
     /// ---
+    /*
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] before pagination mgmt`)
     if (occuredProblem === null) {
       console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] [occuredProblem = ${occuredProblem}] insid (if) for pagination management`)
@@ -611,6 +622,7 @@ export class PipelineExecSetStatusWatcher {
     } else {
       console.log(`[{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData]  A problem was detected with a Workflow execution in the Circle CI Pipline of GUID [${observedResponse.parent_pipeline_guid}], so a fatal [PipelineExecSetReportLogger] was instantiated, with a non-null [Error] passed to constructor, will build and log Execution Report, and stop all CICD Operations.   `);
     }
+    */
 
     console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - AFTER PUSHING RETRIEVED WORKFLOW STATES - Inspecting Array [ this.progressMatrix ] : `);
     console.log(`----`);
