@@ -43,7 +43,7 @@
 À priori :
 - Chaque dev aura permission de lire ces repositories
 - Quels dev auront la permission de maven deploy sur le repo snapshot ? Tous, et ils ne feront de maven deploy , le seul use case que je verrais serait: pour s'échanger des artifacts entre eux, en discutant sur slack, collaborant sur une tâche précise. À discuter les use case
-- il faut surtout que les pull requests fonctionnent sur ce "settings.xml", donc à utiliser dansl'Orb Circle CI :
+- Il faut surtout que les pull requests fonctionnent sur ce "settings.xml", donc à utiliser dansl'Orb Circle CI :
   - le dev va alors git push les dépendances, dans l'ordre de l'arbre de dépendances, et ce settings.xml lui assure que c'est bien son artifact qui sera utilsié, présent dans le repo snapshot
   - cela supose qu'il n' y ait qu'un seul dev qui travaille sur une même version d'artyifact à la fois :donc que les pull request soient traitées rapidement, pour pouvoir faire du "basket ball"
   - http://odbxikk7vo-artifactory.services.clever-cloud.com/external-dependencies-n-gravitee-snapshots/ est à créer et à configurer avec le graviteebot
@@ -51,6 +51,8 @@
 
 
 to do : finaliser la doc et ajoutet schema explicartif de ce fonctionnement pour les dev, de circle ci.
+
+secrethub write --in-file ./.secret.settings.dev.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.dev.xml"
 
 -->
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
