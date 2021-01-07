@@ -21,10 +21,21 @@
         {
             "name": "gravitee-cockpit",
             "version": "3.0.0-SNAPSHOT"
+        },
+        {
+            "name": "gravitee-platform-repository-api",
+            "version": "1.0.0"
+        },
+        {
+            "name": "gravitee-common",
+            "version": "1.18.0"
         }
-
     ],
     "buildDependencies": [
+        [
+            "gravitee-common",
+            "gravitee-platform-repository-api"
+        ],
         [
             "gravitee-license",
             "gravitee-cockpit-api",

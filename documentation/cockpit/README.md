@@ -94,7 +94,7 @@ Bon, alors à lamain je lis l'arbre de dépendances :
 * `gravitee-cockpit` version `3.0.0-SNAPSHOT`, dépend de `gravitee-license` version `1.1.2` (cf. `<gravitee-license-api.version>1.1.2</gravitee-license-api.version>`). Donc ilfaut que je build https://github.com/gravitee-lab/gravitee-license sur la branche `1.1.x`
 
 
-* Release, on branch `master` of the `gravitee-cockpit` repo :
+* Release dry run, on branch `master` of the `gravitee-cockpit` repo :
 
 ```bash
 # It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
@@ -254,6 +254,7 @@ Ok, mais en fait, je vais directement appliquer cette même solution, sur toutes
 
 #### Essai 3: simplifiction des dépendances `pom.xml` et identity provider dry release
 
+
 * git@github.com:gravitee-lab/gravitee-identityprovider-api.git : dry run release the version `1.1.0-SNAPSHOT` on `master` git branch
 
 
@@ -284,6 +285,117 @@ export JSON_PAYLOAD="{
 
     {
         \"gio_action\": \"release\",
+        \"dry_run\": true,
+        \"maven_profile_id\": \"gravitee-dry-run\",
+        \"secrethub_org\": \"gravitee-lab\",
+        \"secrethub_repo\": \"cicd\"
+    }
+
+}"
+
+# dry_run: << pipeline.parameters.dry_run >>
+# maven_container_image_tag: stable-latest
+# maven_profile_id: << pipeline.parameters.maven_profile_id>>
+# secrethub_org: << pipeline.parameters.secrethub_org >>
+# secrethub_repo: << pipeline.parameters.secrethub_repo >>
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
+
+Résultat de tests où j'avais oublié de virer toutes les dépendances dans lessous modules maven :
+
+https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-cockpit/10/workflows/5ed1bd85-4a14-4526-82db-18a014580b5c/jobs/10
+
+
+* ok, parmi lesdépendances virées, la `gravitee-platform-repository-api` est nécessaire : https://app.circleci.com/pipelines/github/gravitee-lab/gravitee-cockpit/12/workflows/e7e80728-913e-4ac0-8ac0-8823be0d6970/jobs/12 .DOnc :
+  * Je ne dois pas faire le release dry run de `gravitee-platform-repository-api` version `1.0.0` car a déjà été releasée
+  * je rajoute et je relance
+* même chose pour `gravitee-common` en version `1.18.0` : déjà releasée,donc pasdbesoin de faire une release dry run
+*
+
+
+
+* Release dry run, on branch `master` of the `gravitee-cockpit` repo :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="gravitee-cockpit"
+export BRANCH="master"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"release\",
+        \"dry_run\": true,
+        \"maven_profile_id\": \"gravitee-dry-run\",
+        \"secrethub_org\": \"gravitee-lab\",
+        \"secrethub_repo\": \"cicd\"
+    }
+
+}"
+
+# dry_run: << pipeline.parameters.dry_run >>
+# maven_container_image_tag: stable-latest
+# maven_profile_id: << pipeline.parameters.maven_profile_id>>
+# secrethub_org: << pipeline.parameters.secrethub_org >>
+# secrethub_repo: << pipeline.parameters.secrethub_repo >>
+
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/me | jq .
+curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline | jq .
+```
+
+
+Okmaintenant j'ai eut une erreur parceque j'ai release la `gravitee-license` version `1.1.3`,alors que j'ai besoin de la `1.1.2` dans `gravitee-cockpit` :
+* Pour cela, j'ai customisé le `config.yml` pour fair eune "back in time release" dans le pipeline de `gravitee-license`, afin de faire la maven release de la `gravitee-license`
+* pour ensuite relancer `gravitee-cockpit`
+
+
+
+
+* Maven dry run Release, back in time, of version  `1.1.2` of the `gravitee-license` repo :
+
+```bash
+# It should be SECRETHUB_ORG=graviteeio, but Cirlce CI token is related to
+# a Circle CI User, not an Org, so jsut reusing the same than for Gravtiee-Lab here, to work faster
+# ---
+SECRETHUB_ORG=gravitee-lab
+SECRETHUB_REPO=cicd
+# Nevertheless, I today think :
+# Each team member should have his own personal secrethub repo in the [graviteeio] secrethub org.
+# like this :
+# a [graviteeio/${TEAM_MEMBER_NAME}] secrethub repo for each team member
+# and the Circle CI Personal Access token stored with [graviteeio/${TEAM_MEMBER_NAME}/circleci/token]
+# ---
+export HUMAN_NAME=jblasselle
+export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
+
+export ORG_NAME="gravitee-lab"
+export REPO_NAME="gravitee-license"
+export BRANCH="1.1.x"
+export JSON_PAYLOAD="{
+
+    \"branch\": \"${BRANCH}\",
+    \"parameters\":
+
+    {
+        \"gio_action\": \"martymcfly_mvn_release\",
         \"dry_run\": true,
         \"maven_profile_id\": \"gravitee-dry-run\",
         \"secrethub_org\": \"gravitee-lab\",
