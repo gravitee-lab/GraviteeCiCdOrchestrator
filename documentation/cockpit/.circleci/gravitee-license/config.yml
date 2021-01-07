@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   gio_action:
     type: enum
-    enum: [release, pr_build]
+    enum: [release, martymcfly_mvn_release, pr_build]
     default: pr_build
   dry_run:
     type: boolean
@@ -21,9 +21,13 @@ parameters:
     type: string
     default: "cicd"
     description: "SecretHub Repo to use to fetch secrets ?"
-
+  marty_mcfly:
+    type: string
+    default: "HEAD"
+    description: "What back-in-time version would you like to maven deploy in your private maven repo ?"
 orbs:
   gravitee: gravitee-io/gravitee@dev:1.0.4
+  secrethub: secrethub/cli@1.0
 
 jobs:
   empty_job:
@@ -36,14 +40,40 @@ jobs:
           name: "This is a dummy empty job (isn't it ?)"
           command: echo "No task is executed."
 
-  mvn_release_job:
+  martymcfly_mvn_release_job:
     machine:
       image: 'ubuntu-1604:201903-01'
       resource_class: medium
+    environment:
+      BACK_IN_TIME_VERSION: << pipeline.parameters.marty_mcfly >>
     steps:
-      - checkout
+      # - checkout
       - secrethub/install
-      # - docker/install-docker-compose
+      - gravitee/git_config:
+          secrethub_org: << pipeline.parameters.secrethub_org >>
+          secrethub_repo: << pipeline.parameters.secrethub_repo >>
+      - run:
+          name: "Back in time release [${BACK_IN_TIME_VERSION}]"
+          command: |
+                    echo "BACK_IN_TIME_VERSION=[${BACK_IN_TIME_VERSION}]"
+                    echo "This job was used ONCE to 'release again' the [1.1.2] versio the [gravitee-licence]"
+                    echo "It could inspire a more general purpose Job, but it's not yet reusable as-is"
+                    if [ -d ./.circleci ]; then
+                      rm -fr ./circleci
+                    fi
+                    if [ -d ./graviteebot ]; then
+                      rm -fr ./graviteebot
+                    fi
+                    # there i will have to rm some files for sure
+                    ls -allh .
+                    git clone git@github.com:gravitee-lab/gravitee-license.git .
+                    git checkout 1.1.2
+                    sed -i "s#1.1.2#1.1.2-SNAPSHOT#g" pom.xml
+                    sed -i "s#1.1.2#1.1.2-SNAPSHOT#g" gravitee-license-api/pom.xml
+                    sed -i "s#1.1.2#1.1.2-SNAPSHOT#g" gravitee-license-generator/pom.xml
+                    sed -i "s#1.1.2#1.1.2-SNAPSHOT#g" gravitee-license-node/pom.xml
+                    sed -i "s#1.1.2#1.1.2-SNAPSHOT#g" gravitee-license-node-enterprise/pom.xml
+                    mkdir -p ./.circleci
       - gravitee/mvn_prepare_release:
           dry_run: << pipeline.parameters.dry_run >>
           maven_container_image_tag: stable-latest
@@ -68,52 +98,6 @@ jobs:
           # maven_profile_id: << pipeline.parameters.maven_profile_id>>
           # secrethub_org: << pipeline.parameters.secrethub_org >>
           # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - run:
-          name: "Ok, where are the zip and npm packages ?"
-          command: ls -allh .
-  git_release_job:
-    machine:
-      image: 'ubuntu-1604:201903-01'
-      resource_class: medium
-    steps:
-      - checkout
-      - secrethub/install
-      - docker/install-docker-compose
-      - gravitee/mvn_prepare_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      # - gravitee/mvn_test_release:
-          # dry_run: << pipeline.parameters.dry_run >>
-          # maven_container_image_tag: stable-latest
-          # maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          # secrethub_org: << pipeline.parameters.secrethub_org >>
-          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      # - gravitee/mvn_release:
-          # dry_run: << pipeline.parameters.dry_run >>
-          # maven_container_image_tag: stable-latest
-          # maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          # secrethub_org: << pipeline.parameters.secrethub_org >>
-          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - gravitee/git_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: << pipeline.parameters.maven_container_image_tag >>
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-  container_build:
-    machine:
-      image: 'ubuntu-1604:201903-01'
-      resource_class: medium
-    steps:
-      - checkout
-      - secrethub/install
-      - docker/install-docker-compose
-      - run:
-          name: "There I'll docker build the container image'"
-          command: ls -allh .
 
 workflows:
   version: 2.1
@@ -123,7 +107,7 @@ workflows:
     jobs:
       - gravitee/pr-build:
           context: cicd-orchestrator
-  mvn_release:
+  release:
     when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]
@@ -147,3 +131,16 @@ workflows:
           secrethub_org: << pipeline.parameters.secrethub_org >>
           secrethub_repo: << pipeline.parameters.secrethub_repo >>
           maven_profile_id: << pipeline.parameters.maven_profile_id >>
+
+  martymcfly_mvn_release:
+    when:
+      and:
+        - equal: [ martymcfly_mvn_release, << pipeline.parameters.gio_action >> ]
+        - << pipeline.parameters.dry_run >>
+    jobs:
+      - martymcfly_mvn_release_job:
+          context: cicd-orchestrator
+          # dry_run: << pipeline.parameters.dry_run >>
+          # secrethub_org: << pipeline.parameters.secrethub_org >>
+          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
+          # maven_profile_id: << pipeline.parameters.maven_profile_id >>

@@ -26,83 +26,6 @@ orbs:
   gravitee: gravitee-io/gravitee@dev:1.0.4
 
 jobs:
-  empty_job:
-    docker:
-     - image: alpine
-    resource_class: small
-    working_directory: /mnt/ramdisk
-    steps:
-      - run:
-          name: "This is a dummy empty job (isn't it ?)"
-          command: echo "No task is executed."
-
-  mvn_release_job:
-    machine:
-      image: 'ubuntu-1604:201903-01'
-      resource_class: medium
-    steps:
-      - checkout
-      - secrethub/install
-      # - docker/install-docker-compose
-      - gravitee/mvn_prepare_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - gravitee/mvn_test_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - gravitee/mvn_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      # - gravitee/git_release:
-          # dry_run: << pipeline.parameters.dry_run >>
-          # maven_container_image_tag: << pipeline.parameters.maven_container_image_tag >>
-          # maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          # secrethub_org: << pipeline.parameters.secrethub_org >>
-          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - run:
-          name: "Ok, where are the zip and npm packages ?"
-          command: ls -allh .
-  git_release_job:
-    machine:
-      image: 'ubuntu-1604:201903-01'
-      resource_class: medium
-    steps:
-      - checkout
-      - secrethub/install
-      - docker/install-docker-compose
-      - gravitee/mvn_prepare_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: stable-latest
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      # - gravitee/mvn_test_release:
-          # dry_run: << pipeline.parameters.dry_run >>
-          # maven_container_image_tag: stable-latest
-          # maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          # secrethub_org: << pipeline.parameters.secrethub_org >>
-          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      # - gravitee/mvn_release:
-          # dry_run: << pipeline.parameters.dry_run >>
-          # maven_container_image_tag: stable-latest
-          # maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          # secrethub_org: << pipeline.parameters.secrethub_org >>
-          # secrethub_repo: << pipeline.parameters.secrethub_repo >>
-      - gravitee/git_release:
-          dry_run: << pipeline.parameters.dry_run >>
-          maven_container_image_tag: << pipeline.parameters.maven_container_image_tag >>
-          maven_profile_id: << pipeline.parameters.maven_profile_id>>
-          secrethub_org: << pipeline.parameters.secrethub_org >>
-          secrethub_repo: << pipeline.parameters.secrethub_repo >>
   container_build:
     machine:
       image: 'ubuntu-1604:201903-01'
@@ -123,7 +46,7 @@ workflows:
     jobs:
       - gravitee/pr-build:
           context: cicd-orchestrator
-  mvn_release:
+  release:
     when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]
