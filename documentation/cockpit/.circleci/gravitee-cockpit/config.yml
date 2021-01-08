@@ -25,6 +25,19 @@ parameters:
 orbs:
   gravitee: gravitee-io/gravitee@dev:1.0.4
 
+jobs:
+  container_build:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+      resource_class: medium
+    steps:
+      - checkout
+      - secrethub/install
+      - docker/install-docker-compose
+      - run:
+          name: "There I'll docker build the container image'"
+          command: ls -allh .
+
 workflows:
   version: 2.1
   pull_requests:
@@ -33,13 +46,15 @@ workflows:
     jobs:
       - gravitee/pull_request:
           context: cicd-orchestrator
+          # you can anytime change the maven container image tag
+          # e.g.you want another jdk or maven version
           # maven_container_image_tag: stable-latest
-          secrethub_org: gravitee-lab
+          secrethub_org: graviteeio
           secrethub_repo: cicd
           # # [maven_profile_id] maven profile defined in the dev team dedicated [settings.xml]
           # maven_profile_id: gravitee-dry-run
           maven_profile_id: gio-dev
-  release:
+  mvn_release:
     when:
       and:
         - equal: [ release, << pipeline.parameters.gio_action >> ]

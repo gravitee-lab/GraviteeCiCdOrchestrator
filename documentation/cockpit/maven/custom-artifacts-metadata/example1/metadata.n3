@@ -1,0 +1,5 @@
+<urn:maven/artifact#org.sonatype.example:custommetadata:1.0.0::jar>
+    <urn:mycustomspace#repositoryId> "releases" ;
+    <urn:mycustomspace#mavenVersion> "3.3.3" ;
+    <urn:mycustomspace#releaseManager> "mymanager" ;
+    <urn:mycustomspace#codeCoverage> ".99" .

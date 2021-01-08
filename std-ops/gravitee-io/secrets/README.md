@@ -351,7 +351,7 @@ export SECRETHUB_ORG="graviteeio"
 export SECRETHUB_REPO="cicd"
 export ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/"
 export ARTIFACTORY_REPO_RELEASE_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/"
-export ARTIFACTORY_REPO_SNAPSHOTS_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-snapshots/"
+export ARTIFACTORY_REPO_SNAPSHOTS_URL="http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/"
 
 echo "ARTIFACTORY_REPO_SNAPSHOTS_URL=[${ARTIFACTORY_REPO_SNAPSHOTS_URL}]"
 echo "ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL=[${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}]"
@@ -386,6 +386,9 @@ if [ -f ./.secret.settings.xml ]; then
 fi;
 if [ -f ./.secret.settings.non.dry.run.xml ]; then
   rm ./.secret.settings.non.dry.run.xml
+fi;
+if [ -f ./.secret.settings.dev.xml ]; then
+  rm ./.secret.settings.dev.xml
 fi;
 
 cat <<EOF >>./.secret.settings.xml
@@ -497,7 +500,7 @@ cat <<EOF >>./.secret.settings.xml
               <updatePolicy>never</updatePolicy>
               <checksumPolicy>warn</checksumPolicy>
             </snapshots>
-            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/</url>
+            <url>${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}</url>
             <layout>default</layout>
           </repository>
           <repository>
@@ -677,7 +680,7 @@ cat <<EOF >>./.secret.settings.non.dry.run.xml
               <updatePolicy>never</updatePolicy>
               <checksumPolicy>warn</checksumPolicy>
             </snapshots>
-            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/dry-run-releases/</url>
+            <url>${ARTIFACTORY_REPO_DRY_RUN_RELEASE_URL}</url>
             <layout>default</layout>
           </repository>
         </repositories>
@@ -720,10 +723,163 @@ cat <<EOF >>./.secret.settings.non.dry.run.xml
 EOF
 
 
+cat <<EOF >>./.secret.settings.dev.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <pluginGroups></pluginGroups>
+  <proxies></proxies>
+  <mirrors>
+    <mirror>
+      <!--The maven referential for all CI CD Processes in NON Dry Run Mode -->
+      <id>artifactory-gravitee-maven-mirror</id>
+      <mirrorOf>external:*</mirrorOf>
+      <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/external-dependencies-n-gravitee-all/</url>
+    </mirror>
+  </mirrors>
+  <servers>
+    <server>
+      <id>artifactory-gravitee-maven-mirror</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-plugin-repository-remote-nexus</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-repository-remote-nexus</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-gravitee-snapshots</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-gravitee-releases</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <!-- as of https://maven.apache.org/plugins/maven-gpg-plugin/usage.html -->
+      <id>gpg.passphrase</id>
+      <passphrase>${GRAVITEEBOT_GPG_PASSPHRASE}</passphrase>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>gio-dev</id>
+        <properties>
+          <altDeploymentRepository>artifactory-gravitee-snapshots::default::${ARTIFACTORY_REPO_SNAPSHOTS_URL}</altDeploymentRepository>
+        </properties>
+        <activation>
+            <property>
+                <name>performRelease</name>
+                <value>true</value>
+            </property>
+        </activation>
+        <repositories>
+          <repository>
+            <id>artifactory-gravitee-releases</id>
+            <name>Artifactory Repository for Gravitee Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>${ARTIFACTORY_REPO_RELEASE_URL}</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-gravitee-snapshots</id>
+            <name>Artifactory Repository for Gravitee Snapshots</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>${ARTIFACTORY_REPO_SNAPSHOTS_URL}</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-repository-remote-nexus</id>
+            <name>Artifactory Repository Remote Nexus</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </repository>
+        </repositories>
+        <pluginRepositories>
+          <pluginRepository>
+            <id>artifactory-plugin-repository-remote-nexus</id>
+            <name>Artifactory Proxy Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </pluginRepository>
+        </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+  <activeProfile>gio-dev</activeProfile>
+  </activeProfiles>
+</settings>
+
+EOF
+
+
 # secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
 secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
 secrethub write --in-file ./.secret.settings.non.dry.run.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.non.dry.run.xml"
-secrethub read --out-file ./test.retrievieving.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.non.dry.run.xml"
+secrethub write --in-file ./.secret.settings.dev.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.dev.xml"
+secrethub read --out-file ./test.retrievieving.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.dev.xml"
 
 cat ./test.retrievieving.settings.xml
 

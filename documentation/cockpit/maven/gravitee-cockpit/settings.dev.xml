@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!--
+    Ce commentaire doit être supprimé, et la licence ci-dessus doit être conservée
+
+    Ci-dessous :
+
+    => ARTIFACTORY_REPO_RELEASE_URL=http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/
+    => ARTIFACTORY_REPO_SNAPSHOTS_URL=http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/
+
+    => maven central mirror : http://odbxikk7vo-artifactory.services.clever-cloud.com/external-dependencies-n-gravitee-all/ est un repo artifactory virtuel, cumulant :
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/releases-remote/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-bintray/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-jenkins-releases/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/libs-releases/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/
+    => parmi les <repositories> :
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/
+    => parmi les <pluginRepositories> :
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/
+    => le <altDeploymentRepository> (cible d'un maven deploy) :
+          + http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/
+
+À priori :
+
+- Chaque dev aura permission de lire les repositories
+- Quels dev auront la permission de maven deploy sur le repo snapshot ? Aucun, et le seul use case que je verrais pour mvn deploy to artifactory serait: pour s'échanger des artifacts entre eux, en discutant sur slack, collaborant sur une tâche précise. À discuter les use case
+- Il faut surtout que les pull requests fonctionnent sur ce "settings.xml", donc à utiliser dans l'Orb Circle CI :
+  - le dev va alors git push les dépendances, dans l'ordre de l'arbre de dépendances, et ce settings.xml lui assure que c'est bien son artifact qui sera utilisé, présent dans le repo snapshot
+  - cela suppose qu'il n' y ait qu'un seul dev qui travaille sur une même version d'artifact à la fois : donc que les pull request soient traitées rapidement, pour pouvoir faire du "basket ball"
+  - http://odbxikk7vo-artifactory.services.clever-cloud.com/external-dependencies-n-gravitee-all/ est à créer et à configurer avec le graviteebot
+  - http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/ est déjà créé, et est à configurer avec le graviteebot
+
+Sur Artifactory, Pour la gestion des permissions des dev engineers:
+- j'ai créé un groupe d'utilisateurs "gravitee-dev-team",
+- et une "Permission" de nom "gravitee-readers", comme ça je n'ai plus qu'à ajouter un nouvel utilisateur dans ce groupe pour qu'il ait les permissions de lecture sur les repos de Workflow Cicd Gravitee.
+- J'ai même configuré que tout nouvel utilisateur créé soit automatiquement ajouté dans le groupe "gravitee-dev-team".
+
+TODO : finaliser la doc et ajouter schema explicatif de ce fonctionnement pour les dev, de Circle CI.
+
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <pluginGroups></pluginGroups>
+  <proxies></proxies>
+  <mirrors>
+    <mirror>
+      <!--The maven referential for all CI CD Processes in NON Dry Run Mode -->
+      <id>artifactory-gravitee-maven-mirror</id>
+      <mirrorOf>external:*</mirrorOf>
+      <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/external-dependencies-n-gravitee-all/</url>
+    </mirror>
+  </mirrors>
+  <servers>
+    <server>
+      <id>artifactory-gravitee-maven-mirror</id>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-plugin-repository-remote-nexus</id>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-repository-remote-nexus</id>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-gravitee-snapshots</id>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-gravitee-releases</id>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
+    </server>
+    <server>
+      <!-- as of https://maven.apache.org/plugins/maven-gpg-plugin/usage.html -->
+      <id>gpg.passphrase</id>
+      <passphrase>${YOUR_GPG_PASSPHRASE} (optional)</passphrase>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>gio-dev</id>
+        <properties>
+          <altDeploymentRepository>artifactory-gravitee-snapshots::default::http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/</altDeploymentRepository>
+        </properties>
+        <activation>
+            <property>
+                <name>performRelease</name>
+                <value>true</value>
+            </property>
+        </activation>
+        <repositories>
+          <repository>
+            <id>artifactory-gravitee-releases</id>
+            <name>Artifactory Repository for Gravitee Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-gravitee-snapshots</id>
+            <name>Artifactory Repository for Gravitee Snapshots</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/</url>
+            <layout>default</layout>
+          </repository>
+          <repository>
+            <id>artifactory-repository-remote-nexus</id>
+            <name>Artifactory Repository Remote Nexus</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </repository>
+        </repositories>
+        <pluginRepositories>
+          <pluginRepository>
+            <id>artifactory-plugin-repository-remote-nexus</id>
+            <name>Artifactory Proxy Releases</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
+            <layout>default</layout>
+          </pluginRepository>
+        </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+  <activeProfile>gio-dev</activeProfile>
+  </activeProfiles>
+</settings>
