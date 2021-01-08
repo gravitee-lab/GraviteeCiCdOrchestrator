@@ -2,7 +2,7 @@ ARG MAVEN_VERSION=3.6.3
 ARG OPENJDK_VERSION=11
 FROM maven:$MAVEN_VERSION-openjdk-$OPENJDK_VERSION
 
-RUN apt-get update -y && apt-get install -y gnupg
+RUN apt-get update -y && apt-get install -y gnupg build-essential
 ARG MAVEN_VERSION=3.6.3
 ARG OPENJDK_VERSION=11
 ARG GITHUB_ORG=unspecified
