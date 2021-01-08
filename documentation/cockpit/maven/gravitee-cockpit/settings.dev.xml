@@ -58,8 +58,6 @@ Sur Artifactory, Pour la gestion des permissions des dev engineers:
 
 TODO : finaliser la doc et ajouter schema explicatif de ce fonctionnement pour les dev, de Circle CI.
 
-secrethub : "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.dev.xml"
-
 -->
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <pluginGroups></pluginGroups>
@@ -75,40 +73,40 @@ secrethub : "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/
   <servers>
     <server>
       <id>artifactory-gravitee-maven-mirror</id>
-      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
-      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
     </server>
     <server>
       <id>artifactory-plugin-repository-remote-nexus</id>
-      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
-      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
     </server>
     <server>
       <id>artifactory-repository-remote-nexus</id>
-      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
-      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
     </server>
     <server>
       <id>artifactory-gravitee-snapshots</id>
-      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
-      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
     </server>
     <server>
       <id>artifactory-gravitee-releases</id>
-      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
-      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+      <username>${ARTIFACTORY_USER_USER_NAME}</username>
+      <password>${ARTIFACTORY_USER_USER_PWD}</password>
     </server>
     <server>
       <!-- as of https://maven.apache.org/plugins/maven-gpg-plugin/usage.html -->
       <id>gpg.passphrase</id>
-      <passphrase>${GRAVITEEBOT_GPG_PASSPHRASE}</passphrase>
+      <passphrase>${YOUR_GPG_PASSPHRASE} (optional)</passphrase>
     </server>
   </servers>
   <profiles>
     <profile>
       <id>gio-dev</id>
         <properties>
-          <altDeploymentRepository>artifactory-gravitee-snapshots::default::${ARTIFACTORY_REPO_SNAPSHOTS_URL}</altDeploymentRepository>
+          <altDeploymentRepository>artifactory-gravitee-snapshots::default::http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-snapshots/</altDeploymentRepository>
         </properties>
         <activation>
             <property>
@@ -130,7 +128,7 @@ secrethub : "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/
               <updatePolicy>always</updatePolicy>
               <checksumPolicy>warn</checksumPolicy>
             </snapshots>
-            <url>${ARTIFACTORY_REPO_RELEASE_URL}</url>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/</url>
             <layout>default</layout>
           </repository>
           <repository>

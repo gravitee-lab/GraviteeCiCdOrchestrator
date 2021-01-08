@@ -396,8 +396,8 @@ export JSON_PAYLOAD="{
 
     {
         \"gio_action\": \"martymcfly_mvn_release\",
-        \"dry_run\": true,
-        \"maven_profile_id\": \"gravitee-dry-run\",
+        \"dry_run\": false,
+        \"maven_profile_id\": \"gio-release\",
         \"secrethub_org\": \"gravitee-lab\",
         \"secrethub_repo\": \"cicd\"
     }
@@ -515,3 +515,13 @@ pour cette histoire de git commit id, .... comment faire une solution vite fait 
 <!-- ![Architecture concept](documentation/cockpit/images/Cockpit_Continuous_Delivery.png) -->
 
 ![Architecture concept](./images/Cockpit_Continuous_Delivery.png)
+
+
+
+## Cocneption du flow des pull requests
+
+a été finalisé avec https://app.circleci.com/pipelines/github/gravitee-io/gravitee-cockpit/241/workflows/2263bda5-8ddf-4dc2-a438-fc397b609a07/jobs/240
+
+Pour résumer :
+* Circle CI Orb Job dédié pull requests, ça mvn build and deploy sur artifactory private, les `SNAPSHOTS`
+* `settings.xml` dédié pull request, identitique à celui utilisable par les dev : `documentation/cockpit/maven/gravitee-cockpit/settings.xml`
