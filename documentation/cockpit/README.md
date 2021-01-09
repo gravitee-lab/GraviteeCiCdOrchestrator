@@ -506,7 +506,7 @@ pour cette histoire de git commit id, .... comment faire une solution vite fait 
     * l'insérer dans toutes les images de conteneur
     * toute image de conteneur doit aussi pouvoir êtreconsciente des components qu'elle contient,qui sont un sous ensemble des components du `release.json`
     * ok c'est vraiment complexe, si on va au bout ... Ou alors on pourrait simplement avoir un components.json qui est "une rduction du release.json aux seuls composants embarqués dans l'image Docker"
-* du cou pourlevite fait pour Cockpit : on voit pas après pas, ce qu'on peut mettre commemetadata, et on avisera, sans jamais compliquer.
+* du coup, pour le vite fait pour Cockpit : on voit pas après pas, ce qu'on peut mettre commemetadata, et on avisera, sans jamais compliquer.
 
 
 
@@ -518,10 +518,15 @@ pour cette histoire de git commit id, .... comment faire une solution vite fait 
 
 
 
-## Cocneption du flow des pull requests
+## Conception du flow des pull requests
 
 a été finalisé avec https://app.circleci.com/pipelines/github/gravitee-io/gravitee-cockpit/241/workflows/2263bda5-8ddf-4dc2-a438-fc397b609a07/jobs/240
 
 Pour résumer :
 * Circle CI Orb Job dédié pull requests, ça mvn build and deploy sur artifactory private, les `SNAPSHOTS`
 * `settings.xml` dédié pull request, identitique à celui utilisable par les dev : `documentation/cockpit/maven/gravitee-cockpit/settings.xml`
+
+
+Après demultiplesaméliorations, et avoir ajouté lebuild d'une première image docker de cockpit :
+* le repo `gravitee-cockpit` , utilise une Orb Job spécifique à la fois au workflow (les pull requests) et au produit: `pull_request_cockpit`
+* les 2 autres repos (dépendances) `gravitee-cockpit-api` et `gravitee-identityprovider-api` , utilisent la même Orb Job, "standard" pour tous les repos de dev, qui ne comprennent pas d'image de conteneur à builder 
