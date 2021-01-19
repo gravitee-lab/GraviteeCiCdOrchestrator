@@ -342,6 +342,39 @@ echo "${ARTIFACTORY_BOT_USER_PWD}" | secrethub write "${SECRETHUB_ORG}/${SECRETH
 
 ```
 
+
+#### Gravitee.io Bot Docker Hub credentials
+
+* init / rotate the Gravitee.io Bot artifactory credentials
+
+```bash
+export SECRETHUB_ORG="graviteeio"
+export SECRETHUB_REPO="cicd"
+# secrethub org init "${SECRETHUB_ORG}"
+# secrethub repo init "${SECRETHUB_ORG}/${SECRETHUB_REPO}"
+
+# --- #
+# for the DEV CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+# secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/"
+
+# --- #
+# write quay secrets for the DEV CI CD WorkFlow of
+# the Gravitee CI CD Orchestrator
+export DOCKERHUB_BOT_USER_NAME="inyourdreams;)"
+export DOCKERHUB_BOT_USER_TOKEN="inyourdreams;)"
+
+echo "${DOCKERHUB_BOT_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/dockerhub-user-name"
+echo "${DOCKERHUB_BOT_USER_TOKEN}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/dockerhub-user-token"
+# Testing retrieving secrets
+export DOCKERHUB_BOT_USER_NAME=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/dockerhub-user-name")
+export DOCKERHUB_BOT_USER_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/dockerhub-user-token")
+
+docker login --username="${DOCKERHUB_BOT_USER_NAME}" -p="${DOCKERHUB_BOT_USER_TOKEN}"
+
+```
+
+
 #### Gravitee.io CI CD `settings.xml` files in https://github.com/gravitee-lab
 
 * init / rotate the Gravitee.io Bot `settings.xml` files used in all CI CD Processes :
