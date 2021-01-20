@@ -725,6 +725,7 @@ cat <<EOF >>./.secret.settings.non.dry.run.xml
 </settings>
 EOF
 
+
 cat <<EOF >>./.secret.settings.dev.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
@@ -778,6 +779,11 @@ cat <<EOF >>./.secret.settings.dev.xml
     </server>
     <server>
       <id>artifactory-gravitee-releases</id>
+      <username>${ARTIFACTORY_BOT_USER_NAME}</username>
+      <password>${ARTIFACTORY_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <id>artifactory-repository-remote-nexus-cache</id>
       <username>${ARTIFACTORY_BOT_USER_NAME}</username>
       <password>${ARTIFACTORY_BOT_USER_PWD}</password>
     </server>
@@ -848,6 +854,22 @@ cat <<EOF >>./.secret.settings.dev.xml
             <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus/</url>
             <layout>default</layout>
           </repository>
+          <repository>
+            <id>artifactory-repository-remote-nexus-cache</id>
+            <name>Artifactory Repository Remote Nexus</name>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+              <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>http://odbxikk7vo-artifactory.services.clever-cloud.com/remote-nexus-cache/</url>
+            <layout>default</layout>
+          </repository>
         </repositories>
         <pluginRepositories>
           <pluginRepository>
@@ -875,6 +897,7 @@ cat <<EOF >>./.secret.settings.dev.xml
 </settings>
 
 EOF
+
 
 # secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
 secrethub write --in-file ./.secret.settings.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/settings.xml"
