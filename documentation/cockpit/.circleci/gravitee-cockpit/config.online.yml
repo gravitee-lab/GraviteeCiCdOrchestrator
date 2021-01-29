@@ -31,17 +31,23 @@ workflows:
     when:
       equal: [ pr_build, << pipeline.parameters.gio_action >> ]
     jobs:
-      - gravitee/pull_request:
-          # This is a  standard pull request : no docker image job
+      - gravitee/pull_request_cockpit:
           context: cicd-orchestrator
-          # you can anytime change the maven container image tag
-          # e.g.you want another jdk or maven version
-          # maven_container_image_tag: stable-latest
+          maven_container_image_tag: stable-latest
+          maven_profile_id: gio-dev
           secrethub_org: graviteeio
           secrethub_repo: cicd
-          # # [maven_profile_id] maven profile defined in the dev team dedicated [settings.xml]
-          # maven_profile_id: gravitee-dry-run
-          maven_profile_id: gio-dev
+      # - gravitee/pull_request:
+          # # This is a  standard pull request : no docker image job
+          # context: cicd-orchestrator
+          # # you can anytime change the maven container image tag
+          # # e.g.you want another jdk or maven version
+          # # maven_container_image_tag: stable-latest
+          # secrethub_org: gravitee-lab
+          # secrethub_repo: cicd
+          # # # [maven_profile_id] maven profile defined in the dev team dedicated [settings.xml]
+          # # maven_profile_id: gravitee-dry-run
+          # maven_profile_id: gio-dev
   mvn_release:
     when:
       and:

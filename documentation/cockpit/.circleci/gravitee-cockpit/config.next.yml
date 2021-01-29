@@ -27,21 +27,33 @@ orbs:
 
 workflows:
   version: 2.1
-  pull_requests:
-    when:
-      equal: [ pr_build, << pipeline.parameters.gio_action >> ]
+  # [deliver_nightly] : builds and deploys the nightly demo
+  deliver_nightly:
     jobs:
-      - gravitee/pull_request:
-          # This is a  standard pull request : no docker image job
+      - gravitee/deliver_nightly_cockpit:
           context: cicd-orchestrator
-          # you can anytime change the maven container image tag
-          # e.g.you want another jdk or maven version
-          # maven_container_image_tag: stable-latest
+          maven_container_image_tag: stable-latest
+          maven_profile_id: gio-dev
           secrethub_org: graviteeio
           secrethub_repo: cicd
-          # # [maven_profile_id] maven profile defined in the dev team dedicated [settings.xml]
-          # maven_profile_id: gravitee-dry-run
+          filters:
+            branches:
+              only:
+                - master
+  pull_requests:
+    # when:
+      # equal: [ pr_build, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - gravitee/pull_request_cockpit:
+          context: cicd-orchestrator
+          maven_container_image_tag: stable-latest
           maven_profile_id: gio-dev
+          secrethub_org: graviteeio
+          secrethub_repo: cicd
+          filters:
+            branches:
+              ignore:
+                - master
   mvn_release:
     when:
       and:

@@ -28,6 +28,13 @@ export NON_ROOT_USER_GRP=${NON_ROOT_USER_NAME}
 # -----------                         DOCKER PUSH                        --------- #
 # -------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------- #
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     MAVEN DOCKER IMAGE                     --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
 # checking docker image built in previous step is there
 docker images
 
@@ -66,4 +73,22 @@ docker push "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
 
 
 
-# docker build -t "${GITHUB_ORG}" maven/
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     S3CMD DOCKER IMAGE                     --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
+export S3CMD_VERSION=${S3CMD_VERSION:-"2.1.0"}
+# I identify the version of the whole CI CD system,wih the versionof the Gravitee CI CD Orchestrator
+export ORCHESTRATOR_GIT_COMMIT_ID=$(git rev-parse --short=15 HEAD)
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-s3cmd"}
+export S3CMD_CONTAINER_IMAGE_TAG="s3cmd-${S3CMD_VERSION}-cicd-${ORCHESTRATOR_GIT_COMMIT_ID}"
+export S3CMD_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${S3CMD_CONTAINER_IMAGE_TAG}"
+
+echo  "Pushing OCI Image [${S3CMD_OCI_IMAGE_GUN}] with [stable-latest] tag"
+
+docker tag ${S3CMD_OCI_IMAGE_GUN} "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
+docker push "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"

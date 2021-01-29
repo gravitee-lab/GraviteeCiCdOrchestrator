@@ -32,6 +32,7 @@ workflows:
       equal: [ pr_build, << pipeline.parameters.gio_action >> ]
     jobs:
       - gravitee/pull_request:
+          # This is a  standard pull request : no docker image job
           context: cicd-orchestrator
           # you can anytime change the maven container image tag
           # e.g.you want another jdk or maven version
