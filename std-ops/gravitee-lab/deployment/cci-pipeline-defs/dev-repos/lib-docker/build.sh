@@ -2,6 +2,13 @@
 
 set -x
 
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     MAVEN DOCKER IMAGE                     --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
 # --
 export MAVEN_VERSION=${MAVEN_VERSION:-"3.6.3"}
 export OPENJDK_VERSION=${OPENJDK_VERSION:-"11"}
@@ -38,3 +45,33 @@ export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg NON_ROOT_USER_NAME=${NON_RO
 
 docker build -t "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}" ${OCI_BUILD_ARGS} -f ./maven/Dockerfile ./maven/
 docker tag "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:${DESIRED_DOCKER_TAG}" "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest"
+
+
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     S3CMD DOCKER IMAGE                     --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
+export S3CMD_VERSION=${S3CMD_VERSION:-"2.1.0"}
+# I identify the version of the whole CI CD system,wih the versionof the Gravitee CI CD Orchestrator
+export ORCHESTRATOR_GIT_COMMIT_ID=$(git rev-parse --short=15 HEAD)
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-s3cmd"}
+export S3CMD_CONTAINER_IMAGE_TAG="s3cmd-${S3CMD_VERSION}-cicd-${ORCHESTRATOR_GIT_COMMIT_ID}"
+export S3CMD_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${S3CMD_CONTAINER_IMAGE_TAG}"
+
+echo  "Building OCI Image [${S3CMD_OCI_IMAGE_GUN}]"
+
+# docker build -t graviteeio/s3cmd:clever-cloud-0.0.1 .
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
+export OCI_VENDOR=gravitee.io
+
+export OCI_BUILD_ARGS="--build-arg S3CMD_VERSION=${S3CMD_VERSION}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg ORCHESTRATOR_GIT_COMMIT_ID=${ORCHESTRATOR_GIT_COMMIT_ID}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg OCI_VENDOR=${OCI_VENDOR}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
+
+
+docker build -t ${S3CMD_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./maven/Dockerfile ./s3cmd/

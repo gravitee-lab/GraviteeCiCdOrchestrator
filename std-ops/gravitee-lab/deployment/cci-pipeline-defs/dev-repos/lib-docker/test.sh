@@ -2,6 +2,13 @@
 
 set -x
 
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     MAVEN DOCKER IMAGE TESTS               --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
 # --
 export MAVEN_VERSION=${MAVEN_VERSION:-"3.6.3"}
 export OPENJDK_VERSION=${OPENJDK_VERSION:-"11"}
@@ -298,3 +305,12 @@ chmod +x ./let_say_here/.circleci/gpg.signature.run.tests.sh
 export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2"
 # docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
 docker run -it --name test11ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.signature.run.tests.sh
+
+
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     S3CMD DOCKER IMAGE TESTS               --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+echo "No tests are run yet for the S3CMD DOCKER IMAGE "
