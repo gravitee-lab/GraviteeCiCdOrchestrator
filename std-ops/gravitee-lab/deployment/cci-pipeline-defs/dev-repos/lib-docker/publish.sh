@@ -91,4 +91,10 @@ export S3CMD_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSI
 echo  "Pushing OCI Image [${S3CMD_OCI_IMAGE_GUN}] with [stable-latest] tag"
 
 docker tag ${S3CMD_OCI_IMAGE_GUN} "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
+
+# ---
+# always push both the original tag, and the same tagged as stable-latest
+# ---
+#
+docker push "${S3CMD_OCI_IMAGE_GUN}"
 docker push "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
