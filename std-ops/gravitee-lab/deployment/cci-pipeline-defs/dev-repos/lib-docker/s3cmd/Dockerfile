@@ -16,7 +16,7 @@ LABEL maintainer="jean-baptiste.lasselle@graviteesource.com"
 # [python-pip] package necessary for s3cmd installation
 # [python3-pip] package necessary for s3cmd installation  ?
 # RUN apt-get update -y && apt-get install -y curl wget python3-pip jq
-RUN apt-get update -y && apt-get install -y bash curl wget python-pip python-setuptools jq unzip
+RUN apt-get update -y && apt-get install -y bash curl wget python-pip python-setuptools jq unzip tree
 
 # install kubectl latest stable
 # https://kubernetes.io/docs/tasks/tools/install-kubectl/
