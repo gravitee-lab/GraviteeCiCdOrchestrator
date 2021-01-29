@@ -74,4 +74,4 @@ export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg OCI_VENDOR=${OCI_VENDOR}"
 export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
 
 
-docker build -t ${S3CMD_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./maven/Dockerfile ./s3cmd/
+docker build -t ${S3CMD_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./s3cmd/Dockerfile ./s3cmd/
