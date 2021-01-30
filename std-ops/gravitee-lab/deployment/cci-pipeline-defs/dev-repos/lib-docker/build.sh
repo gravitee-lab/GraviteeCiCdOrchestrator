@@ -75,3 +75,32 @@ export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
 
 
 docker build -t ${S3CMD_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./s3cmd/Dockerfile ./s3cmd/
+
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                     RESTIC DOCKER IMAGE                    --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
+export RESTIC_VERSION=${RESTIC_VERSION:-"0.11.0"}
+# I identify the version of the whole CI CD system,wih the versionof the Gravitee CI CD Orchestrator
+export ORCHESTRATOR_GIT_COMMIT_ID=$(git rev-parse --short=15 HEAD)
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-restic"}
+export RESTIC_CONTAINER_IMAGE_TAG="restic-${RESTIC_VERSION}-cicd-${ORCHESTRATOR_GIT_COMMIT_ID}"
+export RESTIC_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${RESTIC_CONTAINER_IMAGE_TAG}"
+
+echo  "Building OCI Image [${RESTIC_OCI_IMAGE_GUN}]"
+
+# docker build -t graviteeio/restic:clever-cloud-0.0.1 .
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
+export OCI_VENDOR=gravitee.io
+
+export OCI_BUILD_ARGS="--build-arg RESTIC_VERSION=${RESTIC_VERSION}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg ORCHESTRATOR_GIT_COMMIT_ID=${ORCHESTRATOR_GIT_COMMIT_ID}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg OCI_VENDOR=${OCI_VENDOR}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
+
+
+docker build -t ${RESTIC_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./restic/Dockerfile ./restic/
