@@ -6,6 +6,8 @@ import requests
 import json
 from shutil import copy2
 from urllib.request import urlretrieve
+import urllib2, base64
+
 
 # Input parameters
 version_param = os.environ.get('RELEASE_VERSION')
@@ -149,8 +151,12 @@ def download(name, filename_path, url):
     print('\nDowloading %s\n%s' % (name, url))
     if url.startswith("http"):
         filename_path = tmp_path + "/" + get_suffix_path_by_name(name) + url[url.rfind('/'):]
-        urlretrieve(url, filename_path)
+        urlretrieve(url, filename_path) # original http call from Jenkins
         # TODO JBL : add HTTP Basic Auth authentication https://stackoverflow.com/questions/44239822/urllib-request-urlopenurl-with-authentication
+        request = urllib2.Request(url)
+        base64string = base64.b64encode('%s:%s' % (username, password))
+        request.add_header("Authorization", "Basic %s" % base64string)
+        result = urllib2.urlopen(request)
     else:
         copy2(url, filename_path)
 
