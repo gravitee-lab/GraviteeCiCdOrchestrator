@@ -13,7 +13,7 @@ LABEL cicd.github.org="${GITHUB_ORG}"
 LABEL vendor="${OCI_VENDOR}"
 LABEL maintainer="jean-baptiste.lasselle@graviteesource.com"
 
-RELEASE_VERSION=$RELEASE_VERSION
+ENV RELEASE_VERSION=$RELEASE_VERSION
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./
