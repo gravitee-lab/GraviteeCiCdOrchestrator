@@ -8,6 +8,7 @@
 
 ```bash
 docker build -t py-bundler .
+docker run -it --rm --name my-running-py-bundler py-bundler
 ```
 
 ## Meta data of the image : Labels
