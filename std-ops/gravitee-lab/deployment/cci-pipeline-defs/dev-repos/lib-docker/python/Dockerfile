@@ -15,9 +15,9 @@ LABEL maintainer="jean-baptiste.lasselle@graviteesource.com"
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# COPY requirements.txt ./
+# RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY package_bundles.py .
 
-CMD [ "python", "./your-daemon-or-script.py" ]
+CMD [ "python", "./package_bundles.py" ]
