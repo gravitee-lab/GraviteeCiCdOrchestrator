@@ -150,6 +150,7 @@ def download(name, filename_path, url):
     if url.startswith("http"):
         filename_path = tmp_path + "/" + get_suffix_path_by_name(name) + url[url.rfind('/'):]
         urlretrieve(url, filename_path)
+        # TODO JBL : add HTTP Basic Auth authentication https://stackoverflow.com/questions/44239822/urllib-request-urlopenurl-with-authentication
     else:
         copy2(url, filename_path)
 
