@@ -15,8 +15,8 @@ LABEL maintainer="jean-baptiste.lasselle@graviteesource.com"
 
 WORKDIR /usr/src/app
 
-# COPY requirements.txt ./
-# RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 # RUN pip install os-tools regex pycopy-shutil zipfile2 requests json2json copy2hash urllib5 resumable-urlretrieve
 COPY package_bundles.py .
 
