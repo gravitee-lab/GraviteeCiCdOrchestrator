@@ -17,7 +17,7 @@ WORKDIR /usr/src/app
 
 # COPY requirements.txt ./
 # RUN pip install --no-cache-dir -r requirements.txt
-
+RUN pip install os re shutil zipfile requests json shutil import copy2 urllib urlretrieve
 COPY package_bundles.py .
 
 CMD [ "python", "./package_bundles.py" ]
