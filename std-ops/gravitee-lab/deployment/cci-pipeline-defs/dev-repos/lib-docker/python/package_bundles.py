@@ -13,6 +13,8 @@ from urllib.request import urlopen
 from shutil import copyfileobj
 import requests
 import getpass
+import logging
+
 
 
 
@@ -24,7 +26,18 @@ arti_password_param = os.environ.get('ARTIFACTORY_PASSWORD')
 artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 https_debug_level = os.environ.get('HTTPS_DEBUG_LEVEL')
 
-http.client.HTTPConnection.debuglevel = 10
+# https://docs.python.org/3/howto/logging.html
+if https_debug_level == "CRITICAL":
+  logging.basicConfig(level=logging.CRITICAL)
+elif https_debug_level == "ERROR":
+  logging.basicConfig(level=logging.ERROR)
+elif https_debug_level == "WARN":
+  logging.basicConfig(level=logging.WARN)
+elif https_debug_level == "DEBUG":
+  logging.basicConfig(level=logging.DEBUG)
+else:
+  logging.basicConfig(level=logging.INFO)
+
 
 # ----
 artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo
