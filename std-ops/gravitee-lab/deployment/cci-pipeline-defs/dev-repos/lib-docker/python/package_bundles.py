@@ -256,7 +256,7 @@ def download(name, filename_path, url):
             # shutil.copyfileobj(in_stream.read(), out_file, -1)
             # # out_file.write(in_stream.read())
         print('Writing extremely simple testfile')
-        ftest=open(target_folder_path + "testbinfile.bin","wb")
+        ftest=open(target_folder_path + "/testbinfile.bin","wb")
         num=[5, 10, 15, 20, 25]
         arr=bytearray(num)
         ftest.write(arr)
