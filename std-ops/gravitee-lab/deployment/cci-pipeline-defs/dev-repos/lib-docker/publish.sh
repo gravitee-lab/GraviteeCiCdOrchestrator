@@ -114,6 +114,8 @@ export PY_BUNDLER_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_R
 
 echo  "Pushing OCI Image [${PY_BUNDLER_OCI_IMAGE_GUN}]"
 
+docker tag ${PY_BUNDLER_OCI_IMAGE_GUN} "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
+
 # ---
 # always push both the original tag, and the same tagged as stable-latest
 # ---
