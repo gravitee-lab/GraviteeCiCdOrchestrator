@@ -14,6 +14,8 @@ export SECRETHUB_REPO="cicd"
 export ARTIFACTORY_BOT_USER_NAME=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-name")
 export ARTIFACTORY_BOT_USER_PWD=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-pwd")
 
+echo "export ARTIFACTORY_BOT_USER_NAME=${ARTIFACTORY_BOT_USER_NAME}"
+echo "export ARTIFACTORY_BOT_USER_PWD=${ARTIFACTORY_BOT_USER_PWD}"
 
 export BUNDLER_ENV_ARGS="-e RELEASE_VERSION=3.4.3 -e ARTIFACTORY_USERNAME=${ARTIFACTORY_BOT_USER_NAME} -e ARTIFACTORY_PASSWORD=${ARTIFACTORY_BOT_USER_PWD}"
 

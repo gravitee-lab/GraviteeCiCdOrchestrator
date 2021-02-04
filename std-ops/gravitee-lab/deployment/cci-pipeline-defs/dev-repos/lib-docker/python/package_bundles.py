@@ -6,6 +6,7 @@ import requests
 import json
 from shutil import copy2
 from urllib.request import urlretrieve
+import urllib
 # import urllib2, base64
 
 # Artifactory HTTP Basic Auth
