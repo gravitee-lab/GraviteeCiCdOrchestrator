@@ -259,7 +259,7 @@ def download(name, filename_path, url):
         if os.path.isdir(target_folder_path):
           os.mkdir(target_folder_path)
 
-        ftest=open(target_folder_path + "/testbinfile.bin","wb")
+        ftest=open(target_folder_path + "/testbinfile.bin","wb+")
         num=[5, 10, 15, 20, 25]
         arr=bytearray(num)
         ftest.write(arr)
