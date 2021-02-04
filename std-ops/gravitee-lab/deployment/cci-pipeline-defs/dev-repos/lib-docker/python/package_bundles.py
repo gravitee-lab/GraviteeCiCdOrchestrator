@@ -7,6 +7,7 @@ import json
 from shutil import copy2
 from urllib.request import urlretrieve
 import urllib
+import httplib
 # import urllib2, base64
 from urllib.request import urlopen
 from shutil import copyfileobj
