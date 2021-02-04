@@ -35,6 +35,14 @@ RUN useradd -g $NON_ROOT_USER_GRP -u $NON_ROOT_USER_UID -m $NON_ROOT_USER_NAME
 
 RUN ls -allh /home/$NON_ROOT_USER_NAME
 RUN echo "whoami = [$(whoami)]"
+
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+COPY start.sh /usr/src/app
+RUN chmod a+x /usr/src/app/start.sh
+COPY package_bundles.py .
+RUN pip install --no-cache-dir -r requirements.txt
+
 RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP -R /usr/src
 USER $NON_ROOT_USER_NAME
 RUN echo "whoami = [$(whoami)]"
@@ -47,16 +55,7 @@ ENV HTTPS_DEBUG_LEVEL=$HTTPS_DEBUG_LEVEL
 
 RUN mkdir -p /usr/src/gio_files
 VOLUME /usr/src/gio_files
-WORKDIR /usr/src/app
 
-
-COPY requirements.txt ./
-COPY start.sh /usr/src/app
-RUN chmod +x /usr/src/app/start.sh
-
-RUN pip install --no-cache-dir -r requirements.txt
-# RUN pip install os-tools regex pycopy-shutil zipfile2 requests json2json copy2hash urllib5 resumable-urlretrieve
-COPY package_bundles.py .
 
 CMD [ "/usr/src/app/start.sh" ]
 # CMD [ "python", "./package_bundles.py" ]
