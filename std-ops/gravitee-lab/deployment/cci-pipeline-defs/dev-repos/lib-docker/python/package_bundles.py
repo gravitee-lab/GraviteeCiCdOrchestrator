@@ -8,6 +8,14 @@ from shutil import copy2
 from urllib.request import urlretrieve
 # import urllib2, base64
 
+# Artifactory HTTP Basic Auth
+arti_username_param = os.environ.get('ARTIFACTORY_USERNAME')
+arti_password_param = os.environ.get('ARTIFACTORY_PASSWORD')
+artifactory_auth_realm = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+artifactory_auth_realm.add_password(None, url, arti_username_param, arti_password_param)
+authhandler = urllib.request.HTTPBasicAuthHandler(artifactory_auth_realm)
+opener = urllib.request.build_opener(authhandler)
+urllib.request.install_opener(opener)
 
 # Input parameters
 version_param = os.environ.get('RELEASE_VERSION')
