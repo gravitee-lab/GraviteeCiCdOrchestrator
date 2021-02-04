@@ -35,6 +35,7 @@ RUN useradd -g $NON_ROOT_USER_GRP -u $NON_ROOT_USER_UID -m $NON_ROOT_USER_NAME
 
 RUN ls -allh /home/$NON_ROOT_USER_NAME
 RUN echo "whoami = [$(whoami)]"
+RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP -R /usr/src 
 USER $NON_ROOT_USER_NAME
 RUN echo "whoami = [$(whoami)]"
 
@@ -48,7 +49,6 @@ RUN mkdir -p /usr/src/gio_files
 VOLUME /usr/src/gio_files
 WORKDIR /usr/src/app
 
-RUN mkdir -p ./tmp/$RELEASE_VERSION/portals/
 
 COPY requirements.txt ./
 COPY start.sh /usr/src/app
