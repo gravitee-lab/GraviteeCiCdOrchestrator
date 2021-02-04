@@ -31,7 +31,7 @@ artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 
 
 # create a password manager
-password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+# - UNDER TESTS - # password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
 # Add the username and password.
 # If we knew the realm, we could use it instead of None.
@@ -43,21 +43,21 @@ password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
 # top_level_url = "http://example.com/foo/"
 
-artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
+# - UNDER TESTS - # artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
 
-password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
+# - UNDER TESTS - # password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
 
-handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+# - UNDER TESTS - # handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
 
 # create "opener" (OpenerDirector instance)
-opener = urllib.request.build_opener(handler)
+# - UNDER TESTS - # opener = urllib.request.build_opener(handler)
 
 # # use the opener to fetch a URL
 # opener.open(a_url)
 
 # # Install the opener.
 # # Now all calls to urllib.request.urlopen use our opener.
-# urllib.request.install_opener(opener)
+# - UNDER TESTS - # urllib.request.install_opener(opener)
 
 # ---
 # So in functions I will use the below [urlopen] call to
