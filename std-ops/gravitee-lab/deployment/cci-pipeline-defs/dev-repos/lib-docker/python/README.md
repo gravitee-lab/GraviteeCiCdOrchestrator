@@ -28,9 +28,11 @@ export HTTPS_LOGGING_LEVEL="DEBUG"
 
 
 export BUNDLER_ENV_ARGS="-e RELEASE_VERSION=3.4.3 -e ARTIFACTORY_REPO_NAME=${ARTIFACTORY_REPO_NAME} -e ARTIFACTORY_USERNAME=${ARTIFACTORY_BOT_USER_NAME} -e ARTIFACTORY_PASSWORD=${ARTIFACTORY_BOT_USER_PWD} -e HTTPS_DEBUG_LEVEL=${HTTPS_DEBUG_LEVEL}"
+export CCI_USER_UID=$(id -u)
+export CCI_USER_GID=$(id -g)
 
 # docker run ${BUNDLER_ENV_ARGS} -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
-docker run ${BUNDLER_ENV_ARGS} -v $PWD:/usr/src/gio_files -it --rm --name my-running-py-bundler py-bundler
+docker run ${BUNDLER_ENV_ARGS} --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD:/usr/src/gio_files -it --rm --name my-running-py-bundler py-bundler
 
 ```
 
