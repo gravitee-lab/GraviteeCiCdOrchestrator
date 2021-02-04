@@ -255,6 +255,12 @@ def download(name, filename_path, url):
         # with urllib.request.urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
             # shutil.copyfileobj(in_stream.read(), out_file, -1)
             # # out_file.write(in_stream.read())
+        print('Writing extremely simple testfile')
+        ftest=open(target_folder_path + "testbinfile.bin","wb")
+        num=[5, 10, 15, 20, 25]
+        arr=bytearray(num)
+        ftest.write(arr)
+        ftest.close()
         print('Beginning file download with requests')
         # r = requests.get(url)
         r = requests.get(url, auth=(arti_username_param, arti_password_param))
