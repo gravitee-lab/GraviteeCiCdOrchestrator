@@ -8,8 +8,8 @@ from shutil import copy2
 from urllib.request import urlretrieve
 import urllib
 # import urllib2, base64
-# - UNDER TESTS - # from urllib.request import urlopen
-# - UNDER TESTS - # from shutil import copyfileobj
+from urllib.request import urlopen
+from shutil import copyfileobj
 
 # ----
 
@@ -31,7 +31,7 @@ artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 
 
 # create a password manager
-# - UNDER TESTS - # password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
 # Add the username and password.
 # If we knew the realm, we could use it instead of None.
@@ -43,22 +43,21 @@ artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 
 # top_level_url = "http://example.com/foo/"
 
-# - UNDER TESTS - # artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
+artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
 
-# - UNDER TESTS - # password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
+password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
 
-# - UNDER TESTS - # handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
 
 # create "opener" (OpenerDirector instance)
-# - UNDER TESTS - # opener = urllib.request.build_opener(handler)
+opener = urllib.request.build_opener(handler)
 
 # # use the opener to fetch a URL
 # opener.open(a_url)
 
 # # Install the opener.
 # # Now all calls to urllib.request.urlopen use our opener.
-# - UNDER TESTS - # urllib.request.install_opener(opener)
-
+urllib.request.install_opener(opener)
 # ---
 # So in functions I will use the below [urlopen] call to
 # download a file, with a URL realtive to base URL defined by [artifactory_repo_url]
@@ -66,6 +65,7 @@ artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 # with urlopen(my_url) as in_stream, open('my_filename', 'wb') as out_file:
 #     copyfileobj(in_stream, out_file)
 
+# - UNDER TESTS - #
 
 # ----
 # ---- BEGINING OF LEGACY PYTHON SCRIPT
@@ -214,9 +214,9 @@ def download(name, filename_path, url):
     if url.startswith("http"):
         filename_path = tmp_path + "/" + get_suffix_path_by_name(name) + url[url.rfind('/'):]
         print('\nJBL Voici le chemin téléchargé :  %s\n%s' % (url, filename_path))
-        # with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
-            # copyfileobj(in_stream, out_file)
-        urlretrieve(url, filename_path) # original http call from Jenkins
+        with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
+            copyfileobj(in_stream, out_file)
+        # urlretrieve(url, filename_path) # original http call from Jenkins
         # # TODO JBL : add HTTP Basic Auth authentication https://stackoverflow.com/questions/44239822/urllib-request-urlopenurl-with-authentication
         # request = urllib2.Request(url)
         # base64string = base64.b64encode('%s:%s' % (username, password))
