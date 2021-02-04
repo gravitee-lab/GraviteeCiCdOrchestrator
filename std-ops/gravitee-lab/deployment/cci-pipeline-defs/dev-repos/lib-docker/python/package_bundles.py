@@ -12,6 +12,8 @@ import http.client
 from urllib.request import urlopen
 from shutil import copyfileobj
 import requests
+import getpass
+
 # ----
 http.client.HTTPConnection.debuglevel = 1
 
@@ -241,7 +243,7 @@ def download(name, filename_path, url):
         target_folder_path = tmp_path + "/" + get_suffix_path_by_name(name)
         print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le legacy :  %s\n%s' % (url, filename_path))
         print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le code JBL :  %s\n%s' % (url, target_folder_path))
-
+        getpass.getuser()
         # with urllib.request.urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
             # shutil.copyfileobj(in_stream.read(), out_file, -1)
             # # out_file.write(in_stream.read())
