@@ -102,6 +102,28 @@ docker push "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stab
 
 # -------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------- #
+# -----------                PYTHON BUNDLER DOCKER IMAGE                 --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
+export ORCHESTRATOR_GIT_COMMIT_ID=$(git rev-parse --short=15 HEAD)
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-py-bundler"}
+export PY_BUNDLER_CONTAINER_IMAGE_TAG="py-bundler-cicd-${ORCHESTRATOR_GIT_COMMIT_ID}"
+export PY_BUNDLER_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${PY_BUNDLER_CONTAINER_IMAGE_TAG}"
+
+echo  "Pushing OCI Image [${PY_BUNDLER_OCI_IMAGE_GUN}]"
+
+# ---
+# always push both the original tag, and the same tagged as stable-latest
+# ---
+#
+docker push "${PY_BUNDLER_OCI_IMAGE_GUN}"
+docker push "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
+
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
 # -----------                     RESTIC DOCKER IMAGE                     --------- #
 # -------------------------------------------------------------------------------- #
 # -------------------------------------------------------------------------------- #
