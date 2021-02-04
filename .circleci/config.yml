@@ -123,11 +123,11 @@ workflows:
   version: 2.1
   docker_build_and_push:
     jobs:
-      - docker_build_and_push_approval:
-          type: approval
+      # - docker_build_and_push_approval:
+          # type: approval
       - docker_build_and_push:
-          requires:
-            - docker_build_and_push_approval
+          # requires:
+            # - docker_build_and_push_approval
           context: cicd-orchestrator
           filters:
             branches:
@@ -145,11 +145,11 @@ workflows:
                 - /^[0-999].[0-999].[0-999]/
                 - /^[0-999].[0-999].[0-999]-alpha/
                 - /^[0-999].[0-999].[0-999]-beta/
-      - orb_container_library_publish_approval:
-          type: approval
+      # - orb_container_library_publish_approval:
+          # type: approval
       - orb_container_library_publish:
-          requires:
-            - orb_container_library_publish_approval
+          # requires:
+            # - orb_container_library_publish_approval
           context: cicd-orchestrator
           filters:
             branches:
