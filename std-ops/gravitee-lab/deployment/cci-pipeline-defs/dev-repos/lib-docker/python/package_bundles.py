@@ -28,14 +28,19 @@ https_debug_level = os.environ.get('HTTPS_DEBUG_LEVEL')
 
 # https://docs.python.org/3/howto/logging.html
 if https_debug_level == "CRITICAL":
+  print('\n ### Log level is set to : CRITICAL')
   logging.basicConfig(level=logging.CRITICAL)
 elif https_debug_level == "ERROR":
+  print('\n ### Log level is set to : ERROR')
   logging.basicConfig(level=logging.ERROR)
 elif https_debug_level == "WARN":
+  print('\n ### Log level is set to : WARN')
   logging.basicConfig(level=logging.WARN)
 elif https_debug_level == "DEBUG":
+  print('\n ### Log level is set to : DEBUG')
   logging.basicConfig(level=logging.DEBUG)
 else:
+  print('\n ### Log level is set to : INFO')
   logging.basicConfig(level=logging.INFO)
 
 
