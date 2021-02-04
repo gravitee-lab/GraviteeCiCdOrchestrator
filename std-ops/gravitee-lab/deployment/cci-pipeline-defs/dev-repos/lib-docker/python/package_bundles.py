@@ -256,7 +256,7 @@ def download(name, filename_path, url):
             # shutil.copyfileobj(in_stream.read(), out_file, -1)
             # # out_file.write(in_stream.read())
         print('Writing extremely simple testfile')
-        if os.path.isdir(target_folder_path):
+        if not os.path.isdir(target_folder_path):
           os.mkdir(target_folder_path)
 
         ftest=open(target_folder_path + "/testbinfile.bin","wb+")
