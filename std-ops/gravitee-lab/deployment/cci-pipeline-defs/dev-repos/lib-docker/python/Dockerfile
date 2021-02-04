@@ -21,6 +21,8 @@ ENV HTTPS_DEBUG_LEVEL=$HTTPS_DEBUG_LEVEL
 
 WORKDIR /usr/src/app
 
+RUN mkdir -p ./tmp/$RELEASE_VERSION/portals/
+
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 # RUN pip install os-tools regex pycopy-shutil zipfile2 requests json2json copy2hash urllib5 resumable-urlretrieve
