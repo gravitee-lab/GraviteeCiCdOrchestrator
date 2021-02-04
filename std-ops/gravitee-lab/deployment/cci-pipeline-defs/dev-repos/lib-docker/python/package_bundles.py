@@ -29,7 +29,7 @@ arti_password_param = os.environ.get('ARTIFACTORY_PASSWORD')
 # artifactory_repo = "nexus-and-non-dry-run-releases"
 # artifactory_repo = "gravitee-releases"
 artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
-
+https_debug_level = os.environ.get('HTTPS_DEBUG_LEVEL')
 
 # create a password manager
 password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
