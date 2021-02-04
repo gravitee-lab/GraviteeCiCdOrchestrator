@@ -196,8 +196,10 @@ def get_download_url(group_id, artifact_id, version, t):
     else:
         # https://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/com/graviteesource/license/gravitee-license-api/1.1.2/gravitee-license-api-1.1.2.jar
         # return "https://oss.sonatype.org/service/local/repositories/%s/content/%s/%s/%s/%s-%s.%s" % (
-        return artifactory_repo_url + "/%s/%s/%s/%s/%s-%s.%s" % (
-            ("snapshots" if snapshotPattern.match(version) else "releases"), group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
+        # return artifactory_repo_url + "/%s/%s/%s/%s/%s-%s.%s" % (
+            # ("snapshots" if snapshotPattern.match(version) else "releases"), group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
+        return artifactory_repo_url + "/%s/%s/%s/%s-%s.%s" % (
+            group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
 
 
 def get_suffix_path_by_name(name):
