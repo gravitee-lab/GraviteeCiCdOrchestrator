@@ -227,8 +227,8 @@ def download(name, filename_path, url):
         # with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
             # copyfileobj(in_stream, out_file)
         not os.path.exists(target_folder_path) or os.makedirs(target_folder_path)
-        with urlopen(url) as in_stream, open(filename_path, 'w+') as out_file:
-            copyfileobj(in_stream, out_file)
+        with urlopen(url) as in_stream, open(filename_path, 'w') as out_file:
+            shutil.copyfileobj(in_stream, out_file)
         # urlretrieve(url, filename_path) # original http call from Jenkins
         # # TODO JBL : add HTTP Basic Auth authentication https://stackoverflow.com/questions/44239822/urllib-request-urlopenurl-with-authentication
         # request = urllib2.Request(url)
