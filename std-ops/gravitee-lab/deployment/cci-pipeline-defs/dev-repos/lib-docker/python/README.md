@@ -7,7 +7,31 @@
 
 
 ```bash
-docker build -t py-bundler .
+# I identify the version of the whole CI CD system,wih the versionof the Gravitee CI CD Orchestrator
+export ORCHESTRATOR_GIT_COMMIT_ID=$(git rev-parse --short=15 HEAD)
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-py-bundler"}
+export PY_BUNDLER_CONTAINER_IMAGE_TAG="py-bundler-cicd-${ORCHESTRATOR_GIT_COMMIT_ID}"
+export PY_BUNDLER_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${PY_BUNDLER_CONTAINER_IMAGE_TAG}"
+
+echo  "Building OCI Image [${PY_BUNDLER_OCI_IMAGE_GUN}]"
+
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
+export OCI_VENDOR=gravitee.io
+export CCI_USER_UID=$(id -u)
+export CCI_USER_GID=$(id -g)
+export NON_ROOT_USER_UID=${CCI_USER_UID}
+export NON_ROOT_USER_NAME=$(whoami)
+export NON_ROOT_USER_GID=${CCI_USER_GID}
+export NON_ROOT_USER_GRP=${NON_ROOT_USER_NAME}
+
+export OCI_BUILD_ARGS=""
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg ORCHESTRATOR_GIT_COMMIT_ID=${ORCHESTRATOR_GIT_COMMIT_ID}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg OCI_VENDOR=${OCI_VENDOR}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
+
+docker build -t ${PY_BUNDLER_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./python/Dockerfile ./python/
+
 
 export SECRETHUB_ORG="gravitee-lab"
 export SECRETHUB_REPO="cicd"
@@ -17,19 +41,28 @@ export ARTIFACTORY_BOT_USER_PWD=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_R
 echo "export ARTIFACTORY_BOT_USER_NAME=${ARTIFACTORY_BOT_USER_NAME}"
 echo "export ARTIFACTORY_BOT_USER_PWD=${ARTIFACTORY_BOT_USER_PWD}"
 
-export ARTIFACTORY_REPO_NAME=nexus-and-non-dry-run-releases
 export ARTIFACTORY_REPO_NAME=gravitee-releases
-export HTTPS_DEBUG_LEVEL=1
-export HTTPS_DEBUG_LEVEL=10
+export ARTIFACTORY_REPO_NAME=nexus-and-non-dry-run-releases
+
+export HTTPS_LOGGING_LEVEL="CRITICAL"
+export HTTPS_LOGGING_LEVEL="ERROR"
+export HTTPS_LOGGING_LEVEL="INFO"
+export HTTPS_LOGGING_LEVEL="WARN"
+export HTTPS_LOGGING_LEVEL="DEBUG"
+
 
 export BUNDLER_ENV_ARGS="-e RELEASE_VERSION=3.4.3 -e ARTIFACTORY_REPO_NAME=${ARTIFACTORY_REPO_NAME} -e ARTIFACTORY_USERNAME=${ARTIFACTORY_BOT_USER_NAME} -e ARTIFACTORY_PASSWORD=${ARTIFACTORY_BOT_USER_PWD} -e HTTPS_DEBUG_LEVEL=${HTTPS_DEBUG_LEVEL}"
+export CCI_USER_UID=$(id -u)
+export CCI_USER_GID=$(id -g)
 
-docker run ${BUNDLER_ENV_ARGS} -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
+# docker run ${BUNDLER_ENV_ARGS} -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
+docker run ${BUNDLER_ENV_ARGS} --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD:/usr/src/gio_files -it --rm --name my-running-py-bundler py-bundler
+
 ```
 
 ## Meta data of the image : Labels
 
-When you use the `cicd-python` Gravitee CICD Sysem contianer image, always use the `stable-latest`, tag, and then you can get the following metadata(e.g.the version of `python` in the container), like this :
+When you use the `cicd-python` Gravitee CICD System contianer image, always use the `stable-latest`, tag, and then you can get the following metadata(e.g.the version of `python` in the container), like this :
 
 ```bash
 

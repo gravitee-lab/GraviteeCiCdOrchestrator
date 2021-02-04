@@ -13,12 +13,19 @@ from urllib.request import urlopen
 from shutil import copyfileobj
 import requests
 import getpass
-import logging
 
+# ----
+http.client.HTTPConnection.debuglevel = 1
 
+# from urllib.request import urlopen
+# from shutil import copyfileobj
+
+# with urlopen(my_url) as in_stream, open('my_filename', 'wb') as out_file:
+#     copyfileobj(in_stream, out_file)
 
 
 # ---
+
 arti_username_param = os.environ.get('ARTIFACTORY_USERNAME')
 arti_password_param = os.environ.get('ARTIFACTORY_PASSWORD')
 # artifactory_repo = "nexus-and-non-dry-run-releases"
@@ -26,26 +33,60 @@ arti_password_param = os.environ.get('ARTIFACTORY_PASSWORD')
 artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 https_debug_level = os.environ.get('HTTPS_DEBUG_LEVEL')
 
-# https://docs.python.org/3/howto/logging.html
-if https_debug_level == "CRITICAL":
-  print('\n ### Log level is set to : CRITICAL')
-  logging.basicConfig(level=logging.CRITICAL)
-elif https_debug_level == "ERROR":
-  print('\n ### Log level is set to : ERROR')
-  logging.basicConfig(level=logging.ERROR)
-elif https_debug_level == "WARN":
-  print('\n ### Log level is set to : WARN')
-  logging.basicConfig(level=logging.WARN)
-elif https_debug_level == "DEBUG":
-  print('\n ### Log level is set to : DEBUG')
-  logging.basicConfig(level=logging.DEBUG)
-else:
-  print('\n ### Log level is set to : INFO')
-  logging.basicConfig(level=logging.INFO)
+# create a password manager
+password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
+# Add the username and password.
+# If we knew the realm, we could use it instead of None.
+# https://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/releases/io/gravitee/portal/gravitee-portal-webui/3.4.3/gravitee-portal-webui-3.4.3.zip
+# for portal, for example,the zip is fetched form artifactory:
+# => search in gravitee-releases repo
+# => if not found in gravitee-releases repo, then fetch the [nexus-and-non-dry-run-releases/] repo (https://odbxikk7vo-artifactory.services.clever-cloud.com/nexus-and-non-dry-run-releases/)
+#    and in each artifactory repo, the URL of the GRavitee APIM Portal, relatively to the artifactory repo URL, is [/io/gravitee/portal/gravitee-portal-webui/3.4.3/gravitee-portal-webui-3.4.3.zip]
 
-# ----
+# top_level_url = "http://example.com/foo/"
+
+# artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
 artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo
+
+
+password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
+
+handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+https_handler = urllib.request.HTTPSHandler(debuglevel=1)
+# create "opener" (OpenerDirector instance)
+opener = urllib.request.build_opener(handler, https_handler)
+
+# # use the opener to fetch a URL
+# opener.open(a_url)
+
+# # Install the opener.
+# # Now all calls to urllib.request.urlopen use our opener.
+urllib.request.install_opener(opener)
+# ---
+# So in functions I will use the below [urlopen] call to
+# download a file, with a URL realtive to base URL defined by [artifactory_repo_url]
+# ---
+# with urlopen(my_url) as in_stream, open('my_filename', 'wb') as out_file:
+#     copyfileobj(in_stream, out_file)
+
+# - UNDER TESTS - #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # ----

@@ -1,20 +1,34 @@
 #!/bin/bash
-export INSTALL_OPS_HOME=$(mktemp -d -t "s3cmd_install_ops-XXXXXXXXXX")
-export S3CMD_VERSION=${S3CMD_VERSION:-'2.1.0'}
-curl -LO https://github.com/s3tools/s3cmd/releases/download/v${S3CMD_VERSION}/s3cmd-${S3CMD_VERSION}.zip
-curl -LO https://github.com/s3tools/s3cmd/releases/download/v${S3CMD_VERSION}/s3cmd-${S3CMD_VERSION}.zip.asc
-# okay this is a GPG based signature check
-# Si need GPG installed, a GPG keyring context
-# gpg --keyid-format long --list-options show-keyring s3cmd-.zip.asc
-# I will need the GPG Public Key of the project, whichI could not find anywhere yet, so
-# I opened an issue to ask for it : https://github.com/s3tools/s3cmd/issues/1173
-# https://serverfault.com/questions/896228/how-to-verify-a-file-using-an-asc-signature-file
-# once verifications finished
 
-unzip ./s3cmd-${S3CMD_VERSION}.zip -d ${INSTALL_OPS_HOME}
-export WHERE_IAM=$(pwd)
-cd ${INSTALL_OPS_HOME}/s3cmd-2.1.0
-python setup.py install
-cd ${WHERE_IAM}
-rm -fr ${INSTALL_OPS_HOME}
-s3cmd --version
+export FOLDER_FOR_ALL_DOWNLOADED_FILES=/usr/src/gio_files
+
+# mkdir -p /usr/src/gio_files/tmp/3.4.3/portals/
+# chmod a+rw /usr/src/gio_files/tmp/3.4.3/portals/
+# touch /usr/src/gio_files/tmp/3.4.3/portals/gravitee-portal-webui-3.4.3.zip
+# chmod a+rw /usr/src/gio_files/tmp/3.4.3/portals/gravitee-portal-webui-3.4.3.zip
+
+# export PATH="$PATH:/usr/src/app:/usr/src/app/tmp/${RELEASE_VERSION}/portals/"
+# export PATH="$PATH:$FOLDER_FOR_ALL_DOWNLOADED_FILES:$FOLDER_FOR_ALL_DOWNLOADED_FILES/tmp/${RELEASE_VERSION}/portals/:/usr/src/app"
+
+echo "# ------------------------------------------------------------ #"
+echo "   Just before python script start up : "
+echo "# ------------------------------------------------------------ #"
+# echo "  PWD = [${PWD}]"
+# echo "# ------------------------------------------------------------ #"
+# echo "  existence du répertoire [/usr/src/gio_files/tmp/3.4.3/portals/] : "
+# ls -allh /usr/src/gio_files/tmp/3.4.3/portals/
+echo "# ------------------------------------------------------------ #"
+# echo "  existence du fichier [/usr/src/gio_files/tmp/3.4.3/portals/gravitee-portal-webui-3.4.3.zip] : "
+# ls -allh /usr/src/gio_files/tmp/3.4.3/portals/gravitee-portal-webui-3.4.3.zip
+echo "# ------------------------------------------------------------ #"
+echo "   Linux user identity : "
+id
+echo "# ------------------------------------------------------------ #"
+echo "  Path to the Python Executable : "
+which python
+ls -allh /usr/local/bin/python
+echo "# ------------------------------------------------------------ #"
+# The directory containing the python executable must be in the PATH
+export PATH="$PATH:/usr/local/bin"
+
+python ./package_bundles.py
