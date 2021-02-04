@@ -26,7 +26,9 @@ id
 echo "# ------------------------------------------------------------ #"
 echo "  Path to the Python Executable : "
 which python
+ls -allh /usr/local/bin/python
 echo "# ------------------------------------------------------------ #"
 # The directory containing the python executable must be in the PATH
+export PATH="$PATH:/usr/local/bin"
 
 python ./package_bundles.py
