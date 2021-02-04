@@ -214,9 +214,9 @@ def download(name, filename_path, url):
     if url.startswith("http"):
         filename_path = tmp_path + "/" + get_suffix_path_by_name(name) + url[url.rfind('/'):]
         print('\nJBL Voici le chemin téléchargé :  %s\n%s' % (url, filename_path))
-        with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
-            copyfileobj(in_stream, out_file)
-        # urlretrieve(url, filename_path) # original http call from Jenkins
+        # with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
+            # copyfileobj(in_stream, out_file)
+        urlretrieve(url, filename_path) # original http call from Jenkins
         # # TODO JBL : add HTTP Basic Auth authentication https://stackoverflow.com/questions/44239822/urllib-request-urlopenurl-with-authentication
         # request = urllib2.Request(url)
         # base64string = base64.b64encode('%s:%s' % (username, password))
