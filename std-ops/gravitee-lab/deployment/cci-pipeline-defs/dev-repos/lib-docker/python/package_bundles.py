@@ -219,7 +219,9 @@ def download(name, filename_path, url):
     if url.startswith("http"):
         filename_path = tmp_path + "/" + get_suffix_path_by_name(name) + url[url.rfind('/'):]
         target_folder_path = tmp_path + "/" + get_suffix_path_by_name(name)
-        print('\nJBL Voici le chemin téléchargé :  %s\n%s' % (url, filename_path))
+        print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le legacy :  %s\n%s' % (url, filename_path))
+        print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le code JBL :  %s\n%s' % (url, target_folder_path))
+
         # with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
             # copyfileobj(in_stream, out_file)
         with urlopen(url) as in_stream, open(target_folder_path, 'wb') as out_file:
