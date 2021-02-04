@@ -106,6 +106,7 @@ folder_for_all_downloaded_files = os.environ.get('FOLDER_FOR_ALL_DOWNLOADED_FILE
 tmp_path = folder_for_all_downloaded_files + '/tmp/%s' % version_param
 
 current_dir_path = os.path.dirname(os.path.realpath(__file__))
+jbl_py_system_path = os.environ.get('PATH');
 
 print('\nTemporary Folfer is : %s' % (tmp_path))
 policies_path = "%s/policies" % tmp_path
@@ -248,9 +249,9 @@ def download(name, filename_path, url):
         target_folder_path = tmp_path + "/" + get_suffix_path_by_name(name)
         print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le legacy :  %s\n%s' % (url, filename_path))
         print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le code JBL :  %s\n%s' % (url, target_folder_path))
-        print('\n current linux user is : %s' % getpass.getuser())
-        print('\n current_dir_path is: %s' % current_dir_path)
-
+        print('\n current linux user is : %s\n' % getpass.getuser())
+        print('\n current_dir_path is: %s\n' % current_dir_path)
+        print('\n system PATH is: %s\n' % jbl_py_system_path)
         # with urllib.request.urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
             # shutil.copyfileobj(in_stream.read(), out_file, -1)
             # # out_file.write(in_stream.read())
