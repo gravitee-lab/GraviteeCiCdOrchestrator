@@ -259,7 +259,7 @@ def download(name, filename_path, url):
         # r = requests.get(url)
         r = requests.get(url, auth=(arti_username_param, arti_password_param))
 
-        with open(filename_path, 'c') as f:
+        with open(filename_path, 'x') as f:
             f.write(r.content)
 
         # Retrieve HTTP meta-data
