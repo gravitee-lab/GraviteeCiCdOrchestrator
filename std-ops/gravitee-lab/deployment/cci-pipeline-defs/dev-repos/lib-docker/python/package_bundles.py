@@ -49,9 +49,9 @@ artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com
 password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
 
 handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
-
+https_handler = urllib.request.HTTPSHandler(debuglevel=1)
 # create "opener" (OpenerDirector instance)
-opener = urllib.request.build_opener(handler)
+opener = urllib.request.build_opener(handler, https_handler)
 
 # # use the opener to fetch a URL
 # opener.open(a_url)
