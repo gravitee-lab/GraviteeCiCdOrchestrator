@@ -24,5 +24,9 @@ echo "# ------------------------------------------------------------ #"
 echo "   identité du user linux : "
 id
 echo "# ------------------------------------------------------------ #"
+echo "  Path to the Python Executable : "
+which python
+echo "# ------------------------------------------------------------ #"
+# The directory containing the python executable must be in the PATH
 
 python ./package_bundles.py
