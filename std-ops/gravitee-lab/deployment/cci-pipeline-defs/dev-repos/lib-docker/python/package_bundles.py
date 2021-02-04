@@ -25,6 +25,9 @@ from shutil import copyfileobj
 
 arti_username_param = os.environ.get('ARTIFACTORY_USERNAME')
 arti_password_param = os.environ.get('ARTIFACTORY_PASSWORD')
+# artifactory_repo = "nexus-and-non-dry-run-releases"
+# artifactory_repo = "gravitee-releases"
+artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 
 
 # create a password manager
@@ -39,9 +42,6 @@ password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 #    and in each artifactory repo, the URL of the GRavitee APIM Portal, relatively to the artifactory repo URL, is [/io/gravitee/portal/gravitee-portal-webui/3.4.3/gravitee-portal-webui-3.4.3.zip]
 
 # top_level_url = "http://example.com/foo/"
-artifactory_repo = "nexus-and-non-dry-run-releases"
-artifactory_repo = "gravitee-releases"
-artifactory_repo = os.environ.get('ARTIFACTORY_REPO_NAME')
 
 artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
 
@@ -57,7 +57,7 @@ opener = urllib.request.build_opener(handler)
 
 # # Install the opener.
 # # Now all calls to urllib.request.urlopen use our opener.
-urllib.request.install_opener(opener)
+# urllib.request.install_opener(opener)
 
 # ---
 # So in functions I will use the below [urlopen] call to
@@ -68,7 +68,7 @@ urllib.request.install_opener(opener)
 
 
 # ----
-# ----
+# ---- BEGINING OF LEGACY PYTHON SCRIPT
 # ----
 
 # Input parameters
