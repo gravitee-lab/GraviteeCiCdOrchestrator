@@ -24,8 +24,12 @@ WORKDIR /usr/src/app
 RUN mkdir -p ./tmp/$RELEASE_VERSION/portals/
 
 COPY requirements.txt ./
+COPY start.sh /usr/src/app
+RUN chmod +x /usr/src/app/start.sh
+
 RUN pip install --no-cache-dir -r requirements.txt
 # RUN pip install os-tools regex pycopy-shutil zipfile2 requests json2json copy2hash urllib5 resumable-urlretrieve
 COPY package_bundles.py .
 
-CMD [ "python", "./package_bundles.py" ]
+CMD [ "/usr/src/app/start.sh" ]
+# CMD [ "python", "./package_bundles.py" ]
