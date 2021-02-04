@@ -8,8 +8,8 @@ from shutil import copy2
 from urllib.request import urlretrieve
 import urllib
 # import urllib2, base64
-from urllib.request import urlopen
-from shutil import copyfileobj
+# - UNDER TESTS - # from urllib.request import urlopen
+# - UNDER TESTS - # from shutil import copyfileobj
 
 # ----
 
