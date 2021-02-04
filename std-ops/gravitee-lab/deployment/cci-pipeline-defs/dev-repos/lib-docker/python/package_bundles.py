@@ -11,7 +11,7 @@ import http.client
 # import urllib2, base64
 from urllib.request import urlopen
 from shutil import copyfileobj
-
+import requests
 # ----
 http.client.HTTPConnection.debuglevel = 1
 
@@ -69,6 +69,23 @@ urllib.request.install_opener(opener)
 #     copyfileobj(in_stream, out_file)
 
 # - UNDER TESTS - #
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ----
 # ---- BEGINING OF LEGACY PYTHON SCRIPT
@@ -225,20 +242,21 @@ def download(name, filename_path, url):
         print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le legacy :  %s\n%s' % (url, filename_path))
         print('\nJBL Voici l\'URL téléchargée et le folder local de destination dans le code JBL :  %s\n%s' % (url, target_folder_path))
 
-        # with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
-            # copyfileobj(in_stream, out_file)
-        # with urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
-            # copyfileobj(in_stream, out_file)
-        # not os.path.exists(target_folder_path) or os.makedirs(target_folder_path)
-        with urllib.request.urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
-            shutil.copyfileobj(in_stream.read(), out_file, -1)
-            # out_file.write(in_stream.read())
-        # urlretrieve(url, filename_path) # original http call from Jenkins
-        # # TODO JBL : add HTTP Basic Auth authentication https://stackoverflow.com/questions/44239822/urllib-request-urlopenurl-with-authentication
-        # request = urllib2.Request(url)
-        # base64string = base64.b64encode('%s:%s' % (username, password))
-        # request.add_header("Authorization", "Basic %s" % base64string)
-        # result = urllib2.urlopen(request)
+        # with urllib.request.urlopen(url) as in_stream, open(filename_path, 'wb') as out_file:
+            # shutil.copyfileobj(in_stream.read(), out_file, -1)
+            # # out_file.write(in_stream.read())
+        print('Beginning file download with requests')
+        # r = requests.get(url)
+        r = requests.get(url, auth=(arti_username_param, arti_password_param))
+
+        with open(filename_path, 'wb') as f:
+            f.write(r.content)
+
+        # Retrieve HTTP meta-data
+        print(r.status_code)
+        print(r.headers['content-type'])
+        print(r.encoding)
+
     else:
         copy2(url, filename_path)
 
