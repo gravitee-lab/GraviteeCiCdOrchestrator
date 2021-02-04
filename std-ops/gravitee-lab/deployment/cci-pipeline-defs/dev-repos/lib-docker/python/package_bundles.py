@@ -6,7 +6,7 @@ import requests
 import json
 from shutil import copy2
 from urllib.request import urlretrieve
-import urllib2, base64
+# import urllib2, base64
 
 
 # Input parameters
