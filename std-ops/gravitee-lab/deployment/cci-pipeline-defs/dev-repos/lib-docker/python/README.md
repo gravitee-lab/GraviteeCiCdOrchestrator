@@ -8,7 +8,16 @@
 
 ```bash
 docker build -t py-bundler .
-docker run -e RELEASE_VERSION=3.4.3 -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
+
+export SECRETHUB_ORG="gravitee-lab"
+export SECRETHUB_REPO="cicd"
+export ARTIFACTORY_BOT_USER_NAME=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-name")
+export ARTIFACTORY_BOT_USER_PWD=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/dry-run/artifactory/user-pwd")
+
+
+export BUNDLER_ENV_ARGS="-e RELEASE_VERSION=3.4.3 -e ARTIFACTORY_USERNAME=${ARTIFACTORY_BOT_USER_NAME} -e ARTIFACTORY_PASSWORD=${ARTIFACTORY_BOT_USER_PWD}"
+
+docker run "${BUNDLER_ENV_ARGS}" -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
 ```
 
 ## Meta data of the image : Labels
