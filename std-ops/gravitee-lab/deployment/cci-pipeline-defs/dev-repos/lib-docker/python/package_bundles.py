@@ -101,7 +101,11 @@ is_latest_param = True if version_param == "master" else False
 m2repo_path = '/m2repo'
 # tmp_path = './tmp/%s' % version_param
 
-tmp_path = os.path.dirname(os.path.abspath(__file__)) + '/tmp/%s' % version_param
+# tmp_path = os.path.dirname(os.path.abspath(__file__)) + '/tmp/%s' % version_param
+folder_for_all_downloaded_files = os.environ.get('FOLDER_FOR_ALL_DOWNLOADED_FILES')
+tmp_path = folder_for_all_downloaded_files + '/tmp/%s' % version_param
+
+
 print('\nTemporary Folfer is : %s' % (tmp_path))
 policies_path = "%s/policies" % tmp_path
 resources_path = "%s/resources" % tmp_path
