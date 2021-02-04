@@ -22,7 +22,7 @@ export ARTIFACTORY_REPO_NAME=gravitee-releases
 
 export BUNDLER_ENV_ARGS="-e RELEASE_VERSION=3.4.3 -e ARTIFACTORY_REPO_NAME=${ARTIFACTORY_REPO_NAME} -e ARTIFACTORY_USERNAME=${ARTIFACTORY_BOT_USER_NAME} -e ARTIFACTORY_PASSWORD=${ARTIFACTORY_BOT_USER_PWD}"
 
-docker run "${BUNDLER_ENV_ARGS}" -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
+docker run ${BUNDLER_ENV_ARGS} -v $PWD:/usr/src/app -it --rm --name my-running-py-bundler py-bundler
 ```
 
 ## Meta data of the image : Labels

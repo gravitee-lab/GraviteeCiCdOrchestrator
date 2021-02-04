@@ -12,7 +12,7 @@ from urllib.request import urlopen
 from shutil import copyfileobj
 
 # ----
-
+http.client.HTTPConnection.debuglevel = 1
 
 # from urllib.request import urlopen
 # from shutil import copyfileobj
