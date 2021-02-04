@@ -44,7 +44,9 @@ password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
 
 # top_level_url = "http://example.com/foo/"
 
-artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
+# artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo + "/"
+artifactory_repo_url = "https://odbxikk7vo-artifactory.services.clever-cloud.com/" + artifactory_repo
+
 
 password_mgr.add_password(None, artifactory_repo_url, arti_username_param, arti_password_param)
 
@@ -194,7 +196,7 @@ def get_download_url(group_id, artifact_id, version, t):
     else:
         # https://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/com/graviteesource/license/gravitee-license-api/1.1.2/gravitee-license-api-1.1.2.jar
         # return "https://oss.sonatype.org/service/local/repositories/%s/content/%s/%s/%s/%s-%s.%s" % (
-        return "https://odbxikk7vo-artifactory.services.clever-cloud.com/gravitee-releases/%s/%s/%s/%s/%s-%s.%s" % (
+        return artifactory_repo_url + "/%s/%s/%s/%s/%s-%s.%s" % (
             ("snapshots" if snapshotPattern.match(version) else "releases"), group_id.replace(".", "/"), artifact_id, version, artifact_id, version, t)
 
 

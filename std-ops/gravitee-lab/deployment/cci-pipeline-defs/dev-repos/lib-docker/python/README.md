@@ -17,8 +17,8 @@ export ARTIFACTORY_BOT_USER_PWD=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_R
 echo "export ARTIFACTORY_BOT_USER_NAME=${ARTIFACTORY_BOT_USER_NAME}"
 echo "export ARTIFACTORY_BOT_USER_PWD=${ARTIFACTORY_BOT_USER_PWD}"
 
-export ARTIFACTORY_REPO_NAME=nexus-and-non-dry-run-releases
 export ARTIFACTORY_REPO_NAME=gravitee-releases
+export ARTIFACTORY_REPO_NAME=nexus-and-non-dry-run-releases
 export HTTPS_DEBUG_LEVEL=1
 export HTTPS_DEBUG_LEVEL=10
 
@@ -29,7 +29,7 @@ docker run ${BUNDLER_ENV_ARGS} -v $PWD:/usr/src/app -it --rm --name my-running-p
 
 ## Meta data of the image : Labels
 
-When you use the `cicd-python` Gravitee CICD Sysem contianer image, always use the `stable-latest`, tag, and then you can get the following metadata(e.g.the version of `python` in the container), like this :
+When you use the `cicd-python` Gravitee CICD System contianer image, always use the `stable-latest`, tag, and then you can get the following metadata(e.g.the version of `python` in the container), like this :
 
 ```bash
 
