@@ -67,14 +67,104 @@ export CCI_USER_GID=$(id -g)
 export NON_ROOT_USER_NAME=$(docker inspect --format '{{ index .Config.Labels "oci.image.nonroot.user.name"}}' "${PYTHON_DOCKER}")
 
 
-docker run ${GPG_SIGNER_ENV_ARGS} --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/.signer.secrets:/home/${NON_ROOT_USER_NAME}/.secrets -it --rm --name my-running-py-bundler py-bundler
+# --- #
+# Now how to sign a file with the image
+#
 
- ```
+# ---
+# The GnuPG SNIPPET
+cat << EOF >./signer/gpg.script.snippet.sh
+echo "# --------------------- #"
+# The [/home/$NON_ROOT_USER_NAME/.secrets] is engraved into the container image
+export SECRETS_HOME=/home/$NON_ROOT_USER_NAME/.secrets
+export RESTORED_GPG_PUB_KEY_FILE="\${SECRETS_HOME}/graviteebot.gpg.pub.key"
+export RESTORED_GPG_PRIVATE_KEY_FILE="\${SECRETS_HOME}/graviteebot.gpg.priv.key"
+echo "# --------------------- #"
+echo "Content of [\\\${SECRETS_HOME}/]=[\${SECRETS_HOME}/] (are the keys there in the container ?)" :
+ls -allh \${SECRETS_HOME}/
+echo "# --------------------- #"
+
+export EPHEMERAL_KEYRING_FOLDER_ZERO=\$(mktemp -d)
+chmod 700 \${EPHEMERAL_KEYRING_FOLDER_ZERO}
+export GNUPGHOME=\${EPHEMERAL_KEYRING_FOLDER_ZERO}
+echo "GPG Keys before import : "
+gpg --list-keys
+
+# ---
+# Importing GPG KeyPair
+gpg --batch --import \${RESTORED_GPG_PRIVATE_KEY_FILE}
+gpg --import \${RESTORED_GPG_PUB_KEY_FILE}
+echo "# --------------------- #"
+echo "GPG Keys after import : "
+gpg --list-keys
+echo "# --------------------- #"
+echo "  GPG version is :"
+echo "# --------------------- #"
+gpg --version
+echo "# --------------------- #"
+
+# ---
+# now we trust ultimately the Public Key in the Ephemeral Context,
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=${GRAVITEEBOT_GPG_SIGNING_KEY_ID}
+echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[\${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
+
+echo -e "5\\ny\\n" |  gpg --command-fd 0 --expert --edit-key \${GRAVITEEBOT_GPG_SIGNING_KEY_ID} trust
+
+export GPG_TTY=$(tty)
+echo "# ----------------------------------------------------------------"
+mkdir -p ~/.gnupg/
+touch ~/.gnupg/gpg.conf
+echo 'no-tty' > ~/.gnupg/gpg.conf
+echo "# ----------------------------------------------------------------"
+echo "   Check the content of the [~/.gnupg/gpg.conf] : "
+echo "# ----------------------------------------------------------------"
+cat ~/.gnupg/gpg.conf
+echo "# ----------------------------------------------------------------"
+echo " Now SED the [~/.gnupg/gpg.conf] : "
+echo "# ----------------------------------------------------------------"
+sed -i "s~#no-tty~no-tty~g" ~/.gnupg/gpg.conf
+echo "# ----------------------------------------------------------------"
+echo " AFTER SED content of the [~/.gnupg/gpg.conf] : "
+echo "# ----------------------------------------------------------------"
+cat ~/.gnupg/gpg.conf
+echo "# ----------------------------------------------------------------"
+
+echo "# --------------------- #"
+echo "# --- OK READY TO SIGN"
+echo "# --------------------- #"
+EOF
+export GPG_SCRIPT_SNIPPET=$(cat ./signer/gpg.script.snippet.sh)
+rm ./signer/gpg.script.snippet.sh
+
+export PATH_TO_FILE_TO_SIGN=./my.file.to.sign
+mkdir -p ./signer
+cp ${PATH_TO_FILE_TO_SIGN} ./signer
+
+export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase")
+export GRAVITEEBOT_GPG_SIGNING_KEY_ID=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/key_id")
+echo "GRAVITEEBOT_GPG_SIGNING_KEY_ID=[${GRAVITEEBOT_GPG_SIGNING_KEY_ID}]"
+
+
+cat << EOF > ./signer/signing.script.sh
+#!/bin/bash
+${GPG_SCRIPT_SNIPPET}
+
+gpg --keyid-format LONG -k "0x${GRAVITEEBOT_GPG_SIGNING_KEY_ID}"
+echo "${GRAVITEEBOT_GPG_PASSPHRASE}" | gpg -u "0x${GRAVITEEBOT_GPG_SIGNING_KEY_ID}" --pinentry-mode loopback --passphrase-fd 0 --detach-sign ./signer/some-file-to-sign.txt
+
+EOF
+
+docker run ${GPG_SIGNER_ENV_ARGS} --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/signer:/workspace/signer -v $PWD/.signer.secrets:/home/${NON_ROOT_USER_NAME}/.secrets -it --rm --name gpg_signer ${GPG_SIGNER_OCI_IMAGE_GUN} ./signer/signing.script.sh
+ls -allh ./signer/my.file.to.sign
+ls -allh ./signer/my.file.to.sign.sig
+
+
+```
 
 
 ### The detached signature process
 
-Assuming we have stored a GPGP public/private RSA Key pair into our favorite secret manager (example secrethub), here is how we willsign Gravitee Products :
+Assuming we have stored a GPGP public/private RSA Key pair into our favorite secret manager (example secrethub), here is how we will sign Gravitee Products :
 
 ```bash
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
@@ -296,7 +386,6 @@ export SECRETHUB_ORG="graviteeio"
 export SECRETHUB_REPO="cicd"
 secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg"
 
-
 echo "${GRAVITEEBOT_GPG_USER_NAME}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_name"
 echo "${GRAVITEEBOT_GPG_USER_NAME_COMMENT}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_name_comment"
 echo "${GRAVITEEBOT_GPG_USER_EMAIL}" | secrethub write "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/user_email"
@@ -333,7 +422,8 @@ So the important hing here, is tocheck how the customers ' admission controllers
 
 ### Most important security consideration : Deployment Rollout of ANY GRAVITEE PRODUCT should not just happen over GIT COMMIT ID, but also on Signatures
 
-Any GRavitee Product deployement MUST have an automated roll out deployment  made possible over just changing its signature :
+Any Gravitee Product deployement MUST have an automated roll out deployment  made possible over just changing its signature :
+
 * over GPG Signatures
 * over Notary Signatures (TLS Certificate based signatures)
 * Any TLS Certificatebased signature.

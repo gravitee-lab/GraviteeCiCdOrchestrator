@@ -35,9 +35,6 @@ RUN useradd -g $NON_ROOT_USER_GRP -u $NON_ROOT_USER_UID -m $NON_ROOT_USER_NAME
 
 RUN ls -allh /home/$NON_ROOT_USER_NAME
 
-RUN echo "whoami = [$(whoami)]"
-USER $NON_ROOT_USER_NAME
-RUN echo "whoami = [$(whoami)]"
 
 # --- #
 # /home/$NON_ROOT_USER_NAME/.secrets will be mapped as a
@@ -47,7 +44,14 @@ RUN echo "whoami = [$(whoami)]"
 RUN mkdir -p /home/$NON_ROOT_USER_NAME/.secrets
 RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP /home/$NON_ROOT_USER_NAME/.secrets
 
-WORKDIR /home
+RUN mkdir -p /workspace/signer
+RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP -R /workspace/signer
+VOLUME /workspace/signer
+RUN echo "whoami = [$(whoami)]"
+USER $NON_ROOT_USER_NAME
+RUN echo "whoami = [$(whoami)]"
+
+WORKDIR /workspace
 
 # COPY test /home
 
