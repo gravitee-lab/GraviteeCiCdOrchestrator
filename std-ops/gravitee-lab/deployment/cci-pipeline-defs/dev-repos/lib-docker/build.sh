@@ -136,3 +136,39 @@ export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
 
 
 docker build -t ${RESTIC_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./restic/Dockerfile ./restic/
+
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                 GPG SIGNER DOCKER IMAGE                    --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-gpg-signer"}
+export DEBIAN_OCI_TAG=slim
+export GPG_VERSION=2.2.23
+export GPG_SIGNER_CONTAINER_IMAGE_TAG="${DEBIAN_OCI_TAG}-gpg-${GPG_VERSION}"
+export GPG_SIGNER_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${GPG_SIGNER_CONTAINER_IMAGE_TAG}"
+
+echo  "Building OCI Image [${GPG_SIGNER_OCI_IMAGE_GUN}]"
+
+# I identify the version of the whole CI CD system, with the version of the Gravitee CI CD Orchestrator
+export ORCHESTRATOR_GIT_COMMIT_ID=$(git rev-parse --short=15 HEAD)
+export GITHUB_ORG=${GITHUB_ORG:-"gravitee-lab"}
+export OCI_VENDOR=gravitee.io
+export CCI_USER_UID=$(id -u)
+export CCI_USER_GID=$(id -g)
+export NON_ROOT_USER_UID=${CCI_USER_UID}
+export NON_ROOT_USER_NAME=$(whoami)
+export NON_ROOT_USER_GID=${CCI_USER_GID}
+export NON_ROOT_USER_GRP=${NON_ROOT_USER_NAME}
+
+export OCI_BUILD_ARGS=""
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg ORCHESTRATOR_GIT_COMMIT_ID=${ORCHESTRATOR_GIT_COMMIT_ID}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg OCI_VENDOR=${OCI_VENDOR}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg NON_ROOT_USER_UID=${NON_ROOT_USER_UID} --build-arg NON_ROOT_USER_GID=${NON_ROOT_USER_GID}"
+export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg NON_ROOT_USER_NAME=${NON_ROOT_USER_NAME} --build-arg NON_ROOT_USER_GRP=${NON_ROOT_USER_GRP}"
+
+docker build -t ${GPG_SIGNER_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./gpg-signer/Dockerfile ./gpg-signer/

@@ -9,7 +9,7 @@ This docker container image is the definition of a utility container to put the 
 
 ```bash
 export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
-export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-py-bundler"}
+export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-gpg-signer"}
 export DEBIAN_OCI_TAG=slim
 export GPG_VERSION=2.2.23
 export GPG_SIGNER_CONTAINER_IMAGE_TAG="${DEBIAN_OCI_TAG}-gpg-${GPG_VERSION}"
@@ -33,7 +33,7 @@ export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg ORCHESTRATOR_GIT_COMMIT_ID=
 export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg OCI_VENDOR=${OCI_VENDOR}"
 export OCI_BUILD_ARGS="${OCI_BUILD_ARGS} --build-arg GITHUB_ORG=${GITHUB_ORG}"
 
-docker build -t ${GPG_SIGNER_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./python/Dockerfile ./python/
+docker build -t ${GPG_SIGNER_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./gpg-signer/Dockerfile ./gpg-signer/
 
 ```
 
