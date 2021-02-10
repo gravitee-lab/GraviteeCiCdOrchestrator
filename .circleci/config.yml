@@ -139,6 +139,13 @@ workflows:
                 - /^bugfix\/*/
                 - /^hotfix\/*/
                 - /^release\/*/
+                # ---
+                - /^feature\/.*/
+                - /^support\/.*/
+                - /^bugfix\/.*/
+                - /^hotfix\/.*/
+                - /^release\/.*/
+                # ---
             tags:
               # only: /^v.*/
               only:
@@ -161,6 +168,13 @@ workflows:
                 - /^bugfix\/*/
                 - /^hotfix\/*/
                 - /^release\/*/
+                # ---
+                - /^feature\/.*/
+                - /^support\/.*/
+                - /^bugfix\/.*/
+                - /^hotfix\/.*/
+                - /^release\/.*/
+                # ---
             tags:
               # only: /^v.*/
               only:
