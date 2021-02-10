@@ -29,6 +29,7 @@ if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
 */
+import * as shelljs from 'shelljs';
 import * as fs from 'fs';
 import * as arrayUtils from 'util';
 // export const manifestPath : string = "release-data/apim/1.30.x/tests/release.json";
@@ -49,7 +50,7 @@ export class ReleaseManifestFilter {
     parallelizationConstraintsMatrix: any[][];
     executionPlan : any [][];
     constructor(release_version: string, release_branch: string) {
-        this.validateJSon();
+        this.loadReleaseManifest();
         this.loadParallelizationContraints();
         // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
@@ -282,12 +283,13 @@ export class ReleaseManifestFilter {
       return parallelExecutionSetIndexToReturn;
     }
     /**
+     * Loads the Release Manifest from the filesystem
      * Checks :
      * => if the file exists,
      * => if it contains a valid JSON,
      *
      **/
-    validateJSon()  : void {
+    loadReleaseManifest()  : void {
       if (!fs.existsSync(manifestPath)) {
         throw new Error("{[ReleaseManifestFilter]} - [" + `${manifestPath}` + "] does not exists, stopping release process");
       } else {
@@ -297,6 +299,112 @@ export class ReleaseManifestFilter {
       console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
       let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
       this.releaseManifest = JSON.parse(manifestAsString);
+
+      /**
+       * If the Stage is nexus staging, then we add again the [-SNAPSHOT] suffixes
+       *
+       *
+       **/
+       if (process.argv["cicd-stage"] === 'mvn_release') {
+         console.log(`{[ReleaseManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
+         this.prepareManifestForNexusStaging();
+       }
+    }
+
+    prepareManifestForNexusStaging() {
+      let releaseForNexusStaging = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
+      for (let currComponentIndex = 0; currComponentIndex < this.releaseManifest.components.length; currComponentIndex++) {
+        console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
+        if (`${this.releaseManifest.components[currComponentIndex].since}` === `${releaseForNexusStaging}`) {
+          ///
+          this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
+        }
+      }
+      /// ---
+      this.commitAndPushReleaseResult("{[Nexus Staging]} - adding again [-SNAPSHOT] suffix for component to deploy to Nexus Staging")
+    }
+
+    removeSnapshotSuffix(maven_version_number: string): string {
+      let toReturn: string = null;
+      if (maven_version_number.endsWith('-SNAPSHOT')) {
+        toReturn = maven_version_number.substr(0, maven_version_number.length - 9 );
+      } else {
+        /// toReturn = maven_version_number;
+        let errMsg = `{[ReleaseManifestFilter]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
+        console.log(errMsg);
+        throw new Error(errMsg);
+      }
+      return toReturn;
+    }
+
+    /**
+     * call this method, to commit all added changes to the release repo (to the release.json), and git push
+     * <code>hasThereBeenErrors</code> : if there has been no errors in the release process, this method will also reset the top version of the release manifest, to remove the [-SNAPSHOT] suffix
+     **/
+    commitAndPushReleaseResult(commit_message: string): void {
+      /// ---                                                                 --- ///
+      /// --- FIRST GIT ADD RELEASE VERSION (iff no errorsin release process) --- ///
+      /// ---                                                                 --- ///
+
+      console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] persist [this.releaseManifest] to file`)
+
+      // persist [this.releaseManifest] to file
+
+      try {
+        fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log('{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath} the prepared release version`);
+        console.error(err);
+        throw err;
+      }
+
+      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+      if (gitADDCommandResult.code !== 0) {
+        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+      } else {
+        // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
+        console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git added : `);
+        console.log(gitADDCommandResult.stdout);
+      }
+      /// ---                                                --- ///
+      /// --- NOW COMMIT AND PUSH                            --- ///
+      /// ---                                                --- ///
+      /// -
+      console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] Before commit and push, content of the [release.json] on filessytem, and git status are : `);
+      /// -
+      let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json && git status && git remote -v && git status");
+      if (shellCommandResult.code !== 0) {
+        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+      } else {
+        let shellCommandStdOUT = shellCommandResult.stdout;
+        console.log(shellCommandStdOUT);
+      }
+
+      // let commit_message: string = `CI CD Orchestrator Release process state update of successfullly released components`
+
+      let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"Prepare Release (${this.releaseManifest.version}): ${commit_message}\"`);
+      if (gitCOMMITCommandResult.code !== 0) {
+        throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+      } else {
+        // gitCOMMITCommandStdOUT = gitCOMMITCommandResult.stdout;
+        console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
+        console.log(gitCOMMITCommandResult.stdout)
+      }
+
+      /// pushing to git if and only if  DRY RUN MODE is off (if this is a "fully fledged" release, not a dry run)
+      if (`${process.argv["dry-run"]}` === 'false') {
+        let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
+        if (gitPUSHCommandResult.code !== 0) {
+          throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+        } else {
+          let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
+          console.log(gitPUSHCommandStdOUT);
+          console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully pushed to remote git repo with commit message [${commit_message}] : `);
+
+        }
+      }
+
     }
 }
 export let companyName:string = "Gravitee.io";

@@ -30,7 +30,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
 */
 import * as shelljs from 'shelljs';
-import axios from 'axios';
+/// import axios from 'axios';
 /// import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import * as fs from 'fs';
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
@@ -294,6 +294,8 @@ export class ReleaseProcessStatePersistenceManager {
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] removing [-SNAPSHOT] suffix for component :`)
       console.log(this.releaseManifest.components[currComponentIndex]);
       this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currComponentIndex].version);
+      // add the [since] JSon property
+      this.releaseManifest.components[currComponentIndex].since = this.removeSnapshotSuffix(this.releaseManifest.version);
     }
     /// and write the modified JSON back to the file
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(commit_message: string): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
