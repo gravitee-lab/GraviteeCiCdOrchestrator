@@ -1,4 +1,3 @@
-ARG GPG_VERSION=2.2.23
 ARG DEBIAN_OCI_TAG=slim
 FROM debian:${DEBIAN_OCI_TAG}
 
@@ -7,7 +6,10 @@ RUN apt-get update -y && apt-get install -y gnupg
 ARG GITHUB_ORG=unspecified
 ARG OCI_VENDOR=$GITHUB_ORG
 # LABEL oci.image.tag=maven:"${MAVEN_VERSION}"-openjdk-"${OPENJDK_VERSION}"
+
+ARG GPG_VERSION=2.2.23
 LABEL oci.image.tag="${DEBIAN_OCI_TAG}-gpg-${GPG_VERSION}"
+LABEL gpg.version=$GPG_VERSION
 LABEL cicd.github.org="${GITHUB_ORG}"
 LABEL vendor="${OCI_VENDOR}"
 LABEL maintainer="jean-baptiste.lasselle@graviteesource.com"
