@@ -312,6 +312,7 @@ export class ReleaseManifestFilter {
     }
 
     prepareManifestForNexusStaging() {
+      /// -- add again the [-SNAPSHOT] suffix go rallmaven released dev repos.
       let releaseForNexusStaging = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
       for (let currComponentIndex = 0; currComponentIndex < this.releaseManifest.components.length; currComponentIndex++) {
         console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
@@ -320,6 +321,14 @@ export class ReleaseManifestFilter {
           this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
         }
       }
+      /// -- merge all buildDependencies
+      let mergedBuildDependencies = []
+      for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
+        console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
+        mergedBuildDependencies = mergedBuildDependencies.concat(this.releaseManifest.buildDependencies[i]);
+
+      }
+      this.releaseManifest.buildDependencies = [ mergedBuildDependencies ];
       /// ---
       this.commitAndPushReleaseResult("{[Nexus Staging]} - adding again [-SNAPSHOT] suffix for component to deploy to Nexus Staging")
     }
@@ -359,9 +368,9 @@ export class ReleaseManifestFilter {
         throw err;
       }
 
-      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add --all`);
+      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json`);
       if (gitADDCommandResult.code !== 0) {
-        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add --all ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
         console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git added : `);
@@ -385,7 +394,7 @@ export class ReleaseManifestFilter {
 
       let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"Prepare Release (${this.releaseManifest.version}): ${commit_message}\"`);
       if (gitCOMMITCommandResult.code !== 0) {
-        throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git add --all && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+        throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git add ./release.json && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
       } else {
         // gitCOMMITCommandStdOUT = gitCOMMITCommandResult.stdout;
         console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
