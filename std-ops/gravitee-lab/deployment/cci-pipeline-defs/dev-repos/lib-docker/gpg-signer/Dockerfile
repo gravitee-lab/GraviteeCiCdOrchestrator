@@ -1,4 +1,4 @@
-ARG DEBIAN_OCI_TAG=slim
+ARG DEBIAN_OCI_TAG=$DEBIAN_OCI_TAG
 FROM debian:${DEBIAN_OCI_TAG}
 
 RUN apt-get update -y && apt-get install -y gnupg
