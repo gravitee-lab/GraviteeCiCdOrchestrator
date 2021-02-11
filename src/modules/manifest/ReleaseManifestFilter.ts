@@ -321,14 +321,17 @@ export class ReleaseManifestFilter {
           this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
         }
       }
-      /// -- merge all buildDependencies
-      let mergedBuildDependencies = []
-      for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
-        console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
-        mergedBuildDependencies = mergedBuildDependencies.concat(this.releaseManifest.buildDependencies[i]);
+      if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
+    
+        /// -- merge all buildDependencies
+        let mergedBuildDependencies = []
+        for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
+          console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
+          mergedBuildDependencies = mergedBuildDependencies.concat(this.releaseManifest.buildDependencies[i]);
 
+        }
+        this.releaseManifest.buildDependencies = [ mergedBuildDependencies ];
       }
-      this.releaseManifest.buildDependencies = [ mergedBuildDependencies ];
       /// ---
       this.commitAndPushReleaseResult("{[Nexus Staging]} - adding again [-SNAPSHOT] suffix for component to deploy to Nexus Staging")
     }
