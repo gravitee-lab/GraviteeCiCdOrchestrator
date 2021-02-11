@@ -148,3 +148,30 @@ docker tag ${RESTIC_OCI_IMAGE_GUN} "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OC
 #
 docker push "${RESTIC_OCI_IMAGE_GUN}"
 docker push "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
+
+
+# ---
+# ---
+# ---
+
+
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+# -----------                GPG SIGNER DOCKER IMAGE                     --------- #
+# -------------------------------------------------------------------------------- #
+# -------------------------------------------------------------------------------- #
+
+
+export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
+export CICD_LIB_OCI_REPOSITORY_NAME="cicd-gpg-signer"
+export DEBIAN_OCI_TAG=slim
+export GPG_VERSION=2.2.23
+export GPG_SIGNER_CONTAINER_IMAGE_TAG="${DEBIAN_OCI_TAG}-gpg-${GPG_VERSION}"
+export GPG_SIGNER_OCI_IMAGE_GUN="${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:${GPG_SIGNER_CONTAINER_IMAGE_TAG}"
+
+echo  "Pushing OCI Image [${GPG_SIGNER_OCI_IMAGE_GUN}]"
+
+docker tag ${GPG_SIGNER_OCI_IMAGE_GUN} "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"
+
+docker push ${GPG_SIGNER_OCI_IMAGE_GUN}
+docker push "${CICD_LIB_OCI_REPOSITORY_ORG}/${CICD_LIB_OCI_REPOSITORY_NAME}:stable-latest"

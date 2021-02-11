@@ -134,17 +134,19 @@ workflows:
               ignore:
                 - master
                 - develop
-                - /^feature\/*/
-                - /^support\/*/
-                - /^bugfix\/*/
-                - /^hotfix\/*/
-                - /^release\/*/
+                # ---
+                - /^feature\/.*/
+                - /^support\/.*/
+                - /^bugfix\/.*/
+                - /^hotfix\/.*/
+                - /^release\/.*/
+                # ---
             tags:
               # only: /^v.*/
               only:
-                - /^[0-999].[0-999].[0-999]/
-                - /^[0-999].[0-999].[0-999]-alpha/
-                - /^[0-999].[0-999].[0-999]-beta/
+                - /^[0-9]+.[0-9]+.[0-9]+/
+                - /^[0-9]+.[0-9]+.[0-9]+-alpha/
+                - /^[0-9]+.[0-9]+.[0-9]+-beta/
       # - orb_container_library_publish_approval:
           # type: approval
       - orb_container_library_publish:
@@ -156,14 +158,16 @@ workflows:
               ignore:
                 - master
                 - develop
-                - /^feature\/*/
-                - /^support\/*/
-                - /^bugfix\/*/
-                - /^hotfix\/*/
-                - /^release\/*/
+                # ---
+                - /^feature\/.*/
+                - /^support\/.*/
+                - /^bugfix\/.*/
+                - /^hotfix\/.*/
+                - /^release\/.*/
+                # ---
             tags:
               # only: /^v.*/
               only:
-                - /^[0-999].[0-999].[0-999]/
-                - /^[0-999].[0-999].[0-999]-alpha/
-                - /^[0-999].[0-999].[0-999]-beta/
+                - /^[0-9]+.[0-9]+.[0-9]+/
+                - /^[0-9]+.[0-9]+.[0-9]+-alpha/
+                - /^[0-9]+.[0-9]+.[0-9]+-beta/

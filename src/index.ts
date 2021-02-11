@@ -81,7 +81,39 @@ if (process.argv["cicd-stage"] === 'pull_req') {
   ///
   ///
   /// ---
-  let manifestParser = new ReleaseManifestFilter("45.21.78", "This will be an awesome release, won't it ? :) ")
+  let manifestParser = new ReleaseManifestFilter("1045.2145.7878", "This will be an awesome release, won't it ? :) ")
+  /// ---
+  /// First, parses the locally git cloned [release.json], and returns a
+  /// 2-dimensional array : the execution Plan
+  /// ---
+  let executionPlan : string [][] = manifestParser.buildExecutionPlan();
+
+
+
+  /// throw new Error("DEBUG POINT");
+
+  /// then, using the execution plan, we are going to
+  /// process parallel executions one after the other
+  let orchestrator = new CircleCiOrchestrator(executionPlan, 5);
+
+  try {
+    orchestrator.start();
+  } catch (error) {
+    console.log(`# ----------------------------------------------------`)
+    console.log(`Catched orchestrator error : `)
+    console.log(error)
+    console.log(`# ----------------------------------------------------`)
+    throw new Error(`Stopping Orchestrator because an error occured during the execution of the CI CD Process`)
+  }
+
+
+} else if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
+  /// ---
+  /// ReleaseManifestFilter runs inside the Circle CI pipeline defined in the
+  ///
+  ///
+  /// ---
+  let manifestParser = new ReleaseManifestFilter("1045.2145.7878", "This will be an awesome release, won't it ? :) ")
   /// ---
   /// First, parses the locally git cloned [release.json], and returns a
   /// 2-dimensional array : the execution Plan
