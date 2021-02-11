@@ -160,7 +160,7 @@ export class ReleaseProcessStatePersistenceManager {
     let gitBranchCommandResult = shelljs.exec(`cd pipeline/ && git branch -a | grep '*' | awk '{print $2}'`);
     let currentBranch = null;
     if (gitBranchCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json ] shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json ./.gitignore ] shell command. Shell error was [" + gitBranchCommandResult.stderr + "] ")
     } else {
       // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
       currentBranch = `${gitBranchCommandResult.stdout}`;
@@ -202,7 +202,7 @@ export class ReleaseProcessStatePersistenceManager {
         throw err;
       }
       // git add, commit and push the next patch version
-      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json && git commit -m "prepare next patch version" && git push -u origin HEAD`);
+      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next patch version" && git push -u origin HEAD`);
       if (prepareNextPatchVersionCmdResult.code !== 0) {
         throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
       } else {
@@ -231,9 +231,9 @@ export class ReleaseProcessStatePersistenceManager {
         throw err;
       }
       // git add, commit and push the next minor version
-      let prepareNextMinorVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json && git commit -m "prepare next minor version" && git push -u origin HEAD`);
+      let prepareNextMinorVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next minor version" && git push -u origin HEAD`);
       if (prepareNextMinorVersionCmdResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git add ./release.json && git commit -m \"prepare next minor version\" && git push -u origin HEAD] shell command. Shell error was [" + prepareNextMinorVersionCmdResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m \"prepare next minor version\" && git push -u origin HEAD] shell command. Shell error was [" + prepareNextMinorVersionCmdResult.stderr + "] ")
       } else {
         console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next minor version [${nextMinorVersion}] on the [master] branch : `);
         console.log(prepareNextMinorVersionCmdResult.stdout);
@@ -255,7 +255,7 @@ export class ReleaseProcessStatePersistenceManager {
         throw err;
       }
       // git add, commit and push the next patch version
-      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json && git commit -m "prepare next patch version" && git push -u origin HEAD`);
+      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next patch version" && git push -u origin HEAD`);
       if (prepareNextPatchVersionCmdResult.code !== 0) {
         throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
       } else {
@@ -319,9 +319,9 @@ export class ReleaseProcessStatePersistenceManager {
       throw err;
     }
 
-    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json`);
+    let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore`);
     if (gitADDCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json ./.gitignore ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
     } else {
       // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(commit_message: string): void] successfully git added : `);
@@ -353,9 +353,9 @@ export class ReleaseProcessStatePersistenceManager {
         throw err;
       }
 
-      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json`);
+      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore`);
       if (gitADDCommandResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ./.gitignore ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
         console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git added : `);
@@ -365,7 +365,17 @@ export class ReleaseProcessStatePersistenceManager {
     /// ---                                                --- ///
     /// --- NOW COMMIT AND PUSH                            --- ///
     /// ---                                                --- ///
-    /// -
+    /// - But before we commit and push, we nned to verify one thing :
+    //     One edge case is the following :
+    //       ==> The parallel execution set has only 1 component
+    //       ==> this one and only component 's pipeline failed : so ther is nothing to commit and push.
+    /// For that very special case, it might happen that no change to any gi tracked file can be commited :
+    /// => in this case the git commit command will return the [1] exit code.
+    /// => And that's why we need to not thrown any Error, but just log git stdout : then the ORchestrator will anyway stop the entire release process, because of the failure status of the Pipeline execution.
+
+    let isThereAnyReleaseMAnifestChangeToCommit: boolean = false;
+
+
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] Before commit and push, content of the [release.json] on filessytem, and git status are : `);
     /// -
     let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json && git status && git remote -v && git status");
@@ -380,7 +390,7 @@ export class ReleaseProcessStatePersistenceManager {
 
     let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"Prepare Release (${this.releaseManifest.version}): ${commit_message}\"`);
     if (gitCOMMITCommandResult.code !== 0) {
-      throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+      console.log(`{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m '${commit_message}'] shell command exited with exit code [${gitCOMMITCommandResult.code}]. Standard Err output was [` + gitCOMMITCommandResult.stderr + "], and stdout was [" + gitCOMMITCommandResult.stdout + "] ")
     } else {
       // gitCOMMITCommandStdOUT = gitCOMMITCommandResult.stdout;
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
@@ -391,7 +401,8 @@ export class ReleaseProcessStatePersistenceManager {
     if (`${process.argv["dry-run"]}` === 'false') {
       let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
       if (gitPUSHCommandResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+        /// throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command, which exited with returned exit code [${gitPUSHCommandResult.code}]. Standard Err output was [` + gitPUSHCommandResult.stderr + "], and stdout was [" + gitPUSHCommandResult.stdout + "] ")
       } else {
         let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
         console.log(gitPUSHCommandStdOUT);

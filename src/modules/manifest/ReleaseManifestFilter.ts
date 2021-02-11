@@ -371,10 +371,10 @@ export class ReleaseManifestFilter {
         throw err;
       }
 
-      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json`);
+      let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore`);
       if (gitADDCommandResult.code !== 0) {
         console.log(gitADDCommandResult.stdout);
-        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ./.gitignore ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
         console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git added : `);
@@ -400,7 +400,7 @@ export class ReleaseManifestFilter {
 
       let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"Prepare Release (${this.releaseManifest.version}): ${commit_message}\"`);
       if (gitCOMMITCommandResult.code !== 0) {
-        throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git add ./release.json && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+        throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
       } else {
         // gitCOMMITCommandStdOUT = gitCOMMITCommandResult.stdout;
         console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
