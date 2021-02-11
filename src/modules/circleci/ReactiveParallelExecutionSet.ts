@@ -30,13 +30,16 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
 */
 import * as rxjs from 'rxjs';
+import * as fs from 'fs';
 import { CircleCIClient, WorkflowsData, WorkflowJobsData } from '../../modules/circleci/CircleCIClient';
 import { PipelineExecSetStatusWatcher, PipeExecSetStatusNotification } from '../../modules/circleci/status/PipelineExecSetStatusWatcher';
 
+import { releaseManifest, gioReleaseVersion } from '../../modules/circleci/ReleaseManifest'
 
 
 export class ReactiveParallelExecutionSet {
 
+  releaseManifest: any;
   /**
    * This is the progress matrix for all pipeline executions
    * in one {Parallel Execution Set}, the <code>this.parallelExecutionSet</code>, not
@@ -265,7 +268,8 @@ export class ReactiveParallelExecutionSet {
          dry_run: process.argv["dry-run"],
          secrethub_org: process.env.SECRETHUB_ORG,
          secrethub_repo: process.env.SECRETHUB_REPO,
-         maven_profile_id: process.env.MAVEN_PROFILE_ID
+         maven_profile_id: process.env.MAVEN_PROFILE_ID,
+         s3_bucket_name: `prepared-nexus-staging-gravitee-apim-${gioReleaseVersion}`
         },
         branch: `${pipelineTargetBranch}`
       }
@@ -355,4 +359,6 @@ export class ReactiveParallelExecutionSet {
   public getProgressMatrix(): any[] {
     return this.progressMatrix;
   }
+
+
 }
