@@ -261,7 +261,7 @@ export class ReactiveParallelExecutionSet {
 
       /// pipeline execution parameters, same as [Jenkins] build parameters
       /// ---
-
+      console.log(`{ReactiveParallelExecutionSet} : DEBUG tracking down if I catch properly [gioReleaseVersion]=[${gioReleaseVersion}]`)
       let pipelineConfig = {
         parameters: {
          gio_action: `release`, // should be releated to cicd_stage...? mvn_release ?
