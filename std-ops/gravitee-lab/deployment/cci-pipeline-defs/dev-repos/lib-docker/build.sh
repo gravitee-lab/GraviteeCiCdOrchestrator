@@ -145,7 +145,7 @@ docker build -t ${RESTIC_OCI_IMAGE_GUN} ${OCI_BUILD_ARGS}  -f ./restic/Dockerfil
 # -------------------------------------------------------------------------------- #
 
 export CICD_LIB_OCI_REPOSITORY_ORG=${CICD_LIB_OCI_REPOSITORY_ORG:-"quay.io/gravitee-lab"}
-export CICD_LIB_OCI_REPOSITORY_NAME=${CICD_LIB_OCI_REPOSITORY_NAME:-"cicd-gpg-signer"}
+export CICD_LIB_OCI_REPOSITORY_NAME="cicd-gpg-signer"
 export DEBIAN_OCI_TAG=buster-slim
 export GPG_VERSION=2.2.23
 export GPG_SIGNER_CONTAINER_IMAGE_TAG="${DEBIAN_OCI_TAG}-gpg-${GPG_VERSION}"
