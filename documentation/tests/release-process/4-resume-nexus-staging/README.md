@@ -105,7 +105,7 @@ curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept
   * `graviteek-cicd-test-maven-project-g1/project`
   * `graviteek-cicd-test-maven-project-g1/mavenm2`
 * at the end of the release, the package bundle python is triggered
-* at the beginning of the 
+* at the beginning of the
 The https://github.com/gravitee-lab/nexus-staging
 
 # Test 2 : then nexus_staging

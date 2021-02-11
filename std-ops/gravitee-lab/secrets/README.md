@@ -912,6 +912,51 @@ rm ./test.retrievieving.settings.xml
 exit 0
 ```
 
+#### _**Le `settings.xml` du Nexus Staging**_
+
+
+I need to create the following secret file :
+
+```bash
+export SECRETHUB_ORG=gravitee-lab
+export SECRETHUB_REPO=cicd
+
+# secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/"
+
+export NEXUS_STAGING_BOT_USER_NAME=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_name)
+export NEXUS_STAGING_BOT_USER_PWD=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_pwd)
+
+export NEXUS_STAGING_BOT_USER_NAME=jbljbljbl
+export NEXUS_STAGING_BOT_USER_PWD=jbljbljbl
+
+# ---
+#
+cat << EOF >./settings.nexus-staging.xml
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <pluginGroups></pluginGroups>
+  <proxies></proxies>
+  <servers>
+    <server>
+      <id>sonatype-nexus-staging</id>
+      <username>${NEXUS_STAGING_BOT_USER_NAME}</username>
+      <password>${NEXUS_STAGING_BOT_USER_PWD}</password>
+    </server>
+  </servers>
+  <activeProfiles>
+  <activeProfile>gravitee-release</activeProfile>
+  </activeProfiles>
+</settings>
+EOF
+
+secrethub write --in-file ./settings.nexus-staging.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/settings.nexus-staging.xml"
+secrethub read --out-file ./test.settings.nexus-staging.xml "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/settings.nexus-staging.xml"
+
+cat ./test.settings.nexus-staging.xml
+rm ./test.settings.nexus-staging.xml
+
+```
+
+
 #### _**Le `settings.xml` de dev (pull requests) expliqué**_
 
 Ci-dessus :
