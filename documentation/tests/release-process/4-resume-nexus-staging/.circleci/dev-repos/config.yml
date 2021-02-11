@@ -51,7 +51,6 @@ workflows:
           secrethub_repo: << pipeline.parameters.secrethub_repo >>
           maven_profile_id: << pipeline.parameters.maven_profile_id >>
           s3_bucket_name: << pipeline.parameters.s3_bucket_name >>
-          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
   release_dry_run:
     # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
     when:
@@ -67,7 +66,6 @@ workflows:
           secrethub_repo: << pipeline.parameters.secrethub_repo >>
           maven_profile_id: << pipeline.parameters.maven_profile_id >>
           s3_bucket_name: << pipeline.parameters.s3_bucket_name >>
-          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
 
   nexus_staging_dry_run:
     # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
