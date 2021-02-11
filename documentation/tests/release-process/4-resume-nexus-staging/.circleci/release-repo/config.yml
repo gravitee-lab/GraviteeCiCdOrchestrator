@@ -1,5 +1,5 @@
 version: 2.1
-
+# Must setup to "Only Build Pull Requests"
 parameters:
   gio_action:
     type: enum
@@ -36,6 +36,15 @@ jobs:
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
       - run:
+          name: "Remember Gravitee Release Version"
+          command: |
+                    apt-get install -y jq
+                    export RELEASE_VERSION_NUMBER=$(cat release.json | jq .version | awk -F '"' '{print $2}')
+                    export TRIMMED_RELEASE_VERSION_NUMBER=$(echo "${RELEASE_VERSION_NUMBER}" | awk -F '-SNAPSHOT' '{print $1}')
+                    export RELEASE_VERSION_NUMBER=${TRIMMED_RELEASE_VERSION_NUMBER}
+                    echo "${RELEASE_VERSION_NUMBER}" > ./.remember.gravitee.release.version
+                    echo "./.remember.gravitee.release.version" >> ./.gitignore
+      - run:
           name: "Docker pull"
           command: |
                     docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
@@ -63,6 +72,20 @@ jobs:
                     export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_release --dry-run
                     exit "$?"
+      - run:
+          name: "Come back to Gravitee Release Version"
+          command: |
+                    export RELEASE_VERSION_NUMBER=$(cat ./.remember.gravitee.release.version)
+                    echo "RELEASE_VERSION_NUMBER=[${RELEASE_VERSION_NUMBER}]"
+                    git checkout ${RELEASE_VERSION_NUMBER}
+
+      # after release is finished, the nexus staging phase is
+      - gravitee/nexus_staging_trigger:
+          context: cicd-orchestrator
+          secrethub_org: gravitee-lab
+          secrethub_repo: cicd
+          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
+
   run_orchestrator:
     machine:
       image: 'ubuntu-1604:201903-01'
@@ -79,6 +102,15 @@ jobs:
           maven_profile_id: gio-release
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
+      - run:
+          name: "Remember Gravitee Release Version"
+          command: |
+                    apt-get install -y jq
+                    export RELEASE_VERSION_NUMBER=$(cat release.json | jq .version | awk -F '"' '{print $2}')
+                    export TRIMMED_RELEASE_VERSION_NUMBER=$(echo "${RELEASE_VERSION_NUMBER}" | awk -F '-SNAPSHOT' '{print $1}')
+                    export RELEASE_VERSION_NUMBER=${TRIMMED_RELEASE_VERSION_NUMBER}
+                    echo "${RELEASE_VERSION_NUMBER}" > ./.remember.gravitee.release.version
+                    echo "./.remember.gravitee.release.version" >> ./.gitignore
       - run:
           name: "Docker pull"
           command: |
@@ -107,6 +139,17 @@ jobs:
                     export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_release --dry-run false
                     exit "$?"
+      - run:
+          name: "Come back to Gravitee Release Version"
+          command: |
+                    export RELEASE_VERSION_NUMBER=$(cat ./.remember.gravitee.release.version)
+                    echo "RELEASE_VERSION_NUMBER=[${RELEASE_VERSION_NUMBER}]"
+                    git checkout ${RELEASE_VERSION_NUMBER}
+      - gravitee/nexus_staging_trigger:
+          context: cicd-orchestrator
+          secrethub_org: gravitee-lab
+          secrethub_repo: cicd
+          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
 
   publish_bundles_job:
     machine:
@@ -179,7 +222,41 @@ workflows:
           # requires:
             # - release_process
           context: cicd-orchestrator
-          # one cannot filters branches when conditonal workflows ?
+          # one cannot filters tag/branches when conditonal workflows
+          filters:
+            branches:
+              # ---
+              # Will run only when git commits are pushed to master branch
+              # Therefore, will be triggered when a pull request is accepted, with target branch being
+              # the master branch.
+              ignore:
+                # ---
+                - /^feature\/.*/ # feature/<any string here>
+                - /^support\/.*/ # support/<any string here>
+                - /^issue\/.*/ # issue/<any string here>
+                - /^cicd\/.*/ # cicd/<any string here>
+                - /^.*\/.*/ # <any string here>/<any string here>
+            tags:
+              # only: /^v.*/
+              only:
+                - /^[0-9]+.[0-9]+.[0-9]+/
+                - /^[0-9]+.[0-9]+.[0-9]+-alpha/
+                - /^[0-9]+.[0-9]+.[0-9]+-beta/
+  # ---
+  # this workflow is triggered
+  nexus_staging_trigger:
+    # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
+    # when:
+      # and:
+        # - equal: [ nexus_staging, << pipeline.parameters.gio_action >> ]
+        # - not: << pipeline.parameters.dry_run >>
+    jobs:
+      # return to simple definition :
+      - gravitee/nexus_staging_trigger:
+          context: cicd-orchestrator
+          secrethub_org: gravitee-lab
+          secrethub_repo: cicd
+          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
           filters:
             branches:
               # ---
