@@ -269,7 +269,7 @@ export class ReactiveParallelExecutionSet {
          secrethub_org: process.env.SECRETHUB_ORG,
          secrethub_repo: process.env.SECRETHUB_REPO,
          maven_profile_id: process.env.MAVEN_PROFILE_ID,
-         s3_bucket_name: `prepared-nexus-staging-gravitee-apim-${gioReleaseVersion}`
+         s3_bucket_name: `prepared_nexus_staging_gravitee_apim_${gioReleaseVersion.replace(/\./g, "_")}`
         },
         branch: `${pipelineTargetBranch}`
       }
