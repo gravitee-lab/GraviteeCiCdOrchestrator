@@ -52,3 +52,5 @@ if (tempVersion.endsWith('-SNAPSHOT')) {
 }
 
 export const gioReleaseVersion = tempVersion;
+
+console.log(`{src/modules/circleci/ReleaseManifest.ts} : DEBUG tracking down if I catch properly [gioReleaseVersion]=[${gioReleaseVersion}]`)
