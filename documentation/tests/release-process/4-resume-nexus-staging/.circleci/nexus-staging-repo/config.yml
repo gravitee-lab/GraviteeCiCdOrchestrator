@@ -1,0 +1,149 @@
+version: 2.1
+
+parameters:
+  gio_action:
+    type: enum
+    enum: [release, dry_nexus_staging, nexus_staging, blank]
+    default: blank
+orbs:
+  secrethub: secrethub/cli@1.0.0
+  gravitee: gravitee-io/gravitee@dev:1.0.4
+jobs:
+  # empty_job:
+    # docker:
+     # - image: alpine
+    # resource_class: small
+    # working_directory: /mnt/ramdisk
+    # steps:
+      # - run:
+          # name: "This is a dummy empty job (isn't it ?)"
+          # command: echo "No task is executed."
+
+  dry_run_orchestrator:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      GITHUB_ORG: ${GITHUB_ORG}
+      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_REPO: cicd
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Docker pull"
+          command: |
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+      - run:
+          name: "Running the Gio CICD Orchestrator as docker container"
+          command: |
+                    echo "Checking pipeline env. : "
+                    ls -allh
+                    export GITHUB_ORG=gravitee-lab
+                    export SECRETHUB_ORG=gravitee-lab
+                    export SECRETHUB_REPO=cicd
+                    echo "GITHUB_ORG=${GITHUB_ORG}"
+                    echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
+                    echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    # checking docker image pulled in previous step is there
+                    docker images
+                    # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
+                    CCI_SECRET_FILE=$PWD/.secrets.json
+                    secrethub read --out-file ${CCI_SECRET_FILE} ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/.secret.json
+                    secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account/token > ./.secrethub.credential
+                    ls -allh ${CCI_SECRET_FILE}
+                    # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
+                    # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
+                    export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json -v $PWD/.secrethub.credential:/graviteeio/cicd/.secrethub.credential"
+                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_nexus_staging --dry-run
+                    exit "$?"
+  run_orchestrator:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      GITHUB_ORG: ${GITHUB_ORG}
+      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_REPO: cicd
+    steps:
+      - checkout
+      - secrethub/install
+      - run:
+          name: "Docker pull"
+          command: |
+                    docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
+      - run:
+          name: "Running the Gio CICD Orchestrator as docker container"
+          command: |
+                    echo "Checking pipeline env. : "
+                    ls -allh
+                    export GITHUB_ORG=gravitee-lab
+                    export SECRETHUB_ORG=gravitee-lab
+                    export SECRETHUB_REPO=cicd
+                    echo "GITHUB_ORG=${GITHUB_ORG}"
+                    echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
+                    echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    # checking docker image pulled in previous step is there
+                    docker images
+                    # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
+                    CCI_SECRET_FILE=$PWD/.secrets.json
+                    secrethub read --out-file ${CCI_SECRET_FILE} ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/api/.secret.json
+                    secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/circleci/secrethub-svc-account/token > ./.secrethub.credential
+                    ls -allh ${CCI_SECRET_FILE}
+                    # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
+                    # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
+                    export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json -v $PWD/.secrethub.credential:/graviteeio/cicd/.secrethub.credential"
+                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_nexus_staging --dry-run false
+                    exit "$?"
+  nexus_staging_prepare_bucket_test_job:
+    machine:
+      image: 'ubuntu-1604:201903-01'
+    environment:
+      GITHUB_ORG: ${GITHUB_ORG}
+      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_REPO: cicd
+    steps:
+      - checkout
+      - secrethub/install
+      - gravitee/nexus_staging_prepare_bucket:
+          dry_run: false
+          maven_container_image_tag: stable-latest
+          maven_profile_id: gio-release
+          secrethub_org: gravitee-lab
+          secrethub_repo: cicd
+workflows:
+  version: 2.1
+  # Blank process invoked when pull requests events are triggered
+  # blank:
+    # when:
+      # equal: [ blank, << pipeline.parameters.gio_action >> ]
+    # jobs:
+      # - empty_job:
+          # context: cicd-orchestrator
+  # Release Process DRY RUN
+  dry_nexus_staging_process:
+    when:
+      equal: [ dry_nexus_staging, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - dry_run_orchestrator:
+          context: cicd-orchestrator
+          filters:
+            tags:
+              only:
+                - /^[0-9]+.[0-9]+.[0-9]+/
+  nexus_staging_process:
+    when:
+      equal: [ nexus_staging, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - run_orchestrator:
+          context: cicd-orchestrator
+          # one cannot filters branches when conditonal workflows ?
+          filters:
+            branches:
+              # ---
+              # Will run only when git commits are pushed to master branch
+              # Therefore, will be triggered when a pull request is accepted, with target branch being
+              # the master branch.
+              only:
+                - /^[0-9]+.[0-9]+.x/
+                - master # ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process DRY RUN
