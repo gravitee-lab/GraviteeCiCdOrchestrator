@@ -305,8 +305,8 @@ export class ReleaseManifestFilter {
        *
        *
        **/
-       if (process.argv["cicd-stage"] === 'mvn_release') {
-         console.log(`{[ReleaseManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
+       if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
+         console.log(`{[ReleaseManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for components to deploy to Nexus Staging.`)
          this.prepareManifestForNexusStaging();
        }
     }
@@ -315,14 +315,14 @@ export class ReleaseManifestFilter {
       /// -- add again the [-SNAPSHOT] suffix go rallmaven released dev repos.
       let releaseForNexusStaging = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
       for (let currComponentIndex = 0; currComponentIndex < this.releaseManifest.components.length; currComponentIndex++) {
-        console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
         if (`${this.releaseManifest.components[currComponentIndex].since}` === `${releaseForNexusStaging}`) {
+          console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
           ///
           this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
         }
       }
       if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
-    
+
         /// -- merge all buildDependencies
         let mergedBuildDependencies = []
         for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
@@ -373,6 +373,7 @@ export class ReleaseManifestFilter {
 
       let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json`);
       if (gitADDCommandResult.code !== 0) {
+        console.log(gitADDCommandResult.stdout);
         throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
@@ -387,6 +388,8 @@ export class ReleaseManifestFilter {
       /// -
       let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json && git status && git remote -v && git status");
       if (shellCommandResult.code !== 0) {
+        let shellCommandStdOUTforErr = shellCommandResult.stdout;
+        console.log(shellCommandStdOUTforErr);
         throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
       } else {
         let shellCommandStdOUT = shellCommandResult.stdout;
