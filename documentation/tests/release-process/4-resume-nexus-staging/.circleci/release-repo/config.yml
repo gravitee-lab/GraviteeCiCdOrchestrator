@@ -1,9 +1,9 @@
 version: 2.1
-# Must setup to "Only Build Pull Requests"
+
 parameters:
   gio_action:
     type: enum
-    enum: [release, dry_release, blank]
+    enum: [release, dry_release, publish_bundles, blank]
     default: blank
 orbs:
   secrethub: secrethub/cli@1.0.0
@@ -81,7 +81,6 @@ jobs:
 
       # after release is finished, the nexus staging phase is
       - gravitee/nexus_staging_trigger:
-          context: cicd-orchestrator
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
           ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
@@ -105,7 +104,7 @@ jobs:
       - run:
           name: "Remember Gravitee Release Version"
           command: |
-                    apt-get install -y jq
+                    sudo apt-get install -y jq
                     export RELEASE_VERSION_NUMBER=$(cat release.json | jq .version | awk -F '"' '{print $2}')
                     export TRIMMED_RELEASE_VERSION_NUMBER=$(echo "${RELEASE_VERSION_NUMBER}" | awk -F '-SNAPSHOT' '{print $1}')
                     export RELEASE_VERSION_NUMBER=${TRIMMED_RELEASE_VERSION_NUMBER}
@@ -146,7 +145,6 @@ jobs:
                     echo "RELEASE_VERSION_NUMBER=[${RELEASE_VERSION_NUMBER}]"
                     git checkout ${RELEASE_VERSION_NUMBER}
       - gravitee/nexus_staging_trigger:
-          context: cicd-orchestrator
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
           ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
@@ -213,50 +211,22 @@ workflows:
                 # - /^[0-9]+.[0-9]+.[0-9]+/ # e.g. 3.0.0
                 - /^[0-9]+.[0-9]+.[0-9]+-beta/ # e.g. 3.0.0-beta
                 - master # ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process DRY RUN
+      - publish_bundles_job:
+          requires:
+            - run_orchestrator
+          context: cicd-orchestrator
   # ---
   # This workflow is triggered by the git tag created when
   # the maven release process successfully completes.
   publish_bundles:
+    when:
+      equal: [ publish_bundles, << pipeline.parameters.gio_action >> ]
     jobs:
       - publish_bundles_job:
           # requires:
             # - release_process
           context: cicd-orchestrator
           # one cannot filters tag/branches when conditonal workflows
-          filters:
-            branches:
-              # ---
-              # Will run only when git commits are pushed to master branch
-              # Therefore, will be triggered when a pull request is accepted, with target branch being
-              # the master branch.
-              ignore:
-                # ---
-                - /^feature\/.*/ # feature/<any string here>
-                - /^support\/.*/ # support/<any string here>
-                - /^issue\/.*/ # issue/<any string here>
-                - /^cicd\/.*/ # cicd/<any string here>
-                - /^.*\/.*/ # <any string here>/<any string here>
-            tags:
-              # only: /^v.*/
-              only:
-                - /^[0-9]+.[0-9]+.[0-9]+/
-                - /^[0-9]+.[0-9]+.[0-9]+-alpha/
-                - /^[0-9]+.[0-9]+.[0-9]+-beta/
-  # ---
-  # this workflow is triggered
-  nexus_staging_trigger:
-    # see https://circleci.com/docs/2.0/configuration-reference/#logic-statement-examples
-    # when:
-      # and:
-        # - equal: [ nexus_staging, << pipeline.parameters.gio_action >> ]
-        # - not: << pipeline.parameters.dry_run >>
-    jobs:
-      # return to simple definition :
-      - gravitee/nexus_staging_trigger:
-          context: cicd-orchestrator
-          secrethub_org: gravitee-lab
-          secrethub_repo: cicd
-          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
           filters:
             branches:
               # ---

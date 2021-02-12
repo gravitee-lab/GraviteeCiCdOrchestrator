@@ -95,22 +95,6 @@ jobs:
                     export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_nexus_staging --dry-run false
                     exit "$?"
-  nexus_staging_prepare_bucket_test_job:
-    machine:
-      image: 'ubuntu-1604:201903-01'
-    environment:
-      GITHUB_ORG: ${GITHUB_ORG}
-      SECRETHUB_ORG: gravitee-lab
-      SECRETHUB_REPO: cicd
-    steps:
-      - checkout
-      - secrethub/install
-      - gravitee/nexus_staging_prepare_bucket:
-          dry_run: false
-          maven_container_image_tag: stable-latest
-          maven_profile_id: gio-release
-          secrethub_org: gravitee-lab
-          secrethub_repo: cicd
 workflows:
   version: 2.1
   # Blank process invoked when pull requests events are triggered
