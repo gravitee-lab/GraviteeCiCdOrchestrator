@@ -215,7 +215,7 @@ export class ReleaseManifestFilter {
       console.debug('');
       console.debug('--- ');
       console.debug('');
-      if (Object.keys(component).length != 2 || Object.keys(component).length != 3) {
+      if (!(Object.keys(component).length == 2 || Object.keys(component).length == 3)) {
         let errMsg = "{[ReleaseManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += "{[ReleaseManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.";
