@@ -308,6 +308,9 @@ export class ReleaseManifestFilter {
        if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
          console.log(`{[ReleaseManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for components to deploy to Nexus Staging.`)
          this.prepareManifestForNexusStaging();
+         console.debug("{[ReleaseManifestFilter]} - Prepared Manifest is : ");
+         console.debug(this.releaseManifest);
+         throw new Error(`{[ReleaseManifestFilter]} - DEBUG point`)
        }
     }
 
