@@ -3,8 +3,11 @@ version: 2.1
 parameters:
   gio_action:
     type: enum
-    enum: [release, dry_nexus_staging, nexus_staging, blank]
+    enum: [release, dry_nexus_staging, nexus_staging, cicd_test, blank]
     default: blank
+  gio_product_version:
+    type: string
+    default: "78.15.42"
 orbs:
   secrethub: secrethub/cli@1.0.0
   gravitee: gravitee-io/gravitee@dev:1.0.4
@@ -18,17 +21,44 @@ jobs:
       # - run:
           # name: "This is a dummy empty job (isn't it ?)"
           # command: echo "No task is executed."
-
   dry_run_orchestrator:
     machine:
       image: 'ubuntu-1604:201903-01'
     environment:
       GITHUB_ORG: ${GITHUB_ORG}
+      GIO_PRODUCT_VERSION: << pipeline.parameters.gio_product_version >>
+      RELEASE_REPO: git@github.com:gravitee-lab/release-with-nexus-staging-test1
       SECRETHUB_ORG: gravitee-lab
       SECRETHUB_REPO: cicd
     steps:
       - checkout
       - secrethub/install
+      # - secrethub/install
+      - gravitee/git_config:
+          secrethub_org: gravitee-lab
+          secrethub_repo: cicd
+      - run:
+          name: "Test Git config"
+          command: |
+                    echo "check [${HOME}/.ssh.gravitee.io/]"
+                    ls -allh ${HOME}/.ssh.gravitee.io/
+                    echo "check [${HOME}/.ssh.gravitee.io/id_rsa]"
+                    ls -allh ${HOME}/.ssh.gravitee.io/id_rsa
+                    echo "check [${HOME}/.ssh.gravitee.io/id_rsa.pub]"
+                    ls -allh ${HOME}/.ssh.gravitee.io/id_rsa.pub
+                    git config --list
+                    ssh -Ti ~/.ssh.gravitee.io/id_rsa git@github.com || true
+      - run:
+          name: "Retrieving Release.json"
+          command: |
+                    export OPS_HOME=$(pwd)
+                    echo "Current diectory: [$(pwd)]"
+                    export LOCAL_RELEASE_REPO=$(mktemp -d -t "s3cmd_install_ops-XXXXXXXXXX")
+                    git clone ${RELEASE_REPO} ${LOCAL_RELEASE_REPO}
+                    cd ${LOCAL_RELEASE_REPO}
+                    git checkout ${GIO_PRODUCT_VERSION}
+                    cp -f ${LOCAL_RELEASE_REPO}/release.json ${OPS_HOME}/release.json
+                    cd ${OPS_HOME}
       - run:
           name: "Docker pull"
           command: |
@@ -41,9 +71,12 @@ jobs:
                     export GITHUB_ORG=gravitee-lab
                     export SECRETHUB_ORG=gravitee-lab
                     export SECRETHUB_REPO=cicd
+                    export MAVEN_PROFILE_ID='gravitee-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    echo "MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
+
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
@@ -54,7 +87,7 @@ jobs:
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
                     export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json -v $PWD/.secrethub.credential:/graviteeio/cicd/.secrethub.credential"
-                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO} --env MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_nexus_staging --dry-run
                     exit "$?"
   run_orchestrator:
@@ -79,9 +112,11 @@ jobs:
                     export GITHUB_ORG=gravitee-lab
                     export SECRETHUB_ORG=gravitee-lab
                     export SECRETHUB_REPO=cicd
+                    export MAVEN_PROFILE_ID='gravitee-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    echo "MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
@@ -92,7 +127,7 @@ jobs:
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
                     export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json -v $PWD/.secrethub.credential:/graviteeio/cicd/.secrethub.credential"
-                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO} --env MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_nexus_staging --dry-run false
                     exit "$?"
 workflows:
@@ -105,6 +140,16 @@ workflows:
       # - empty_job:
           # context: cicd-orchestrator
   # Release Process DRY RUN
+  cicd_test_wf:
+    when:
+      equal: [ cicd_test, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - cicd_test_job:
+          context: cicd-orchestrator
+      - cicd_test_job2:
+          requires:
+            - cicd_test_job
+          context: cicd-orchestrator
   dry_nexus_staging_process:
     when:
       equal: [ dry_nexus_staging, << pipeline.parameters.gio_action >> ]
