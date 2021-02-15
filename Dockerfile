@@ -105,6 +105,8 @@ ENV SECRETHUB_ORG=${SECRETHUB_ORG}
 ARG SECRETHUB_REPO
 ENV SECRETHUB_REPO=${SECRETHUB_REPO}
 
+ARG MAVEN_PROFILE_ID
+ENV MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}
 
 # --- copy production node_modules
 COPY --from=dependencies /graviteeio/cicd/prod_node_modules ./node_modules

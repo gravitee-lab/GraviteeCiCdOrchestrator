@@ -264,7 +264,7 @@ export class ReactiveParallelExecutionSet {
       console.log(`{ReactiveParallelExecutionSet} : DEBUG tracking down if I catch properly [gioReleaseVersion]=[${gioReleaseVersion}]`)
 
       // throw new Error(`{[ReleaseManifestFilter]} - DEBUG point`) //
-      let gio_action_pipeline_param = `release`;
+      let gio_action_pipeline_param = '';
       if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
         gio_action_pipeline_param = `nexus_staging`;
       } else if (process.argv["cicd-stage"] === 'release') {
