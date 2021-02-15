@@ -93,3 +93,9 @@ export JSON_PAYLOAD="{
 curl -X POST -d "${JSON_PAYLOAD}" -H 'Content-Type: application/json' -H 'Accept: application/json' -H "Circle-Token: ${CCI_TOKEN}" https://circleci.com/api/v2/project/gh/${ORG_NAME}/${REPO_NAME}/pipeline
 
 ```
+
+## Current squash
+
+```bash
+export SQUASH_ORIGIN="1b1488c98556575c8e153beed20a6133fe4248cc"
+git rebase --interactive "${SQUASH_ORIGIN}"

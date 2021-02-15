@@ -39,6 +39,7 @@ export class GNUOptions {
   constructor(){
 
     let cicd_stage_option_desc = "\n\n" +`['mvn_release'] designed to run in the [https://github.com/${process.env.GH_ORG}/release] ${process.env.GH_ORG} git repo, will run the maven release process, handling all dependency tree parallelization, with reactive behavior (using RxJS), based on the 'release.json' versioned in the https://github.com/${process.env.GH_ORG}/release git repository`
+    cicd_stage_option_desc += "\n\n" +`['mvn_nexus_staging'] designed to run the nexus staging in every the ${process.env.GH_ORG} product component git repo (dev git repos, aka repos where product source code is versioned).`
     cicd_stage_option_desc += "\n\n" +`['pull_req'] designed to run in every the ${process.env.GH_ORG} product component git repo (dev git repos, aka repos where product source code is versioned), to manage pull requests with different Circle CI Pipeline Workflows, for support sprints, dev sprints, or even secops sprints. , and based on git branch names (prefix).`
     cicd_stage_option_desc += "\n\n" +`['release_bundle'] designed to run in the [https://github.com/${process.env.GH_ORG}/docker-library] ${process.env.GH_ORG} git repo, to make bundles (something like tar arhcives, zip files of jars...) used to install many dependencies in Container images.`
     cicd_stage_option_desc += "\n\n" +`['oci_release'] designed to run in the [https://github.com/${process.env.GH_ORG}/docker-library] ${process.env.GH_ORG} git repo, will run the docker release process : docker builds and push all docker images for the product, LTS and STS Releases`
@@ -50,7 +51,7 @@ export class GNUOptions {
 
     this.argv = yargsLib.options({
       'dry-run': { type: 'boolean', default: true, desc: "\n\n" +"Use this option to run the CICD Process Stage in 'dry run' mode.", alias: 'd' },
-      'cicd-stage': { choices: ['mvn_release', 'release_bundle', 'docker_release', 'rpm_release', 'doc_release', 'demos_release', 'social_announcements', 'pull_req'], demandOption: true, desc: `Use this option to specify the CICD Process to run. ${cicd_stage_option_desc}`, alias: 's' },  /// 'pr-bot': { type: 'boolean', default: false, desc: "\n\n" +"Use this option to run the Pull Request Bot CICD Process in a Gravitee IO Component Pipeline.", alias: 'pr' }
+      'cicd-stage': { choices: ['mvn_release', 'mvn_nexus_staging', 'release_bundle', 'docker_release', 'rpm_release', 'doc_release', 'demos_release', 'social_announcements', 'pull_req'], demandOption: true, desc: `Use this option to specify the CICD Process to run. ${cicd_stage_option_desc}`, alias: 's' },  /// 'pr-bot': { type: 'boolean', default: false, desc: "\n\n" +"Use this option to run the Pull Request Bot CICD Process in a Gravitee IO Component Pipeline.", alias: 'pr' }
       /*,
       b: { type: 'string', demandOption: true },
       c: { type: 'number', alias: 'chill' },

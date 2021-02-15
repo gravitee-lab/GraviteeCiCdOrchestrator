@@ -128,7 +128,7 @@ export HUMAN_NAME=jblasselle
 export CCI_TOKEN=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/humans/${HUMAN_NAME}/circleci/token")
 
 export ORG_NAME="gravitee-lab"
-export REPO_NAME="release-with-nexus-staging-test1"
+export REPO_NAME="nexus-staging"
 export BRANCH="4.1.x"
 export JSON_PAYLOAD="{
 
@@ -136,7 +136,8 @@ export JSON_PAYLOAD="{
     \"parameters\":
 
     {
-        \"gio_action\": \"release\"
+        \"gio_action\": \"dry_nexus_staging\",
+        \"gio_product_version\": \"4.1.7\"
     }
 
 }"
