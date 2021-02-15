@@ -345,6 +345,9 @@ export class ReleaseManifestFilter {
         toReturn = maven_version_number.substr(0, maven_version_number.length - 9 );
       } else {
         /// toReturn = maven_version_number;
+        if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
+          return maven_version_number;
+        }
         let errMsg = `{[ReleaseManifestFilter]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
         console.log(errMsg);
         throw new Error(errMsg);
