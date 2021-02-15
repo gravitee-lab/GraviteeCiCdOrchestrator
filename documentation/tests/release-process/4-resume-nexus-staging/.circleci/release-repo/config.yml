@@ -5,6 +5,9 @@ parameters:
     type: enum
     enum: [release, dry_release, publish_bundles, blank]
     default: blank
+  gio_release_version:
+    type: string
+    default: $GIO_RELEASE_VERSION
 orbs:
   secrethub: secrethub/cli@1.0.0
   gravitee: gravitee-io/gravitee@dev:1.0.4
@@ -35,15 +38,7 @@ jobs:
           maven_profile_id: gio-release
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
-      - run:
-          name: "Remember Gravitee Release Version"
-          command: |
-                    apt-get install -y jq
-                    export RELEASE_VERSION_NUMBER=$(cat release.json | jq .version | awk -F '"' '{print $2}')
-                    export TRIMMED_RELEASE_VERSION_NUMBER=$(echo "${RELEASE_VERSION_NUMBER}" | awk -F '-SNAPSHOT' '{print $1}')
-                    export RELEASE_VERSION_NUMBER=${TRIMMED_RELEASE_VERSION_NUMBER}
-                    echo "${RELEASE_VERSION_NUMBER}" > ./.remember.gravitee.release.version
-                    echo "./.remember.gravitee.release.version" >> ./.gitignore
+
       - run:
           name: "Docker pull"
           command: |
@@ -56,9 +51,11 @@ jobs:
                     export GITHUB_ORG=gravitee-lab
                     export SECRETHUB_ORG=gravitee-lab
                     export SECRETHUB_REPO=cicd
+                    export MAVEN_PROFILE_ID='gravitee-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    echo "MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
@@ -69,21 +66,9 @@ jobs:
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
                     export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json -v $PWD/.secrethub.credential:/graviteeio/cicd/.secrethub.credential"
-                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO} --env MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_release --dry-run
                     exit "$?"
-      - run:
-          name: "Come back to Gravitee Release Version"
-          command: |
-                    export RELEASE_VERSION_NUMBER=$(cat ./.remember.gravitee.release.version)
-                    echo "RELEASE_VERSION_NUMBER=[${RELEASE_VERSION_NUMBER}]"
-                    git checkout ${RELEASE_VERSION_NUMBER}
-
-      # after release is finished, the nexus staging phase is
-      - gravitee/nexus_staging_trigger:
-          secrethub_org: gravitee-lab
-          secrethub_repo: cicd
-          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
 
   run_orchestrator:
     machine:
@@ -102,15 +87,6 @@ jobs:
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
       - run:
-          name: "Remember Gravitee Release Version"
-          command: |
-                    sudo apt-get install -y jq
-                    export RELEASE_VERSION_NUMBER=$(cat release.json | jq .version | awk -F '"' '{print $2}')
-                    export TRIMMED_RELEASE_VERSION_NUMBER=$(echo "${RELEASE_VERSION_NUMBER}" | awk -F '-SNAPSHOT' '{print $1}')
-                    export RELEASE_VERSION_NUMBER=${TRIMMED_RELEASE_VERSION_NUMBER}
-                    echo "${RELEASE_VERSION_NUMBER}" > ./.remember.gravitee.release.version
-                    echo "./.remember.gravitee.release.version" >> ./.gitignore
-      - run:
           name: "Docker pull"
           command: |
                     docker pull quay.io/gravitee-lab/cicd-orchestrator:stable-latest
@@ -122,9 +98,11 @@ jobs:
                     export GITHUB_ORG=gravitee-lab
                     export SECRETHUB_ORG=gravitee-lab
                     export SECRETHUB_REPO=cicd
+                    export MAVEN_PROFILE_ID='gravitee-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    echo "MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
@@ -135,19 +113,9 @@ jobs:
                     # Docker volumes to map pipeline checked out git tree, .env file and .secrets.json files inside the docker container
                     # export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.env:/graviteeio/cicd/.env -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json"
                     export DOCKER_VOLUMES="-v $PWD:/graviteeio/cicd/pipeline -v $PWD/.secrets.json:/graviteeio/cicd/.secrets.json -v $PWD/.secrethub.credential:/graviteeio/cicd/.secrethub.credential"
-                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO}"
+                    export ENV_VARS="--env GH_ORG=${GITHUB_ORG} --env SECRETHUB_ORG=${SECRETHUB_ORG} --env SECRETHUB_REPO=${SECRETHUB_REPO} --env MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
                     docker run --name orchestrator ${ENV_VARS} ${DOCKER_VOLUMES} --restart no -it quay.io/gravitee-lab/cicd-orchestrator:stable-latest -s mvn_release --dry-run false
                     exit "$?"
-      - run:
-          name: "Come back to Gravitee Release Version"
-          command: |
-                    export RELEASE_VERSION_NUMBER=$(cat ./.remember.gravitee.release.version)
-                    echo "RELEASE_VERSION_NUMBER=[${RELEASE_VERSION_NUMBER}]"
-                    git checkout ${RELEASE_VERSION_NUMBER}
-      - gravitee/nexus_staging_trigger:
-          secrethub_org: gravitee-lab
-          secrethub_repo: cicd
-          ssh_nexus_staging_git_repo: git@github.com:gravitee-lab/nexus-staging.git
 
   publish_bundles_job:
     machine:
@@ -165,7 +133,7 @@ jobs:
           maven_profile_id: gio-release
           secrethub_org: gravitee-lab
           secrethub_repo: cicd
-
+          gio_release_version: << pipeline.parameters.gio_release_version >>
 workflows:
   version: 2.1
   # Blank process invoked when pull requests events are triggered
@@ -211,10 +179,10 @@ workflows:
                 # - /^[0-9]+.[0-9]+.[0-9]+/ # e.g. 3.0.0
                 - /^[0-9]+.[0-9]+.[0-9]+-beta/ # e.g. 3.0.0-beta
                 - master # ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process DRY RUN
-      - publish_bundles_job:
-          requires:
-            - run_orchestrator
-          context: cicd-orchestrator
+      # - publish_bundles_job:
+          # requires:
+            # - run_orchestrator
+          # context: cicd-orchestrator
   # ---
   # This workflow is triggered by the git tag created when
   # the maven release process successfully completes.
@@ -227,22 +195,22 @@ workflows:
             # - release_process
           context: cicd-orchestrator
           # one cannot filters tag/branches when conditonal workflows
-          filters:
-            branches:
-              # ---
-              # Will run only when git commits are pushed to master branch
-              # Therefore, will be triggered when a pull request is accepted, with target branch being
-              # the master branch.
-              ignore:
-                # ---
-                - /^feature\/.*/ # feature/<any string here>
-                - /^support\/.*/ # support/<any string here>
-                - /^issue\/.*/ # issue/<any string here>
-                - /^cicd\/.*/ # cicd/<any string here>
-                - /^.*\/.*/ # <any string here>/<any string here>
-            tags:
-              # only: /^v.*/
-              only:
-                - /^[0-9]+.[0-9]+.[0-9]+/
-                - /^[0-9]+.[0-9]+.[0-9]+-alpha/
-                - /^[0-9]+.[0-9]+.[0-9]+-beta/
+          # filters:
+            # branches:
+              # # ---
+              # # Will run only when git commits are pushed to master branch
+              # # Therefore, will be triggered when a pull request is accepted, with target branch being
+              # # the master branch.
+              # ignore:
+                # # ---
+                # - /^feature\/.*/ # feature/<any string here>
+                # - /^support\/.*/ # support/<any string here>
+                # - /^issue\/.*/ # issue/<any string here>
+                # - /^cicd\/.*/ # cicd/<any string here>
+                # - /^.*\/.*/ # <any string here>/<any string here>
+            # tags:
+              # # only: /^v.*/
+              # only:
+                # - /^[0-9]+.[0-9]+.[0-9]+/
+                # - /^[0-9]+.[0-9]+.[0-9]+-alpha/
+                # - /^[0-9]+.[0-9]+.[0-9]+-beta/

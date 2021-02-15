@@ -21,6 +21,113 @@ jobs:
       # - run:
           # name: "This is a dummy empty job (isn't it ?)"
           # command: echo "No task is executed."
+  cicd_test_job:
+    docker:
+     - image: 'cimg/base:stable'
+    resource_class: medium
+    # working_directory: /mnt/ramdisk
+    environment:
+      GIO_PRODUCT_VERSION: << pipeline.parameters.gio_product_version >>
+      RELEASE_REPO: git@github.com:gravitee-lab/release-with-nexus-staging-test1
+      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_REPO: cicd
+      GIT_SSH_PUB_KEY: 'secrethub://gravitee-lab/cicd/graviteebot/git/ssh/public_key'
+      GIT_SSH_PRV_KEY: 'secrethub://gravitee-lab/cicd/graviteebot/git/ssh/private_key'
+    steps:
+      # secrethub cannot be installed directly into a docker image
+      # So git_config orb cannot be used as is into a docker container.
+      #
+      # - secrethub/install
+      # - gravitee/git_config:
+          # secrethub_org: $SECRETHUB_ORG
+          # secrethub_repo: $SECRETHUB_REPO
+      - secrethub/exec:
+          command: |
+                    mkdir -p /tmp/graviteebot/.secrets/.ssh.gravitee.io
+                    echo $GIT_SSH_PUB_KEY > /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa.pub
+                    echo $GIT_SSH_PRV_KEY > /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    ssh-keygen -R github.com
+                    mkdir -p ~/.ssh
+                    touch ~/.ssh/known_hosts
+                    chmod 700 -R ~/.ssh/
+                    ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+                    chmod 700 /tmp/graviteebot/.secrets/.ssh.gravitee.io
+                    chmod 644 /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa.pub
+                    chmod 600 /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    ssh-add -D
+                    # cat /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    # ssh-add /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    ssh -Ti /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa git@github.com || true
+                    exit 0
+      - run:
+          name: "This is a dummy empty job (isn't it ?)"
+          command: |
+                    echo "value of GIO_PRODUCT_VERSION = [$GIO_PRODUCT_VERSION]"
+                    echo "value of GIO_PRODUCT_VERSION = [${GIO_PRODUCT_VERSION}]"
+                    echo "value of RELEASE_REPO = [${RELEASE_REPO}]"
+                    echo "value of SECRETHUB_ORG = [${SECRETHUB_ORG}]"
+                    echo "value of SECRETHUB_REPO = [${SECRETHUB_REPO}]"
+                    # export OPS_HOME=$(pwd)
+                    # echo "Current diectory: [$(pwd)]"
+                    # git clone ${RELEASE_REPO} ${HOME}/retrieved-release-repo
+                    # export LOCAL_RELEASE_REPO=${HOME}/retrieved-release-repo
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - graviteebot
+
+  cicd_test_job2:
+    docker:
+     - image: 'cimg/base:stable'
+    resource_class: medium
+    # working_directory: /mnt/ramdisk
+    environment:
+      GIO_PRODUCT_VERSION: << pipeline.parameters.gio_product_version >>
+      RELEASE_REPO: git@github.com:gravitee-lab/release-with-nexus-staging-test1
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: "Git SSH config"
+          command: |
+                    # mkdir -p /tmp/graviteebot/.secrets/.ssh.gravitee.io
+                    # echo $GIT_SSH_PUB_KEY > /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa.pub
+                    # echo $GIT_SSH_PRV_KEY > /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    echo "check [/tmp]"
+                    ls -allh /tmp
+                    echo "check [/tmp/graviteebot]"
+                    ls -allh /tmp/graviteebot
+                    echo "check [/tmp/graviteebot/.secrets/.ssh.gravitee.io]"
+                    ls -allh /tmp/graviteebot/.secrets/.ssh.gravitee.io
+                    # --
+                    mkdir -p ~/.ssh
+                    chmod 700 ~/.ssh
+                    touch ~/.ssh/known_hosts
+                    ssh-keygen -R github.com
+                    ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+                    chmod 700 /tmp/graviteebot/.secrets/.ssh.gravitee.io
+                    chmod 644 /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa.pub
+                    chmod 600 /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    ssh-add -D
+                    # cat /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    # ssh-add /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa
+                    ssh -Ti /tmp/graviteebot/.secrets/.ssh.gravitee.io/id_rsa git@github.com || true
+
+
+      - run:
+          name: "This is a dummy empty job (isn't it ?)"
+          command: |
+                    echo "value of GIO_PRODUCT_VERSION = [$GIO_PRODUCT_VERSION]"
+                    echo "value of GIO_PRODUCT_VERSION = [${GIO_PRODUCT_VERSION}]"
+                    echo "value of RELEASE_REPO = [${RELEASE_REPO}]"
+                    echo "value of SECRETHUB_ORG = [${SECRETHUB_ORG}]"
+                    echo "value of SECRETHUB_REPO = [${SECRETHUB_REPO}]"
+                    export OPS_HOME=$(pwd)
+                    echo "Current diectory: [$(pwd)]"
+                    git clone ${RELEASE_REPO} ${HOME}/retrieved-release-repo
+                    export LOCAL_RELEASE_REPO=${HOME}/retrieved-release-repo
+
+
   dry_run_orchestrator:
     machine:
       image: 'ubuntu-1604:201903-01'
@@ -76,7 +183,6 @@ jobs:
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
                     echo "MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}"
-
                     # checking docker image pulled in previous step is there
                     docker images
                     # --> .secrets.json is used by Gravitee CI CD Orchestrator to authenticate to Circle CI
