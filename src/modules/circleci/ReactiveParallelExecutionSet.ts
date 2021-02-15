@@ -267,7 +267,7 @@ export class ReactiveParallelExecutionSet {
       let gio_action_pipeline_param = '';
       if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
         gio_action_pipeline_param = `nexus_staging`;
-      } else if (process.argv["cicd-stage"] === 'release') {
+      } else if (process.argv["cicd-stage"] === 'mvn_release') {
         gio_action_pipeline_param = `release`;
       }
 

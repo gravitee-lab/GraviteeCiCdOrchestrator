@@ -942,9 +942,11 @@ cat << EOF >./settings.nexus-staging.xml
       <password>${NEXUS_STAGING_BOT_USER_PWD}</password>
     </server>
   </servers>
+  <!--
   <activeProfiles>
   <activeProfile>gravitee-release</activeProfile>
   </activeProfiles>
+  -->
 </settings>
 EOF
 
