@@ -262,9 +262,18 @@ export class ReactiveParallelExecutionSet {
       /// pipeline execution parameters, same as [Jenkins] build parameters
       /// ---
       console.log(`{ReactiveParallelExecutionSet} : DEBUG tracking down if I catch properly [gioReleaseVersion]=[${gioReleaseVersion}]`)
+
+      // throw new Error(`{[ReleaseManifestFilter]} - DEBUG point`) //
+      let gio_action_pipeline_param = `release`;
+      if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
+        gio_action_pipeline_param = `nexus_staging`;
+      } else if (process.argv["cicd-stage"] === 'release') {
+        gio_action_pipeline_param = `release`;
+      }
+
       let pipelineConfig = {
         parameters: {
-         gio_action: `release`, // should be releated to cicd_stage...? mvn_release ?
+         gio_action: `${gio_action_pipeline_param}`, // should be releated to cicd_stage...? mvn_release ?
          dry_run: process.argv["dry-run"],
          secrethub_org: process.env.SECRETHUB_ORG,
          secrethub_repo: process.env.SECRETHUB_REPO,

@@ -310,7 +310,6 @@ export class ReleaseManifestFilter {
          this.prepareManifestForNexusStaging();
          console.debug("{[ReleaseManifestFilter]} - Prepared Manifest is : ");
          console.debug(this.releaseManifest);
-         throw new Error(`{[ReleaseManifestFilter]} - DEBUG point`)
        }
     }
 
