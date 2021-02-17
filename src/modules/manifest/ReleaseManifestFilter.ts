@@ -315,7 +315,15 @@ export class ReleaseManifestFilter {
        */
 
        if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
-
+         /// -- add again the [-SNAPSHOT] suffix go rallmaven released dev repos.
+         let releaseForNexusStaging = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
+         for (let currComponentIndex = 0; currComponentIndex < this.releaseManifest.components.length; currComponentIndex++) {
+           if (`${this.releaseManifest.components[currComponentIndex].since}` === `${releaseForNexusStaging}`) {
+             console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
+             ///
+             this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
+           }
+         }
          /// -- merge all buildDependencies
          let mergedBuildDependencies = []
          for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
