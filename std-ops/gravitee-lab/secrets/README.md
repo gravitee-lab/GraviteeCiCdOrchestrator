@@ -923,15 +923,34 @@ export SECRETHUB_REPO=cicd
 
 # secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/"
 
-export NEXUS_STAGING_BOT_USER_NAME=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_name)
-export NEXUS_STAGING_BOT_USER_PWD=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_pwd)
+# export NEXUS_STAGING_BOT_USER_NAME=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_name)
+# export NEXUS_STAGING_BOT_USER_PWD=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_pwd)
 
 export NEXUS_STAGING_BOT_USER_NAME=jbljbljbl
 export NEXUS_STAGING_BOT_USER_PWD=jbljbljbl
+export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase")
 
 # ---
 #
 cat << EOF >./settings.nexus-staging.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <pluginGroups></pluginGroups>
   <proxies></proxies>
@@ -940,6 +959,11 @@ cat << EOF >./settings.nexus-staging.xml
       <id>sonatype-nexus-staging</id>
       <username>${NEXUS_STAGING_BOT_USER_NAME}</username>
       <password>${NEXUS_STAGING_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <!-- as of https://maven.apache.org/plugins/maven-gpg-plugin/usage.html -->
+      <id>gpg.passphrase</id>
+      <passphrase>${GRAVITEEBOT_GPG_PASSPHRASE}</passphrase>
     </server>
   </servers>
   <!--

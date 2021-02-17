@@ -250,7 +250,9 @@ export class CircleCiOrchestrator {
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-      this.releaseStatePersistenceMngr.tagReleaseStart("CICD Orchestrator starts here The Release")
+      if (!(process.argv["cicd-stage"] === 'mvn_nexus_staging')) {
+        this.releaseStatePersistenceMngr.tagReleaseStart("CICD Orchestrator starts here The Release")
+      }
 
       /* WORKING TEST
       let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries

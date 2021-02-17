@@ -237,7 +237,9 @@ export class PipelineExecSetStatusWatcher {
                 console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [this.progressMatrixUpdatesNotifier SUBSCRIPTION] - RESUME RELEASE FEATURE SEWUP, component split : [${this.progressMatrix[k].project_slug.split('/')[2]}]`);
                 componentNamesArray.push(this.progressMatrix[k].project_slug.split('/')[2]);
               }
-              this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray);
+              if (!(process.argv["cicd-stage"] === 'mvn_nexus_staging')) {
+                this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray);
+              }
 
               if (this.isLast) {
                 console.log(`DEBUG [{PipelineExecSetStatusWatcher}] - [handleInspectPipelineExecStateResponseData] - now calling [this.finalizeReleaseRepoPersistence()] because all pipelines have successfully completed for the last non empty [Parallel Execution Set]`)
@@ -663,7 +665,9 @@ export class PipelineExecSetStatusWatcher {
           }
         }
       }
-      this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
+      if (!(process.argv["cicd-stage"] === 'mvn_nexus_staging')) {
+        this.releaseStatePersistenceMngr.persistSuccessStateOf(componentNamesArray); // this method is synchronous
+      }
 
       // -- AND FINISH MODE -- AND FINISH MODE --- "NEAT FINISH" // TO TEST // THIS WILL HAVE TO BE tested
       // OK HERE IS A NEW IDEA : MODIFY THE DESIGN OF THE WATCHER SHOULD STOP WHEN ALL PIPELINES ARE IN A FINAL STATE : NONE OF THEM IS RUNNING, AND THERE WAS AT LEAST ONE FAILURE, SO WE DO NOT PROCEED WITH NEXT [PARALLEL EXECUTION SET]. That way, at the very moment this event is detected,then we can persist all wuccessful pipeline execution in the [release.json]
@@ -680,35 +684,39 @@ export class PipelineExecSetStatusWatcher {
         }
       });*/
     }
-    // and finally commit and push it all
-    if (hasThereBeenErrors) {
-      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some components failed to be released, persisting successfully released components`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
-    } else {
-      this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Release finished completed without errors`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
-    }
-    if (!hasThereBeenErrors) { // tag release and prepare next version iff no errors
-      this.releaseStatePersistenceMngr.tagReleaseFinish(`Release published`)
-      // and prepare next version
-      this.releaseStatePersistenceMngr.prepareNextVersion();
-    }
-    if (hasThereBeenErrors) {
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`|--------------------------    STOPPING THE RELEASE PROCESS    -----------------------------------|`);
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The Release process is now stopping because some pipelines were detected as failing.`);
-      if (finishProgressMatrix.length != 0) {
-        console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The following Components have their pipelines still running while Release is stopping (if they successfully complete, remove the '-SNAPSHOT' suffix for them in the [release.json]) : `);
-        console.log(JSON.stringify(finishProgressMatrix, null, 4));
+    // and finally commit and push it all (unless this is maven staging)
+
+    if (!(process.argv["cicd-stage"] === 'mvn_nexus_staging')) {
+      if (hasThereBeenErrors) {
+        this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Some components failed to be released, persisting successfully released components`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
       } else {
-        console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - No Components have their pipelines still running while Release is stopping.`);
+        this.releaseStatePersistenceMngr.commitAndPushReleaseResult(hasThereBeenErrors, `Release finished completed without errors`); // is dry run sensible (in mode is on, won't push) // this method is synchronous
       }
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
-      console.log(`|-------------------------------------------------------------------------------------------------|`);
+      if (!hasThereBeenErrors) { // tag release and prepare next version iff no errors
+        this.releaseStatePersistenceMngr.tagReleaseFinish(`Release published`)
+        // and prepare next version
+        this.releaseStatePersistenceMngr.prepareNextVersion();
+      }
+      if (hasThereBeenErrors) {
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`|--------------------------    STOPPING THE RELEASE PROCESS    -----------------------------------|`);
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The Release process is now stopping because some pipelines were detected as failing.`);
+        if (finishProgressMatrix.length != 0) {
+          console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - The following Components have their pipelines still running while Release is stopping (if they successfully complete, remove the '-SNAPSHOT' suffix for them in the [release.json]) : `);
+          console.log(JSON.stringify(finishProgressMatrix, null, 4));
+        } else {
+          console.log(`[{PipelineExecSetStatusWatcher}] - [finalizeReleaseRepoPersistence] - No Components have their pipelines still running while Release is stopping.`);
+        }
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+        console.log(`|-------------------------------------------------------------------------------------------------|`);
+      }
     }
+
   }
   /// -------------
   ///  https://circleci.com/docs/2.0/workflows/#states

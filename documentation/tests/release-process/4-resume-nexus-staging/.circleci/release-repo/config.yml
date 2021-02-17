@@ -51,7 +51,7 @@ jobs:
                     export GITHUB_ORG=gravitee-lab
                     export SECRETHUB_ORG=gravitee-lab
                     export SECRETHUB_REPO=cicd
-                    export MAVEN_PROFILE_ID='gravitee-release'
+                    export MAVEN_PROFILE_ID='gio-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
@@ -98,7 +98,7 @@ jobs:
                     export GITHUB_ORG=gravitee-lab
                     export SECRETHUB_ORG=gravitee-lab
                     export SECRETHUB_REPO=cicd
-                    export MAVEN_PROFILE_ID='gravitee-release'
+                    export MAVEN_PROFILE_ID='gio-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
                     echo "SECRETHUB_ORG=${SECRETHUB_ORG}"
                     echo "SECRETHUB_REPO=${SECRETHUB_REPO}"
@@ -194,23 +194,3 @@ workflows:
           # requires:
             # - release_process
           context: cicd-orchestrator
-          # one cannot filters tag/branches when conditonal workflows
-          # filters:
-            # branches:
-              # # ---
-              # # Will run only when git commits are pushed to master branch
-              # # Therefore, will be triggered when a pull request is accepted, with target branch being
-              # # the master branch.
-              # ignore:
-                # # ---
-                # - /^feature\/.*/ # feature/<any string here>
-                # - /^support\/.*/ # support/<any string here>
-                # - /^issue\/.*/ # issue/<any string here>
-                # - /^cicd\/.*/ # cicd/<any string here>
-                # - /^.*\/.*/ # <any string here>/<any string here>
-            # tags:
-              # # only: /^v.*/
-              # only:
-                # - /^[0-9]+.[0-9]+.[0-9]+/
-                # - /^[0-9]+.[0-9]+.[0-9]+-alpha/
-                # - /^[0-9]+.[0-9]+.[0-9]+-beta/
