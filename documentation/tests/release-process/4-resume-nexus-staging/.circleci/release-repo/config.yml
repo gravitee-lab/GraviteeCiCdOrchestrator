@@ -191,4 +191,6 @@ workflows:
       equal: [ publish_bundles, << pipeline.parameters.gio_action >> ]
     jobs:
       - publish_bundles_job:
+          # requires:
+            # - release_process
           context: cicd-orchestrator

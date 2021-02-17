@@ -1,11 +1,31 @@
 # Resume release feature
 
 
+Next steps :
+
+* Faire une release APIM `1.25.x` :
+  * pour support
+  * pour les issues :
+    * https://github.com/gravitee-io/issues/milestone/132?closed=1
+    * 3 repos gateway reat-api ui (à )
+
+* pour tester dans gravitee-io, nexus staging après release :
+  * se lance par un `curl`
+  * 2 secrets : secret s3 , `settings.xml` qui contient les credentials
+  * reste à faire : fix la signature GPG pour le maven deploy
+
+* pour tester dans gravitee-io, package bundle :
+  * créer le secret s3, (le secret ARTIFACTORY username/password est déjà créé)
+  * reste à faire :
+    * webui custom pour le package bundle
+    * se lance avec un curl
+    * synchroniser avec nicolas ce qui existe déjà dans la Apache
+
 
 ## What we need to prepare full release
 
-* create the https://github.com/gravitee-io/nexus-staging repo
-* update the `.circleci/config.yml` in :
+* Create the https://github.com/gravitee-io/nexus-staging repo
+* Update the `.circleci/config.yml` in :
   * dev repos
   * release repo : to add job to prepare S3 bucket for nexus staging, and
 
@@ -150,8 +170,8 @@ export JSON_PAYLOAD="{
     \"parameters\":
 
     {
-        \"gio_action\": \"dry_nexus_staging\",
-        \"gio_product_version\": \"4.1.12\"
+        \"gio_action\": \"nexus_staging\",
+        \"gio_product_version\": \"4.1.13\"
     }
 
 }"

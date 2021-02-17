@@ -305,10 +305,26 @@ export class ReleaseManifestFilter {
        *
        *
        **/
+       /*
        if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
          console.log(`{[ReleaseManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for components to deploy to Nexus Staging.`)
          this.prepareManifestForNexusStaging();
          console.debug("{[ReleaseManifestFilter]} - Prepared Manifest is : ");
+         console.debug(this.releaseManifest);
+       }
+       */
+
+       if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
+
+         /// -- merge all buildDependencies
+         let mergedBuildDependencies = []
+         for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
+           console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
+           mergedBuildDependencies = mergedBuildDependencies.concat(this.releaseManifest.buildDependencies[i]);
+
+         }
+         this.releaseManifest.buildDependencies = [ mergedBuildDependencies ];
+         console.debug("{[ReleaseManifestFilter]} - {Nexus Staging} - Loaded in RAM Manifest is : ");
          console.debug(this.releaseManifest);
        }
     }

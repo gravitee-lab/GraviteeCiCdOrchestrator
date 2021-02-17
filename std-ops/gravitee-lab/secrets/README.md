@@ -923,11 +923,12 @@ export SECRETHUB_REPO=cicd
 
 # secrethub mkdir --parents "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/"
 
-export NEXUS_STAGING_BOT_USER_NAME=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_name)
-export NEXUS_STAGING_BOT_USER_PWD=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_pwd)
+# export NEXUS_STAGING_BOT_USER_NAME=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_name)
+# export NEXUS_STAGING_BOT_USER_PWD=$(secrethub read ${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/infra/maven/nexus_staging_bot_user_pwd)
 
 export NEXUS_STAGING_BOT_USER_NAME=jbljbljbl
 export NEXUS_STAGING_BOT_USER_PWD=jbljbljbl
+export GRAVITEEBOT_GPG_PASSPHRASE=$(secrethub read "${SECRETHUB_ORG}/${SECRETHUB_REPO}/graviteebot/gpg/passphrase")
 
 # ---
 #
@@ -958,6 +959,11 @@ cat << EOF >./settings.nexus-staging.xml
       <id>sonatype-nexus-staging</id>
       <username>${NEXUS_STAGING_BOT_USER_NAME}</username>
       <password>${NEXUS_STAGING_BOT_USER_PWD}</password>
+    </server>
+    <server>
+      <!-- as of https://maven.apache.org/plugins/maven-gpg-plugin/usage.html -->
+      <id>gpg.passphrase</id>
+      <passphrase>${GRAVITEEBOT_GPG_PASSPHRASE}</passphrase>
     </server>
   </servers>
   <!--
