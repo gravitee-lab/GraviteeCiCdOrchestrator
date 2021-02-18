@@ -19,7 +19,7 @@ jobs:
     working_directory: /mnt/ramdisk
     steps:
       - run:
-          name: "This is a dummy empty job (isn't it ?)"
+          name: "This is a blank job"
           command: echo "No task is executed."
 
   dry_run_orchestrator:
@@ -27,7 +27,7 @@ jobs:
       image: 'ubuntu-1604:201903-01'
     environment:
       GITHUB_ORG: ${GITHUB_ORG}
-      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_ORG: graviteeio
       SECRETHUB_REPO: cicd
     steps:
       - checkout
@@ -36,7 +36,7 @@ jobs:
           dry_run: true
           maven_container_image_tag: stable-latest
           maven_profile_id: gio-release
-          secrethub_org: gravitee-lab
+          secrethub_org: graviteeio
           secrethub_repo: cicd
 
       - run:
@@ -48,8 +48,8 @@ jobs:
           command: |
                     echo "Checking pipeline env. : "
                     ls -allh
-                    export GITHUB_ORG=gravitee-lab
-                    export SECRETHUB_ORG=gravitee-lab
+                    export GITHUB_ORG=gravitee-io
+                    export SECRETHUB_ORG=graviteeio
                     export SECRETHUB_REPO=cicd
                     export MAVEN_PROFILE_ID='gio-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
@@ -75,7 +75,7 @@ jobs:
       image: 'ubuntu-1604:201903-01'
     environment:
       GITHUB_ORG: ${GITHUB_ORG}
-      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_ORG: graviteeio
       SECRETHUB_REPO: cicd
     steps:
       - checkout
@@ -84,7 +84,7 @@ jobs:
           dry_run: false
           maven_container_image_tag: stable-latest
           maven_profile_id: gio-release
-          secrethub_org: gravitee-lab
+          secrethub_org: graviteeio
           secrethub_repo: cicd
       - run:
           name: "Docker pull"
@@ -95,8 +95,8 @@ jobs:
           command: |
                     echo "Checking pipeline env. : "
                     ls -allh
-                    export GITHUB_ORG=gravitee-lab
-                    export SECRETHUB_ORG=gravitee-lab
+                    export GITHUB_ORG=gravitee-io
+                    export SECRETHUB_ORG=graviteeio
                     export SECRETHUB_REPO=cicd
                     export MAVEN_PROFILE_ID='gio-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
@@ -123,8 +123,7 @@ jobs:
     environment:
       GITHUB_ORG: ${GITHUB_ORG}
       GIO_PRODUCT_VERSION: << pipeline.parameters.gio_release_version >>
-      # RELEASE_REPO: git@github.com:gravitee-lab/release-with-nexus-staging-test1
-      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_ORG: graviteeio
       SECRETHUB_REPO: cicd
     steps:
       - checkout
@@ -144,8 +143,8 @@ jobs:
           command: |
                     echo "Checking pipeline env. : "
                     ls -allh
-                    export GITHUB_ORG=gravitee-lab
-                    export SECRETHUB_ORG=gravitee-lab
+                    export GITHUB_ORG=gravitee-io
+                    export SECRETHUB_ORG=graviteeio
                     export SECRETHUB_REPO=cicd
                     export MAVEN_PROFILE_ID='gravitee-release'
                     echo "GITHUB_ORG=${GITHUB_ORG}"
@@ -171,7 +170,7 @@ jobs:
       image: 'ubuntu-1604:201903-01'
     environment:
       GITHUB_ORG: ${GITHUB_ORG}
-      SECRETHUB_ORG: gravitee-lab
+      SECRETHUB_ORG: graviteeio
       SECRETHUB_REPO: cicd
     steps:
       - checkout
@@ -180,7 +179,7 @@ jobs:
           dry_run: false
           maven_container_image_tag: stable-latest
           maven_profile_id: gio-release
-          secrethub_org: gravitee-lab
+          secrethub_org: graviteeio
           secrethub_repo: cicd
           gio_release_version: << pipeline.parameters.gio_release_version >>
 workflows:
@@ -192,7 +191,6 @@ workflows:
     jobs:
       - empty_job:
           context: cicd-orchestrator
-  # Release Process DRY RUN
   dry_release_process:
     when:
       equal: [ dry_release, << pipeline.parameters.gio_action >> ]
@@ -201,37 +199,22 @@ workflows:
           context: cicd-orchestrator
           filters:
             branches:
-              # ---
-              # Will run only when git commits are pushed to a release branch
-              # Therefore, will be triggered when a pull request, with target branch being
-              # a release branch, is accepted
               only:
                 - /^[0-9]+.[0-9]+.x/ # e.g. 4.5.x
-                # - /^[0-9]+.[0-9]+.[0-9]+/ # e.g. 3.0.0
                 - /^[0-9]+.[0-9]+.[0-9]+-beta/ # e.g. 3.0.0-beta
-                - master # ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process DRY RUN
+                - master
   release_process:
     when:
       equal: [ release, << pipeline.parameters.gio_action >> ]
     jobs:
       - run_orchestrator:
           context: cicd-orchestrator
-          # one cannot filters branches when conditonal workflows ?
           filters:
             branches:
-              # ---
-              # Will run only when git commits are pushed to master branch
-              # Therefore, will be triggered when a pull request is accepted, with target branch being
-              # the master branch.
               only:
                 - /^[0-9]+.[0-9]+.x/ # e.g. 4.5.x
-                # - /^[0-9]+.[0-9]+.[0-9]+/ # e.g. 3.0.0
                 - /^[0-9]+.[0-9]+.[0-9]+-beta/ # e.g. 3.0.0-beta
-                - master # ? as discussed ? if un-commented, any new pushed commit to master will trigger a Release Process DRY RUN
-      # - publish_bundles_job:
-          # requires:
-            # - run_orchestrator
-          # context: cicd-orchestrator
+                - master
   nexus_staging_workflow:
     when:
       equal: [ nexus_staging, << pipeline.parameters.gio_action >> ]
@@ -242,14 +225,10 @@ workflows:
             tags:
               only:
                 - /^[0-9]+.[0-9]+.[0-9]+/
-  # ---
-  # This workflow is triggered by the git tag created when
-  # the maven release process successfully completes.
+
   publish_bundles:
     when:
       equal: [ publish_bundles, << pipeline.parameters.gio_action >> ]
     jobs:
       - publish_bundles_job:
-          # requires:
-            # - release_process
           context: cicd-orchestrator
