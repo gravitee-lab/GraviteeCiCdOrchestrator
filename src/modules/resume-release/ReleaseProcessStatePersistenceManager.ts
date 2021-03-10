@@ -293,9 +293,15 @@ export class ReleaseProcessStatePersistenceManager {
       let currComponentIndex = this.getComponentIndex(component_names[i]);
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] removing [-SNAPSHOT] suffix for component :`)
       console.log(this.releaseManifest.components[currComponentIndex]);
-      this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currComponentIndex].version);
+
+      if (this.releaseManifest.components[currComponentIndex].version === undefined || this.releaseManifest.components[currComponentIndex].version === "") {
+        this.releaseManifest.components[currComponentIndex].version = this.releaseManifest.version;
+        this.releaseManifest.components[currComponentIndex].since = this.releaseManifest.version;
+      } else {
+        this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currComponentIndex].version);
+        this.releaseManifest.components[currComponentIndex].since = this.removeSnapshotSuffix(this.releaseManifest.version);
+      }
       // add the [since] JSon property
-      this.releaseManifest.components[currComponentIndex].since = this.removeSnapshotSuffix(this.releaseManifest.version);
     }
     /// and write the modified JSON back to the file
     console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(commit_message: string): void] after removing [-SNAPSHOT] suffix release manifest is now :`)
