@@ -295,8 +295,8 @@ export class ReleaseProcessStatePersistenceManager {
       console.log(this.releaseManifest.components[currComponentIndex]);
 
       if (this.releaseManifest.components[currComponentIndex].version === undefined || this.releaseManifest.components[currComponentIndex].version === "") {
-        this.releaseManifest.components[currComponentIndex].version = this.releaseManifest.version;
-        this.releaseManifest.components[currComponentIndex].since = this.releaseManifest.version;
+        this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.version);
+        this.releaseManifest.components[currComponentIndex].since = this.removeSnapshotSuffix(this.releaseManifest.version);
       } else {
         this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.components[currComponentIndex].version);
         this.releaseManifest.components[currComponentIndex].since = this.removeSnapshotSuffix(this.releaseManifest.version);
