@@ -182,40 +182,57 @@ export class ReleaseProcessStatePersistenceManager {
     if ( `${currentBranch}` === 'master' ) { // then this is a minor release
       // -- 1. create new support branch
       let nextSupportBranch = `${semver.major(this.releaseManifest.version)}.${semver.minor(this.releaseManifest.version)}.x`;
-      let gitCreateSupportBranchCmdResult = shelljs.exec(`cd pipeline/ && git checkout -b ${nextSupportBranch} && git push -u origin --all`);
-      if (gitCreateSupportBranchCmdResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + gitCreateSupportBranchCmdResult.stderr + "] ")
-      } else {
-        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully created the nex support branch [${nextSupportBranch}] : `);
-        console.log(gitCreateSupportBranchCmdResult.stdout);
+      if (`${process.argv["dry-run"]}` === 'false') {
+        let gitCreateSupportBranchCmdResult = shelljs.exec(`cd pipeline/ && git checkout -b ${nextSupportBranch} && git push -u origin --all`);
+        if (gitCreateSupportBranchCmdResult.code !== 0) {
+          throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + gitCreateSupportBranchCmdResult.stderr + "] ")
+        } else {
+          console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully created the nex support branch [${nextSupportBranch}] : `);
+          console.log(gitCreateSupportBranchCmdResult.stdout);
+        }
       }
       // git commit and push next Patch Version on the new support branch
       let nextPatchVersion = `${semver.major(this.releaseManifest.version)}.${semver.minor(this.releaseManifest.version)}.1-SNAPSHOT`;
       this.releaseManifest.version = nextPatchVersion;
       try {
         fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
-        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - Successfully wrote to ' + `[${manifestPath}] to prepare next patch version on [${nextSupportBranch}] new support branch  `);
+        console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - Successfully wrote to ' + `[${manifestPath}] to prepare next patch version on [${nextSupportBranch}] new support branch.`);
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
         console.log('{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred writing to ' + `[${manifestPath}] to prepare next patch version on [${nextSupportBranch}] new support branch  `);
         console.error(err);
         throw err;
       }
-      // git add, commit and push the next patch version
-      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next patch version" && git push -u origin HEAD`);
+
+      // git add, commit (not push) the next patch version
+      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next patch version"`);
       if (prepareNextPatchVersionCmdResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m ̀\"prepare next patch version\"] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
       } else {
         console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next patch version on the new support branch [${nextSupportBranch}] : `);
         console.log(prepareNextPatchVersionCmdResult.stdout);
+        console.log(`The [release.json] on the [${nextSupportBranch}] git branch is now :`);
+        this.loadReleaseJSon();
+        console.log(this.releaseManifest)
       }
+      // git push the next patch version if not a dry run
+      if (`${process.argv["dry-run"]}` === 'false') {
+        let prepareNextPatchVersionPushCmdResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
+        if (prepareNextPatchVersionPushCmdResult.code !== 0) {
+          throw new Error("{[ReleaseProcessStatePersistenceManager]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + prepareNextPatchVersionPushCmdResult.stderr + "] ")
+        } else {
+          console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully pushed the prepared the next patch version on the new support branch [${nextSupportBranch}] : `);
+          console.log(prepareNextPatchVersionPushCmdResult.stdout);
+        }
+      }
+
       // -- 2. go back to master branch to prepare next Minor Version
       // go back to master branch
       let goBackToMasterBranchCmdResult = shelljs.exec(`cd pipeline/ && git checkout master`);
       if (prepareNextPatchVersionCmdResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + goBackToMasterBranchCmdResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout master] shell command. Shell error was [" + goBackToMasterBranchCmdResult.stderr + "] ")
       } else {
-        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully switched backto master branch`);
+        console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully switched back to master branch`);
         console.log(goBackToMasterBranchCmdResult.stdout);
       }
       this.loadReleaseJSon(); // reload the [release.json], as it is on master
@@ -230,13 +247,26 @@ export class ReleaseProcessStatePersistenceManager {
         console.error(err);
         throw err;
       }
-      // git add, commit and push the next minor version
-      let prepareNextMinorVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next minor version" && git push -u origin HEAD`);
+      // git add, commit and not push the next minor version
+      let prepareNextMinorVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next minor version"`);
       if (prepareNextMinorVersionCmdResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m \"prepare next minor version\" && git push -u origin HEAD] shell command. Shell error was [" + prepareNextMinorVersionCmdResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m \"prepare next minor version\"] shell command. Shell error was [" + prepareNextMinorVersionCmdResult.stderr + "] ")
       } else {
         console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next minor version [${nextMinorVersion}] on the [master] branch : `);
         console.log(prepareNextMinorVersionCmdResult.stdout);
+        console.log(`The [release.json] on the [master] git branch is now :`);
+        this.loadReleaseJSon();
+        console.log(this.releaseManifest)
+      }
+      // git push the next minor version if not a dry run
+      if (`${process.argv["dry-run"]}` === 'false') {
+        let prepareNextMinorVersionPushCmdResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
+        if (prepareNextMinorVersionPushCmdResult.code !== 0) {
+          throw new Error(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git push -u origin HEAD] shell command, to git push the prepared next minor version [${nextMinorVersion}] on the [master] branch. Shell error was [${prepareNextMinorVersionPushCmdResult.stderr}]`)
+        } else {
+          console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully git pushed the prepared next minor version [${nextMinorVersion}] on the [master] branch : `);
+          console.log(prepareNextMinorVersionPushCmdResult.stdout);
+        }
       }
 
     } else { // then this is a patch release
@@ -254,14 +284,29 @@ export class ReleaseProcessStatePersistenceManager {
         console.error(err);
         throw err;
       }
-      // git add, commit and push the next patch version
-      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next patch version" && git push -u origin HEAD`);
+      // git add, commit and not push the next patch version
+      let prepareNextPatchVersionCmdResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore && git commit -m "prepare next patch version"`);
       if (prepareNextPatchVersionCmdResult.code !== 0) {
-        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch} && git push -u origin --all] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
+        throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git checkout -b ${nextSupportBranch}] shell command. Shell error was [" + prepareNextPatchVersionCmdResult.stderr + "] ")
       } else {
         console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully prepared the next patch version on the new support branch [${currentBranch}] : `);
         console.log(prepareNextPatchVersionCmdResult.stdout);
+        console.log(`The [release.json] on the [${currentBranch}] git branch is now :`);
+        this.loadReleaseJSon();
+        console.log(this.releaseManifest)
       }
+      // git push the next patch version, if not a dry run
+      if (`${process.argv["dry-run"]}` === 'false') {
+        let prepareNextPatchVersionPushCmdResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
+        if (prepareNextPatchVersionPushCmdResult.code !== 0) {
+          throw new Error("{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] - An Error occurred executing the [git push -u origin HEAD] shell command, to git push the prepared next patch version. Shell error was [" + prepareNextPatchVersionPushCmdResult.stderr + "] ")
+        } else {
+          console.log(`{[ReleaseProcessStatePersistenceManager]} - [prepareNextVersion(): void] successfully git pushed the prepared next patch version on the new support branch [${currentBranch}] : `);
+          console.log(prepareNextPatchVersionPushCmdResult.stdout);
+        }
+      }
+
+
     }
 
   }
