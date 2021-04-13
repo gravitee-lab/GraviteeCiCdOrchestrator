@@ -499,9 +499,9 @@ export class ReleaseProcessStatePersistenceManager {
         if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
           return maven_version_number;
         }
-        let errMsg = `{[ReleaseManifestFilter]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
+        let errMsg = `{[ReleaseManifestFilter]} - [WARNING] Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
         console.log(errMsg);
-        throw new Error(errMsg);
+        // throw new Error(errMsg);
       }
       return toReturn;
     }
