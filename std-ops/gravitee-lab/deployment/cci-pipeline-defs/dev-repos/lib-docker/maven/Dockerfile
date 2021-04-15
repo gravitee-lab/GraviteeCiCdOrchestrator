@@ -40,9 +40,6 @@ RUN ls -allh /home/$NON_ROOT_USER_NAME
 RUN mkdir -p /home/$NON_ROOT_USER_NAME/.m2
 RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP /home/$NON_ROOT_USER_NAME/.m2
 
-RUN echo "whoami = [$(whoami)]"
-USER $NON_ROOT_USER_NAME
-RUN echo "whoami = [$(whoami)]"
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
@@ -84,9 +81,12 @@ RUN DOCKERIZE_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
   && rm -rf /tmp/dockerize-linux-amd64.tar.gz \
   && dockerize --version
 
-RUN groupadd --gid 3434 circleci \
-  && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
-  && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
+# RUN groupadd --gid 3434 circleci \
+#   && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
+#   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
+#   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
+
+RUN echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
 
 
@@ -95,9 +95,9 @@ RUN groupadd --gid 3434 circleci \
 
 
 
-
-
-
+RUN echo "whoami = [$(whoami)]"
+USER $NON_ROOT_USER_NAME
+RUN echo "whoami = [$(whoami)]"
 
 
 
