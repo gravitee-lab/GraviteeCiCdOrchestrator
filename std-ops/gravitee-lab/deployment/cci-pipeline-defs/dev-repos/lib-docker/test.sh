@@ -226,9 +226,9 @@ docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} 
 # ------------------------------------------------------------------------------------
 echo "trying to run docker in docker with root user"
 docker run -it --name test11ofimage --rm -u root -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && ls -alh /root && ls -allh /usr/bin/docker"
-docker run -it --name test11ofimage --rm -u root -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && docker version"
+docker run -it --name test11ofimage --rm -u root -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && /usr/local/bin/dockerd && docker version"
 echo "trying to run docker in docker with circleci user"
-docker run -it --name test11ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && docker version"
+docker run -it --name test11ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && /usr/local/bin/dockerd && docker version"
 
 exit 0
 # ------------------------------------------------------------------------------------
