@@ -32,6 +32,8 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 import * as shelljs from 'shelljs';
 import * as fs from 'fs';
 import * as arrayUtils from 'util';
+import * as bom from '../../modules/slack/templates/release.bom'; //src/modules/slack/templates/release.bom.ts
+
 // export const manifestPath : string = "release-data/apim/1.30.x/tests/release.json";
 export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
 
@@ -229,10 +231,55 @@ export class ReleaseManifestFilter {
       }
       /// return this.executionPlan
 
-      /// Generate Slack Template
 
-      let SlackTemplate: any = {
-      	blocks: []
+      /// ---
+      /// Generate Slack Template
+      /// ---
+      ///
+      let bomDivider: bom.SlackBomDivider = {
+      	type: "divider"
+      }
+      let bomHeader: bom.SlackBomHeader = {
+      	type: "section",
+      	text: {
+      		type: "mrkdwn",
+      		text: `You have triggered the Release Process with dry run mode ${(process.argv["dry-run"]?'ON':'OFF')}, For the *Gravitee APIM Release* version *${this.releaseManifest.version}*. Here below is the B.O.M. (Bill of Material) of that release.\n\n *Please check that the Release B.O.M. (Bill of Material) is Ok, and in Circle CI Web UI, Approve or Cancel The Job on hold :*`
+      	}
+      }
+      let releaseBomSlackTemplate: bom.GraviteeBOMSlackTemplate = {
+        blocks: [
+      		  bomHeader,
+            bomDivider
+        ]
+      }
+      // And now we loop over execution plan entries
+      for (let i: number = 0; i < this.executionPlan.length; i++) {
+        releaseBomSlackTemplate.blocks.push(bomDivider);
+        this.executionPlan[i].forEach(component => {
+          let currentBomEntry: bom.SlackBomEntry = {
+          	type: "section",
+          	text: {
+          		type: "mrkdwn",
+          		text: `*${component.name}*\n:star::star::star::star: 1528 reviews\n *version: ${component.version}*`
+          	},
+          	accessory: {
+          		type: "image",
+          		image_url: "https://download.gravitee.io/logo.png",
+          		alt_text: `${component.name}`
+          	}
+          }
+          releaseBomSlackTemplate.blocks.push(currentBomEntry);
+        });
+      }
+      try {
+        // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
+        fs.writeFileSync(`./pipeline/.circleci/release.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
+        console.log(`{[ReleaseManifestFilter]} - successfully generated [./pipeline/.circleci/release.bom.slack]`);
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log(`{[ReleaseManifestFilter]} - An Error occurred writing to [.circleci/release.bom.slack] to generate the release BOM`);
+        console.error(err);
+        throw err;
       }
     }
     /**
