@@ -1,9 +1,10 @@
 
-export interface SlackTemplate {
+export interface GraviteeBOMSlackTemplate {
 	// allParallelExecutionSetProgress: ParallelExecutionSetProgress;
 	blocks: SlackBlock[]
 }
-
+export interface SlackBlock {
+}
 export interface SlackSectionText {
 	type: string,
 	text: string
@@ -15,14 +16,14 @@ export interface SlackSectionAccessory {
 }
 
 
-export interface SlackBomDivider {
+export interface SlackBomDivider extends SlackBlock {
 	type: string
 }
-export interface SlackBomHeader {
+export interface SlackBomHeader extends SlackBlock {
 	type: string,
 	text: SlackSectionText
 }
-export interface SlackBomEntry {
+export interface SlackBomEntry extends SlackBlock {
 	type: string,
 	text: SlackSectionText,
 	accessory: SlackSectionAccessory
@@ -32,16 +33,11 @@ let bomDivider: SlackBomDivider = {
 	type: "divider"
 }
 
-let bomHeader: SlackBomEntry = {
+let bomHeader: SlackBomHeader = {
 	type: "section",
 	text: {
 		type: "mrkdwn",
 		text: "You have triggered the Release Process with dry run mode  ${DRYN_RUN}, For the *Gravitee APIM Release* version *3.8.0*. Here below is the B.O.M. (Bill of Material) of that release.\n\n *Please check that the Release B.O.M. (Bill of Material) is Ok, and in Circle CI Web UI, Approve or Cancel The Job on hold :*"
-	},
-	accessory: {
-		type: "image",
-		image_url: "https://download.gravitee.io/logo.png",
-		alt_text: "alt text for image"
 	}
 }
 
@@ -71,12 +67,41 @@ let bomEntry2: SlackBomEntry = {
 	}
 }
 
-let exemple: SlackTemplate = {
+let bomEntry3: SlackBomEntry = {
+	type: "section",
+	text: {
+		type: "mrkdwn",
+		text: "*gravitee-gateway*\n:star::star::star::star: 1528 reviews\n *version: 7.2.8*"
+	},
+	accessory: {
+		type: "image",
+		image_url: "https://download.gravitee.io/logo.png",
+		alt_text: "alt text for image"
+	}
+}
+
+let bomEntry4: SlackBomEntry = {
+	type: "section",
+	text: {
+		type: "mrkdwn",
+		text: "*gravitee-gateway*\n:star::star::star::star: 1528 reviews\n *version: 7.2.8*"
+	},
+	accessory: {
+		type: "image",
+		image_url: "https://download.gravitee.io/logo.png",
+		alt_text: "alt text for image"
+	}
+}
+
+let exampleBom: GraviteeBOMSlackTemplate = {
 	blocks: [
 		  bomHeader,
       bomDivider,
-      bomEntry1
-
+			bomEntry1,
+			bomEntry2,
+      bomDivider,
+			bomEntry3,
+			bomEntry4
 	]
 }
 /* {

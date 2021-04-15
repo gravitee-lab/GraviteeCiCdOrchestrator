@@ -222,7 +222,7 @@ export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secret
 docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
 
 # ------------------------------------------------------------------------------------
-# Test no.11 : CAn the Circle Ci user run docker in docker
+# Test no.11 : Can the Circle Ci user run docker in docker
 # ------------------------------------------------------------------------------------
 echo "trying to run docker in docker with root user"
 docker run -it --name test11ofimage --rm -u root -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && ls -alh /root && ls -allh /usr/bin/docker"
