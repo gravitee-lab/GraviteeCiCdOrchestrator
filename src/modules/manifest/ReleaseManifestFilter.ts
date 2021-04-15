@@ -273,6 +273,22 @@ export class ReleaseManifestFilter {
           releaseBomSlackTemplate.blocks.push(currentBomEntry);
         });
       }
+      let actions = 		{
+      			type: "actions",
+      			elements: [
+      				{
+      					type: "button",
+      					text: {
+      						type: "plain_text",
+      						text: "Go to Circle CI to Approve / Disappprove the Job",
+      						emoji: true
+      					},
+      					value: "goToCircleCIJob",
+      					url: `${process.env.CIRCLE_BUILD_URL}`
+      				}
+      			]
+      		} // process.env.CIRCLE_BUILD_URL
+      releaseBomSlackTemplate.blocks.push(actions);
       try {
         // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
         fs.writeFileSync(`./pipeline/.circleci/release.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
