@@ -228,6 +228,12 @@ export class ReleaseManifestFilter {
         throw err;
       }
       /// return this.executionPlan
+
+      /// Generate Slack Template
+
+      let SlackTemplate: any = {
+      	blocks: []
+      }
     }
     /**
      * This method lokks up the [this.parallelizationConstraintsMatrix] ("Parallelization Constraints Matrix") to determine what is the Parallelization Execution Set Index of {@argument component}

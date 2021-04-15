@@ -98,8 +98,10 @@ RUN DOCKERIZE_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
 #   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
 #   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
 COPY etc.sudoers .
-RUN mkdir -p /etc/ && cat ./etc.sudoers > /etc/sudoers
+RUN mkdir -p /etc/ && cat ./etc.sudoers > /etc/sudoers && rm ./etc.sudoers
 RUN mkdir -p /etc/sudoers.d/ && mkdir -p /root \
+  && groupadd docker \
+  && echo 'docker ALL=NOPASSWD: /usr/bin/docker' >> /etc/sudoers.d/40-docker \
   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep \
   && usermod -aG docker $NON_ROOT_USER_NAME
