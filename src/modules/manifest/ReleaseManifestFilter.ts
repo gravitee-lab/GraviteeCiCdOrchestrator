@@ -105,7 +105,7 @@ export class ReleaseManifestFilter {
     filter() : void {
       console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
       if (!this.releaseManifest.hasOwnProperty('version')) {
-        throw new Error("The [release.json] file doesnot have a 'version' JSON property. It should, cannot proceed with CI CD Release Process.");
+        throw new Error("The [release.json] file does not have a 'version' JSON property. It should, cannot proceed with CI CD Release Process.");
       }
       this.releaseManifest.components.forEach(component => {
         if (!component.hasOwnProperty('version')) {
@@ -199,7 +199,36 @@ export class ReleaseManifestFilter {
       console.info("");
       return this.executionPlan
     }
+    generateExecutionPlanBomFile()  : void {
 
+      this.filter(); /// populates the [this.selectedComponents] Class member
+
+      this.selectedComponents.components.forEach(component => {
+        let parallelExecutionSetIndex = this.getParallelExecutionSetIndex(component);
+        this.executionPlan[parallelExecutionSetIndex].push(component);
+      });
+      console.info("");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info(" ---");
+      console.info(JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " "));
+      console.info(" ---");
+      console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
+      console.info("");
+
+      try {
+        // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
+        fs.writeFileSync(`./pipeline/.circleci/release.bom`, `${JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " ")}`, {}); // no options
+        console.log(`{[ReleaseManifestFilter]} - successfully generated [./pipeline/.circleci/release.bom]`);
+      } catch(err) {
+        // An error occurred // former persistSuccessStateOf
+        console.log(`{[ReleaseManifestFilter]} - An Error occurred writing to [.circleci/release.bom] to generate the release BOM`);
+        console.error(err);
+        throw err;
+      }
+      /// return this.executionPlan
+    }
     /**
      * This method lokks up the [this.parallelizationConstraintsMatrix] ("Parallelization Constraints Matrix") to determine what is the Parallelization Execution Set Index of {@argument component}
      *
