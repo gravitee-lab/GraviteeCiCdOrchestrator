@@ -139,6 +139,20 @@ if (process.argv["cicd-stage"] === 'pull_req') {
   }
 
 
+} else if (process.argv["cicd-stage"] === 'bom') {
+  /// ---
+  /// ReleaseManifestFilter runs inside the Circle CI pipeline defined in the
+  ///
+  ///
+  /// ---
+  let manifestParser = new ReleaseManifestFilter("1045.2145.7878", "This will be an awesome release, won't it ? :) ")
+  /// ---
+  /// Generate the execution Plan (Cicd Process B.O.M. Bill Of Material), And
+  /// Store this into the ./pipeline/.circleci/release.bom file
+  /// ---
+  manifestParser.generateExecutionPlanBomFile();
+  // And that's it : now the orchestrator stops, and In your CICD Pipeline, you
+  // can send the [./pipeline/.circleci/release.bom] file to slack, discord, rocker.chat ... your call :)
 }
 
 
