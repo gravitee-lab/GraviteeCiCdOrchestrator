@@ -254,7 +254,9 @@ export class ReleaseManifestFilter {
       }
       // And now we loop over execution plan entries
       for (let i: number = 0; i < this.executionPlan.length; i++) {
-        releaseBomSlackTemplate.blocks.push(bomDivider);
+        if (this.executionPlan[i].length != 0) {
+          releaseBomSlackTemplate.blocks.push(bomDivider);
+        }
         this.executionPlan[i].forEach(component => {
           let currentBomEntry: bom.SlackBomEntry = {
           	type: "section",
