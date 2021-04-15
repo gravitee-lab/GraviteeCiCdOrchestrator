@@ -291,11 +291,19 @@ export class ReleaseManifestFilter {
       releaseBomSlackTemplate.blocks.push(actions);
       try {
         // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
-        fs.writeFileSync(`./pipeline/.circleci/release.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
-        console.log(`{[ReleaseManifestFilter]} - successfully generated [./pipeline/.circleci/release.bom.slack]`);
+        fs.writeFileSync(`./pipeline/.circleci/release.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate)}`, {}); // no options
+        fs.writeFileSync(`./pipeline/.circleci/release.bom.slack.beautified`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
+        console.log(``);
+        console.log(`{[ReleaseManifestFilter]} - Here is the formatted Slack Template for the Gravitee BOM :`);
+        console.log(``);
+        console.log(JSON.stringify(releaseBomSlackTemplate, null, " "));
+        console.log(``);
+        console.log(`Copy the above JSON, ans Go and Check how this Slack Template`);
+        console.log(`renders in Slack, at https://app.slack.com/block-kit-builder/`);
+        console.log(``);
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
-        console.log(`{[ReleaseManifestFilter]} - An Error occurred writing to [.circleci/release.bom.slack] to generate the release BOM`);
+        console.log(`{[ReleaseManifestFilter]} - An Error occurred writing either to [.circleci/release.bom.slack] or to [.circleci/release.bom.slack.beautified] to generate the release BOM`);
         console.error(err);
         throw err;
       }
