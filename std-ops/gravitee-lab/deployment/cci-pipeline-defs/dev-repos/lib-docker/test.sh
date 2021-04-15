@@ -221,9 +221,14 @@ export C_VOLUMES="-v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secret
 # docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v $PWD/graviteebot/.secrets:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
 docker run -it --name test10ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -v ${OUTSIDE_CONTAINER_SECRETS_VOLUME}:/home/$NON_ROOT_USER_NAME/.secrets -v "$PWD/let_say_here":/usr/src/giomaven_project -v "$HOME/.m2":/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -e MAVEN_CONFIG=/home/${NON_ROOT_USER_NAME_LABEL}/.m2 -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" ./.circleci/gpg.setup.run.tests.sh
 
+# ------------------------------------------------------------------------------------
+# Test no.11 : CAn the Circle Ci user run docker in docker
+# ------------------------------------------------------------------------------------
+docker run -it --name test11ofimage --rm --user ${CCI_USER_UID}:${CCI_USER_GID} -w /usr/src/giomaven_project "${OCI_REPOSITORY_ORG}/${OCI_REPOSITORY_NAME}:stable-latest" bash -c "pwd && whoami && docker version"
+
 exit 0
 # ------------------------------------------------------------------------------------
-# Test no.11 : SKIPPED SIGNING ARTIFACTS
+# Test no.12 : SKIPPED SIGNING ARTIFACTS
 # ------------------------------------------------------------------------------------
 # Test GPG Signature with the [gravitee-io/gravitee@dev:1.0.2] Circle CI Orb
 # export OUTSIDE_CONTAINER_SECRETS_VOLUME=$(pwd)/graviteebot/.secrets/

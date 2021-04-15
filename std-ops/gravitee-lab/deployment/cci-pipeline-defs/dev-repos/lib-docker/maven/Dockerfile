@@ -86,13 +86,10 @@ RUN DOCKERIZE_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
 #   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
 #   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
 
-RUN echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
-  && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
-
-
-
-
-
+RUN mkdir -p /etc/sudoers.d/ \
+  && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
+  && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep \
+  && usermod -aG docker $NON_ROOT_USER_NAME
 
 
 RUN echo "whoami = [$(whoami)]"
