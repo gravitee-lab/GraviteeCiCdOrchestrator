@@ -108,6 +108,10 @@ ENV SECRETHUB_REPO=${SECRETHUB_REPO}
 ARG MAVEN_PROFILE_ID
 ENV MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}
 
+# --- CI CD Env
+ARG CIRCLE_BUILD_URL
+ENV CIRCLE_BUILD_URL=${CIRCLE_BUILD_URL}
+
 # --- copy production node_modules
 COPY --from=dependencies /graviteeio/cicd/prod_node_modules ./node_modules
 # --- Copy built TypeScript app

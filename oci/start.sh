@@ -6,6 +6,7 @@ sed -i "s#GH_ORG=.*#GH_ORG=${GH_ORG}#g" ./.env
 sed -i "s#SECRETHUB_ORG=.*#SECRETHUB_ORG=${SECRETHUB_ORG}#g" ./.env
 sed -i "s#SECRETHUB_REPO=.*#SECRETHUB_REPO=${SECRETHUB_REPO}#g" ./.env
 sed -i "s#MAVEN_PROFILE_ID=.*#MAVEN_PROFILE_ID=${MAVEN_PROFILE_ID}#g" ./.env
+sed -i "s#CIRCLE_BUILD_URL=.*#CIRCLE_BUILD_URL=${CIRCLE_BUILD_URL}#g" ./.env
 
 echo ''
 echo 'Content of DOTENV [./.env] file'
