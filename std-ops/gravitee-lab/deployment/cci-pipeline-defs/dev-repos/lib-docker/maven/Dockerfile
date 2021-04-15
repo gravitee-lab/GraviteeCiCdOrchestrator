@@ -3,6 +3,17 @@ ARG OPENJDK_VERSION=11
 FROM maven:$MAVEN_VERSION-openjdk-$OPENJDK_VERSION
 
 RUN apt-get update -y && apt-get install -y gnupg build-essential
+
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ For Docker installation
+# https://github.com/CircleCI-Public/circleci-dockerfiles/blob/master/openjdk/images/11.0.3-jdk-stretch/Dockerfile
+RUN apt-get update \
+  && mkdir -p /usr/share/man/man1 \
+  && apt-get install -y \
+    git mercurial xvfb apt \
+    locales sudo openssh-client ca-certificates tar gzip parallel \
+    net-tools netcat unzip zip bzip2 gnupg curl wget make
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 ARG MAVEN_VERSION=3.6.3
 ARG OPENJDK_VERSION=11
 ARG GITHUB_ORG=unspecified
@@ -42,7 +53,8 @@ RUN chown $NON_ROOT_USER_NAME:$NON_ROOT_USER_GRP /home/$NON_ROOT_USER_NAME/.m2
 
 
 
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# see https://github.com/CircleCI-Public/circleci-dockerfiles/blob/master/openjdk/images/11.0.3-jdk-stretch/Dockerfile
 # Install Docker
 
 # Docker.com returns the URL of the latest binary when you hit a directory listing
@@ -90,6 +102,7 @@ RUN mkdir -p /etc/sudoers.d/ \
   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep \
   && usermod -aG docker $NON_ROOT_USER_NAME
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 RUN echo "whoami = [$(whoami)]"
