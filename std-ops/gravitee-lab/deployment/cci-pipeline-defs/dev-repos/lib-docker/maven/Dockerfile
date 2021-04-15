@@ -97,7 +97,8 @@ RUN DOCKERIZE_URL="https://circle-downloads.s3.amazonaws.com/circleci-images/cac
 #   && useradd --uid 3434 --gid circleci --shell /bin/bash --create-home circleci \
 #   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
 #   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
-
+COPY etc.sudoers .
+RUN mkdir -p /etc/ && cat ./etc.sudoers > /etc/sudoers
 RUN mkdir -p /etc/sudoers.d/ && mkdir -p /root \
   && echo 'circleci ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-circleci \
   && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep \

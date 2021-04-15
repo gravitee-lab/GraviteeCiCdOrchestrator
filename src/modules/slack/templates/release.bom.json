@@ -26,7 +26,34 @@
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": "*gravitee-gateway*\n:star::star::star::star: 1528 reviews\n *version: 7.2.8*"
+				"text": "*gravitee-kubernetes*\n:star::star::star::star: 1528 reviews\n *version: 1.2.4*"
+			},
+			"accessory": {
+				"type": "image",
+				"image_url": "https://download.gravitee.io/logo.png",
+				"alt_text": "alt text for image"
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*gravitee-management-rest-api*\n:star::star::star::star: 1528 reviews\n *version: 5.3.4*"
+			},
+			"accessory": {
+				"type": "image",
+				"image_url": "https://download.gravitee.io/logo.png",
+				"alt_text": "alt text for image"
+			}
+		},
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "*gravitee-management-webui*\n:star::star::star::star: 1528 reviews\n *version: 3.8.0*"
 			},
 			"accessory": {
 				"type": "image",
