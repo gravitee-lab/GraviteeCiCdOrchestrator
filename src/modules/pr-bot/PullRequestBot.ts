@@ -183,7 +183,7 @@ export class PullRequestBot /* extends CICDStage */{
     *
     **/
    resolveCciSlug() {
-     let splitStrArr: string[] = process.env.RELEASE_MANIFEST_PATH.split('/');
+     let splitStrArr: string[] = process.env.CICD_PROCESS_MANIFEST_PATH.split('/');
      this.git_repo_root_folder = "/";
      for (let k = 0 ; k < (splitStrArr.length - 1); k++) {
        this.git_repo_root_folder += "/" + splitStrArr[k];

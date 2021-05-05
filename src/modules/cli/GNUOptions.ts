@@ -47,11 +47,12 @@ export class GNUOptions {
     cicd_stage_option_desc += "\n\n" +`['doc_release'] builds and publish the Gravitee Documentation to https://docs.gravitee.io`
     cicd_stage_option_desc += "\n\n" +`['social_release'] builds and publish the Social networks , and communication channels announcements (twitter, medium.com, hackernews, facebook, linkedIn, Jumbo posts on website)`
     cicd_stage_option_desc += "\n\n" +`['demos_release'] bluegreen deploys all public gravitee demos`
+    cicd_stage_option_desc += "\n\n" +`['trigger'] triggers a simple unique pipeline, and uses the TRIGGER_BRANCH, TRIGGER_REPO, TRIGGER_PARAMS env. vars`
     cicd_stage_option_desc += "\n\n"
 
     this.argv = yargsLib.options({
       'dry-run': { type: 'boolean', default: true, desc: "\n\n" +"Use this option to run the CICD Process Stage in 'dry run' mode.", alias: 'd' },
-      'cicd-stage': { choices: ['bom', 'mvn_release', 'mvn_nexus_staging', 'release_bundle', 'docker_release', 'rpm_release', 'doc_release', 'demos_release', 'social_announcements', 'pull_req'], demandOption: true, desc: `Use this option to specify the CICD Process to run. ${cicd_stage_option_desc}`, alias: 's' },  /// 'pr-bot': { type: 'boolean', default: false, desc: "\n\n" +"Use this option to run the Pull Request Bot CICD Process in a Gravitee IO Component Pipeline.", alias: 'pr' }
+      'cicd-stage': { choices: ['trigger', 'bom', 'mvn_release', 'mvn_nexus_staging', 'release_bundle', 'docker_release', 'rpm_release', 'doc_release', 'demos_release', 'social_announcements', 'pull_req'], demandOption: true, desc: `Use this option to specify the CICD Process to run. ${cicd_stage_option_desc}`, alias: 's' },  /// 'pr-bot': { type: 'boolean', default: false, desc: "\n\n" +"Use this option to run the Pull Request Bot CICD Process in a Gravitee IO Component Pipeline.", alias: 'pr' }
       /*,
       b: { type: 'string', demandOption: true },
       c: { type: 'number', alias: 'chill' },

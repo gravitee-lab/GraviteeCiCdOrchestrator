@@ -35,7 +35,7 @@ import * as arrayUtils from 'util';
 import * as bom from '../../modules/slack/templates/release.bom'; //src/modules/slack/templates/release.bom.ts
 
 // export const manifestPath : string = "release-data/apim/1.30.x/tests/release.json";
-export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
+export const manifestPath : string = process.env.CICD_PROCESS_MANIFEST_PATH;
 
 /**
  * Filters Gravitee components to release and builds an Execution Plan.

@@ -41,7 +41,7 @@ class ErrorReporter {
     console.debug("{[.DOTENV]} - validating [release_manifest_path] ")
     if (release_manifest_path === undefined || release_manifest_path === "") {
       console.debug("{[.DOTENV]} - validating [release_manifest_path] an error should be thrown")
-      throw new Error("{[.DOTENV]} - [RELEASE_MANIFEST_PATH] is undefined, or an empty string, at least either of them is required. Value should be set to the local path of the [release.json] manifest file. Gravitee Release Orchestrator will parse this file to determine which " + `${this.product}` + " component to release.")
+      throw new Error("{[.DOTENV]} - [CICD_PROCESS_MANIFEST_PATH] is undefined, or an empty string, at least either of them is required. Value should be set to the local path of the [release.json] manifest file. Gravitee Release Orchestrator will parse this file to determine which " + `${this.product}` + " component to release.")
     } else {
       console.debug("{[.DOTENV]} - validating [release_manifest_path] NO error should be thrown")
     }
@@ -136,4 +136,4 @@ class ErrorReporter {
   }
 }
 
-export default new ErrorReporter(process.env.PRODUCT, process.env.RELEASE_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETION_TIMEOUT, process.env.GH_ORG, process.env.EXEC_STATUS_WATCH_INTERVAL, process.env.SECRETHUB_ORG, process.env.SECRETHUB_REPO, process.env.MAVEN_PROFILE_ID);
+export default new ErrorReporter(process.env.PRODUCT, process.env.CICD_PROCESS_MANIFEST_PATH, process.env.RETRIES_BEFORE_FAILURE, process.env.SSH_RELEASE_GIT_REPO, process.env.HTTP_RELEASE_GIT_REPO, process.env.RELEASE_BRANCHES, process.env.SECRETS_FILE_PATH, process.env.TRIGGER_TIMEOUT, process.env.PIPELINE_COMPLETION_TIMEOUT, process.env.GH_ORG, process.env.EXEC_STATUS_WATCH_INTERVAL, process.env.SECRETHUB_ORG, process.env.SECRETHUB_REPO, process.env.MAVEN_PROFILE_ID);
