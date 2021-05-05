@@ -228,7 +228,7 @@ export class SinglePipelineManager {
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("{[SinglePipelineManager]} - STARTING PROCESSING EXECUTION PLAN - ");
-      console.info("[{SinglePipelineManager}] - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
+      console.info("[{SinglePipelineManager}] - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up. (THIS PARAMETER IS NOT USED YET)")
       console.info("{[SinglePipelineManager]} - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");

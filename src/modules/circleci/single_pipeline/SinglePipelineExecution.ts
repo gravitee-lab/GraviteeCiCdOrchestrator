@@ -93,7 +93,7 @@ export class SinglePipelineExecution {
 
   /**
    * Instantiate a new {@link SinglePipelineExecution}
-   * [isLast] : msut be set to true, if this is the last non empty Parallel Execution Set
+   * [isLast] : must be set to true, if this is the last non empty Parallel Execution Set
    **/
   constructor(parallelExecutionSet: any[], parallelExecutionSetIndex: number, circleci_client: CircleCIClient, orchestratorNotifier: rxjs.Subject<number>, isLast: boolean) {
     this.parallelExecutionSetIndex = parallelExecutionSetIndex;
@@ -236,10 +236,10 @@ export class SinglePipelineExecution {
 
       let pipelineGitRepoName: string = null;
       let pipelineTargetBranch: string = null;
-      if(component.name === null || component.name === '') {
+      if(component.name === undefined || component.name === '') {
           throw new Error(`Error : [component.name] is null or an empty string : [${component.name}]`)
       }
-      if(component.version === null || component.version === '') {
+      if(component.version === undefined || component.version === '') {
           throw new Error(`Error : [component.version] is null or an empty string : [${component.version}]`)
       }
       pipelineGitRepoName = component.name;
@@ -247,7 +247,8 @@ export class SinglePipelineExecution {
       /// pipeline execution parameters, same as [Jenkins] build parameters
       /// ---
       let pipelineConfig = {};
-      if(component.pipeline_params === null || component.pipeline_params === '') {
+      if(component.pipeline_params === undefined || component.pipeline_params === '') {
+          console.log(`{[SinglePipelineExecution # triggerPipelines()]} - WARNING - For the git repo [${component.name}] no pipeline parameters are set`)
           pipelineConfig = {};
       } else {
         pipelineConfig = component.pipeline_params;

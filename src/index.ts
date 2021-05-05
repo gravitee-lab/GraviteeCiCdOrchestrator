@@ -42,6 +42,8 @@ import { monitoring }  from './modules/monitor/Monitor';
 import { Cli } from './modules/cli/Cli';
 import * as pr_robotics from './modules/pr-bot/PullRequestBot'
 import { SinglePipelineManager } from "./modules/circleci/single_pipeline/SinglePipelineManager";
+import { SingleExecutionManifestFilter } from "./modules/manifest/SingleExecutionManifestFilter";
+
 
 
 
@@ -154,23 +156,23 @@ if (process.argv["cicd-stage"] === 'pull_req') {
   // can send the [./pipeline/.circleci/release.bom] file to slack, discord, rocker.chat ... your call :)
 } else if (process.argv["cicd-stage"] === 'trigger') {
   /// ---
-  /// ReleaseManifestFilter runs inside the Circle CI pipeline defined in the
   ///
   ///
   /// ---
-  let manifestParser = new SingleExecutionManifestFilter("1045.2145.7878", "This process will trigger a set of strictly idempotent pipelines (no needfor a resume feature, it can always be restarted and re-execute all pipelines, without errors) ")
+  let manifestParser = new SingleExecutionManifestFilter()
   /// ---
   /// First, parses the locally git cloned [release.json], and returns a
   /// 2-dimensional array : the execution Plan
   /// ---
   let executionPlan : string [][] = manifestParser.buildExecutionPlan();
 
-  /// Implementation of a CICD process to execute a Single set of pipelines in parallel RELEASE_MANIFEST_PATH renamed CICD_PROCESS_MANIFEST_PATH 
+  /// Implementation of a CICD process to execute a Single set of pipelines in parallel RELEASE_MANIFEST_PATH renamed CICD_PROCESS_MANIFEST_PATH
 
   /// then, using the execution plan, we are going to
   /// process parallel executions one after the other
   let pipeExecManager = new SinglePipelineManager(executionPlan, 5);
 }
+
 
 
 
