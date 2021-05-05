@@ -32,18 +32,15 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 import * as shelljs from 'shelljs';
 import * as fs from 'fs';
 import * as arrayUtils from 'util';
-import * as bom from '../../modules/slack/templates/release.bom'; //src/modules/slack/templates/release.bom.ts
+import * as bom from '../../modules/slack/templates/process.bom'; //src/modules/slack/templates/process.bom.ts
 
 export const manifestPath : string = process.env.CICD_PROCESS_MANIFEST_PATH;
 
 /**
- * Filters Gravitee components to release and builds an Execution Plan.
+ * Filters Gravitee components for which to execute the CI/CD Pipelines, and builds an Execution Plan.
  * @comment All methods are synchronous
  **/
 export class SingleExecutionManifestFilter {
-    /**
-     * [gravitee_release_branch] must match one the of the existing branch on
-     **/
     processManifest: any;
     selectedComponents : any;
     parallelizationMatrix: any[][];
@@ -52,7 +49,7 @@ export class SingleExecutionManifestFilter {
         this.loadProcessManifest();
         this.loadParallelizationMatrix();
         // console.debug("{[SingleExecutionManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.processManifest, null, "  ")}` + "]");
-        
+
         this.selectedComponents = { "components" : []};
         this.initializeExecutionPlan();
         /// throw new Error('DEBUG POINT to reove asap');
@@ -110,15 +107,12 @@ export class SingleExecutionManifestFilter {
     }
     /**
      * Filters the processManifest Release manifest file to
-     * Populate [this.selectedComponents] with the components that should be included in the release
+     * Populate [this.selectedComponents] with all the components
      **/
     filter() : void {
       console.debug("{[SingleExecutionManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.processManifest, null, "  ")}` + "]");
 
       this.processManifest.components.forEach(component => {
-        if (!component.hasOwnProperty('version')) {
-          component.version = this.processManifest.version; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
-        }
         if (!component.hasOwnProperty('pipeline_params')) { // pipeline parameters may be set through this JSON property
           component.pipeline_params = {}; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
         }
@@ -221,11 +215,11 @@ export class SingleExecutionManifestFilter {
 
       try {
         // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
-        fs.writeFileSync(`./pipeline/.circleci/release.bom`, `${JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " ")}`, {}); // no options
-        console.log(`{[SingleExecutionManifestFilter]} - successfully generated [./pipeline/.circleci/release.bom]`);
+        fs.writeFileSync(`./pipeline/.circleci/process.bom`, `${JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " ")}`, {}); // no options
+        console.log(`{[SingleExecutionManifestFilter]} - successfully generated [./pipeline/.circleci/process.bom]`);
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
-        console.log(`{[SingleExecutionManifestFilter]} - An Error occurred writing to [.circleci/release.bom] to generate the release BOM`);
+        console.log(`{[SingleExecutionManifestFilter]} - An Error occurred writing to [.circleci/process.bom] to generate the Process BOM`);
         console.error(err);
         throw err;
       }
@@ -243,7 +237,7 @@ export class SingleExecutionManifestFilter {
       	type: "section",
       	text: {
       		type: "mrkdwn",
-      		text: `You have triggered the Release Process with dry run mode ${(process.argv["dry-run"]?'ON':'OFF')}, For the *Gravitee APIM Release* version *${this.processManifest.version}*. Here below is the B.O.M. (Bill of Material) of that release.\n\n *Please check that the Release B.O.M. (Bill of Material) is Ok, and in Circle CI Web UI, Approve or Cancel The Job on hold :*`
+      		text: `You have triggered a CI/CD Process. Here below is the B.O.M. (Bill of Material) of that CI/CD Process.\n\n *Please check that the B.O.M. (Bill of Material) is Ok, and in Circle CI Web UI, Approve or Cancel The Job on hold :*`
       	}
       }
       let releaseBomSlackTemplate: bom.GraviteeBOMSlackTemplate = {
@@ -291,8 +285,8 @@ export class SingleExecutionManifestFilter {
       releaseBomSlackTemplate.blocks.push(actions);
       try {
         // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
-        fs.writeFileSync(`./pipeline/.circleci/release.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate)}`, {}); // no options
-        fs.writeFileSync(`./pipeline/.circleci/release.bom.slack.beautified`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
+        fs.writeFileSync(`./pipeline/.circleci/process.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate)}`, {}); // no options
+        fs.writeFileSync(`./pipeline/.circleci/process.bom.slack.beautified`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
         console.log(``);
         console.log(`{[SingleExecutionManifestFilter]} - Here is the formatted Slack Template for the Gravitee BOM :`);
         console.log(``);
@@ -303,7 +297,7 @@ export class SingleExecutionManifestFilter {
         console.log(``);
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
-        console.log(`{[SingleExecutionManifestFilter]} - An Error occurred writing either to [.circleci/release.bom.slack] or to [.circleci/release.bom.slack.beautified] to generate the release BOM`);
+        console.log(`{[SingleExecutionManifestFilter]} - An Error occurred writing either to [.circleci/process.bom.slack] or to [.circleci/process.bom.slack.beautified] to generate the Process BOM`);
         console.error(err);
         throw err;
       }
@@ -399,11 +393,11 @@ export class SingleExecutionManifestFilter {
      **/
     loadProcessManifest()  : void {
       if (!fs.existsSync(manifestPath)) {
-        throw new Error("{[SingleExecutionManifestFilter]} - [" + `${manifestPath}` + "] does not exists, stopping release process");
+        throw new Error("{[SingleExecutionManifestFilter]} - [" + `${manifestPath}` + "] does not exists, stopping the CICD process");
       } else {
-        console.log("{[SingleExecutionManifestFilter]} - found release manifest located at [" + manifestPath + "]");
+        console.log("{[SingleExecutionManifestFilter]} - found Process manifest located at [" + manifestPath + "]");
       }
-      console.info("{[SingleExecutionManifestFilter]} - Parsing Release Manifest file located at [" + manifestPath + "]");
+      console.info("{[SingleExecutionManifestFilter]} - Parsing Process Manifest file located at [" + manifestPath + "]");
       console.debug("{[SingleExecutionManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.processManifest, null, "  ")}` + "]");
       let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
       this.processManifest = JSON.parse(manifestAsString);

@@ -47,6 +47,7 @@ export class GNUOptions {
     cicd_stage_option_desc += "\n\n" +`['doc_release'] builds and publish the Gravitee Documentation to https://docs.gravitee.io`
     cicd_stage_option_desc += "\n\n" +`['social_release'] builds and publish the Social networks , and communication channels announcements (twitter, medium.com, hackernews, facebook, linkedIn, Jumbo posts on website)`
     cicd_stage_option_desc += "\n\n" +`['demos_release'] bluegreen deploys all public gravitee demos`
+    cicd_stage_option_desc += "\n\n" +`['bom'] Generates the Bill Of Material (B.O.M.) for the CI/CD Process, from the Process Manifest file, see also [CICD_PROCESS_MANIFEST_PATH] env. var.`
     cicd_stage_option_desc += "\n\n" +`['trigger'] triggers a simple unique pipeline, and uses the TRIGGER_BRANCH, TRIGGER_REPO, TRIGGER_PARAMS env. vars`
     cicd_stage_option_desc += "\n\n"
 
