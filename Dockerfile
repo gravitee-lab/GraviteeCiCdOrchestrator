@@ -63,10 +63,10 @@ LABEL maintainer=jean-baptiste.lasselle@graviteesource.com
 ARG PRODUCT='Gravitee APIM'
 ENV PRODUCT=${PRODUCT}
 
-# RELEASE_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test1.json
-# RELEASE_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test4-20-conccurrent.json
-ARG RELEASE_MANIFEST_PATH=/release/release.json
-ENV RELEASE_MANIFEST_PATH=${RELEASE_MANIFEST_PATH}
+# CICD_PROCESS_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test1.json
+# CICD_PROCESS_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test4-20-conccurrent.json
+ARG CICD_PROCESS_MANIFEST_PATH=/path/to/release.json
+ENV CICD_PROCESS_MANIFEST_PATH=${CICD_PROCESS_MANIFEST_PATH}
 
 ENV RETRIES_BEFORE_FAILURE=${RETRIES_BEFORE_FAILURE}
 # SSH_RELEASE_GIT_REPO='git@github.com:gravitee-io/release.git'

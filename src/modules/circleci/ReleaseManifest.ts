@@ -33,7 +33,7 @@ import * as shelljs from 'shelljs';
 import * as fs from 'fs';
 import * as arrayUtils from 'util';
 // export const manifestPath : string = "release-data/apim/1.30.x/tests/release.json";
-const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
+const manifestPath : string = process.env.CICD_PROCESS_MANIFEST_PATH;
 
 if (!fs.existsSync(manifestPath)) {
   throw new Error("{[ReleaseManifestFilter]} - [" + `${manifestPath}` + "] does not exists, stopping release process");

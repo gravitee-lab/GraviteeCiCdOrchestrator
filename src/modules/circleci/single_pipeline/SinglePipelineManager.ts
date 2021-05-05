@@ -30,19 +30,8 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
 */
 import * as rxjs from 'rxjs';
-/// import { map, tap, retryWhen, delayWhen,delay,take } from 'rxjs/operators';
-/// import axios from 'axios';
-/// import {AxiosResponse} from 'axios';
-/// import * as fs from 'fs';
-/// import * as Collections from 'typescript-collections';
-/// import { monitoring }  from '../../modules/monitor/Monitor';
-/// import * as parallel from '../../modules/monitor/ParallelExecutionSetProgress';
-/// import { GraviteeComponent } from '../../modules/manifest/GraviteeComponent';
-/// import { ParallelExecutionSet } from '../../modules/manifest/ParallelExecutionSet'
-import { CircleCIClient } from '../../modules/circleci/CircleCIClient'
-import { ReactiveParallelExecutionSet } from '../../modules/circleci/ReactiveParallelExecutionSet'
-import {ReleaseProcessStatePersistenceManager} from '../../modules/resume-release/ReleaseProcessStatePersistenceManager';
-
+import { CircleCIClient } from '../../../modules/circleci/CircleCIClient'
+import { SinglePipelineExecution } from '../../../modules/circleci/single_pipeline/SinglePipelineExecution'
 /**
  *
  *  CICD Stage : Represents the Pull Request Bot managing the Pull Request CICD Stage
@@ -54,8 +43,7 @@ import {ReleaseProcessStatePersistenceManager} from '../../modules/resume-releas
  *
  * @comment All Circle CI API calls are asynchronous, RxJS ObservableStreams, cf. https://github.com/gravitee-lab/GraviteeReleaseOrchestrator/issues/9
  **/
-export class CircleCiOrchestrator {
-    private releaseStatePersistenceMngr: ReleaseProcessStatePersistenceManager;
+export class SinglePipelineManager {
     /**
     * <p>
     * The Execution plan listing all the components that should be included in the release :
@@ -188,16 +176,15 @@ export class CircleCiOrchestrator {
 
       this.retries = retries;
       this.circleci_client = new CircleCIClient();
-      this.releaseStatePersistenceMngr = new ReleaseProcessStatePersistenceManager();
       this.initializeNotifiers();
 
       this.parallelExecutionSetsNotifier.subscribe({
         next: (parallelExecutionSetIndex) => {
           console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
           console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
-          console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
-          console.info("{[CircleCiOrchestrator]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
-          console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
+          console.info('{[SinglePipelineManager]} - x+x+x+x+x+x+x+x+x+x');
+          console.info("{[SinglePipelineManager]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
+          console.info('{[SinglePipelineManager]} - x+x+x+x+x+x+x+x+x+x');
           console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
           console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
         }
@@ -211,20 +198,20 @@ export class CircleCiOrchestrator {
           next: ((parallelExecutionSetIndex: number) => {
             console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
             console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
-            console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
-            console.info("{[CircleCiOrchestrator]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
+            console.info('{[SinglePipelineManager]} - x+x+x+x+x+x+x+x+x+x');
+            console.info("{[SinglePipelineManager]} - PARALLEL EXECUTION SET NO.[" + parallelExecutionSetIndex  + "] JUST COMPLETED TRIGGERING [CIRCLE CI] PIPELINES - ");
 
             if (parallelExecutionSetIndex + 1 < this.execution_plan.length){
-              console.info("{[CircleCiOrchestrator]} - NOW EXECUTING NEXT PARALLEL EXECUTION SET NO.[" + (parallelExecutionSetIndex + 1) + "]  - ");
-              /// console.info("{[CircleCiOrchestrator]} - Intropsecting the [this] instance  => [" + JSON.stringify(this, null , " ") + "]  - ");
-              /// console.info("{[CircleCiOrchestrator]} - The [typeof this] is  => [" + (typeof this) + "]  - ");
+              console.info("{[SinglePipelineManager]} - NOW EXECUTING NEXT PARALLEL EXECUTION SET NO.[" + (parallelExecutionSetIndex + 1) + "]  - ");
+              /// console.info("{[SinglePipelineManager]} - Intropsecting the [this] instance  => [" + JSON.stringify(this, null , " ") + "]  - ");
+              /// console.info("{[SinglePipelineManager]} - The [typeof this] is  => [" + (typeof this) + "]  - ");
 
               this.processExecutionSetNumber(parallelExecutionSetIndex + 1)
             } else {
-              console.info("{[CircleCiOrchestrator]} - NOT EXECUTING NEXT PARALLEL EXECUTION SET, BECAUSE CURRENT IS LAST OF INDEX NO.[" + parallelExecutionSetIndex + "]  - ");
+              console.info("{[SinglePipelineManager]} - NOT EXECUTING NEXT PARALLEL EXECUTION SET, BECAUSE CURRENT IS LAST OF INDEX NO.[" + parallelExecutionSetIndex + "]  - ");
             }
 
-            console.info('{[CircleCiOrchestrator]} - x+x+x+x+x+x+x+x+x+x');
+            console.info('{[SinglePipelineManager]} - x+x+x+x+x+x+x+x+x+x');
             console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
             console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x');
           }).bind(this)
@@ -240,21 +227,18 @@ export class CircleCiOrchestrator {
     start()  : void {
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[CircleCiOrchestrator]} - STARTING PROCESSING EXECUTION PLAN - ");
-      console.info("[{CircleCiOrchestrator}] - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
-      console.info("{[CircleCiOrchestrator]} - Execution plan is the value of the 'execution_plan_is' below : ");
+      console.info("{[SinglePipelineManager]} - STARTING PROCESSING EXECUTION PLAN - ");
+      console.info("[{SinglePipelineManager}] - will retry " + this.retries + " times triggering a [Circle CI] pipeline before giving up.")
+      console.info("{[SinglePipelineManager]} - Execution plan is the value of the 'execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ execution_plan_is: this.execution_plan}, null, " "));
       console.info(" ---");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info("");
-      if (!(process.argv["cicd-stage"] === 'mvn_nexus_staging')) {
-        this.releaseStatePersistenceMngr.tagReleaseStart("CICD Orchestrator starts here The Release")
-      }
 
       /* WORKING TEST
-      let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[3], 3, this.circleci_client, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+      let parallelExecSet1: SinglePipelineExecution = new SinglePipelineExecution(this.execution_plan[3], 3, this.circleci_client, this.parallelExecutionSetsNotifiers[3]); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
       // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
       parallelExecSet1.triggerPipelines();
@@ -266,20 +250,20 @@ export class CircleCiOrchestrator {
 
     private processExecutionSetNumber(parallelExecutionsSetIndex: number) : void {
 
-      console.info("[{CircleCiOrchestrator}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
+      console.info("[{SinglePipelineManager}] - processing Parallel Execution Set no. ["+`${parallelExecutionsSetIndex}`+"] will trigger the following [Circle CI] pipelines : ");
       if (this.execution_plan[parallelExecutionsSetIndex].length == 0) {
 
         if (parallelExecutionsSetIndex + 1 < this.execution_plan.length) { // reccurrence stop condition
-          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, proceed with next");
+          console.info("[{SinglePipelineManager}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, proceed with next");
           this.processExecutionSetNumber(parallelExecutionsSetIndex + 1)
         } else {
-          console.info("[{CircleCiOrchestrator}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, do not proceed with next, cause this was last.");
+          console.info("[{SinglePipelineManager}] - Skipped Parallel Executions Set no. ["+`${parallelExecutionsSetIndex}`+"] because it is empty, do not proceed with next, cause this was last.");
         }
       } else {
 
         let isLast:boolean = (this.getLastNonEmptyParallelExecutionSetIndex() == parallelExecutionsSetIndex);
-        console.log(`[{CircleCiOrchestrator}] - is [${parallelExecutionsSetIndex}] the last non empty parallel execution set ? Answer : [${isLast}]`)
-        let parallelExecSet1: ReactiveParallelExecutionSet = new ReactiveParallelExecutionSet(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex], isLast); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
+        console.log(`[{SinglePipelineManager}] - is [${parallelExecutionsSetIndex}] the last non empty parallel execution set ? Answer : [${isLast}]`)
+        let parallelExecSet1: SinglePipelineExecution = new SinglePipelineExecution(this.execution_plan[parallelExecutionsSetIndex], parallelExecutionsSetIndex, this.circleci_client, this.parallelExecutionSetsNotifiers[parallelExecutionsSetIndex], isLast); // test cause I know entry of index 3 will exists in [this.execution_plan] , and will have several entries
         // let subscription1 : rxjs.Subscription = parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
         parallelExecSet1.doSubscribe(); // this.parallelExecutionSetsNotifier // this.parallelExecutionSetsNotifier.next(3)
         parallelExecSet1.triggerPipelines();
@@ -289,7 +273,7 @@ export class CircleCiOrchestrator {
 
     private getLastNonEmptyParallelExecutionSetIndex() : number {
       let toReturn: number = -1;
-      console.info("[{CircleCiOrchestrator}] - ");
+      console.info("[{SinglePipelineManager}] - ");
       for (let k:number = 0; k < this.execution_plan.length; k++) {
         if (this.execution_plan[k].length != 0) {
           toReturn = k;

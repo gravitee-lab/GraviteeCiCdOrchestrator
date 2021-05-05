@@ -41,7 +41,7 @@ export const manifestPath : string = process.env.CICD_PROCESS_MANIFEST_PATH;
  * Filters Gravitee components to release and builds an Execution Plan.
  * @comment All methods are synchronous
  **/
-export class ReleaseManifestFilter {
+export class SingleExecutionManifestFilter {
     /**
      * [gravitee_release_branch] must match one the of the existing branch on
      **/
@@ -54,7 +54,7 @@ export class ReleaseManifestFilter {
     constructor(release_version: string, release_branch: string) {
         this.loadReleaseManifest();
         this.loadParallelizationContraints();
-        // console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
+        // console.debug("{[SingleExecutionManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
 
         this.gravitee_release_version = release_version;
         this.gravitee_release_branch = release_branch;
@@ -72,12 +72,12 @@ export class ReleaseManifestFilter {
      **/
     initializeExecutionPlan () : void {
       this.executionPlan = [];
-      console.debug("{[ReleaseManifestFilter]} - Initializing Empty Execution Plan from Parallelization Constraints Matrix... ");
+      console.debug("{[SingleExecutionManifestFilter]} - Initializing Empty Execution Plan from Parallelization Constraints Matrix... ");
       for (let i = 0; i < this.parallelizationConstraintsMatrix.length; i++) {
         let newEntry = [ ];
         this.executionPlan.push(newEntry);
       }
-      console.debug("{[ReleaseManifestFilter]} - Initialized Empty Execution Plan with " + `${this.executionPlan.length}` + " empty arrays : ");
+      console.debug("{[SingleExecutionManifestFilter]} - Initialized Empty Execution Plan with " + `${this.executionPlan.length}` + " empty arrays : ");
       console.log('[');
       this.executionPlan.forEach(executionSet => {
         console.log('  [');
@@ -87,9 +87,9 @@ export class ReleaseManifestFilter {
       console.log(']');
     }
     loadParallelizationContraints() : void {
-      console.debug("{[ReleaseManifestFilter]} - Loading Parallelization Constraints Matrix from Release Manifest... ");
+      console.debug("{[SingleExecutionManifestFilter]} - Loading Parallelization Constraints Matrix from Release Manifest... ");
       this.parallelizationConstraintsMatrix = this.releaseManifest.buildDependencies
-      console.debug("{[ReleaseManifestFilter]} - Loaded Parallelization Constraints Matrix from Release Manifest : ");
+      console.debug("{[SingleExecutionManifestFilter]} - Loaded Parallelization Constraints Matrix from Release Manifest : ");
       // console.debug(`${this.parallelizationConstraintsMatrix}`);
       console.log('[');
 
@@ -105,7 +105,7 @@ export class ReleaseManifestFilter {
      * Populate [this.selectedComponents] with the components that should be included in the release
      **/
     filter() : void {
-      console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
+      console.debug("{[SingleExecutionManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
       if (!this.releaseManifest.hasOwnProperty('version')) {
         throw new Error("The [release.json] file does not have a 'version' JSON property. It should, cannot proceed with CI CD Release Process.");
       }
@@ -113,16 +113,9 @@ export class ReleaseManifestFilter {
         if (!component.hasOwnProperty('version')) {
           component.version = this.releaseManifest.version; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
         }
-        if (component.version.includes('-SNAPSHOT')) {
-          console.info('');
-          /// console.debug("[{CircleCiOrchestrator}] - processing filter selected component : ");
-          /// console.debug(`${JSON.stringify(component, null, "  ")}`);
-          /// selectedComponents.push(component);
-          this.selectedComponents.components.push(component);
-          console.info('');
-        }
+        this.selectedComponents.components.push(component);
       });
-      console.debug("{[ReleaseManifestFilter]} - Selected components are [" + `${JSON.stringify(this.selectedComponents, null, "  ")}` + "]");
+      console.debug("{[SingleExecutionManifestFilter]} - Selected components are [" + `${JSON.stringify(this.selectedComponents, null, "  ")}` + "]");
     }
     /**
      * <p>
@@ -192,7 +185,7 @@ export class ReleaseManifestFilter {
       });
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
+      console.info("{[SingleExecutionManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " "));
@@ -211,7 +204,7 @@ export class ReleaseManifestFilter {
       });
       console.info("");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
-      console.info("{[ReleaseManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
+      console.info("{[SingleExecutionManifestFilter]} - EXECUTION PLAN is the value of the 'built_execution_plan_is' below : ");
       console.info('+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x+x')
       console.info(" ---");
       console.info(JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " "));
@@ -222,10 +215,10 @@ export class ReleaseManifestFilter {
       try {
         // in the ./pipeline folder, because the ./pipeline folder is a docke rmapped volume
         fs.writeFileSync(`./pipeline/.circleci/release.bom`, `${JSON.stringify({ built_execution_plan_is: this.executionPlan}, null, " ")}`, {}); // no options
-        console.log(`{[ReleaseManifestFilter]} - successfully generated [./pipeline/.circleci/release.bom]`);
+        console.log(`{[SingleExecutionManifestFilter]} - successfully generated [./pipeline/.circleci/release.bom]`);
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
-        console.log(`{[ReleaseManifestFilter]} - An Error occurred writing to [.circleci/release.bom] to generate the release BOM`);
+        console.log(`{[SingleExecutionManifestFilter]} - An Error occurred writing to [.circleci/release.bom] to generate the release BOM`);
         console.error(err);
         throw err;
       }
@@ -294,7 +287,7 @@ export class ReleaseManifestFilter {
         fs.writeFileSync(`./pipeline/.circleci/release.bom.slack`, `${JSON.stringify(releaseBomSlackTemplate)}`, {}); // no options
         fs.writeFileSync(`./pipeline/.circleci/release.bom.slack.beautified`, `${JSON.stringify(releaseBomSlackTemplate, null, " ")}`, {}); // no options
         console.log(``);
-        console.log(`{[ReleaseManifestFilter]} - Here is the formatted Slack Template for the Gravitee BOM :`);
+        console.log(`{[SingleExecutionManifestFilter]} - Here is the formatted Slack Template for the Gravitee BOM :`);
         console.log(``);
         console.log(JSON.stringify(releaseBomSlackTemplate, null, " "));
         console.log(``);
@@ -303,7 +296,7 @@ export class ReleaseManifestFilter {
         console.log(``);
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
-        console.log(`{[ReleaseManifestFilter]} - An Error occurred writing either to [.circleci/release.bom.slack] or to [.circleci/release.bom.slack.beautified] to generate the release BOM`);
+        console.log(`{[SingleExecutionManifestFilter]} - An Error occurred writing either to [.circleci/release.bom.slack] or to [.circleci/release.bom.slack.beautified] to generate the release BOM`);
         console.error(err);
         throw err;
       }
@@ -324,24 +317,24 @@ export class ReleaseManifestFilter {
       console.debug('--- ');
       console.debug('');
       if (!(Object.keys(component).length == 2 || Object.keys(component).length == 3)) {
-        let errMsg = "{[ReleaseManifestFilter]} - The component : ";
+        let errMsg = "{[SingleExecutionManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
-        errMsg += "{[ReleaseManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.";
-        errMsg += "{[ReleaseManifestFilter]} - whil components are exepected to have exactly 2 properties [JSon] properties.";
+        errMsg += "{[SingleExecutionManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.";
+        errMsg += "{[SingleExecutionManifestFilter]} - whil components are exepected to have exactly 2 properties [JSon] properties.";
         throw new Error(errMsg);
       }
       if (component.name === undefined || component.name === "") {
-        let errMsg = "{[ReleaseManifestFilter]} - The component : ";
+        let errMsg = "{[SingleExecutionManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
-        errMsg += "{[ReleaseManifestFilter]} - 'name' [JSon] property is undefined, while Gravitee [components] are exepected to";
-        errMsg += "{[ReleaseManifestFilter]} - have a 'name' [JSon] property that neither is undefined, nor an empty string.";
+        errMsg += "{[SingleExecutionManifestFilter]} - 'name' [JSon] property is undefined, while Gravitee [components] are exepected to";
+        errMsg += "{[SingleExecutionManifestFilter]} - have a 'name' [JSon] property that neither is undefined, nor an empty string.";
         throw new Error(errMsg);
       }
       if (component.version === undefined || component.name === "") {
-        let errMsg = "{[ReleaseManifestFilter]} - The component : ";
+        let errMsg = "{[SingleExecutionManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
-        errMsg += "{[ReleaseManifestFilter]} - 'version' [JSon] property is undefined, while Gravitee [components] are exepected to";
-        errMsg += "{[ReleaseManifestFilter]} - have a 'version' [JSon] property that neither is undefined, nor an empty string.";
+        errMsg += "{[SingleExecutionManifestFilter]} - 'version' [JSon] property is undefined, while Gravitee [components] are exepected to";
+        errMsg += "{[SingleExecutionManifestFilter]} - have a 'version' [JSon] property that neither is undefined, nor an empty string.";
         throw new Error(errMsg);
       }
 
@@ -354,14 +347,14 @@ export class ReleaseManifestFilter {
 
         this.parallelizationConstraintsMatrix[i].forEach(componentName => {
           if (component.name === componentName) {
-            console.debug("{[ReleaseManifestFilter]} - Gravitee Release Orchestrator searches for " + `${componentName}` + " into Parallel Execution Set no. ["+ `${i}` + "] : ");
+            console.debug("{[SingleExecutionManifestFilter]} - Gravitee Release Orchestrator searches for " + `${componentName}` + " into Parallel Execution Set no. ["+ `${i}` + "] : ");
             console.debug('');
             console.debug(`${JSON.stringify(component, null, "  ")}`);
             console.debug('');
             console.debug('--- ');
             console.debug('');
             parallelExecutionSetIndexToReturn = i;
-            let foundMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [" + `${parallelExecutionSetIndexToReturn}` + "] for the following component : \n";
+            let foundMsg = "{[SingleExecutionManifestFilter]} - Gravitee Release Orchestrator could determine Parallel Execution Set Index is [" + `${parallelExecutionSetIndexToReturn}` + "] for the following component : \n";
             foundMsg += `${JSON.stringify(component, null, "  ")}`;
             foundMsg += " ";
             console.info(foundMsg);
@@ -372,7 +365,7 @@ export class ReleaseManifestFilter {
       /// Index must not be out of bounds of the [parallelizationConstraintsMatrix]
       /// Index must not be negative
       if (parallelExecutionSetIndexToReturn < 0) {
-        let errMsg = "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component (do they appear in the [buildDependencies] in the [release.json] ? ) : ";
+        let errMsg = "{[SingleExecutionManifestFilter]} - Gravitee Release Orchestrator could not determine which Parallel Execution Set Index for the following component (do they appear in the [buildDependencies] in the [release.json] ? ) : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += " ";
         throw new Error(errMsg)
@@ -380,8 +373,8 @@ export class ReleaseManifestFilter {
       /// Index must not be strictly less than the [this.parallelizationConstraintsMatrix] array length
       if (parallelExecutionSetIndexToReturn > this.parallelizationConstraintsMatrix.length - 1) {
 
-        let errMsg = "{[ReleaseManifestFilter]} - [Parallel Execution Set Index] out of bounds Exception"
-        errMsg += "{[ReleaseManifestFilter]} - Gravitee Release Orchestrator determined the Parallel Execution Set Index of the following component : ";
+        let errMsg = "{[SingleExecutionManifestFilter]} - [Parallel Execution Set Index] out of bounds Exception"
+        errMsg += "{[SingleExecutionManifestFilter]} - Gravitee Release Orchestrator determined the Parallel Execution Set Index of the following component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += " is [" + `${parallelExecutionSetIndexToReturn}` + "] ";
         errMsg += " while the [Parallelization Constraints Matrix] defines the highest index to  [" + `${this.parallelizationConstraintsMatrix.length - 1}` + "] ";
@@ -399,12 +392,12 @@ export class ReleaseManifestFilter {
      **/
     loadReleaseManifest()  : void {
       if (!fs.existsSync(manifestPath)) {
-        throw new Error("{[ReleaseManifestFilter]} - [" + `${manifestPath}` + "] does not exists, stopping release process");
+        throw new Error("{[SingleExecutionManifestFilter]} - [" + `${manifestPath}` + "] does not exists, stopping release process");
       } else {
-        console.log("{[ReleaseManifestFilter]} - found release.json release manifest located at [" + manifestPath + "]");
+        console.log("{[SingleExecutionManifestFilter]} - found release.json release manifest located at [" + manifestPath + "]");
       }
-      console.info("{[ReleaseManifestFilter]} - Parsing release.json Release Manifest file located at [" + manifestPath + "]");
-      console.debug("{[ReleaseManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
+      console.info("{[SingleExecutionManifestFilter]} - Parsing release.json Release Manifest file located at [" + manifestPath + "]");
+      console.debug("{[SingleExecutionManifestFilter]} - Parsed Manifest is [" + `${JSON.stringify(this.releaseManifest, null, "  ")}` + "]");
       let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
       this.releaseManifest = JSON.parse(manifestAsString);
 
@@ -415,9 +408,9 @@ export class ReleaseManifestFilter {
        **/
        /*
        if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
-         console.log(`{[ReleaseManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for components to deploy to Nexus Staging.`)
+         console.log(`{[SingleExecutionManifestFilter]} - [loadReleaseManifest(): void] adding again [-SNAPSHOT] suffix for components to deploy to Nexus Staging.`)
          this.prepareManifestForNexusStaging();
-         console.debug("{[ReleaseManifestFilter]} - Prepared Manifest is : ");
+         console.debug("{[SingleExecutionManifestFilter]} - Prepared Manifest is : ");
          console.debug(this.releaseManifest);
        }
        */
@@ -427,7 +420,7 @@ export class ReleaseManifestFilter {
          let releaseForNexusStaging = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
          for (let currComponentIndex = 0; currComponentIndex < this.releaseManifest.components.length; currComponentIndex++) {
            if (`${this.releaseManifest.components[currComponentIndex].since}` === `${releaseForNexusStaging}`) {
-             console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
+             console.log(`{[SingleExecutionManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
              ///
              this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
            }
@@ -435,12 +428,12 @@ export class ReleaseManifestFilter {
          /// -- merge all buildDependencies
          let mergedBuildDependencies = []
          for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
-           console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
+           console.log(`{[SingleExecutionManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
            mergedBuildDependencies = mergedBuildDependencies.concat(this.releaseManifest.buildDependencies[i]);
 
          }
          this.releaseManifest.buildDependencies = [ mergedBuildDependencies ];
-         console.debug("{[ReleaseManifestFilter]} - {Nexus Staging} - Loaded in RAM Manifest is : ");
+         console.debug("{[SingleExecutionManifestFilter]} - {Nexus Staging} - Loaded in RAM Manifest is : ");
          console.debug(this.releaseManifest);
        }
     }
@@ -450,7 +443,7 @@ export class ReleaseManifestFilter {
       let releaseForNexusStaging = `${this.removeSnapshotSuffix(this.releaseManifest.version)}`
       for (let currComponentIndex = 0; currComponentIndex < this.releaseManifest.components.length; currComponentIndex++) {
         if (`${this.releaseManifest.components[currComponentIndex].since}` === `${releaseForNexusStaging}`) {
-          console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
+          console.log(`{[SingleExecutionManifestFilter]} - [prepareManifestForNexusStaging(): void] adding again [-SNAPSHOT] suffix for componentsto deploy to Nexus Staging.`)
           ///
           this.releaseManifest.components[currComponentIndex].version = `${this.releaseManifest.components[currComponentIndex].version}-SNAPSHOT`;
         }
@@ -460,7 +453,7 @@ export class ReleaseManifestFilter {
         /// -- merge all buildDependencies
         let mergedBuildDependencies = []
         for (let i = 0; i < this.releaseManifest.buildDependencies.length; i++) {
-          console.log(`{[ReleaseManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
+          console.log(`{[SingleExecutionManifestFilter]} - [prepareManifestForNexusStaging(): void] mergng all [buildDependencies].`)
           mergedBuildDependencies = mergedBuildDependencies.concat(this.releaseManifest.buildDependencies[i]);
 
         }
@@ -479,7 +472,7 @@ export class ReleaseManifestFilter {
         if (process.argv["cicd-stage"] === 'mvn_nexus_staging') {
           return maven_version_number;
         }
-        let errMsg = `{[ReleaseManifestFilter]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
+        let errMsg = `{[SingleExecutionManifestFilter]} - Provided maven version number does not end with the [-SNAPSHOT] suffix, but was expected to`;
         console.log(errMsg);
         throw new Error(errMsg);
       }
@@ -495,7 +488,7 @@ export class ReleaseManifestFilter {
       /// --- FIRST GIT ADD RELEASE VERSION (iff no errorsin release process) --- ///
       /// ---                                                                 --- ///
 
-      console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] persist [this.releaseManifest] to file`)
+      console.log(`{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] persist [this.releaseManifest] to file`)
 
       // persist [this.releaseManifest] to file
 
@@ -503,7 +496,7 @@ export class ReleaseManifestFilter {
         fs.writeFileSync(`${manifestPath}`, `${JSON.stringify(this.releaseManifest, null, 4)}`, {}); // no options
       } catch(err) {
         // An error occurred // former persistSuccessStateOf
-        console.log('{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath} the prepared release version`);
+        console.log('{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred writing to ' + `${manifestPath} the prepared release version`);
         console.error(err);
         throw err;
       }
@@ -511,23 +504,23 @@ export class ReleaseManifestFilter {
       let gitADDCommandResult = shelljs.exec(`cd pipeline/ && git add ./release.json ./.gitignore`);
       if (gitADDCommandResult.code !== 0) {
         console.log(gitADDCommandResult.stdout);
-        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ./.gitignore ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
+        throw new Error("{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [git add ./release.json ./.gitignore ] shell command. Shell error was [" + gitADDCommandResult.stderr + "] ")
       } else {
         // gitCommandStdOUT = gitADDCommandResult.stdout; // former persistSuccessStateOf
-        console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git added : `);
+        console.log(`{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git added : `);
         console.log(gitADDCommandResult.stdout);
       }
       /// ---                                                --- ///
       /// --- NOW COMMIT AND PUSH                            --- ///
       /// ---                                                --- ///
       /// -
-      console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] Before commit and push, content of the [release.json] on filessytem, and git status are : `);
+      console.log(`{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] Before commit and push, content of the [release.json] on filessytem, and git status are : `);
       /// -
       let shellCommandResult = shelljs.exec("cd pipeline/  && pwd && ls -allh && cat ./release.json && git status && git remote -v && git status");
       if (shellCommandResult.code !== 0) {
         let shellCommandStdOUTforErr = shellCommandResult.stdout;
         console.log(shellCommandStdOUTforErr);
-        throw new Error("{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
+        throw new Error("{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] - An Error occurred executing the [pwd && ls -allh] shell command. Shell error was [" + shellCommandResult.stderr + "] ")
       } else {
         let shellCommandStdOUT = shellCommandResult.stdout;
         console.log(shellCommandStdOUT);
@@ -537,10 +530,10 @@ export class ReleaseManifestFilter {
 
       let gitCOMMITCommandResult = shelljs.exec(`cd pipeline/ && git commit -m \"Prepare Release (${this.releaseManifest.version}): ${commit_message}\"`);
       if (gitCOMMITCommandResult.code !== 0) {
-        throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
+        throw new Error("{[SingleExecutionManifestFilter]} - An Error occurred executing the [git add ./release.json ./.gitignore && git commit -m '${commit_message}'] shell command. Shell error was [" + gitCOMMITCommandResult.stderr + "] ")
       } else {
         // gitCOMMITCommandStdOUT = gitCOMMITCommandResult.stdout;
-        console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
+        console.log(`{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] successfully git commited with commit message [${commit_message}] : `);
         console.log(gitCOMMITCommandResult.stdout)
       }
 
@@ -548,11 +541,11 @@ export class ReleaseManifestFilter {
       if (`${process.argv["dry-run"]}` === 'false') {
         let gitPUSHCommandResult = shelljs.exec(`cd pipeline/ && git push -u origin HEAD`);
         if (gitPUSHCommandResult.code !== 0) {
-          throw new Error("{[ReleaseManifestFilter]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
+          throw new Error("{[SingleExecutionManifestFilter]} - An Error occurred executing the [git push -u origin HEAD] shell command. Shell error was [" + gitPUSHCommandResult.stderr + "] ")
         } else {
           let gitPUSHCommandStdOUT: string = gitPUSHCommandResult.stdout;
           console.log(gitPUSHCommandStdOUT);
-          console.log(`{[ReleaseManifestFilter]} - [commitAndPush(commit_message: string): void] successfully pushed to remote git repo with commit message [${commit_message}] : `);
+          console.log(`{[SingleExecutionManifestFilter]} - [commitAndPush(commit_message: string): void] successfully pushed to remote git repo with commit message [${commit_message}] : `);
 
         }
       }

@@ -33,7 +33,7 @@ import * as shelljs from 'shelljs';
 /// import axios from 'axios';
 /// import { CircleCISecrets } from '../../modules/circleci/CircleCISecrets'
 import * as fs from 'fs';
-export const manifestPath : string = process.env.RELEASE_MANIFEST_PATH;
+export const manifestPath : string = process.env.CICD_PROCESS_MANIFEST_PATH;
 const semver = require('semver');
 /**
  *
