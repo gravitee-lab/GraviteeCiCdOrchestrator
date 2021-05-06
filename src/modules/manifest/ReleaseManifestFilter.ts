@@ -113,7 +113,7 @@ export class ReleaseManifestFilter {
         if (!component.hasOwnProperty('version')) {
           component.version = this.releaseManifest.version; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
         }
-        if (component.version.includes('-SNAPSHOT')) {
+        if (component.version.endsWith('-SNAPSHOT')) {
           console.info('');
           /// console.debug("[{CircleCiOrchestrator}] - processing filter selected component : ");
           /// console.debug(`${JSON.stringify(component, null, "  ")}`);
