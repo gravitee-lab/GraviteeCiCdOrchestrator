@@ -110,7 +110,13 @@ export class ReleaseManifestFilter {
         throw new Error("The [release.json] file does not have a 'version' JSON property. It should, cannot proceed with CI CD Release Process.");
       }
       this.releaseManifest.components.forEach(component => {
+        console.log(`[ReleaseManifestFilter#filter()] : value of [this.releaseManifest.version]=[${this.releaseManifest.version}]`)
+        console.log(`[ReleaseManifestFilter#filter()] : value of [component.version]=[${component.version}]`)
+
         if (!component.hasOwnProperty('version')) {
+          component.version = this.releaseManifest.version; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
+        }
+        if (component.version === undefined || component.version === null || component.version === '') {
           component.version = this.releaseManifest.version; // infer version from release manifest top level version JSON Property, as of [https://github.com/gravitee-lab/GraviteeCiCdOrchestrator/issues/26]
         }
         if (component.version.endsWith('-SNAPSHOT')) {
