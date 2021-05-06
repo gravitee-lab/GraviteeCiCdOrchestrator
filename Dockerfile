@@ -65,7 +65,8 @@ ENV PRODUCT=${PRODUCT}
 
 # CICD_PROCESS_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test1.json
 # CICD_PROCESS_MANIFEST_PATH=release-data/apim/1.30.x/tests/release.test4-20-conccurrent.json
-ARG CICD_PROCESS_MANIFEST_PATH=/path/to/release.json
+# ARG CICD_PROCESS_MANIFEST_PATH=/path/to/release.json
+ARG CICD_PROCESS_MANIFEST_PATH=/graviteeio/cicd/pipeline/release.json
 ENV CICD_PROCESS_MANIFEST_PATH=${CICD_PROCESS_MANIFEST_PATH}
 
 ENV RETRIES_BEFORE_FAILURE=${RETRIES_BEFORE_FAILURE}
