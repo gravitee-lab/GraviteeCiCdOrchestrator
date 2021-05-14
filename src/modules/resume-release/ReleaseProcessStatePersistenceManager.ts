@@ -339,7 +339,7 @@ export class ReleaseProcessStatePersistenceManager {
       console.log(`{[ReleaseProcessStatePersistenceManager]} - [persistSuccessStateOf(component_names: string[]): void] removing [-SNAPSHOT] suffix for component :`)
       console.log(this.releaseManifest.components[currComponentIndex]);
 
-      if (this.releaseManifest.components[currComponentIndex].version === undefined || this.releaseManifest.components[currComponentIndex].version === "") {
+      if (this.releaseManifest.components[currComponentIndex].version === undefined || this.releaseManifest.components[currComponentIndex].version === "" || this.releaseManifest.components[currComponentIndex].version === null) {
         this.releaseManifest.components[currComponentIndex].version = this.removeSnapshotSuffix(this.releaseManifest.version);
         this.releaseManifest.components[currComponentIndex].since = this.removeSnapshotSuffix(this.releaseManifest.version);
       } else {

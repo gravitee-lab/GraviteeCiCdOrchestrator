@@ -191,6 +191,10 @@ export class SinglePipelineManager {
       })
     }
     private initializeNotifiers() : void {
+      console.info('{[SinglePipelineManager]} - initializeNotifiers() - x+x+x+x+x+x+x+x+x+x');
+      console.log(`{[SinglePipelineManager]} - initializeNotifiers() - this.execution_plan.length=[${this.execution_plan.length}]`)
+      console.log(`{[SinglePipelineManager]} - initializeNotifiers() - HEre is the execution plan : `)
+      console.log(this.execution_plan)
       this.parallelExecutionSetsNotifiers = [];
       for (let k: number = 0; k < this.execution_plan.length; k++) {
         this.parallelExecutionSetsNotifiers[k] = new rxjs.Subject<number>();
@@ -217,7 +221,7 @@ export class SinglePipelineManager {
           }).bind(this)
         })
       }
-
+      console.log(`{[SinglePipelineManager]} - initializeNotifiers() - After initialization, this.parallelExecutionSetsNotifiers has length [${this.parallelExecutionSetsNotifiers.length}]`)
     }
 
 
