@@ -171,6 +171,16 @@ if (process.argv["cicd-stage"] === 'pull_req') {
   /// then, using the execution plan, we are going to
   /// process parallel executions one after the other
   let pipeExecManager = new SinglePipelineManager(executionPlan, 5);
+
+  try {
+    pipeExecManager.start();
+  } catch (error) {
+    console.log(`# ----------------------------------------------------`)
+    console.log(`Catched orchestrator error : `)
+    console.log(error)
+    console.log(`# ----------------------------------------------------`)
+    throw new Error(`Stopping Orchestrator because an error occured during the execution of the CI CD Process`)
+  }
 }
 
 

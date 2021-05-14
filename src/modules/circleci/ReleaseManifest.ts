@@ -46,6 +46,7 @@ let manifestAsString: string = fs.readFileSync(`${manifestPath}`,'utf8');
 
 export const releaseManifest = JSON.parse(manifestAsString);
 
+releaseManifest.version
 let tempVersion = releaseManifest.version;
 if (tempVersion.endsWith('-SNAPSHOT')) {
   tempVersion = tempVersion.substr(0, tempVersion.length - 9 );
