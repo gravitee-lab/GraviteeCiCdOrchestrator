@@ -242,8 +242,12 @@ export class SinglePipelineExecution {
       if(component.version === undefined || component.version === '') {
           throw new Error(`Error : [component.version] is null or an empty string : [${component.version}]`)
       }
+      if(component.branch === undefined || component.branch === '') {
+          throw new Error(`Error : [component.branch] is null or an empty string : [${component.branch}]`)
+      }
       pipelineGitRepoName = component.name;
-      pipelineTargetBranch = component.version;
+      /// pipelineTargetBranch = component.version;
+      pipelineTargetBranch = component.branch;
       /// pipeline execution parameters, same as [Jenkins] build parameters
       /// ---
       let pipelineConfig = {};
