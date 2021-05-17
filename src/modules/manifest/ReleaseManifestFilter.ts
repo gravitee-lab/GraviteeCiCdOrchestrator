@@ -329,11 +329,11 @@ export class ReleaseManifestFilter {
       console.debug('');
       console.debug('--- ');
       console.debug('');
-      if (!(Object.keys(component).length == 2 || Object.keys(component).length == 3)) {
+      if (!(Object.keys(component).length == 2 || Object.keys(component).length == 3 || Object.keys(component).length == 4)) {
         let errMsg = "{[ReleaseManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += "{[ReleaseManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.";
-        errMsg += "{[ReleaseManifestFilter]} - whil components are exepected to have exactly 2 properties [JSon] properties.";
+        errMsg += "{[ReleaseManifestFilter]} - whil components are exepected to have 2 to 4 properties [JSon] properties.";
         throw new Error(errMsg);
       }
       if (component.name === undefined || component.name === "") {
