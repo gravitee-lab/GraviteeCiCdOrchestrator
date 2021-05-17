@@ -317,7 +317,7 @@ export class SingleExecutionManifestFilter {
       console.debug('');
       console.debug('--- ');
       console.debug('');
-      if (!(Object.keys(component).length == 2 || Object.keys(component).length == 3)) {
+      if (!(Object.keys(component).length == 2 || Object.keys(component).length == 3) || Object.keys(component).length == 4 ) {
         let errMsg = "{[SingleExecutionManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += "{[SingleExecutionManifestFilter]} - has a total of " + `${Object.keys(component).length}` +" [JSon] properties.";
@@ -331,7 +331,7 @@ export class SingleExecutionManifestFilter {
         errMsg += "{[SingleExecutionManifestFilter]} - have a 'name' [JSon] property that neither is undefined, nor an empty string.";
         throw new Error(errMsg);
       }
-      if (component.version === undefined || component.name === "") {
+      if (component.version === undefined || component.version === "") {
         let errMsg = "{[SingleExecutionManifestFilter]} - The component : ";
         errMsg += `${JSON.stringify(component, null, "  ")}`;
         errMsg += "{[SingleExecutionManifestFilter]} - 'version' [JSon] property is undefined, while Gravitee [components] are exepected to";
